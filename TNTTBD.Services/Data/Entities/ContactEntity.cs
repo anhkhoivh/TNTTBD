@@ -1,0 +1,56 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace TNTTBD.Services.Data.Entities
+{
+    /// <summary>
+    /// Student entity
+    /// </summary>
+    public class ContactEntity
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ContactEntity()
+        { }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Id
+        /// </summary>
+        [Key]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Relation
+        /// </summary>
+        public string Relation { get; set; }
+
+        /// <summary>
+        /// Relation
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Phone number
+        /// </summary>
+        public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// Eucharistic Youngster Id
+        /// </summary>
+        public Guid EucharisticYoungsterId { get; set; }
+
+        /// <summary>
+        /// Eucharistic Youngster that owns the contact
+        /// </summary>
+        public EucharisticYoungsterEntity EucharisticYoungster { get; set; }
+
+        #endregion
+
+    }
+}
