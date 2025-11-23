@@ -19,6 +19,11 @@ namespace TNTTBD.Services.Data.Entities
 
         #region Properties
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<CatechismClassCatechistEntity> ClassAssignments { get; set; } = new List<CatechismClassCatechistEntity>();
+
         #endregion
 
     }

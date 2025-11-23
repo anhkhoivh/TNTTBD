@@ -3,14 +3,14 @@ namespace TNTTBD.Services.Models
     /// <summary>
     /// Student entity
     /// </summary>
-    public class EucharisticYoungster : Member
+    public class EucharisticYouth : Member
     {
         #region Constructors
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public EucharisticYoungster()
+        public EucharisticYouth()
         { }
 
         #endregion

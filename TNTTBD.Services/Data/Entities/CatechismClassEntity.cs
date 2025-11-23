@@ -31,16 +31,6 @@ namespace TNTTBD.Services.Data.Entities
         public string ClassName { get; set; }
 
         /// <summary>
-        /// Primary catechist id
-        /// </summary>
-        public Guid PrimaryCatechistId { get; set; }
-
-        /// <summary>
-        /// Primary catechist
-        /// </summary>
-        public CatechistEntity PrimaryCatechist { get; set; }
-
-        /// <summary>
         /// Catechism Year Id
         /// </summary>
         public Guid CatechismYearId { get; set; }
@@ -53,7 +43,12 @@ namespace TNTTBD.Services.Data.Entities
         /// <summary>
         /// Assistant Catechist List
         /// </summary>
-        public ICollection<CatechistEntity> AssistantCatechists { get; set; }  = new List<CatechistEntity>();
+        public ICollection<CatechistEntity> ClassCatechists { get; set; } = new List<CatechistEntity>();
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public ICollection<EucharisticYouthEntity> EucharisticYouths { get; set; } = new List<EucharisticYouthEntity>();
 
         /// <summary>
         /// Catechism Session List

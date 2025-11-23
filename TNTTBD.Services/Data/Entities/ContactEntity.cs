@@ -43,12 +43,12 @@ namespace TNTTBD.Services.Data.Entities
         /// <summary>
         /// Eucharistic Youngster Id
         /// </summary>
-        public Guid EucharisticYoungsterId { get; set; }
+        public Guid EucharisticYouthId { get; set; }
 
         /// <summary>
         /// Eucharistic Youngster that owns the contact
         /// </summary>
-        public EucharisticYoungsterEntity EucharisticYoungster { get; set; }
+        public EucharisticYouthEntity EucharisticYouth { get; set; }
 
         #endregion
 

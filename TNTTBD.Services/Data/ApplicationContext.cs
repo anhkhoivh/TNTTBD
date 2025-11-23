@@ -20,47 +20,47 @@ namespace TNTTBD.Services.Data
         /// <summary>
         /// Entity of Users
         /// </summary>
-        public DbSet<UserEntity> Users { get; set; }
+        public DbSet<UserEntity> User { get; set; }
 
         /// <summary>
         /// Entity of Youngsters
         /// </summary>
-        public DbSet<EucharisticYoungsterEntity> EucharisticYoungsters { get; set; }
+        public DbSet<EucharisticYouthEntity> EucharisticYouth { get; set; }
 
         /// <summary>
         /// Entity of Catechists
         /// </summary>
-        public DbSet<CatechistEntity> Catechists { get; set; }
+        public DbSet<CatechistEntity> Catechist { get; set; }
 
         /// <summary>
         /// Entity of Catechism Years
         /// </summary>
-        public DbSet<CatechismYearEntity> CatechismYears { get; set; }
+        public DbSet<CatechismYearEntity> CatechismYear { get; set; }
 
         /// <summary>
         /// Entity of Catechism Classes
         /// </summary>
-        public DbSet<CatechismClassEntity> CatechismClasses { get; set; }
+        public DbSet<CatechismClassEntity> CatechismClass { get; set; }
 
         /// <summary>
         /// Entity of Catechism Sessions
         /// </summary>
-        public DbSet<CatechismSessionEntity> CatechismSessions { get; set; }
+        public DbSet<CatechismSessionEntity> CatechismSession { get; set; }
 
         /// <summary>
         /// Entity of Contacts
         /// </summary>
-        public DbSet<ContactEntity> Contacts { get; set; }
+        public DbSet<ContactEntity> Contact { get; set; }
 
         /// <summary>
         /// Entity of Exams
         /// </summary>
-        public DbSet<ExamEntity> Exams { get; set; }
+        public DbSet<ExamEntity> Exam { get; set; }
 
         /// <summary>
         /// Entity of ExamResults
         /// </summary>
-        public DbSet<ExamResultEntity> ExamResults { get; set; }
+        public DbSet<ExamResultEntity> ExamResult { get; set; }
 
         #endregion
     }

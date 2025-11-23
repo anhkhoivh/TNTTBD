@@ -43,7 +43,7 @@ namespace TNTTBD.Services.Models
         /// <summary>
         /// Eucharistic Youngster that owns the contact
         /// </summary>
-        public EucharisticYoungster EucharisticYoungster { get; set; }
+        public EucharisticYouth EucharisticYouth { get; set; }
 
         #endregion
 

@@ -31,9 +31,9 @@ namespace TNTTBD.Services.Data.Entities
         public DateOnly Date { get; set; }
 
         /// <summary>
-        /// Theme
+        /// Title
         /// </summary>
-        public string Theme { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
         /// Class Id
@@ -44,6 +44,8 @@ namespace TNTTBD.Services.Data.Entities
         /// Catechism Class of the Session
         /// </summary>
         public CatechismClassEntity Class { get; set; }
+
+        public ICollection<CatechismSessionAttendanceEntity> EucharisticYouthAttendances { get; set; } = new List<CatechismSessionAttendanceEntity>();
 
         #endregion
 

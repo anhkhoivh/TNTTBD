@@ -27,19 +27,29 @@ namespace TNTTBD.Services.Data.Entities
         public string ChristName { get; set; }
 
         /// <summary>
-        /// Full Name
+        /// Family Name
         /// </summary>
-        public string FullName { get; set; }
+        public string FamilyName { get; set; }
 
+        /// <summary>
+        /// Middle Name
+        /// </summary>
+        public string MiddleName { get; set; }
+
+        /// <summary>
+        /// Given Name
+        /// </summary>
+        public string GivenName { get; set; }
+        
         /// <summary>
         /// User id
         /// </summary>
-        public Guid UserId {get;set;}
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// User
         /// </summary>
-        public UserEntity User {get;set;}
+        public UserEntity User { get; set; }
 
         #endregion
     }
