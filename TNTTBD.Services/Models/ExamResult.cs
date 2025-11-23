@@ -39,7 +39,7 @@ namespace TNTTBD.Services.Models
         /// <summary>
         /// Test
         /// </summary>
-        public EucharisticYoungster EucharisticYoungster { get; set; }
+        public EucharisticYouth EucharisticYouth { get; set; }
 
         #endregion
     }

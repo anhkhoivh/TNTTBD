@@ -3,14 +3,14 @@ namespace TNTTBD.Services.Data.Entities
     /// <summary>
     /// Student entity
     /// </summary>
-    public class EucharisticYoungsterEntity : MemberEntity
+    public class EucharisticYouthEntity : MemberEntity
     {
         #region Constructors
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public EucharisticYoungsterEntity()
+        public EucharisticYouthEntity()
         { }
 
         #endregion
@@ -43,6 +43,5 @@ namespace TNTTBD.Services.Data.Entities
         public ICollection<ContactEntity> Contacts { get; set; } = new List<ContactEntity>();
 
         #endregion
-
     }
 }

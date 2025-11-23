@@ -6,7 +6,7 @@ namespace TNTTBD.Services.Data.Entities
     /// <summary>
     /// Attendance entity
     /// </summary>
-    public class AttendanceEntity 
+    public class CatechismSessionAttendanceEntity 
     {
         #region Constructors
         #endregion

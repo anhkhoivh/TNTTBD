@@ -26,14 +26,29 @@ namespace TNTTBD.Services.Models
         public string ChristName { get; set; }
 
         /// <summary>
-        /// Full Name
+        /// Family Name
         /// </summary>
-        public string FullName { get; set; }
+        public string FamilyName { get; set; }
+
+        /// <summary>
+        /// Middle Name
+        /// </summary>
+        public string MiddleName { get; set; }
+
+        /// <summary>
+        /// Given Name
+        /// </summary>
+        public string GivenName { get; set; }
 
         /// <summary>
         /// User
         /// </summary>
-        public User User {get;set;}
+        public User User { get; set; }
+        
+        /// <summary>
+        /// Full Name
+        /// </summary>
+        public string FullName => $"{ChristName} {FamilyName} {MiddleName} {GivenName}";
 
         #endregion
     }

@@ -45,13 +45,13 @@ namespace TNTTBD.Services.Data.Entities
         /// <summary>
         /// EY id
         /// </summary>
-        [ForeignKey(nameof(EucharisticYoungsterId))]
-        public Guid EucharisticYoungsterId { get; set; }
+        [ForeignKey(nameof(EucharisticYouthId))]
+        public Guid EucharisticYouthId { get; set; }
 
         /// <summary>
         /// Test
         /// </summary>
-        public EucharisticYoungsterEntity EucharisticYoungster { get; set; }
+        public EucharisticYouthEntity EucharisticYouth { get; set; }
 
         #endregion
     }
