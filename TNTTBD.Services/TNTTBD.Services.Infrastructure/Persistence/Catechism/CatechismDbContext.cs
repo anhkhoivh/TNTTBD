@@ -1,0 +1,97 @@
+using Microsoft.EntityFrameworkCore;
+using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
+
+namespace TNTTBD.Services.Infrastructure.Persistence.Catechism;
+
+/// <summary>
+/// Database context
+/// </summary>
+public class CatechismDbContext : DbContext
+{
+    #region Constructors
+
+    public CatechismDbContext(DbContextOptions<CatechismDbContext> options) : base(options)
+    { }
+
+    #endregion
+
+    #region Properties
+
+    /// <summary>
+    /// Entity of Users
+    /// </summary>
+    public DbSet<UserEntity> Users { get; set; }
+
+    /// <summary>
+    /// Entity of Youngsters
+    /// </summary>
+    public DbSet<EucharisticYouthEntity> EucharisticYouth => Set<EucharisticYouthEntity>();
+
+    /// <summary>
+    /// Entity of Catechists
+    /// </summary>
+    public DbSet<CatechistEntity> Catechists => Set<CatechistEntity>();
+
+    /// <summary>
+    /// Entity of Catechism Years
+    /// </summary>
+    public DbSet<CatechismYearEntity> CatechismYears => Set<CatechismYearEntity>();
+
+    /// <summary>
+    /// Entity of Catechism Classes
+    /// </summary>
+    public DbSet<CatechismClassEntity> CatechismClasses => Set<CatechismClassEntity>();
+
+    /// <summary>
+    /// Entity of Catechism Sessions
+    /// </summary>
+    public DbSet<CatechismSessionEntity> CatechismSessions => Set<CatechismSessionEntity>();
+
+    /// <summary>
+    /// Entity of Contacts
+    /// </summary>
+    public DbSet<ContactEntity> Contacts => Set<ContactEntity>();
+
+    /// <summary>
+    /// Entity of Exams
+    /// </summary>
+    public DbSet<ExamEntity> Exams => Set<ExamEntity>();
+
+    /// <summary>
+    /// Entity of ExamResults
+    /// </summary>
+    public DbSet<ExamResultEntity> ExamResults => Set<ExamResultEntity>();
+
+    /// <summary>
+    /// Entity of CatechismSessionAttendance
+    /// </summary>
+    public DbSet<CatechismSessionAttendanceEntity> CatechismSessionAttendances => Set<CatechismSessionAttendanceEntity>();
+
+    /// <summary>
+    /// Join entity CatechismClassCatechistEntity
+    /// </summary>
+    public DbSet<CatechismClassCatechistEntity> CatechismClassCatechists => Set<CatechismClassCatechistEntity>();
+
+    /// <summary>
+    /// Join entity CatechismClassEucharisticYouthEntity
+    /// </summary>
+    public DbSet<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouth => Set<CatechismClassEucharisticYouthEntity>();
+
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// On model creating
+    /// </summary>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(CatechismDbContext).Assembly
+        );
+    }
+
+    #endregion
+}
