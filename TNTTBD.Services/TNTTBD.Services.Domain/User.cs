@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Models
@@ -6,7 +5,7 @@ namespace TNTTBD.Services.Models
     /// <summary>
     /// 
     /// </summary>
-    public class User : IdentityUser
+    public class User
     {
         #region Constructor
 
