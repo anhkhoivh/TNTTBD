@@ -58,7 +58,7 @@ public class CatechistEntity
     /// <summary>
     /// 
     /// </summary>
-    public ICollection<CatechismClassCatechistEntity> ClassAssignments { get; set; } = new List<CatechismClassCatechistEntity>();
+    public ICollection<CatechismClassCatechistEntity> CatechismClassCatechists { get; set; } = new List<CatechismClassCatechistEntity>();
 
     #endregion
 

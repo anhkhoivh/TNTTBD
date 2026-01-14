@@ -43,7 +43,7 @@ public class ExamEntity
     /// <summary>
     /// Exam Result list
     /// </summary>
-    public ICollection<ExamResultEntity> ExamResults { get; set; } = new List<ExamResultEntity>();
+    public ICollection<ExamEucharisticYouthEntity> ExamResults { get; set; } = new List<ExamEucharisticYouthEntity>();
 
     #endregion
 }

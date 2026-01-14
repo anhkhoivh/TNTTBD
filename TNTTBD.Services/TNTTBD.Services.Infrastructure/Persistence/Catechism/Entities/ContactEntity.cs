@@ -7,16 +7,6 @@ namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 /// </summary>
 public class ContactEntity
 {
-    #region Constructors
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
-    public ContactEntity()
-    { }
-
-    #endregion
-
     #region Properties
 
     /// <summary>

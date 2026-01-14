@@ -41,19 +41,24 @@ public class CatechismClassEntity
     public CatechismYearEntity CatechismYear { get; set; }
 
     /// <summary>
-    /// Assistant Catechist List
+    /// Catechist List
     /// </summary>
-    public ICollection<CatechistEntity> ClassCatechists { get; set; } = new List<CatechistEntity>();
+    public ICollection<CatechismClassCatechistEntity> CatechismClassCatechists { get; set; } = new List<CatechismClassCatechistEntity>();
     
     /// <summary>
     /// 
     /// </summary>
-    public ICollection<EucharisticYouthEntity> EucharisticYouths { get; set; } = new List<EucharisticYouthEntity>();
+    public ICollection<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouths { get; set; } = new List<CatechismClassEucharisticYouthEntity>();
 
     /// <summary>
     /// Catechism Session List
     /// </summary>
     public ICollection<CatechismSessionEntity> Sessions { get; set; }  = new List<CatechismSessionEntity>();
+
+    /// <summary>
+    /// Exam List
+    /// </summary>
+    public ICollection<ExamEntity> Exams { get; set; } = new List<ExamEntity>();
 
     #endregion
 

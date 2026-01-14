@@ -70,5 +70,10 @@ public class EucharisticYouthEntity
     /// </summary>
     public ICollection<ContactEntity> Contacts { get; set; } = new List<ContactEntity>();
 
+    /// <summary>
+    /// CatechismClassEucharisticYouth join
+    /// </summary>
+    public ICollection<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouths = new List<CatechismClassEucharisticYouthEntity>();
+
     #endregion
 }
