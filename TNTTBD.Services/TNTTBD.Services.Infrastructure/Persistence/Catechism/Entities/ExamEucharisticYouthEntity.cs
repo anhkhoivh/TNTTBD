@@ -35,7 +35,7 @@ public class ExamEucharisticYouthEntity
     /// <summary>
     /// Exam
     /// </summary>
-    public ExamEntity Exam { get; set; }
+    public ExamEntity Exam { get; set; } = null!;
 
     /// <summary>
     /// EY id
@@ -45,7 +45,7 @@ public class ExamEucharisticYouthEntity
     /// <summary>
     /// Test
     /// </summary>
-    public CatechismClassEucharisticYouthEntity CatechismClassEucharisticYouth { get; set; }
+    public CatechismClassEucharisticYouthEntity CatechismClassEucharisticYouth { get; set; } = null!;
 
     /// <summary>
     /// Score
@@ -60,7 +60,7 @@ public class ExamEucharisticYouthEntity
     /// <summary>
     /// Remark
     /// </summary>
-    public string Remark { get; set; }
+    public string? Remark { get; set; }
 
     #endregion
 }

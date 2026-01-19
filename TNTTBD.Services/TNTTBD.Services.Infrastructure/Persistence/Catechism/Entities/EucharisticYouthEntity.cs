@@ -28,22 +28,22 @@ public class EucharisticYouthEntity
     /// <summary>
     /// Christ Name
     /// </summary>
-    public string ChristName { get; set; }
+    public string? ChristName { get; set; }
 
     /// <summary>
     /// Family Name
     /// </summary>
-    public string FamilyName { get; set; }
+    public required string FamilyName { get; set; }
 
     /// <summary>
     /// Middle Name
     /// </summary>
-    public string MiddleName { get; set; }
+    public string? MiddleName { get; set; }
 
     /// <summary>
     /// Given Name
     /// </summary>
-    public string GivenName { get; set; }
+    public required string GivenName { get; set; }
 
     /// <summary>
     /// Date Of Birth
@@ -58,12 +58,7 @@ public class EucharisticYouthEntity
     /// <summary>
     /// Address
     /// </summary>
-    public string Address { get; set; }
-
-    /// <summary>
-    /// Zone
-    /// </summary>
-    public string Zone { get; set; }
+    public string? Address { get; set; }
 
     /// <summary>
     /// List of Contacts

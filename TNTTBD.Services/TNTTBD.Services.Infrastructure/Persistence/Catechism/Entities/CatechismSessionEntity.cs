@@ -33,17 +33,17 @@ public class CatechismSessionEntity
     /// <summary>
     /// Title
     /// </summary>
-    public string Title { get; set; }
+    public required string Title { get; set; }
 
     /// <summary>
     /// Class Id
     /// </summary>
-    public Guid ClassId { get; set; }
+    public Guid CatechismClassId { get; set; }
 
     /// <summary>
     /// Catechism Class of the Session
     /// </summary>
-    public CatechismClassEntity Class { get; set; }
+    public CatechismClassEntity CatechismClass { get; set; } = null!;
 
     public ICollection<CatechismSessionAttendanceEntity> EucharisticYouthAttendances { get; set; } = new List<CatechismSessionAttendanceEntity>();
 

@@ -27,7 +27,7 @@ public class CatechismSessionAttendanceEntity
     /// <summary>
     /// Session
     /// </summary>
-    public CatechismSessionEntity CatechismSession { get; set; }
+    public CatechismSessionEntity CatechismSession { get; set; } = null!;
 
     /// <summary>
     /// Status
@@ -42,7 +42,7 @@ public class CatechismSessionAttendanceEntity
     /// <summary>
     /// CatechismClassEucharisticYouth
     /// </summary>
-    public CatechismClassEucharisticYouthEntity CatechismClassEucharisticYouth { get; set; }
+    public CatechismClassEucharisticYouthEntity CatechismClassEucharisticYouth { get; set; } = null!;
 
     #endregion
 }

@@ -38,7 +38,7 @@ public class CatechismYearEntity
     /// <summary>
     /// Theme
     /// </summary>
-    public string Theme { get; set; }
+    public string? Theme { get; set; }
 
     /// <summary>
     /// Class in the Catechism Year
