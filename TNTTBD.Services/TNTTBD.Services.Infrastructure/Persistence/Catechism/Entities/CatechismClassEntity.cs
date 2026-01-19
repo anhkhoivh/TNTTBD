@@ -28,7 +28,7 @@ public class CatechismClassEntity
     /// <summary>
     /// Class Name
     /// </summary>
-    public string ClassName { get; set; }
+    public string ClassName { get; set; } = null!;
 
     /// <summary>
     /// Catechism Year Id
@@ -38,7 +38,7 @@ public class CatechismClassEntity
     /// <summary>
     /// Catechism Year
     /// </summary>
-    public CatechismYearEntity CatechismYear { get; set; }
+    public CatechismYearEntity CatechismYear { get; set; } = null!;
 
     /// <summary>
     /// Catechist List

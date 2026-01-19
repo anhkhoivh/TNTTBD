@@ -28,17 +28,17 @@ public class ExamEntity
     /// <summary>
     /// Title
     /// </summary>
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     /// <summary>
     /// Class Id
     /// </summary>
-    public Guid ClassId { get; set; }
+    public Guid CatechismClassId { get; set; }
 
     /// <summary>
     /// Class
     /// </summary>
-    public CatechismClassEntity Class { get; set; }
+    public CatechismClassEntity CatechismClass { get; set; } = null!;
 
     /// <summary>
     /// Exam Result list

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
@@ -16,29 +17,49 @@ public class ContactEntity
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Relation
+    /// Christ Name
     /// </summary>
-    public string Relation { get; set; }
+    public string? ChristName { get; set; }
 
     /// <summary>
-    /// Relation
+    /// Family Name
     /// </summary>
-    public string Name { get; set; }
+    public string? FamilyName { get; set; }
+
+    /// <summary>
+    /// Middle Name
+    /// </summary>
+    public string? MiddleName { get; set; }
+
+    /// <summary>
+    /// Given Name
+    /// </summary>
+    public required string GivenName { get; set; }
 
     /// <summary>
     /// Phone number
     /// </summary>
-    public string PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; }
 
     /// <summary>
-    /// Eucharistic Youngster Id
+    /// Email
     /// </summary>
-    public Guid EucharisticYouthId { get; set; }
+    public string? Email { get; set; }
 
     /// <summary>
-    /// Eucharistic Youngster that owns the contact
+    /// User id
     /// </summary>
-    public EucharisticYouthEntity EucharisticYouth { get; set; }
+    public Guid? UserId { get; set; }
+
+    /// <summary>
+    /// User entity
+    /// </summary>
+    public UserEntity? User { get; set; }
+
+    /// <summary>
+    /// EucharisticYouthContacts
+    /// </summary>
+    public ICollection<EucharisticYouthContactEntity> EucharisticYouthContacts { get; set; } = new List<EucharisticYouthContactEntity>();
 
     #endregion
 

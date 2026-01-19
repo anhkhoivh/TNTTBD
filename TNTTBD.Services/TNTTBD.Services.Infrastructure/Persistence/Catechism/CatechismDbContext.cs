@@ -25,7 +25,7 @@ public class CatechismDbContext : DbContext
     /// <summary>
     /// Entity of Youngsters
     /// </summary>
-    public DbSet<EucharisticYouthEntity> EucharisticYouth => Set<EucharisticYouthEntity>();
+    public DbSet<EucharisticYouthEntity> EucharisticYouths => Set<EucharisticYouthEntity>();
 
     /// <summary>
     /// Entity of Catechists
@@ -60,7 +60,7 @@ public class CatechismDbContext : DbContext
     /// <summary>
     /// Entity of ExamResults
     /// </summary>
-    public DbSet<ExamResultEntity> ExamResults => Set<ExamResultEntity>();
+    public DbSet<ExamEucharisticYouthEntity> ExamEucharisticYouths => Set<ExamEucharisticYouthEntity>();
 
     /// <summary>
     /// Entity of CatechismSessionAttendance
