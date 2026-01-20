@@ -22,24 +22,14 @@ public class Catechist
     #region Properties
 
     /// <summary>
-    /// Christ Name
-    /// </summary>
-    public string ChristName { get; set; }
-
-    /// <summary>
     /// Family Name
     /// </summary>
-    public FullName Name { get; private set; }
+    public FullName FullName { get; private set; }
     
     /// <summary>
     /// User
     /// </summary>
     public User User { get; set; }
-    
-    /// <summary>
-    /// Full Name
-    /// </summary>
-    public string FullName => $"{ChristName} {Name.Display()}";
 
     #endregion
 

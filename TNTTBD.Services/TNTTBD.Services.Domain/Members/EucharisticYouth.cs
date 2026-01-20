@@ -21,11 +21,6 @@ public class EucharisticYouth
     #region Properties
 
     /// <summary>
-    /// Christ Name
-    /// </summary>
-    public string ChristName { get; set; }
-
-    /// <summary>
     /// Family Name
     /// </summary>
     public FullName Name { get; private set; }
@@ -59,11 +54,6 @@ public class EucharisticYouth
     /// List of Contacts
     /// </summary>
     public List<Contact> Contacts { get; set; } = new List<Contact>();
-
-    /// <summary>
-    /// Full Name
-    /// </summary>
-    public string FullName => $"{ChristName} {Name.Display()}";
 
     #endregion
 }
