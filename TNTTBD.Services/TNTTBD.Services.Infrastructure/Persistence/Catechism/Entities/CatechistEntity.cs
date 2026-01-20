@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
@@ -26,25 +27,10 @@ public class CatechistEntity
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Christ Name
+    /// Full Name
     /// </summary>
-    public required string ChristName { get; set; }
+    public FullName FullName { get; set; } = null!;
 
-    /// <summary>
-    /// Family Name
-    /// </summary>
-    public required string FamilyName { get; set; }
-
-    /// <summary>
-    /// Middle Name
-    /// </summary>
-    public string? MiddleName { get; set; }
-
-    /// <summary>
-    /// Given Name
-    /// </summary>
-    public required string GivenName { get; set; }
-    
     /// <summary>
     /// User id
     /// </summary>

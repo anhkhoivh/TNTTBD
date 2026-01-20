@@ -5,30 +5,30 @@ namespace TNTTBD.Services.Domain.ValueObjects;
 /// <summary>
 /// Full name
 /// </summary>
-public class FullName : ValueObject
+public sealed class FullName : ValueObject
 {
     #region Constructors
 
     /// <summary>
     /// Default constructor
     /// </summary>
-    public FullName() {}
+    public FullName()
+    {
+        FamilyName = string.Empty;
+        GivenName = string.Empty;
+        MiddleName = null;
+    }
 
     /// <summary>
     /// Constructor from params
     /// </summary>
-    /// <param name="familyName"></param>
-    /// <param name="middleName"></param>
-    /// <param name="givenName"></param>
-    /// <exception cref="DomainException"></exception>
-    public FullName(string familyName, string middleName, string givenName)
+    public FullName(string givenName, string? familyName = null , string? middleName = null)
     {
-        if (string.IsNullOrWhiteSpace(familyName))
-            throw new DomainException("Family name is required.");
-
-        FamilyName = familyName;
-        MiddleName = middleName ?? string.Empty;
-        GivenName = givenName;
+        FamilyName = string.IsNullOrWhiteSpace(familyName) ? null : Normalize(familyName);
+        MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : Normalize(middleName);
+        GivenName = !string.IsNullOrWhiteSpace(givenName)
+            ? Normalize(givenName)
+            : throw new DomainException("Given name is required");
     }
 
     #endregion
@@ -36,32 +36,51 @@ public class FullName : ValueObject
     #region Properties
 
     /// <summary>
+    /// Christ Name
+    /// </summary>
+    public string? ChristName { get; set; }
+
+    /// <summary>
     /// Family Name
     /// </summary>
-    public string FamilyName { get; set; }
+    public string? FamilyName { get; }
 
     /// <summary>
     /// Middle Name
     /// </summary>
-    public string MiddleName { get; set; }
+    public string? MiddleName { get; }
 
     /// <summary>
     /// Given Name
     /// </summary>
-    public string GivenName { get; set; }
+    public string GivenName { get; }
 
     #endregion
 
     #region Methods
 
-    protected override IEnumerable<object> GetEqualityComponents()
+    protected override IEnumerable<object?> GetEqualityComponents()
     {
+        yield return ChristName;
         yield return FamilyName;
         yield return MiddleName;
         yield return GivenName;
     }
 
-    public string Display() => $"{FamilyName} {MiddleName} {GivenName}";
+    /// <summary>
+    /// String
+    /// </summary>
+    public override string ToString()
+    {
+        return string.Join(" ",
+            new[] { ChristName, FamilyName, MiddleName, GivenName }
+            .Where(x => x != null));
+    }
+
+    private static string Normalize(string value)
+    {
+        return value.Trim();
+    }
 
     #endregion
 }

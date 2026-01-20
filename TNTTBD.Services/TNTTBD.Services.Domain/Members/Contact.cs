@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Domain.Members;
 
@@ -30,9 +31,9 @@ public class Contact
     public string Relation { get; set; }
 
     /// <summary>
-    /// Relation
+    /// Name
     /// </summary>
-    public string Name { get; set; }
+    public FullName Name { get; set; }
 
     /// <summary>
     /// Phone number
