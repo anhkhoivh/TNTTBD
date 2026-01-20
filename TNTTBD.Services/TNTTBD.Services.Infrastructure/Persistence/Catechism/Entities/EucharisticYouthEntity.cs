@@ -31,7 +31,6 @@ public class EucharisticYouthEntity
     /// </summary>
     public FullName FullName { get; set; } = null!;
 
-
     /// <summary>
     /// Date Of Birth
     /// </summary>
