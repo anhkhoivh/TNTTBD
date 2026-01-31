@@ -36,24 +36,9 @@ public class CatechismClassEntity
     public Guid CatechismYearId { get; set; }
 
     /// <summary>
-    /// Catechism Year
-    /// </summary>
-    public CatechismYearEntity CatechismYear { get; set; } = null!;
-
-    /// <summary>
-    /// Catechist List
-    /// </summary>
-    public ICollection<CatechismClassCatechistEntity> CatechismClassCatechists { get; set; } = new List<CatechismClassCatechistEntity>();
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    public ICollection<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouths { get; set; } = new List<CatechismClassEucharisticYouthEntity>();
-
-    /// <summary>
     /// Catechism Session List
     /// </summary>
-    public ICollection<CatechismSessionEntity> Sessions { get; set; }  = new List<CatechismSessionEntity>();
+    public ICollection<CatechismSessionEntity> CatechismSessions { get; set; }  = new List<CatechismSessionEntity>();
 
     /// <summary>
     /// Exam List

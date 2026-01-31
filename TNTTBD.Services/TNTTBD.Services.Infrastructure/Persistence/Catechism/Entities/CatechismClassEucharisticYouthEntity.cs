@@ -10,19 +10,9 @@ public class CatechismClassEucharisticYouthEntity
     public Guid CatechismClassId { get; set; }
 
     /// <summary>
-    /// Catechism Class
-    /// </summary>
-    public CatechismClassEntity CatechismClass { get; set; } = null!;
-
-    /// <summary>
     /// EucharisticYouth Id
     /// </summary>
     public Guid EucharisticYouthId { get; set; }
-
-    /// <summary>
-    /// Eucharistic Youth
-    /// </summary>
-    public EucharisticYouthEntity EucharisticYouth { get; set; } = null!;
 
     #endregion
 }

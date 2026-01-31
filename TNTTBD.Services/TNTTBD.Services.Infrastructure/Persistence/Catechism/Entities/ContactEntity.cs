@@ -31,22 +31,7 @@ public class ContactEntity
     /// Email
     /// </summary>
     public string? Email { get; set; }
-
-    /// <summary>
-    /// User id
-    /// </summary>
-    public Guid? UserId { get; set; }
-
-    /// <summary>
-    /// User entity
-    /// </summary>
-    public UserEntity? User { get; set; }
-
-    /// <summary>
-    /// EucharisticYouthContacts
-    /// </summary>
-    public ICollection<EucharisticYouthContactEntity> EucharisticYouthContacts { get; set; } = new List<EucharisticYouthContactEntity>();
-
+    
     #endregion
 
 }

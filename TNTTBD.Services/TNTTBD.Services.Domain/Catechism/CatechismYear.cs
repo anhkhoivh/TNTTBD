@@ -5,15 +5,17 @@ namespace TNTTBD.Services.Domain.Catechism;
 /// <summary>
 /// Student entity
 /// </summary>
-public class CatechismYear : AggregateRoot
+public class CatechismYear : AggregateRoot<Guid>
 {
     #region Constructors
 
     /// <summary>
     /// Default constructor
     /// </summary>
-    public CatechismYear()
-    { }
+    public CatechismYear() : base(Guid.Empty)
+    {
+        Theme = string.Empty;
+    }
 
     #endregion
 
@@ -22,17 +24,17 @@ public class CatechismYear : AggregateRoot
     /// <summary>
     /// Start Date
     /// </summary>
-    public DateOnly StartDate { get; set; }
+    public DateOnly StartDate { get; }
 
     /// <summary>
     /// End Date
     /// </summary>
-    public DateOnly EndDate { get; set; }
+    public DateOnly EndDate { get; }
 
     /// <summary>
     /// Theme
     /// </summary>
-    public string Theme { get; set; }
+    public string Theme { get; }
 
     /// <summary>
     /// Class in the Catechism Year

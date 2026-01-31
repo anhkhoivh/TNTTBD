@@ -18,11 +18,6 @@ public class CatechismDbContext : DbContext
     #region Properties
 
     /// <summary>
-    /// Entity of Users
-    /// </summary>
-    public DbSet<UserEntity> Users { get; set; }
-
-    /// <summary>
     /// Entity of Youngsters
     /// </summary>
     public DbSet<EucharisticYouthEntity> EucharisticYouths => Set<EucharisticYouthEntity>();
@@ -53,6 +48,11 @@ public class CatechismDbContext : DbContext
     public DbSet<ContactEntity> Contacts => Set<ContactEntity>();
 
     /// <summary>
+    /// Entity of Contact and EucharisticYouth
+    /// </summary>
+    public DbSet<EucharisticYouthContactEntity> EucharisticYouthContacts => Set<EucharisticYouthContactEntity>();
+
+    /// <summary>
     /// Entity of Exams
     /// </summary>
     public DbSet<ExamEntity> Exams => Set<ExamEntity>();
@@ -60,7 +60,7 @@ public class CatechismDbContext : DbContext
     /// <summary>
     /// Entity of ExamResults
     /// </summary>
-    public DbSet<ExamEucharisticYouthEntity> ExamEucharisticYouths => Set<ExamEucharisticYouthEntity>();
+    public DbSet<ExamResultEntity> ExamResults => Set<ExamResultEntity>();
 
     /// <summary>
     /// Entity of CatechismSessionAttendance
@@ -76,6 +76,16 @@ public class CatechismDbContext : DbContext
     /// Join entity CatechismClassEucharisticYouthEntity
     /// </summary>
     public DbSet<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouth => Set<CatechismClassEucharisticYouthEntity>();
+
+    /// <summary>
+    /// Entity of Users
+    /// </summary>
+    public DbSet<UserEntity> Users => Set<UserEntity>();
+
+    /// <summary>
+    /// Entity of User external login
+    /// </summary>
+    public DbSet<UserExternalLoginEntity> UserExternalLogins => Set<UserExternalLoginEntity>();
 
     #endregion
 

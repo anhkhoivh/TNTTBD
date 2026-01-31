@@ -35,15 +35,5 @@ public class ExamEntity
     /// </summary>
     public Guid CatechismClassId { get; set; }
 
-    /// <summary>
-    /// Class
-    /// </summary>
-    public CatechismClassEntity CatechismClass { get; set; } = null!;
-
-    /// <summary>
-    /// Exam Result list
-    /// </summary>
-    public ICollection<ExamEucharisticYouthEntity> ExamResults { get; set; } = new List<ExamEucharisticYouthEntity>();
-
     #endregion
 }

@@ -8,6 +8,12 @@ namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 /// </summary>
 public class CatechistEntity
 {
+    #region Fields
+
+    private readonly List<PhotoReference> _photos = new List<PhotoReference>();
+
+    #endregion
+
     #region Constructors
 
     /// <summary>
@@ -32,20 +38,31 @@ public class CatechistEntity
     public FullName FullName { get; set; } = null!;
 
     /// <summary>
-    /// User id
+    /// Photo collection
     /// </summary>
-    public Guid UserId { get; set; }
-
-    /// <summary>
-    /// User
-    /// </summary>
-    public UserEntity User { get; set; } = null!;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public ICollection<CatechismClassCatechistEntity> CatechismClassCatechists { get; set; } = new List<CatechismClassCatechistEntity>();
+    public IReadOnlyCollection<PhotoReference> Photos => _photos;
 
     #endregion
 
+    #region Methods
+
+    /// <summary>
+    /// Add new photo
+    /// </summary>
+    /// <param name="photo"></param>
+    public void AddPhoto(PhotoReference photo)
+    {
+        _photos.Add(photo);
+    }
+
+    /// <summary>
+    /// Remove photo
+    /// </summary>
+    /// <param name="storageKey"></param>
+    public void RemovePhoto(string storageKey)
+    {
+        _photos.RemoveAll(p => p.StorageKey == storageKey);
+    }
+
+    #endregion
 }

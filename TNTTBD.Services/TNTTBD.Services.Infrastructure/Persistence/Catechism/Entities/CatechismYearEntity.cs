@@ -43,7 +43,7 @@ public class CatechismYearEntity
     /// <summary>
     /// Class in the Catechism Year
     /// </summary>
-    public ICollection<CatechismClassEntity> Classes { get; set; } = new List<CatechismClassEntity>();
+    public ICollection<CatechismClassEntity> CatechismClasses { get; set; } = new List<CatechismClassEntity>();
 
     #endregion
 
