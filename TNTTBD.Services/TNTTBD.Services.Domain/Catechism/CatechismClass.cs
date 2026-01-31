@@ -1,20 +1,34 @@
+using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Common;
-using TNTTBD.Services.Domain.Members;
 
 namespace TNTTBD.Services.Domain.Catechism;
 
 /// summary>
 /// Student entity
 /// </summary>
-public class CatechismClass : AggregateRoot
+public class CatechismClass : AggregateRoot<Guid>
 {
     #region Constructors
 
     /// <summary>
-    /// Default constructor
+    /// Default
     /// </summary>
-    public CatechismClass()
-    { }
+    public CatechismClass() : base(Guid.Empty)
+    {
+        ClassName = string.Empty;
+    }
+
+    /// <summary>
+    /// Constructor from parameters
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    public CatechismClass(Guid id, Guid catechismYearId, string className)
+        : base(id)
+    {
+        ClassName = className;
+        CatechismYearId = catechismYearId;
+    }
 
     #endregion
 
@@ -23,27 +37,12 @@ public class CatechismClass : AggregateRoot
     /// <summary>
     /// Class Name
     /// </summary>
-    public string ClassName { get; set; }
-
-    /// <summary>
-    /// Primary catechist
-    /// </summary>
-    public Catechist PrimaryCatechist { get; set; }
+    public string ClassName { get; private set; }
 
     /// <summary>
     /// Catechism Year
     /// </summary>
-    public CatechismYear CatechismYear { get; set; }
-
-    /// <summary>
-    /// Assistant Catechist List
-    /// </summary>
-    public List<Catechist> AssistantCatechists { get; set; }  = new List<Catechist>();
-
-    /// <summary>
-    /// Catechism Session List
-    /// </summary>
-    public List<CatechismSession> Sessions { get; set; }  = new List<CatechismSession>();
+    public Guid CatechismYearId { get; private set; }
 
     #endregion
 

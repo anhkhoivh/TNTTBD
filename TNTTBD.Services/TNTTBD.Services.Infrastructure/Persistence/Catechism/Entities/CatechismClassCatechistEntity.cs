@@ -1,3 +1,5 @@
+using TNTTBD.Services.Domain.Enums;
+
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
 public class CatechismClassCatechistEntity
@@ -10,24 +12,14 @@ public class CatechismClassCatechistEntity
     public Guid CatechismClassId { get; set; }
 
     /// <summary>
-    /// Catechism Class
-    /// </summary>
-    public CatechismClassEntity CatechismClass { get; set; } = null!;
-
-    /// <summary>
     /// Catechist Id
     /// </summary>
     public Guid CatechistId { get; set; }
 
     /// <summary>
-    /// Catechist
+    /// Catechist role
     /// </summary>
-    public CatechistEntity Catechist { get; set; } = null!;
-
-    /// <summary>
-    /// Is catechist primary
-    /// </summary>
-    public bool IsPrimary { get; set; }
+    public CatechismClassCatechistRole Role { get; set; }
 
     #endregion
 }

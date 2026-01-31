@@ -1,21 +1,22 @@
-using System.ComponentModel.DataAnnotations;
 using TNTTBD.Services.Domain.ValueObjects;
 using TNTTBD.Services.Models;
 
-namespace TNTTBD.Services.Domain.Members;
+namespace TNTTBD.Services.Domain.Catechism.Members;
 
 /// <summary>
 /// Student entity
 /// </summary>
-public class Catechist
+public class Catechist : Member
 {
     #region Constructors
 
     /// <summary>
     /// Default constructor
     /// </summary>
-    public Catechist()
-    { }
+    public Catechist() : base()
+    {
+        FullName = new FullName();
+    }
 
     #endregion
 
@@ -25,11 +26,6 @@ public class Catechist
     /// Family Name
     /// </summary>
     public FullName FullName { get; private set; }
-    
-    /// <summary>
-    /// User
-    /// </summary>
-    public User User { get; set; }
 
     #endregion
 

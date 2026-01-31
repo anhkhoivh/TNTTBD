@@ -1,7 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using TNTTBD.Services.Domain.ValueObjects;
 
-namespace TNTTBD.Services.Domain.Members;
+namespace TNTTBD.Services.Domain.Catechism.Members;
 
 /// <summary>
 /// Student entity

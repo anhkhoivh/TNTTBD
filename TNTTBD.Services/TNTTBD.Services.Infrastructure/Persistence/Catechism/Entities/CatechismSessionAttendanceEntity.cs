@@ -23,26 +23,25 @@ public class CatechismSessionAttendanceEntity
     /// Id of session
     /// </summary>
     public Guid CatechismSessionId { get; set; }
-
-    /// <summary>
-    /// Session
-    /// </summary>
-    public CatechismSessionEntity CatechismSession { get; set; } = null!;
-
     /// <summary>
     /// Status
     /// </summary>
     public AttendanceStatus AttendanceStatus{ get; set; }
 
     /// <summary>
-    /// Id of CatechismClassEucharisticYouth
+    /// Id of EucharisticYouth
     /// </summary>
     public Guid CatechismClassEucharisticYouthId { get; set; }
 
     /// <summary>
-    /// CatechismClassEucharisticYouth
+    /// Marked by
     /// </summary>
-    public CatechismClassEucharisticYouthEntity CatechismClassEucharisticYouth { get; set; } = null!;
+    public Guid MarkedByCatechistId { get; set; }
+
+    /// <summary>
+    /// Marked at
+    /// </summary>
+    public DateTimeOffset MarkedTime { get; private set; }
 
     #endregion
 }

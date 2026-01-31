@@ -1,46 +1,94 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using TNTTBD.Services.Domain.Members;
+using TNTTBD.Services.Domain.Common;
 
 namespace TNTTBD.Services.Domain.Catechism;
 
 /// <summary>
 /// Student entity
 /// </summary>
-public class ExamResult
+public class ExamResult : DomainEntity<Guid>
 {
     #region Constructors
 
-    /// <summary>
-    /// Default constructor
-    /// </summary>
-    public ExamResult()
-    { }
+    public ExamResult(
+        Guid id,
+        Guid examId,
+        Guid catechismClassEucharisticYouthId,
+        Guid? markedByCatechistId,
+        DateTimeOffset markedTime,
+        double score,
+        bool isDone,
+        string? remark) : base(id)
+    {
+        CatechismClassEucharisticYouthId = catechismClassEucharisticYouthId;
+        ExamId = examId;
+        MarkedByCatechistId = markedByCatechistId;
+        Score = score;
+        IsDone = isDone;
+        Remark = remark;
+        MarkedTime = markedTime;
+    }
 
     #endregion
 
     #region Properties
 
     /// <summary>
-    /// Id
+    /// Score
     /// </summary>
-    [Key]
-    public Guid Id { get; set; }
+    public double Score { get; private set; }
 
     /// <summary>
-    /// Point
+    /// Exam id
     /// </summary>
-    public double Point { get; set; }
+    public Guid ExamId { get; private set; }
 
     /// <summary>
-    /// Exam
+    /// CatechismClassEucharisticYouth
     /// </summary>
-    public Exam Exam { get; set; }
+    public Guid CatechismClassEucharisticYouthId { get; }
 
     /// <summary>
-    /// Test
+    /// Marked by
     /// </summary>
-    public EucharisticYouth EucharisticYouth { get; set; }
+    public Guid? MarkedByCatechistId { get; private set; }
+
+    /// <summary>
+    /// Is done
+    /// </summary>
+    public bool IsDone { get; private set; }
+
+    /// <summary>
+    /// Is done
+    /// </summary>
+    public string? Remark { get; private set; }
+
+    /// <summary>
+    /// Marked at
+    /// </summary>
+    public DateTimeOffset MarkedTime { get; private set; }
+
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    public void Update(
+        double score,
+        bool isDone,
+        string? remark,
+        DateTimeOffset markedTime,
+        Guid? markedByCatechistId)
+    {
+        Score = score;
+        MarkedTime = markedTime;
+        MarkedByCatechistId = markedByCatechistId;
+        IsDone = isDone;
+        Remark = remark;
+    }
 
     #endregion
 }

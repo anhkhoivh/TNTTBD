@@ -5,8 +5,9 @@ namespace TNTTBD.Services.Domain.Enums
     /// </summary>
     public enum UserRole 
     {
-        None,
-        Catechist,
         Admin,
+        Catechist,
+        EucharisticYouthContact,
+        EucharisticYouth
     }
 }

@@ -4,20 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
 /// <summary>
-/// ExamEucharisticYouthEntity entity
+/// ExamResultEntity
 /// </summary>
-public class ExamEucharisticYouthEntity
+public class ExamResultEntity
 {
-    #region Constructors
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
-    public ExamEucharisticYouthEntity()
-    { }
-
-    #endregion
-
     #region Properties
 
     /// <summary>
@@ -29,23 +19,12 @@ public class ExamEucharisticYouthEntity
     /// <summary>
     /// Test id
     /// </summary>
-    [ForeignKey(nameof(ExamId))]
     public Guid ExamId { get; set; }
-
-    /// <summary>
-    /// Exam
-    /// </summary>
-    public ExamEntity Exam { get; set; } = null!;
 
     /// <summary>
     /// EY id
     /// </summary>
     public Guid CatechismClassEucharisticYouthId { get; set; }
-
-    /// <summary>
-    /// Test
-    /// </summary>
-    public CatechismClassEucharisticYouthEntity CatechismClassEucharisticYouth { get; set; } = null!;
 
     /// <summary>
     /// Score
@@ -61,6 +40,16 @@ public class ExamEucharisticYouthEntity
     /// Remark
     /// </summary>
     public string? Remark { get; set; }
+
+    /// <summary>
+    /// Marked by
+    /// </summary>
+    public Guid MarkedByCatechistId { get; set; }
+
+    /// <summary>
+    /// Marked at
+    /// </summary>
+    public DateTimeOffset MarkedTime { get; private set; }
 
     #endregion
 }

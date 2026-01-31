@@ -28,7 +28,7 @@ public class CatechismSessionEntity
     /// <summary>
     /// Date
     /// </summary>
-    public DateOnly Date { get; set; }
+    public DateTimeOffset DateTime { get; set; }
 
     /// <summary>
     /// Title
@@ -41,10 +41,8 @@ public class CatechismSessionEntity
     public Guid CatechismClassId { get; set; }
 
     /// <summary>
-    /// Catechism Class of the Session
+    /// Attendance
     /// </summary>
-    public CatechismClassEntity CatechismClass { get; set; } = null!;
-
     public ICollection<CatechismSessionAttendanceEntity> EucharisticYouthAttendances { get; set; } = new List<CatechismSessionAttendanceEntity>();
 
     #endregion

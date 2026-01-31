@@ -8,6 +8,12 @@ namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 /// </summary>
 public class EucharisticYouthEntity
 {
+    #region Fields
+
+    private readonly List<PhotoReference> _photos = new();
+
+    #endregion
+
     #region Constructors
 
     /// <summary>
@@ -47,14 +53,31 @@ public class EucharisticYouthEntity
     public string? Address { get; set; }
 
     /// <summary>
-    /// List of Contacts
+    /// Photo collection
     /// </summary>
-    public ICollection<ContactEntity> Contacts { get; set; } = new List<ContactEntity>();
+    public IReadOnlyCollection<PhotoReference> Photos => _photos;
+
+    #endregion
+
+    #region Methods
 
     /// <summary>
-    /// CatechismClassEucharisticYouth join
+    /// Add new photo
     /// </summary>
-    public ICollection<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouths = new List<CatechismClassEucharisticYouthEntity>();
+    /// <param name="photo"></param>
+    public void AddPhoto(PhotoReference photo)
+    {
+        _photos.Add(photo);
+    }
+
+    /// <summary>
+    /// Remove
+    /// </summary>
+    /// <param name="storageKey"></param>
+    public void RemovePhoto(string storageKey)
+    {
+        _photos.RemoveAll(p => p.StorageKey == storageKey);
+    }
 
     #endregion
 }
