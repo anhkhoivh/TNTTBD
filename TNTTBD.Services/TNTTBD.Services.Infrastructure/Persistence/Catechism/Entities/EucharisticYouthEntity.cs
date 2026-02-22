@@ -27,14 +27,14 @@ public class EucharisticYouthEntity
     public DateOnly DateOfBirth { get; set; }
 
     /// <summary>
-    /// Feast day
-    /// </summary>
-    public DateOnly? FeastDay { get; set; }
-
-    /// <summary>
     /// Address
     /// </summary>
     public string? Address { get; set; }
+
+    /// <summary>
+    /// Is male
+    /// </summary>
+    public bool IsMale { get; set; }
 
     /// <summary>
     /// Photo collection
