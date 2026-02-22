@@ -27,6 +27,16 @@ public class CatechistEntity
     public DateOnly DateOfBirth { get; set; }
 
     /// <summary>
+    /// Address
+    /// </summary>
+    public string? Address { get; set; }
+
+    /// <summary>
+    /// Is male
+    /// </summary>
+    public bool IsMale { get; set; }
+
+    /// <summary>
     /// Photo collection
     /// </summary>
     public ICollection<PhotoReference> Photos { get; set; } = new List<PhotoReference>();

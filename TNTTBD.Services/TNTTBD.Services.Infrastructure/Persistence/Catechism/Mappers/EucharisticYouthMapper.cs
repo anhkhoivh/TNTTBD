@@ -16,7 +16,7 @@ public static class EucharisticYouthMapper
     /// </summary>
     public static EucharisticYouth ToDomain(this EucharisticYouthEntity entity)
     {
-        EucharisticYouth domain = new EucharisticYouth(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.Photos, entity.SpiritualMilestones, entity.PatronSaints);
+        EucharisticYouth domain = new EucharisticYouth(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, entity.Photos, entity.SpiritualMilestones, entity.PatronSaints);
 
         return domain;
     }
@@ -36,6 +36,7 @@ public static class EucharisticYouthMapper
             FullName = domain.FullName,
             Address = domain.Address,
             DateOfBirth = domain.DateOfBirth,
+            IsMale = domain.IsMale,
             Photos = domain.Photos.ToList(),
             SpiritualMilestones = domain.Milestones.ToList(),
             PatronSaints = domain.PatronSaints.ToList()
@@ -52,6 +53,7 @@ public static class EucharisticYouthMapper
         entity.FullName = domain.FullName;
         entity.DateOfBirth = domain.DateOfBirth;
         entity.Address = domain.Address;
+        entity.IsMale = domain.IsMale;
 
         entity.Photos.Clear();
         foreach (PhotoReference photo in domain.Photos)

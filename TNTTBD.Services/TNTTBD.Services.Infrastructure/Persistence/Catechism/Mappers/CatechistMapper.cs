@@ -16,7 +16,7 @@ public static class CatechistMapper
     /// </summary>
     public static Catechist ToDomain(this CatechistEntity entity)
     {
-        Catechist domain = new Catechist(entity.Id, entity.FullName, entity.DateOfBirth, entity.Photos, entity.SpiritualMilestones, entity.PatronSaints);
+        Catechist domain = new Catechist(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, entity.Photos, entity.SpiritualMilestones, entity.PatronSaints);
 
         return domain;
     }
@@ -28,14 +28,15 @@ public static class CatechistMapper
     /// <summary>
     /// Convert from domain model to entity
     /// </summary>
-    public static EucharisticYouthEntity ToEntity(this EucharisticYouth domain)
+    public static CatechistEntity ToEntity(this Catechist domain)
     {
-        EucharisticYouthEntity entity = new EucharisticYouthEntity
+        CatechistEntity entity = new CatechistEntity
         {
             Id = domain.Id,
             FullName = domain.FullName,
             Address = domain.Address,
             DateOfBirth = domain.DateOfBirth,
+            IsMale = domain.IsMale,
         };
 
         entity.Photos.Clear();
@@ -62,11 +63,13 @@ public static class CatechistMapper
     /// <summary>
     /// Update entity
     /// </summary>
-    public static void UpdateEntity(this EucharisticYouth domain, EucharisticYouthEntity entity)
+    public static void UpdateEntity(this Catechist domain, CatechistEntity entity)
     {
         entity.FullName = domain.FullName;
         entity.DateOfBirth = domain.DateOfBirth;
         entity.Address = domain.Address;
+        entity.IsMale = domain.IsMale;
+
         entity.Photos.Clear();
         foreach (PhotoReference photoReference in domain.Photos)
         {

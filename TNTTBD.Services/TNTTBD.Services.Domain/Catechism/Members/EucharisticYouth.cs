@@ -13,26 +13,18 @@ public class EucharisticYouth : Member
     /// Default constructor
     /// </summary>
     public EucharisticYouth() : base()
-    {
-        Address = string.Empty;
-    }
+    { }
 
     /// <summary>
     /// Default constructor
     /// </summary>
-    public EucharisticYouth(Guid id, FullName name, DateOnly dateOfBirth, string? address, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id, name, dateOfBirth, photos, milestones, patronSaints)
+    public EucharisticYouth(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id, name, dateOfBirth, address, isMale, photos, milestones, patronSaints)
     {
-        Address = address ?? string.Empty;
     }
 
     #endregion
 
     #region Properties
-
-    /// <summary>
-    /// Address
-    /// </summary>
-    public string Address { get; private set; }
 
     #endregion
 }
