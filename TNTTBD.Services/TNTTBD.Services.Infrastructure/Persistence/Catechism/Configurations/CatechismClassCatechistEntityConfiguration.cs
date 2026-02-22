@@ -17,7 +17,7 @@ public class CatechismClassCatechistEntityConfiguration : IEntityTypeConfigurati
     public void Configure(EntityTypeBuilder<CatechismClassCatechistEntity> builder)
     {
         builder.ToTable(nameof(CatechismClassCatechistEntity));
-        builder.HasKey(c => new { c.CatechismClassId, c.CatechistId });
+        builder.HasKey(c => c.Id);
 
         builder.HasIndex(x => new
         {

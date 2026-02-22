@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using TNTTBD.Services.Domain.Common;
 
 namespace TNTTBD.Services.Domain.Catechism;
@@ -27,11 +26,12 @@ public class Exam : AggregateRoot<Guid>
     /// <summary>
     /// Constructor from details
     /// </summary>
-    public Exam(Guid id, Guid catechismClassId, DateOnly examDate, string title) : base(id)
+    public Exam(Guid id, Guid catechismClassId, DateOnly examDate, string title, IEnumerable<ExamResult> results) : base(id)
     {
         CatechismClassId = catechismClassId;
         ExamDate = examDate;
         Title = title;
+        _examResults.AddRange(results);
     }
 
     #endregion

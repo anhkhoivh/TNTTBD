@@ -8,22 +8,6 @@ namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 /// </summary>
 public class CatechistEntity
 {
-    #region Fields
-
-    private readonly List<PhotoReference> _photos = new List<PhotoReference>();
-
-    #endregion
-
-    #region Constructors
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
-    public CatechistEntity()
-    { }
-
-    #endregion
-
     #region Properties
 
     /// <summary>
@@ -38,31 +22,24 @@ public class CatechistEntity
     public FullName FullName { get; set; } = null!;
 
     /// <summary>
+    /// Date Of Birth
+    /// </summary>
+    public DateOnly DateOfBirth { get; set; }
+
+    /// <summary>
     /// Photo collection
     /// </summary>
-    public IReadOnlyCollection<PhotoReference> Photos => _photos;
-
-    #endregion
-
-    #region Methods
+    public ICollection<PhotoReference> Photos { get; set; } = new List<PhotoReference>();
 
     /// <summary>
-    /// Add new photo
+    /// Spiritual Milestone collection
     /// </summary>
-    /// <param name="photo"></param>
-    public void AddPhoto(PhotoReference photo)
-    {
-        _photos.Add(photo);
-    }
+    public ICollection<SpiritualMilestone> SpiritualMilestones { get; set; } = new List<SpiritualMilestone>();
 
     /// <summary>
-    /// Remove photo
+    /// Patron Saints
     /// </summary>
-    /// <param name="storageKey"></param>
-    public void RemovePhoto(string storageKey)
-    {
-        _photos.RemoveAll(p => p.StorageKey == storageKey);
-    }
+    public ICollection<PatronSaint> PatronSaints { get; set; } = new List<PatronSaint>();
 
     #endregion
 }

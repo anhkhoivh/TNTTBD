@@ -24,19 +24,35 @@ public class CatechismSession : AggregateRoot<Guid>
         Title = string.Empty;
     }
 
+    /// <summary>
+    /// Constructor from details
+    /// </summary>
+    public CatechismSession(Guid id, Guid classId, DateTimeOffset dateTime, string title, IEnumerable<CatechismSessionAttendance> attendances) : base(id)
+    {
+        CatechismClassId = classId;
+        DateTime = dateTime;
+        Title = title;
+        _attendances.AddRange(attendances);
+    }
+
     #endregion
 
     #region Properties
 
     /// <summary>
+    /// Class Id
+    /// </summary>
+    public Guid CatechismClassId { get; private set; }
+
+    /// <summary>
     /// Date
     /// </summary>
-    public DateTimeOffset DateTime { get; }
+    public DateTimeOffset DateTime { get; private set; }
 
     /// <summary>
     /// Theme
     /// </summary>
-    public string Title { get; }
+    public string Title { get; private set; }
 
     /// <summary>
     /// Attendance

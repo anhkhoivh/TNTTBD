@@ -17,6 +17,16 @@ public class CatechismYear : AggregateRoot<Guid>
         Theme = string.Empty;
     }
 
+    /// <summary>
+    /// Constructor with details
+    /// </summary>
+    public CatechismYear(Guid id, DateOnly startDate, DateOnly endDate, string? theme) : base(id)
+    {
+        StartDate = startDate;
+        EndDate = endDate;
+        Theme = theme;
+    }
+
     #endregion
 
     #region Properties
@@ -24,22 +34,17 @@ public class CatechismYear : AggregateRoot<Guid>
     /// <summary>
     /// Start Date
     /// </summary>
-    public DateOnly StartDate { get; }
+    public DateOnly StartDate { get; private set; }
 
     /// <summary>
     /// End Date
     /// </summary>
-    public DateOnly EndDate { get; }
+    public DateOnly EndDate { get; private set; }
 
     /// <summary>
     /// Theme
     /// </summary>
-    public string Theme { get; }
-
-    /// <summary>
-    /// Class in the Catechism Year
-    /// </summary>
-    public List<CatechismClass> Classes { get; set; } = new List<CatechismClass>();
+    public string? Theme { get; private set; }
 
     #endregion
 

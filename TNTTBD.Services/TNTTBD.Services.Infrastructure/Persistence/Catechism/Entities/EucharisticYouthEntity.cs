@@ -8,22 +8,6 @@ namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 /// </summary>
 public class EucharisticYouthEntity
 {
-    #region Fields
-
-    private readonly List<PhotoReference> _photos = new();
-
-    #endregion
-
-    #region Constructors
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
-    public EucharisticYouthEntity()
-    { }
-
-    #endregion
-
     #region Properties
 
     /// <summary>
@@ -43,9 +27,9 @@ public class EucharisticYouthEntity
     public DateOnly DateOfBirth { get; set; }
 
     /// <summary>
-    /// Date of Baptism
+    /// Feast day
     /// </summary>
-    public DateOnly DateOfBaptism { get; set; }
+    public DateOnly? FeastDay { get; set; }
 
     /// <summary>
     /// Address
@@ -55,29 +39,17 @@ public class EucharisticYouthEntity
     /// <summary>
     /// Photo collection
     /// </summary>
-    public IReadOnlyCollection<PhotoReference> Photos => _photos;
-
-    #endregion
-
-    #region Methods
+    public ICollection<PhotoReference> Photos { get; set; } = new List<PhotoReference>();
 
     /// <summary>
-    /// Add new photo
+    /// Spiritual Milestone collection
     /// </summary>
-    /// <param name="photo"></param>
-    public void AddPhoto(PhotoReference photo)
-    {
-        _photos.Add(photo);
-    }
+    public ICollection<SpiritualMilestone> SpiritualMilestones { get; set; } = new List<SpiritualMilestone>();
 
     /// <summary>
-    /// Remove
+    /// Patron Saints
     /// </summary>
-    /// <param name="storageKey"></param>
-    public void RemovePhoto(string storageKey)
-    {
-        _photos.RemoveAll(p => p.StorageKey == storageKey);
-    }
+    public ICollection<PatronSaint> PatronSaints { get; set; } = new List<PatronSaint>();
 
     #endregion
 }

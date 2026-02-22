@@ -114,11 +114,7 @@ public sealed class User : AggregateRoot<Guid>
             return;
         }
 
-        _externalLogins.Add(
-            UserExternalLogin.Create(
-                Id,
-                provider,
-                subjectId));
+        _externalLogins.Add(UserExternalLogin.Create(Id, provider, subjectId));
     }
 
     #endregion

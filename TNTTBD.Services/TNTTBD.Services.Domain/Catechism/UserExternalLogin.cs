@@ -10,13 +10,14 @@ public sealed class UserExternalLogin : DomainEntity<Guid>
         Guid id,
         Guid userId,
         string provider,
-        string subjectId)
+        string subjectId, 
+        DateTimeOffset linkedAt)
         : base(id)
     {
         UserId = userId;
         Provider = provider;
         SubjectId = subjectId;
-        LinkedAt = DateTimeOffset.UtcNow;
+        LinkedAt = linkedAt;
     }
 
     #endregion
@@ -56,7 +57,8 @@ public sealed class UserExternalLogin : DomainEntity<Guid>
             Guid.NewGuid(),
             userId,
             provider,
-            subjectId);
+            subjectId,
+            DateTimeOffset.Now);
     }
 
     #endregion

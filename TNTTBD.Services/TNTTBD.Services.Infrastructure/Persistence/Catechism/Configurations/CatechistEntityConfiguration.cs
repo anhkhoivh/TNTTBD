@@ -10,6 +10,17 @@ namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Configurations;
 /// </summary>
 public class CatechistEntityConfiguration : IEntityTypeConfiguration<CatechistEntity>
 {
+    #region Default Values
+
+    private const string Id = "Id";
+    private const string CatechistIdFk = "CatechistId";
+
+    private const string CatechistEntityPhotos = "CatechistEntityPhotos";
+    private const string CatechistMilestones = "CatechistMilestones";
+    private const string CatechistPatronSaints = "CatechistPatronSaints";
+
+    #endregion
+
     #region Methods
 
     /// <summary>
@@ -43,13 +54,12 @@ public class CatechistEntityConfiguration : IEntityTypeConfiguration<CatechistEn
 
         builder.OwnsMany(t => t.Photos, photo =>
         {
-            photo.ToTable(nameof(CatechistEntity.Photos));
+            photo.ToTable(CatechistEntityPhotos);
 
-            photo.WithOwner()
-                 .HasForeignKey(nameof(CatechistEntity.Id));
+            photo.WithOwner().HasForeignKey(CatechistIdFk);
 
-            photo.Property<Guid>("Id");
-            photo.HasKey("Id");
+            photo.Property<Guid>(Id);
+            photo.HasKey(Id);
 
             photo.Property(p => p.StorageKey)
                  .IsRequired();
@@ -68,6 +78,47 @@ public class CatechistEntityConfiguration : IEntityTypeConfiguration<CatechistEn
 
             photo.Property(p => p.Visibility)
                  .IsRequired();
+        });
+
+        builder.OwnsMany(e => e.SpiritualMilestones, b =>
+        {
+            b.WithOwner().HasForeignKey(CatechistIdFk);
+
+            b.Property<Guid>(Id);
+            b.HasKey(Id);
+
+            b.Property(m => m.Type)
+                .IsRequired();
+
+            b.Property(m => m.Date)
+                .IsRequired();
+
+            b.Property(m => m.Place);
+
+            b.Property(m => m.Note);
+
+            b.Property(m => m.DocumentCode);
+
+            b.ToTable(CatechistMilestones);
+        });
+
+        builder.OwnsMany(e => e.PatronSaints, b =>
+        {
+            b.WithOwner().HasForeignKey(CatechistIdFk);
+
+            b.Property<Guid>(Id);
+            b.HasKey(Id);
+
+            b.Property(p => p.SaintName)
+                .IsRequired();
+
+            b.Property(p => p.Day)
+                .IsRequired();
+
+            b.Property(p => p.Month)
+                .IsRequired();
+
+            b.ToTable(CatechistPatronSaints);
         });
 
         builder.Navigation(t => t.Photos)

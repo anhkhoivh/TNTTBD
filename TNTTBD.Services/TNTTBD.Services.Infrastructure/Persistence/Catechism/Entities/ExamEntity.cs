@@ -7,16 +7,6 @@ namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 /// </summary>
 public class ExamEntity
 {
-    #region Constructors
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
-    public ExamEntity()
-    { }
-
-    #endregion
-
     #region Properties
 
     /// <summary>
@@ -28,12 +18,22 @@ public class ExamEntity
     /// <summary>
     /// Title
     /// </summary>
-    public string? Title { get; set; }
+    public string Title { get; set; } = null!;
 
     /// <summary>
     /// Class Id
     /// </summary>
     public Guid CatechismClassId { get; set; }
+
+    /// <summary>
+    /// Exam Date
+    /// </summary>
+    public DateOnly ExamDate { get; set; }
+
+    /// <summary>
+    /// Attendance
+    /// </summary>
+    public ICollection<ExamResultEntity> ExamResults { get; set; } = new List<ExamResultEntity>();
 
     #endregion
 }

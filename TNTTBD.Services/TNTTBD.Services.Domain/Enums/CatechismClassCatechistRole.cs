@@ -1,7 +1,7 @@
 namespace TNTTBD.Services.Domain.Enums
 {
     /// <summary>
-    /// User Role
+    /// Catechist Role enum
     /// </summary>
     public enum CatechismClassCatechistRole 
     {

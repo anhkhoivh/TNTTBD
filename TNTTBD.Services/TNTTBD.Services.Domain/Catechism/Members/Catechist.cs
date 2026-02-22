@@ -1,5 +1,4 @@
 using TNTTBD.Services.Domain.ValueObjects;
-using TNTTBD.Services.Models;
 
 namespace TNTTBD.Services.Domain.Catechism.Members;
 
@@ -18,14 +17,16 @@ public class Catechist : Member
         FullName = new FullName();
     }
 
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    public Catechist(Guid id, FullName name, DateOnly dateOfBirth, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id, name, dateOfBirth, photos, milestones, patronSaints)
+    {
+    }
+
     #endregion
 
     #region Properties
-
-    /// <summary>
-    /// Family Name
-    /// </summary>
-    public FullName FullName { get; private set; }
 
     #endregion
 

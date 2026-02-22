@@ -1,7 +1,7 @@
 namespace TNTTBD.Services.Domain.Enums
 {
     /// <summary>
-    /// User Role
+    /// Attendance status type enum
     /// </summary>
     public enum AttendanceStatus 
     {

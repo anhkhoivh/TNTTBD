@@ -13,6 +13,10 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
     #region Default Values
 
     private const string Id = "Id";
+    private const string EucharisticYouthIdFk = "EucharisticYouthId";
+    private const string EucharisticYouthPhotos = "EucharisticYouthPhotos";
+    private const string EucharisticYouthMilestones = "EucharisticYouthMilestones";
+    private const string EucharisticYouthPatronSaints = "EucharisticYouthPatronSaints";
 
     #endregion
 
@@ -54,10 +58,9 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
 
         builder.OwnsMany(t => t.Photos, photo =>
         {
-            photo.ToTable(nameof(EucharisticYouthEntity.Photos));
+            photo.ToTable(EucharisticYouthPhotos);
 
-            photo.WithOwner()
-                 .HasForeignKey(nameof(EucharisticYouthEntity.Id));
+            photo.WithOwner().HasForeignKey(EucharisticYouthIdFk);
 
             photo.Property<Guid>(Id);
             photo.HasKey(Id);
@@ -79,6 +82,47 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
 
             photo.Property(p => p.Visibility)
                  .IsRequired();
+        });
+
+        builder.OwnsMany(e => e.SpiritualMilestones, b =>
+        {
+            b.WithOwner().HasForeignKey(EucharisticYouthIdFk);
+
+            b.Property<Guid>(Id);
+            b.HasKey(Id);
+
+            b.Property(m => m.Type)
+                .IsRequired();
+
+            b.Property(m => m.Date)
+                .IsRequired();
+
+            b.Property(m => m.Place);
+
+            b.Property(m => m.Note);
+            
+            b.Property(m => m.DocumentCode);
+
+            b.ToTable(EucharisticYouthMilestones);
+        });
+
+        builder.OwnsMany(e => e.PatronSaints, b =>
+        {
+            b.WithOwner().HasForeignKey(EucharisticYouthIdFk);
+
+            b.Property<Guid>(Id);
+            b.HasKey(Id);
+
+            b.Property(p => p.SaintName)
+                .IsRequired();
+
+            b.Property(p => p.Day)
+                .IsRequired();
+
+            b.Property(p => p.Month)
+                .IsRequired();
+
+            b.ToTable(EucharisticYouthPatronSaints);
         });
 
         builder.Navigation(t => t.Photos)

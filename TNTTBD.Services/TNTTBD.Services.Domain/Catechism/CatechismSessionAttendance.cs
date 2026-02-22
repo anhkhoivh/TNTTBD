@@ -25,13 +25,13 @@ public class CatechismSessionAttendance : DomainEntity<Guid>
         Guid catechismClassEucharisticYouthId,
         AttendanceStatus status,
         DateTimeOffset markedTime,
-        Guid? markedBy) : base(id)
+        Guid markedBy) : base(id)
     {
         CatechismClassEucharisticYouthId = catechismClassEucharisticYouthId;
         CatechismSessionId = catechismSessionId;
         AttendanceStatus = status;
         MarkedTime = markedTime;
-        MarkedBy = markedBy;
+        MarkedByCatechistId = markedBy;
     }
 
     #endregion
@@ -61,7 +61,7 @@ public class CatechismSessionAttendance : DomainEntity<Guid>
     /// <summary>
     /// Marked by
     /// </summary>
-    public Guid? MarkedBy { get; private set; }
+    public Guid MarkedByCatechistId { get; private set; }
     
     #endregion
 
@@ -73,11 +73,11 @@ public class CatechismSessionAttendance : DomainEntity<Guid>
     public void Update(
         AttendanceStatus status,
         DateTimeOffset markedAt,
-        Guid? markedBy)
+        Guid markedBy)
     {
         AttendanceStatus = status;
         MarkedTime = markedAt;
-        MarkedBy = markedBy;
+        MarkedByCatechistId = markedBy;
     }
 
     #endregion

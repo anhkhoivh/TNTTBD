@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
@@ -49,7 +48,7 @@ public class ExamResultEntity
     /// <summary>
     /// Marked at
     /// </summary>
-    public DateTimeOffset MarkedTime { get; private set; }
+    public DateTimeOffset MarkedTime { get; set; }
 
     #endregion
 }

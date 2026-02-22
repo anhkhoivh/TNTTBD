@@ -1,3 +1,4 @@
+using TNTTBD.Services.Domain.Common;
 using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Domain.Catechism.Members;
@@ -5,45 +6,48 @@ namespace TNTTBD.Services.Domain.Catechism.Members;
 /// <summary>
 /// Student entity
 /// </summary>
-public class Contact
+public class Contact : AggregateRoot<Guid>
 {
     #region Constructors
 
     /// <summary>
     /// Default constructor
     /// </summary>
-    public Contact()
-    { }
+    public Contact() : base(Guid.Empty)
+    {
+        FullName = new FullName();
+        PhoneNumber = string.Empty;
+        Email = string.Empty;
+    }
+
+    /// <summary>
+    /// Constructor with details
+    /// </summary>
+    public Contact(Guid id, FullName fullName, string? phoneNumber, string? email) : base(id)
+    {
+        FullName = fullName;
+        PhoneNumber = phoneNumber ?? string.Empty;
+        Email = email ?? string.Empty;
+    }
 
     #endregion
 
     #region Properties
 
     /// <summary>
-    /// Id
-    /// </summary>
-    public Guid Id { get; set; }
-
-    /// <summary>
-    /// Relation
-    /// </summary>
-    public string Relation { get; set; }
-
-    /// <summary>
     /// Name
     /// </summary>
-    public FullName Name { get; set; }
+    public FullName FullName { get; protected set; }
 
     /// <summary>
     /// Phone number
     /// </summary>
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; protected set; }
 
     /// <summary>
-    /// Eucharistic Youngster that owns the contact
+    /// Email
     /// </summary>
-    public EucharisticYouth EucharisticYouth { get; set; }
+    public string Email { get; protected set; }
 
     #endregion
-
 }
