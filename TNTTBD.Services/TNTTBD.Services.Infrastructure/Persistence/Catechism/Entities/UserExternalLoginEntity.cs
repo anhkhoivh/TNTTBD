@@ -1,5 +1,8 @@
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
+/// <summary>
+/// External logins
+/// </summary>
 public class UserExternalLoginEntity
 {
     public Guid Id { get; set; }

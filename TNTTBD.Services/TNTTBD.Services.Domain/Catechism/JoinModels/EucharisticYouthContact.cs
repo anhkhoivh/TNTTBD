@@ -1,4 +1,5 @@
 using TNTTBD.Services.Domain.Common;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Domain.Catechism.JoinModels;
 
@@ -33,12 +34,17 @@ public class EucharisticYouthContact : DomainEntity<Guid>
     /// <summary>
     /// Catechism Class Id
     /// </summary>
-    public Guid ContactId { get; set; }
+    public Guid ContactId { get; private set; }
 
     /// <summary>
     /// Catechist Id
     /// </summary>
-    public Guid EucharisticYouthId { get; set; }
+    public Guid EucharisticYouthId { get; private set; }
+
+    /// <summary>
+    /// Contact Relation Type
+    /// </summary>
+    public ContactRelationType ContactRelationType { get; private set; }
 
     #endregion
 

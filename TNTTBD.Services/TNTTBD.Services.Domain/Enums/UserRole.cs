@@ -1,7 +1,7 @@
 namespace TNTTBD.Services.Domain.Enums
 {
     /// <summary>
-    /// User Role
+    /// User Role enum
     /// </summary>
     public enum UserRole 
     {

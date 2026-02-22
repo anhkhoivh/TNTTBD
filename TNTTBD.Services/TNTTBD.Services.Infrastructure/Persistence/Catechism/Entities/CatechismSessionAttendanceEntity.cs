@@ -41,7 +41,7 @@ public class CatechismSessionAttendanceEntity
     /// <summary>
     /// Marked at
     /// </summary>
-    public DateTimeOffset MarkedTime { get; private set; }
+    public DateTimeOffset MarkedTime { get; set; }
 
     #endregion
 }

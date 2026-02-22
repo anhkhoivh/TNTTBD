@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using TNTTBD.Services.Domain.Common;
 
 namespace TNTTBD.Services.Domain.Catechism;
@@ -15,7 +13,7 @@ public class ExamResult : DomainEntity<Guid>
         Guid id,
         Guid examId,
         Guid catechismClassEucharisticYouthId,
-        Guid? markedByCatechistId,
+        Guid markedByCatechistId,
         DateTimeOffset markedTime,
         double score,
         bool isDone,
@@ -52,7 +50,7 @@ public class ExamResult : DomainEntity<Guid>
     /// <summary>
     /// Marked by
     /// </summary>
-    public Guid? MarkedByCatechistId { get; private set; }
+    public Guid MarkedByCatechistId { get; private set; }
 
     /// <summary>
     /// Is done
@@ -81,7 +79,7 @@ public class ExamResult : DomainEntity<Guid>
         bool isDone,
         string? remark,
         DateTimeOffset markedTime,
-        Guid? markedByCatechistId)
+        Guid markedByCatechistId)
     {
         Score = score;
         MarkedTime = markedTime;

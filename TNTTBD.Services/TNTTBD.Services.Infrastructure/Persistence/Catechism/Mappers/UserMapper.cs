@@ -1,5 +1,4 @@
 using TNTTBD.Services.Domain.Catechism;
-using TNTTBD.Services.Domain.Common;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
@@ -38,7 +37,7 @@ public static class UserMapper
             user.LinkEucharisticYouth(entity.EucharisticYouthId.Value);
         }
 
-        foreach (var login in entity.ExternalLogins)
+        foreach (UserExternalLoginEntity login in entity.ExternalLogins)
         {
             user.AddExternalLogin(login.Provider, login.SubjectId);
         }
@@ -55,7 +54,7 @@ public static class UserMapper
     /// </summary>
     public static UserEntity ToEntity(this User domain)
     {
-        var entity = new UserEntity
+        UserEntity entity = new UserEntity
         {
             Id = domain.Id,
             Email = domain.Email,
@@ -66,7 +65,7 @@ public static class UserMapper
             EucharisticYouthId = domain.EucharisticYouthId
         };
 
-        foreach (var login in domain.ExternalLogins)
+        foreach (UserExternalLogin login in domain.ExternalLogins)
         {
             entity.ExternalLogins.Add(new UserExternalLoginEntity
             {
@@ -84,33 +83,31 @@ public static class UserMapper
     /// <summary>
     /// Update entity
     /// </summary>
-    public static void UpdateEntity(
-    this User domain,
-    UserEntity entity)
-{
-    entity.Email = domain.Email;
-    entity.UserName = domain.UserName;
-    entity.IsActive = domain.IsActive;
-
-    entity.CatechistId = domain.CatechistId;
-    entity.ContactId = domain.ContactId;
-    entity.EucharisticYouthId = domain.EucharisticYouthId;
-
-    // External logins: sync
-    entity.ExternalLogins.Clear();
-
-    foreach (var login in domain.ExternalLogins)
+    public static void UpdateEntity(this User domain, UserEntity entity)
     {
-        entity.ExternalLogins.Add(new UserExternalLoginEntity
+        entity.Email = domain.Email;
+        entity.UserName = domain.UserName;
+        entity.IsActive = domain.IsActive;
+
+        entity.CatechistId = domain.CatechistId;
+        entity.ContactId = domain.ContactId;
+        entity.EucharisticYouthId = domain.EucharisticYouthId;
+
+        // External logins: sync
+        entity.ExternalLogins.Clear();
+
+        foreach (UserExternalLogin login in domain.ExternalLogins)
         {
-            Id = login.Id,
-            UserId = domain.Id,
-            Provider = login.Provider,
-            SubjectId = login.SubjectId,
-            LinkedAt = login.LinkedAt
-        });
+            entity.ExternalLogins.Add(new UserExternalLoginEntity
+            {
+                Id = login.Id,
+                UserId = domain.Id,
+                Provider = login.Provider,
+                SubjectId = login.SubjectId,
+                LinkedAt = login.LinkedAt
+            });
+        }
     }
-}
 
     #endregion
 }

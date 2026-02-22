@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using TNTTBD.Services.Domain.Enums;
 using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;

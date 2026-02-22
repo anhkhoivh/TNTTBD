@@ -9,6 +9,8 @@ public abstract class Member : AggregateRoot<Guid>
     #region Fields
 
     private readonly List<PhotoReference> _photos = new List<PhotoReference>();
+    private readonly List<SpiritualMilestone> _milestones = new List<SpiritualMilestone>();
+    private readonly List<PatronSaint> _patronSaints = new List<PatronSaint>();
 
     #endregion
 
@@ -19,7 +21,7 @@ public abstract class Member : AggregateRoot<Guid>
     /// </summary>
     public Member() : base(Guid.Empty)
     {
-        Name = new FullName();
+        FullName = new FullName();
     }
 
     /// <summary>
@@ -27,10 +29,13 @@ public abstract class Member : AggregateRoot<Guid>
     /// </summary>
     /// <param name="id"></param>
     /// <param name="name"></param>
-    public Member(Guid id, FullName name)
-        : base(id)
+    public Member(Guid id, FullName name, DateOnly dateOfBirth, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id)
     {
-        Name = name;
+        FullName = name;
+        _photos.AddRange(photos);
+        DateOfBirth = dateOfBirth;
+        _milestones.AddRange(milestones);
+        _patronSaints.AddRange(patronSaints);
     }
 
     #endregion
@@ -40,12 +45,27 @@ public abstract class Member : AggregateRoot<Guid>
     /// <summary>
     /// Full name
     /// </summary>
-    public FullName Name { get; protected set; }
+    public FullName FullName { get; protected set; }
+
+    /// <summary>
+    /// Date Of Birth
+    /// </summary>
+    public DateOnly DateOfBirth { get; protected set; }
 
     /// <summary>
     /// Photo list
     /// </summary>
     public IReadOnlyCollection<PhotoReference> Photos => _photos.AsReadOnly();
+
+    /// <summary>
+    /// Milestone
+    /// </summary>
+    public IReadOnlyCollection<SpiritualMilestone> Milestones => _milestones.AsReadOnly();
+
+    /// <summary>
+    /// Patron Saints
+    /// </summary>
+    public IReadOnlyCollection<PatronSaint> PatronSaints => _patronSaints.AsReadOnly();
 
     #endregion
 

@@ -1,4 +1,3 @@
-using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Common;
 
 namespace TNTTBD.Services.Domain.Catechism;

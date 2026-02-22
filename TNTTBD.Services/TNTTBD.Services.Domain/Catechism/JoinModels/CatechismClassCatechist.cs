@@ -19,7 +19,7 @@ public class CatechismClassCatechist : DomainEntity<Guid>
     /// Constructor from details
     /// </summary>
     public CatechismClassCatechist(
-        Guid id, 
+        Guid id,
         Guid catechistId, 
         Guid catechismClassId, 
         CatechismClassCatechistRole role) : base(id)
