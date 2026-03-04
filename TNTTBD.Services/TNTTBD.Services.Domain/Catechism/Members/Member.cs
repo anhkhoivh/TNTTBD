@@ -28,8 +28,17 @@ public abstract class Member : AggregateRoot<Guid>
     /// <summary>
     /// Constructor from parameters
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="name"></param>
+    public Member(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale) : base(id)
+    {
+        FullName = name;
+        DateOfBirth = dateOfBirth;
+        IsMale = isMale;
+        Address = address ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Constructor from parameters
+    /// </summary>
     public Member(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id)
     {
         FullName = name;
@@ -96,6 +105,49 @@ public abstract class Member : AggregateRoot<Guid>
         }
 
         _photos.Add(photo);
+    }
+
+    /// <summary>
+    /// Add milestone
+    /// </summary>
+    public void AddMilestone(SpiritualMilestone milestone)
+    {
+        if (milestone.Type != MilestoneType.Baptism && _milestones.Any(m => m.Type == MilestoneType.Baptism) == false)
+        {
+            throw new DomainException(DomainErrors.NotBaptised);
+        }
+        if (_milestones.Any(m => m.Type == milestone.Type))
+        {
+            throw new DomainException(DomainErrors.MilestoneAlreadyExists);            
+        }
+        
+        _milestones.Add(milestone);
+    }
+
+    /// <summary>
+    /// Assign patron saint
+    /// </summary>
+    public void AddPatronSaint(PatronSaint patronSaint)
+    {
+        if (_patronSaints.Any(s => s.SaintName == patronSaint.SaintName && s.Day == patronSaint.Day && s.Month == patronSaint.Month))
+        {
+            throw new DomainException(DomainErrors.PatronSaintAlreadyAssigned);
+        }
+
+        _patronSaints.Add(patronSaint);
+    }
+
+    /// <summary>
+    /// Change name
+    /// </summary>
+    public void ChangeName(FullName name)
+    {
+        if (name == null)
+        {
+            throw new DomainException(DomainErrors.ValidationRequired);
+        }
+
+        FullName = name;
     }
 
     #endregion

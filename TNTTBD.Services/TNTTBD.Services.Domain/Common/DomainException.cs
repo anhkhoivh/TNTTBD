@@ -5,5 +5,14 @@ namespace TNTTBD.Services.Domain.Common;
 /// </summary>
 public class DomainException : Exception
 {
-    public DomainException(string message) : base(message) { }
+    public DomainException(string errorCode) : base()
+    {
+        ErrorCode = errorCode;
+    }
+
+    #region Properties
+
+    public string ErrorCode { get; }
+
+    #endregion
 }

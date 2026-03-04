@@ -10,12 +10,13 @@ public class SpiritualMilestone : ValueObject
 {
     #region Constructors
 
-    public SpiritualMilestone(MilestoneType type, DateOnly date, string? place = null, string? note = null)
+    public SpiritualMilestone(MilestoneType type, DateOnly date, string? documentCode, string? place = null, string? note = null)
     {
         Type = type;
         Date = date;
         Place = place;
         Note = note;
+        DocumentCode = documentCode;
     }
 
     #endregion

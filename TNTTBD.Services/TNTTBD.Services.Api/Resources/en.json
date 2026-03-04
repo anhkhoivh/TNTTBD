@@ -1,0 +1,10 @@
+{
+  "milestone.already_exists": "This milestone already exists.",
+  "milestone.date_in_future": "Milestone date cannot be in the future.",
+  "milestone.confirmation_requires_baptism": "Baptism is required before adding Confirmation.",
+  "milestone.not_found": "The requested milestone was not found.",
+  "youth.not_found": "The Eucharistic youth was not found.",
+  "patron_saint.already_assigned": "This patron saint has already been assigned.",
+  "photo.already_exists_for_purpose": "A photo already exists for this purpose.",
+  "validation.required": "The field {0} is required."
+}

@@ -9,6 +9,9 @@ public class PatronSaint : ValueObject
 {
     #region Constructors
 
+    /// <summary>
+    /// Constructor from detail
+    /// </summary>
     public PatronSaint(string name, int day, int month)
     {
         SaintName = name;
