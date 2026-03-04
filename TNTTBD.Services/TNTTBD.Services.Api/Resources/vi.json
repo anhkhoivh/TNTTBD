@@ -1,0 +1,10 @@
+{
+  "milestone.already_exists": "Mốc này đã tồn tại.",
+  "milestone.date_in_future": "Ngày của mốc không được lớn hơn hiện tại.",
+  "milestone.confirmation_requires_baptism": "Phải có Bí tích Rửa Tội trước khi thêm Bí tích Thêm Sức.",
+  "milestone.not_found": "Không tìm thấy mốc được yêu cầu.",
+  "youth.not_found": "Không tìm thấy thiếu nhi Thánh Thể.",
+  "patron_saint.already_assigned": "Thánh bổn mạng này đã được gán.",
+  "photo.already_exists_for_purpose": "Đã tồn tại ảnh cho mục đích này.",
+  "validation.required": "Trường {0} là bắt buộc."
+}

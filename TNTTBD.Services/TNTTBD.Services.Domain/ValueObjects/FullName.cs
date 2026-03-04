@@ -22,8 +22,9 @@ public sealed class FullName : ValueObject
     /// <summary>
     /// Constructor from params
     /// </summary>
-    public FullName(string givenName, string? familyName = null , string? middleName = null)
+    public FullName(string givenName, string? christName, string? familyName = null , string? middleName = null)
     {
+        ChristName = string.IsNullOrWhiteSpace(christName) ? null : Normalize(christName);
         FamilyName = string.IsNullOrWhiteSpace(familyName) ? null : Normalize(familyName);
         MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : Normalize(middleName);
         GivenName = !string.IsNullOrWhiteSpace(givenName)
