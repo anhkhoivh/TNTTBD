@@ -125,6 +125,14 @@ public abstract class Member : AggregateRoot<Guid>
     }
 
     /// <summary>
+    /// Remove milestone
+    /// </summary>
+    public void RemoveMilestone()
+    {
+        
+    }
+
+    /// <summary>
     /// Assign patron saint
     /// </summary>
     public void AddPatronSaint(PatronSaint patronSaint)
@@ -148,6 +156,17 @@ public abstract class Member : AggregateRoot<Guid>
         }
 
         FullName = name;
+    }
+
+    /// <summary>
+    /// Update basic info
+    /// </summary>
+    public void UpdateInfo(FullName fullName, DateOnly dateOfBirth, string address, bool isMale)
+    {
+        FullName = fullName;
+        DateOfBirth = dateOfBirth;
+        Address = address;
+        IsMale = isMale;
     }
 
     #endregion

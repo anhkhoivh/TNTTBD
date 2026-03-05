@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Domain.Catechism.Members;
+using TNTTBD.Services.Domain.Catechism.Repositories;
 using TNTTBD.Services.Domain.ValueObjects;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;

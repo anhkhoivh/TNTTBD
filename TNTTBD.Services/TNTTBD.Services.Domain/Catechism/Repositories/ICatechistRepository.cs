@@ -1,18 +1,19 @@
+using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.ValueObjects;
 
-namespace TNTTBD.Services.Domain.Catechism.Members;
+namespace TNTTBD.Services.Domain.Catechism.Repositories;
 
-public interface IEucharisticYouthRepository
+public interface ICatechistRepository
 {
     /// <summary>
     /// Get Eucharistic Youth by id
     /// </summary>
-    Task<EucharisticYouth?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<Catechist?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Add new Eucharistic Youth
     /// </summary>
-    Task AddAsync(EucharisticYouth youth, CancellationToken cancellationToken);
+    Task AddAsync(Catechist catechist, CancellationToken cancellationToken);
 
     /// <summary>
     /// Add milestone

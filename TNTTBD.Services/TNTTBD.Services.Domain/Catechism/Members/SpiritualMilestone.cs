@@ -1,16 +1,22 @@
 using TNTTBD.Services.Domain.Common;
 using TNTTBD.Services.Domain.Enums;
 
-namespace TNTTBD.Services.Domain.ValueObjects;
+namespace TNTTBD.Services.Domain.Catechism.Members;
 
 /// <summary>
 /// Spiritual Milestone record
 /// </summary>
-public class SpiritualMilestone : ValueObject
+public class SpiritualMilestone : DomainEntity<Guid>
 {
     #region Constructors
 
-    public SpiritualMilestone(MilestoneType type, DateOnly date, string? documentCode, string? place = null, string? note = null)
+    public SpiritualMilestone(
+        Guid id, 
+        MilestoneType type, 
+        DateOnly date, 
+        string? documentCode,
+        string? place = null, 
+        string? note = null) : base(id)
     {
         Type = type;
         Date = date;
@@ -51,15 +57,6 @@ public class SpiritualMilestone : ValueObject
     #endregion
 
     #region Methods
-
-    protected override IEnumerable<object> GetEqualityComponents()
-    {
-        yield return Type;
-        yield return Date;
-        yield return DocumentCode ?? string.Empty;
-        yield return Place ?? string.Empty;
-        yield return Note ?? string.Empty;
-    }
 
     #endregion
 }

@@ -44,7 +44,7 @@ public class EucharisticYouthEntity
     /// <summary>
     /// Spiritual Milestone collection
     /// </summary>
-    public ICollection<SpiritualMilestone> SpiritualMilestones { get; set; } = new List<SpiritualMilestone>();
+    public ICollection<SpiritualMilestoneEntity> SpiritualMilestones { get; set; } = new List<SpiritualMilestoneEntity>();
 
     /// <summary>
     /// Patron Saints
