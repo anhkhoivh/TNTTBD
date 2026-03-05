@@ -16,7 +16,8 @@ public static class EucharisticYouthMapper
     /// </summary>
     public static EucharisticYouth ToDomain(this EucharisticYouthEntity entity)
     {
-        EucharisticYouth domain = new EucharisticYouth(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, entity.Photos, entity.SpiritualMilestones, entity.PatronSaints);
+        IEnumerable<SpiritualMilestone> milestones = entity.SpiritualMilestones.Select(m => m.ToDomain());
+        EucharisticYouth domain = new EucharisticYouth(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, entity.Photos, milestones, entity.PatronSaints);
 
         return domain;
     }
@@ -38,7 +39,7 @@ public static class EucharisticYouthMapper
             DateOfBirth = domain.DateOfBirth,
             IsMale = domain.IsMale,
             Photos = domain.Photos.ToList(),
-            SpiritualMilestones = domain.Milestones.ToList(),
+            SpiritualMilestones = domain.Milestones.Select(m => m.ToEntity(domain.Id)).ToList(),
             PatronSaints = domain.PatronSaints.ToList()
         };
 
@@ -62,10 +63,7 @@ public static class EucharisticYouthMapper
         }
 
         entity.SpiritualMilestones.Clear();
-        foreach (SpiritualMilestone milestone in domain.Milestones)
-        {
-            entity.SpiritualMilestones.Add(milestone);
-        }
+        entity.SpiritualMilestones = domain.Milestones.Select(m => m.ToEntity(domain.Id)).ToList();
 
         entity.PatronSaints.Clear();
         foreach (PatronSaint patronSaint in domain.PatronSaints)

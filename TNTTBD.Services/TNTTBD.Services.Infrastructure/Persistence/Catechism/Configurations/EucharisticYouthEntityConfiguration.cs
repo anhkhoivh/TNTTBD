@@ -84,27 +84,10 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
                  .IsRequired();
         });
 
-        builder.OwnsMany(e => e.SpiritualMilestones, b =>
-        {
-            b.WithOwner().HasForeignKey(EucharisticYouthIdFk);
-
-            b.Property<Guid>(Id);
-            b.HasKey(Id);
-
-            b.Property(m => m.Type)
-                .IsRequired();
-
-            b.Property(m => m.Date)
-                .IsRequired();
-
-            b.Property(m => m.Place);
-
-            b.Property(m => m.Note);
-            
-            b.Property(m => m.DocumentCode);
-
-            b.ToTable(EucharisticYouthMilestones);
-        });
+        builder.HasMany(x => x.SpiritualMilestones)
+            .WithOne()
+            .HasForeignKey(m => m.EucharisticYouthId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.OwnsMany(e => e.PatronSaints, b =>
         {
