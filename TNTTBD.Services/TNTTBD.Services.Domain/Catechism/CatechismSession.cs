@@ -72,7 +72,7 @@ public class CatechismSession : AggregateRoot<Guid>
         Guid markedBy)
     {
         if (_attendances.Any(x => x.CatechismClassEucharisticYouthId == catechismClassEucharisticYouthId))
-            throw new DomainException("Attendance already recorded.");
+            throw new DomainException(DomainErrors.AttendanceAlreadyRecorded);
 
         _attendances.Add(new CatechismSessionAttendance(
             Guid.NewGuid(),

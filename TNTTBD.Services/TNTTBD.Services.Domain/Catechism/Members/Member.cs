@@ -9,7 +9,6 @@ public abstract class Member : AggregateRoot<Guid>
     #region Fields
 
     private readonly List<PhotoReference> _photos = new List<PhotoReference>();
-    private readonly List<SpiritualMilestone> _milestones = new List<SpiritualMilestone>();
     private readonly List<PatronSaint> _patronSaints = new List<PatronSaint>();
 
     #endregion
@@ -39,12 +38,12 @@ public abstract class Member : AggregateRoot<Guid>
     /// <summary>
     /// Constructor from parameters
     /// </summary>
-    public Member(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id)
+    public Member(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<PatronSaint> patronSaints) : base(id)
     {
         FullName = name;
         _photos.AddRange(photos);
         DateOfBirth = dateOfBirth;
-        _milestones.AddRange(milestones);
+        
         _patronSaints.AddRange(patronSaints);
         IsMale = isMale;
         Address = address ?? string.Empty;
@@ -80,11 +79,6 @@ public abstract class Member : AggregateRoot<Guid>
     public IReadOnlyCollection<PhotoReference> Photos => _photos.AsReadOnly();
 
     /// <summary>
-    /// Milestone
-    /// </summary>
-    public IReadOnlyCollection<SpiritualMilestone> Milestones => _milestones.AsReadOnly();
-
-    /// <summary>
     /// Patron Saints
     /// </summary>
     public IReadOnlyCollection<PatronSaint> PatronSaints => _patronSaints.AsReadOnly();
@@ -105,31 +99,6 @@ public abstract class Member : AggregateRoot<Guid>
         }
 
         _photos.Add(photo);
-    }
-
-    /// <summary>
-    /// Add milestone
-    /// </summary>
-    public void AddMilestone(SpiritualMilestone milestone)
-    {
-        if (milestone.Type != MilestoneType.Baptism && _milestones.Any(m => m.Type == MilestoneType.Baptism) == false)
-        {
-            throw new DomainException(DomainErrors.NotBaptised);
-        }
-        if (_milestones.Any(m => m.Type == milestone.Type))
-        {
-            throw new DomainException(DomainErrors.MilestoneAlreadyExists);            
-        }
-        
-        _milestones.Add(milestone);
-    }
-
-    /// <summary>
-    /// Remove milestone
-    /// </summary>
-    public void RemoveMilestone()
-    {
-        
     }
 
     /// <summary>

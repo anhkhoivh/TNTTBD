@@ -74,7 +74,7 @@ public class Exam : AggregateRoot<Guid>
     {
         if (_examResults.Any(x => x.CatechismClassEucharisticYouthId == catechismClassEucharisticYouthId))
         {
-            throw new DomainException("Attendance already recorded.");
+            throw new DomainException(DomainErrors.AttendanceAlreadyRecorded);
         }
 
         _examResults.Add(new ExamResult(

@@ -28,26 +28,10 @@ public class CatechistRepository : ICatechistRepository
     {
         CatechistEntity? entity = await _context.Catechists
             .Include(x => x.Photos)
-            .Include(x => x.SpiritualMilestones)
             .Include(x => x.PatronSaints)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return entity?.ToDomain();
-    }
-
-    /// <inheritdoc />
-    public async Task AddMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken)
-    {
-        CatechistEntity? catechistEntity = await _context.Catechists
-            .Include(y => y.SpiritualMilestones)
-            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
-        if (catechistEntity == null)
-        {
-            return;
-        }
-        Catechist domain = catechistEntity.ToDomain();
-        domain.AddMilestone(milestone);
-        domain.UpdateEntity(catechistEntity);
     }
 
     /// <inheritdoc />

@@ -62,8 +62,31 @@ public static class EucharisticYouthMapper
             entity.Photos.Add(photo);
         }
 
-        entity.SpiritualMilestones.Clear();
-        entity.SpiritualMilestones = domain.Milestones.Select(m => m.ToEntity(domain.Id)).ToList();
+        // UPDATE + ADD
+        foreach (SpiritualMilestone milestone in domain.Milestones)
+        {
+            SpiritualMilestoneEntity? existingEntity = entity.SpiritualMilestones
+                .FirstOrDefault(x => x.Id == milestone.Id);
+
+            if (existingEntity == null)
+            {
+                entity.SpiritualMilestones.Add(milestone.ToEntity(entity.Id));
+            }
+            else
+            {
+                milestone.UpdateEntity(existingEntity);
+            }
+        }
+
+        // REMOVE
+        List<SpiritualMilestoneEntity> removedList = entity.SpiritualMilestones
+            .Where(x => domain.Milestones.All(m => m.Id != x.Id))
+            .ToList();
+
+        foreach (var r in removedList)
+        {
+            entity.SpiritualMilestones.Remove(r);
+        }
 
         entity.PatronSaints.Clear();
         foreach (PatronSaint patronSaint in domain.PatronSaints)

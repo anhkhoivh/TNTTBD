@@ -29,7 +29,7 @@ public sealed class FullName : ValueObject
         MiddleName = string.IsNullOrWhiteSpace(middleName) ? null : Normalize(middleName);
         GivenName = !string.IsNullOrWhiteSpace(givenName)
             ? Normalize(givenName)
-            : throw new DomainException("Given name is required");
+            : throw new DomainException(DomainErrors.ValidationRequired);
     }
 
     #endregion

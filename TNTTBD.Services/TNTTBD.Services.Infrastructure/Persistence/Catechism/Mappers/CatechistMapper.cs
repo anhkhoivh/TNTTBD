@@ -16,8 +16,7 @@ public static class CatechistMapper
     /// </summary>
     public static Catechist ToDomain(this CatechistEntity entity)
     {
-        IEnumerable<SpiritualMilestone> milestones = entity.SpiritualMilestones.Select(m => m.ToDomain());
-        Catechist domain = new Catechist(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, entity.Photos, milestones, entity.PatronSaints);
+        Catechist domain = new Catechist(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, entity.Photos, entity.PatronSaints);
         return domain;
     }
 
@@ -37,7 +36,6 @@ public static class CatechistMapper
             Address = domain.Address,
             DateOfBirth = domain.DateOfBirth,
             IsMale = domain.IsMale,
-            SpiritualMilestones = domain.Milestones.Select(m => m.ToEntity(domain.Id)).ToList(),
         };
 
         entity.Photos.Clear();
@@ -70,9 +68,6 @@ public static class CatechistMapper
         {
             entity.Photos.Add(photoReference);
         }
-
-        entity.SpiritualMilestones.Clear();
-        entity.SpiritualMilestones = domain.Milestones.Select(m => m.ToEntity(domain.Id)).ToList();
 
         entity.PatronSaints.Clear();
         foreach (PatronSaint patronSaint in domain.PatronSaints)

@@ -3,6 +3,7 @@ using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Queries;
 using TNTTBD.Services.Domain.Catechism.Members;
+using TNTTBD.Services.Domain.Catechism.Repositories;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Handlers;
 

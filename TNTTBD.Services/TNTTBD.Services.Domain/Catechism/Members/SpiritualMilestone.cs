@@ -37,26 +37,37 @@ public class SpiritualMilestone : DomainEntity<Guid>
     /// <summary>
     /// Date
     /// </summary>
-    public DateOnly Date { get; }
+    public DateOnly Date { get; private set; }
 
     /// <summary>
     /// Id
     /// </summary>
-    public string? DocumentCode { get; }
+    public string? DocumentCode { get; private set; }
 
     /// <summary>
     /// Place
     /// </summary>
-    public string? Place { get; }
+    public string? Place { get; private set; }
 
     /// <summary>
     /// Note
     /// </summary>
-    public string? Note { get; }
+    public string? Note { get; private set; }
 
     #endregion
 
     #region Methods
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    public void Update(DateOnly date, string? documentCode, string? place, string? note)
+    {
+        Date = date;
+        DocumentCode = documentCode;
+        Place = place;
+        Note = note;
+    }
 
     #endregion
 }
