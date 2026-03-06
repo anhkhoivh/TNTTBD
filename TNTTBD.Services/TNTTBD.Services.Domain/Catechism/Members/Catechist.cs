@@ -27,7 +27,7 @@ public class Catechist : Member
     /// <summary>
     /// Default constructor
     /// </summary>
-    public Catechist(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id, name, dateOfBirth, address, isMale, photos, milestones, patronSaints)
+    public Catechist(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<PatronSaint> patronSaints) : base(id, name, dateOfBirth, address, isMale, photos, patronSaints)
     {
     }
 

@@ -29,4 +29,14 @@ public interface IEucharisticYouthRepository
     /// Add Patron Saint
     /// </summary>
     Task AddPatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Update milestone
+    /// </summary>
+    Task UpdateMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Add Patron Saint
+    /// </summary>
+    Task RemoveMilestone(Guid id, Guid milestoneId, CancellationToken cancellationToken);
 }

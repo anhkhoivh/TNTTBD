@@ -16,11 +16,6 @@ public interface ICatechistRepository
     Task AddAsync(Catechist catechist, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Add milestone
-    /// </summary>
-    Task AddMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Add photo
     /// </summary>
     Task AddPhoto(Guid id, PhotoReference photoReference, CancellationToken cancellationToken);

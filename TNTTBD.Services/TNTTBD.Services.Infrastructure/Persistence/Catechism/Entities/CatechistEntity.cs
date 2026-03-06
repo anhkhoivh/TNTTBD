@@ -42,11 +42,6 @@ public class CatechistEntity
     public ICollection<PhotoReference> Photos { get; set; } = new List<PhotoReference>();
 
     /// <summary>
-    /// Spiritual Milestone collection
-    /// </summary>
-    public ICollection<SpiritualMilestoneEntity> SpiritualMilestones { get; set; } = new List<SpiritualMilestoneEntity>();
-
-    /// <summary>
     /// Patron Saints
     /// </summary>
     public ICollection<PatronSaint> PatronSaints { get; set; } = new List<PatronSaint>();

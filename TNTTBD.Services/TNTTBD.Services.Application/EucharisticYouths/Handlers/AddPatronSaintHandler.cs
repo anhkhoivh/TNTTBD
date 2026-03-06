@@ -1,7 +1,7 @@
 using MediatR;
 using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
-using TNTTBD.Services.Domain.Catechism.Members;
+using TNTTBD.Services.Domain.Catechism.Repositories;
 using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Handlers;

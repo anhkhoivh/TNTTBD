@@ -43,6 +43,11 @@ public class CatechismDbContext : DbContext
     public DbSet<CatechismSessionEntity> CatechismSessions => Set<CatechismSessionEntity>();
 
     /// <summary>
+    /// Entity of Milestones
+    /// </summary>
+    public DbSet<SpiritualMilestoneEntity> SpiritualMilestones => Set<SpiritualMilestoneEntity>();
+
+    /// <summary>
     /// Entity of Contacts
     /// </summary>
     public DbSet<ContactEntity> Contacts => Set<ContactEntity>();

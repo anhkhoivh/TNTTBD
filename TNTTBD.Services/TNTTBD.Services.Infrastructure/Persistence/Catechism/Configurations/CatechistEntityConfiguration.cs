@@ -80,28 +80,6 @@ public class CatechistEntityConfiguration : IEntityTypeConfiguration<CatechistEn
                  .IsRequired();
         });
 
-        builder.OwnsMany(e => e.SpiritualMilestones, b =>
-        {
-            b.WithOwner().HasForeignKey(CatechistIdFk);
-
-            b.Property<Guid>(Id);
-            b.HasKey(Id);
-
-            b.Property(m => m.Type)
-                .IsRequired();
-
-            b.Property(m => m.Date)
-                .IsRequired();
-
-            b.Property(m => m.Place);
-
-            b.Property(m => m.Note);
-
-            b.Property(m => m.DocumentCode);
-
-            b.ToTable(CatechistMilestones);
-        });
-
         builder.OwnsMany(e => e.PatronSaints, b =>
         {
             b.WithOwner().HasForeignKey(CatechistIdFk);
