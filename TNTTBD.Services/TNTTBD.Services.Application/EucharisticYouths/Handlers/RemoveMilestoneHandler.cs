@@ -34,13 +34,7 @@ public class RemoveMilestoneHandler : IRequestHandler<RemoveMilestoneCommand>
 
     public async Task Handle(RemoveMilestoneCommand command, CancellationToken cancellationToken)
     {
-        EucharisticYouth? youth = await _repository.GetByIdAsync(command.EucharisticYouthId, cancellationToken);
-
-        if (youth == null)
-            throw new Exception(DomainErrors.ValidationNotFound);
-
-        youth.RemoveMilestone(command.MilestoneId);
-
+        await _repository.RemoveMilestone(command.EucharisticYouthId, command.MilestoneId, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 

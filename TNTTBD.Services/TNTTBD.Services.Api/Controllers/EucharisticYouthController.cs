@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Queries;
@@ -69,17 +70,6 @@ public class EucharisticYouthController : Controller
     }
 
     /// <summary>
-    /// Add photo
-    /// </summary>
-    [HttpPost("{id}/photos")]
-    public async Task<IActionResult> AddPhoto(Guid id, AddPhotoCommand command, CancellationToken cancellationToken)
-    {
-        AddPhotoCommand finalCommand = command with { EucharisticYouthId = id };
-        await _mediator.Send(finalCommand, cancellationToken);
-        return Ok();
-    }
-
-    /// <summary>
     /// Add Patron Saints
     /// </summary>
     [HttpPost("{id}/patronSaints")]
@@ -88,6 +78,23 @@ public class EucharisticYouthController : Controller
         AddPatronSaintCommand finalCommand = command with { EucharisticYouthId = id };
         await _mediator.Send(finalCommand, cancellationToken);
         return Ok();
+    }
+
+    [HttpPost("{youthId}/photos/upload-url")]
+    public async Task<IActionResult> RequestUploadUrl(Guid youthId, RequestYouthPhotoUploadCommand command)
+    {
+        RequestYouthPhotoUploadCommand finalCommand = command with { EucharisticYouthId = youthId };
+
+        PhotoReferenceDto result = await _mediator.Send(finalCommand);
+
+        return Ok(result);
+    }
+
+    [HttpGet("{youthId}/photos")]
+    public async Task<IActionResult> GetPhotos(Guid youthId)
+    {
+        List<PhotoReferenceDto> result = await _mediator.Send(new GetYouthPhotosQuery(youthId));
+        return Ok(result);
     }
 
     #endregion

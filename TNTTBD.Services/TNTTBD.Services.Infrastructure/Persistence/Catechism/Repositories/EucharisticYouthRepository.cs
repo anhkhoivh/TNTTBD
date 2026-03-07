@@ -112,12 +112,24 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         {
             throw new Exception(DomainErrors.ValidationNotFound);
         }
-        SpiritualMilestoneEntity? milestoneEntity = youthEntity.SpiritualMilestones
-            .FirstOrDefault(m => m.Id == milestoneId);
-        if (milestoneEntity == null)
+        EucharisticYouth domain = youthEntity.ToDomain();
+        domain.RemoveMilestone(milestoneId);
+        domain.UpdateEntity(youthEntity);
+    }
+
+    /// <inheritdoc />
+    public async Task<string> RemovePhoto(Guid id, Guid photoId, CancellationToken cancellationToken)
+    {
+        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
+            .Include(y => y.Photos)
+            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        if (youthEntity == null)
         {
             throw new Exception(DomainErrors.ValidationNotFound);
         }
-        youthEntity.SpiritualMilestones.Remove(milestoneEntity);
+        EucharisticYouth domain = youthEntity.ToDomain();
+        PhotoReference photoReference = domain.RemovePhoto(photoId);
+        domain.UpdateEntity(youthEntity);
+        return photoReference.StorageKey;
     }
 }

@@ -14,9 +14,6 @@ public class CatechistEntityConfiguration : IEntityTypeConfiguration<CatechistEn
 
     private const string Id = "Id";
     private const string CatechistIdFk = "CatechistId";
-
-    private const string CatechistEntityPhotos = "CatechistEntityPhotos";
-    private const string CatechistMilestones = "CatechistMilestones";
     private const string CatechistPatronSaints = "CatechistPatronSaints";
 
     #endregion
@@ -52,33 +49,10 @@ public class CatechistEntityConfiguration : IEntityTypeConfiguration<CatechistEn
             .HasForeignKey(cc => cc.CatechistId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.OwnsMany(t => t.Photos, photo =>
-        {
-            photo.ToTable(CatechistEntityPhotos);
-
-            photo.WithOwner().HasForeignKey(CatechistIdFk);
-
-            photo.Property<Guid>(Id);
-            photo.HasKey(Id);
-
-            photo.Property(p => p.StorageKey)
-                 .IsRequired();
-
-            photo.Property(p => p.ContentType)
-                 .IsRequired();
-
-            photo.Property(p => p.Purpose)
-                 .IsRequired();
-
-            photo.Property(p => p.UploadedAt)
-                 .IsRequired();
-
-            photo.Property(p => p.UploadedBy)
-                 .IsRequired();
-
-            photo.Property(p => p.Visibility)
-                 .IsRequired();
-        });
+        builder.HasMany(x => x.Photos)
+            .WithOne()
+            .HasForeignKey(p => p.CatechistId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.OwnsMany(e => e.PatronSaints, b =>
         {

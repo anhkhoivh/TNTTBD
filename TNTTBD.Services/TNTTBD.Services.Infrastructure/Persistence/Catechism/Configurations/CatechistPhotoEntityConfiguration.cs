@@ -7,21 +7,21 @@ namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Configurations;
 /// <summary>
 /// Catechist entity configuration
 /// </summary>
-public class SpiritualMilestoneConfiguration : IEntityTypeConfiguration<SpiritualMilestoneEntity>
+public class CatechistPhotoEntityConfiguration : IEntityTypeConfiguration<CatechistPhotoEntity>
 {
     #region Methods
 
     /// <summary>
     /// Configure method
     /// </summary>
-    public void Configure(EntityTypeBuilder<SpiritualMilestoneEntity> builder)
+    public void Configure(EntityTypeBuilder<CatechistPhotoEntity> builder)
     {
-        builder.ToTable(nameof(SpiritualMilestoneEntity));
+        builder.ToTable(nameof(CatechistPhotoEntity));
         builder.HasKey(c => c.Id);
 
-        builder.HasOne<EucharisticYouthEntity>()
-            .WithMany(y => y.SpiritualMilestones)
-            .HasForeignKey(c => c.EucharisticYouthId)
+        builder.HasOne<CatechistEntity>()
+            .WithMany(c => c.Photos)
+            .HasForeignKey(c => c.CatechistId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 

@@ -1,29 +1,30 @@
 using TNTTBD.Services.Domain.Common;
 using TNTTBD.Services.Domain.Enums;
 
-public sealed class PhotoReference : ValueObject
+namespace TNTTBD.Services.Domain.Catechism.Members;
+
+/// <summary>
+/// Photo reference
+/// </summary>
+public class PhotoReference : DomainEntity<Guid>
 {
     #region Constructors
 
-    public PhotoReference()
-    {
-        StorageKey = string.Empty;
-        ContentType = string.Empty;
-    }
-
     public PhotoReference(
+        Guid id,
         string storageKey,
         string contentType,
         PhotoPurpose purpose,
         Guid uploadedBy,
-        PhotoVisibility visibility)
+        DateTimeOffset uploadedAt,
+        PhotoVisibility visibility) : base(id)
     {
         StorageKey = storageKey;
         ContentType = contentType;
         Purpose = purpose;
         UploadedBy = uploadedBy;
         Visibility = visibility;
-        UploadedAt = DateTime.UtcNow;
+        UploadedAt = uploadedAt;
     }
 
     #endregion
@@ -33,19 +34,13 @@ public sealed class PhotoReference : ValueObject
     public string StorageKey { get; }
     public string ContentType { get; }
     public PhotoPurpose Purpose { get; }
-    public DateTime UploadedAt { get; }
+    public DateTimeOffset UploadedAt { get; }
     public Guid UploadedBy { get; }
     public PhotoVisibility Visibility { get; }
     
     #endregion
 
     #region Methods
-
-    protected override IEnumerable<object?> GetEqualityComponents()
-    {
-        yield return StorageKey;
-        yield return Purpose;
-    }
 
     #endregion
 }

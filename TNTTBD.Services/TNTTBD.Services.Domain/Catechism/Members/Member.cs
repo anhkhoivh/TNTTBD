@@ -101,6 +101,19 @@ public abstract class Member : AggregateRoot<Guid>
         _photos.Add(photo);
     }
 
+    public PhotoReference RemovePhoto(Guid photoId)
+    {
+        PhotoReference? photo = _photos.FirstOrDefault(p => p.Id == photoId);
+        if (photo == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+
+        _photos.Remove(photo);
+
+        return photo;
+    }
+
     /// <summary>
     /// Assign patron saint
     /// </summary>

@@ -16,7 +16,8 @@ public static class CatechistMapper
     /// </summary>
     public static Catechist ToDomain(this CatechistEntity entity)
     {
-        Catechist domain = new Catechist(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, entity.Photos, entity.PatronSaints);
+        IEnumerable<PhotoReference> photos = entity.Photos.Select(m => m.ToDomain());
+        Catechist domain = new Catechist(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, photos, entity.PatronSaints);
         return domain;
     }
 
@@ -36,20 +37,9 @@ public static class CatechistMapper
             Address = domain.Address,
             DateOfBirth = domain.DateOfBirth,
             IsMale = domain.IsMale,
+            Photos = domain.Photos.Select(p => p.ToCatechistPhotoEntity(domain.Id)).ToList(),
+            PatronSaints = domain.PatronSaints.ToList()
         };
-
-        entity.Photos.Clear();
-        foreach (PhotoReference photoReference in domain.Photos)
-        {
-            entity.Photos.Add(photoReference);
-        }
-
-        entity.PatronSaints.Clear();
-        foreach (PatronSaint patronSaint in domain.PatronSaints)
-        {
-            entity.PatronSaints.Add(patronSaint);
-        }
-
         return entity;
     }
 
@@ -63,10 +53,30 @@ public static class CatechistMapper
         entity.Address = domain.Address;
         entity.IsMale = domain.IsMale;
 
-        entity.Photos.Clear();
-        foreach (PhotoReference photoReference in domain.Photos)
+        // Photo
+        foreach (PhotoReference photo in domain.Photos)
         {
-            entity.Photos.Add(photoReference);
+            CatechistPhotoEntity? existingEntity = entity.Photos
+                .FirstOrDefault(x => x.Id == photo.Id);
+
+            if (existingEntity == null)
+            {
+                entity.Photos.Add(photo.ToCatechistPhotoEntity(entity.Id));
+            }
+            else
+            {
+                photo.UpdateEntity(existingEntity);
+            }
+        }
+
+        // REMOVE
+        List<CatechistPhotoEntity> removedPhotoList = entity.Photos
+            .Where(x => domain.Photos.All(m => m.Id != x.Id))
+            .ToList();
+
+        foreach (CatechistPhotoEntity r in removedPhotoList)
+        {
+            entity.Photos.Remove(r);
         }
 
         entity.PatronSaints.Clear();
