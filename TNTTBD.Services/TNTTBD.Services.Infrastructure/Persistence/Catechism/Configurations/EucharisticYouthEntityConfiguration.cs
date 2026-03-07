@@ -14,8 +14,6 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
 
     private const string Id = "Id";
     private const string EucharisticYouthIdFk = "EucharisticYouthId";
-    private const string EucharisticYouthPhotos = "EucharisticYouthPhotos";
-    private const string EucharisticYouthMilestones = "EucharisticYouthMilestones";
     private const string EucharisticYouthPatronSaints = "EucharisticYouthPatronSaints";
 
     #endregion
@@ -56,33 +54,10 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
             .HasForeignKey(ce => ce.EucharisticYouthId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.OwnsMany(t => t.Photos, photo =>
-        {
-            photo.ToTable(EucharisticYouthPhotos);
-
-            photo.WithOwner().HasForeignKey(EucharisticYouthIdFk);
-
-            photo.Property<Guid>(Id);
-            photo.HasKey(Id);
-
-            photo.Property(p => p.StorageKey)
-                 .IsRequired();
-
-            photo.Property(p => p.ContentType)
-                 .IsRequired();
-
-            photo.Property(p => p.Purpose)
-                 .IsRequired();
-
-            photo.Property(p => p.UploadedAt)
-                 .IsRequired();
-
-            photo.Property(p => p.UploadedBy)
-                 .IsRequired();
-
-            photo.Property(p => p.Visibility)
-                 .IsRequired();
-        });
+        builder.HasMany(x => x.Photos)
+            .WithOne()
+            .HasForeignKey(p => p.EucharisticYouthId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.SpiritualMilestones)
             .WithOne()

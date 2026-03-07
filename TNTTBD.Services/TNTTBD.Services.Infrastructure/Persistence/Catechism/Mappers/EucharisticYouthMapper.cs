@@ -17,7 +17,8 @@ public static class EucharisticYouthMapper
     public static EucharisticYouth ToDomain(this EucharisticYouthEntity entity)
     {
         IEnumerable<SpiritualMilestone> milestones = entity.SpiritualMilestones.Select(m => m.ToDomain());
-        EucharisticYouth domain = new EucharisticYouth(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, entity.Photos, milestones, entity.PatronSaints);
+        IEnumerable<PhotoReference> photos = entity.Photos.Select(m => m.ToDomain());
+        EucharisticYouth domain = new EucharisticYouth(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, photos, milestones, entity.PatronSaints);
 
         return domain;
     }
@@ -38,7 +39,7 @@ public static class EucharisticYouthMapper
             Address = domain.Address,
             DateOfBirth = domain.DateOfBirth,
             IsMale = domain.IsMale,
-            Photos = domain.Photos.ToList(),
+            Photos = domain.Photos.Select(p => p.ToEucharisticYouthPhotoEntity(domain.Id)).ToList(),
             SpiritualMilestones = domain.Milestones.Select(m => m.ToEntity(domain.Id)).ToList(),
             PatronSaints = domain.PatronSaints.ToList()
         };
@@ -56,13 +57,33 @@ public static class EucharisticYouthMapper
         entity.Address = domain.Address;
         entity.IsMale = domain.IsMale;
 
-        entity.Photos.Clear();
+        // Photo
         foreach (PhotoReference photo in domain.Photos)
         {
-            entity.Photos.Add(photo);
+            EucharisticYouthPhotoEntity? existingEntity = entity.Photos
+                .FirstOrDefault(x => x.Id == photo.Id);
+
+            if (existingEntity == null)
+            {
+                entity.Photos.Add(photo.ToEucharisticYouthPhotoEntity(entity.Id));
+            }
+            else
+            {
+                photo.UpdateEntity(existingEntity);
+            }
         }
 
-        // UPDATE + ADD
+        // REMOVE
+        List<EucharisticYouthPhotoEntity> removedPhotoList = entity.Photos
+            .Where(x => domain.Photos.All(m => m.Id != x.Id))
+            .ToList();
+
+        foreach (EucharisticYouthPhotoEntity r in removedPhotoList)
+        {
+            entity.Photos.Remove(r);
+        }
+
+        // UPDATE + ADD milestone
         foreach (SpiritualMilestone milestone in domain.Milestones)
         {
             SpiritualMilestoneEntity? existingEntity = entity.SpiritualMilestones
@@ -83,7 +104,7 @@ public static class EucharisticYouthMapper
             .Where(x => domain.Milestones.All(m => m.Id != x.Id))
             .ToList();
 
-        foreach (var r in removedList)
+        foreach (SpiritualMilestoneEntity r in removedList)
         {
             entity.SpiritualMilestones.Remove(r);
         }

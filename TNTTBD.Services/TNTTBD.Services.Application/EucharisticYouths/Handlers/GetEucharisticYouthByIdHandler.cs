@@ -1,4 +1,5 @@
 using MediatR;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Queries;
@@ -12,15 +13,16 @@ public class GetEucharisticYouthByIdHandler : IRequestHandler<GetEucharisticYout
     #region Fields
 
     private readonly IEucharisticYouthRepository _repository;
+    private readonly IFileStorage _storage;
 
     #endregion
 
     #region Constructors
 
-    public GetEucharisticYouthByIdHandler(
-        IEucharisticYouthRepository repository)
+    public GetEucharisticYouthByIdHandler(IEucharisticYouthRepository repository, IFileStorage fileStorage)
     {
         _repository = repository;
+        _storage = fileStorage;
     }
 
     #endregion
@@ -54,10 +56,8 @@ public class GetEucharisticYouthByIdHandler : IRequestHandler<GetEucharisticYout
                 {
                     Purpose = m.Purpose.ToString(),
                     ContentType = m.ContentType,
-                    StorageKey = m.StorageKey,
-                    Visibility = m.Visibility.ToString(),
-                    UploadedAt = m.UploadedAt,
-                    UploadedBy = m.UploadedBy
+                    UploadedBy = m.UploadedBy,
+                    Url = _storage.GetFileUrl(m.StorageKey)
                 })
                 .ToList(),
 

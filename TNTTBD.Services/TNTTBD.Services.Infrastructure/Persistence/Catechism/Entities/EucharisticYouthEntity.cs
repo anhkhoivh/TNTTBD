@@ -39,7 +39,7 @@ public class EucharisticYouthEntity
     /// <summary>
     /// Photo collection
     /// </summary>
-    public ICollection<PhotoReference> Photos { get; set; } = new List<PhotoReference>();
+    public ICollection<EucharisticYouthPhotoEntity> Photos { get; set; } = new List<EucharisticYouthPhotoEntity>();
 
     /// <summary>
     /// Spiritual Milestone collection

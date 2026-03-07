@@ -39,7 +39,7 @@ public class CatechistEntity
     /// <summary>
     /// Photo collection
     /// </summary>
-    public ICollection<PhotoReference> Photos { get; set; } = new List<PhotoReference>();
+    public ICollection<CatechistPhotoEntity> Photos { get; set; } = new List<CatechistPhotoEntity>();
 
     /// <summary>
     /// Patron Saints

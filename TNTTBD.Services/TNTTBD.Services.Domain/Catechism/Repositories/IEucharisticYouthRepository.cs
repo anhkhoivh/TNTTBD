@@ -36,7 +36,12 @@ public interface IEucharisticYouthRepository
     Task UpdateMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Add Patron Saint
+    /// Remove milestone
     /// </summary>
     Task RemoveMilestone(Guid id, Guid milestoneId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Add Patron Saint
+    /// </summary>
+    Task<string> RemovePhoto(Guid id, Guid photoId, CancellationToken cancellationToken);
 }
