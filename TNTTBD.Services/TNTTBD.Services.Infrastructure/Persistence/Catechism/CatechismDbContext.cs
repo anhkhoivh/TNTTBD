@@ -92,6 +92,11 @@ public class CatechismDbContext : DbContext
     /// </summary>
     public DbSet<UserExternalLoginEntity> UserExternalLogins => Set<UserExternalLoginEntity>();
 
+    /// <summary>
+    /// Entity of EucharisticYouthRunningNumber
+    /// </summary>
+    public DbSet<EucharisticYouthRunningNumberEntity> EucharisticYouthRunningNumbers => Set<EucharisticYouthRunningNumberEntity>();
+
     #endregion
 
     #region Methods

@@ -37,6 +37,20 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
     }
 
     /// <inheritdoc />
+    public async Task UpdateEucharisticYouth(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken)
+    {
+        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        if (youthEntity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+
+        EucharisticYouth domain = youthEntity.ToDomain();
+        domain.UpdateInfo(fullName, dateOfBirth, address, isMale);
+        domain.UpdateEntity(youthEntity);
+    }
+
+    /// <inheritdoc />
     public async Task AddMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken)
     {
         EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
@@ -44,40 +58,10 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            return;
+            throw new Exception(DomainErrors.ValidationNotFound);
         }
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.AddMilestone(milestone);
-        domain.UpdateEntity(youthEntity);
-    }
-
-    /// <inheritdoc />
-    public async Task AddPhoto(Guid id, PhotoReference photoReference, CancellationToken cancellationToken)
-    {
-        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
-            .Include(y => y.Photos)
-            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
-        if (youthEntity == null)
-        {
-            return;
-        }
-        EucharisticYouth domain = youthEntity.ToDomain();
-        domain.AddPhoto(photoReference);
-        domain.UpdateEntity(youthEntity);
-    }
-
-    /// <inheritdoc />
-    public async Task AddPatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken)
-    {
-        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
-            .Include(y => y.PatronSaints)
-            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
-        if (youthEntity == null)
-        {
-            return;
-        }
-        EucharisticYouth domain = youthEntity.ToDomain();
-        domain.AddPatronSaint(patronSaint);
         domain.UpdateEntity(youthEntity);
     }
 
@@ -100,7 +84,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.UpdateMilestone(milestone.Id, milestone.Date, milestone.DocumentCode, milestone.Place, milestone.Note);
         domain.UpdateEntity(youthEntity);
-    }
+    }  
 
     /// <inheritdoc />
     public async Task RemoveMilestone(Guid id, Guid milestoneId, CancellationToken cancellationToken)
@@ -118,6 +102,21 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
     }
 
     /// <inheritdoc />
+    public async Task AddPhoto(Guid id, PhotoReference photoReference, CancellationToken cancellationToken)
+    {
+        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
+            .Include(y => y.Photos)
+            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        if (youthEntity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+        EucharisticYouth domain = youthEntity.ToDomain();
+        domain.AddPhoto(photoReference);
+        domain.UpdateEntity(youthEntity);
+    }
+
+    /// <inheritdoc />
     public async Task<string> RemovePhoto(Guid id, Guid photoId, CancellationToken cancellationToken)
     {
         EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
@@ -131,5 +130,35 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         PhotoReference photoReference = domain.RemovePhoto(photoId);
         domain.UpdateEntity(youthEntity);
         return photoReference.StorageKey;
+    }
+
+    /// <inheritdoc />
+    public async Task AddPatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken)
+    {
+        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
+            .Include(y => y.PatronSaints)
+            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        if (youthEntity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+        EucharisticYouth domain = youthEntity.ToDomain();
+        domain.AddPatronSaint(patronSaint);
+        domain.UpdateEntity(youthEntity);
+    }
+
+    /// <inheritdoc />
+    public async Task RemovePatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken)
+    {
+        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
+            .Include(y => y.PatronSaints)
+            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        if (youthEntity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+        EucharisticYouth domain = youthEntity.ToDomain();
+        domain.RemovePatronSaint(patronSaint);
+        domain.UpdateEntity(youthEntity);
     }
 }

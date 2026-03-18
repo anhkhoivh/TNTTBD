@@ -29,9 +29,7 @@ public class GetEucharisticYouthByIdHandler : IRequestHandler<GetEucharisticYout
 
     #region Methods
 
-    public async Task<EucharisticYouthDto?> Handle(
-        GetEucharisticYouthByIdQuery query,
-        CancellationToken cancellationToken)
+    public async Task<EucharisticYouthDto?> Handle(GetEucharisticYouthByIdQuery query, CancellationToken cancellationToken)
     {
         EucharisticYouth? youth = await _repository.GetByIdAsync(query.Id, cancellationToken);
 

@@ -21,25 +21,35 @@ public class EucharisticYouth : Member
     /// Default constructor
     /// </summary>
     public EucharisticYouth() : base()
-    { }
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
-    public EucharisticYouth(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale) : base(id, name, dateOfBirth, address, isMale)
-    { }
-
-    /// <summary>
-    /// Default constructor
-    /// </summary>
-    public EucharisticYouth(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id, name, dateOfBirth, address, isMale, photos, patronSaints)
     {
+        Code = string.Empty;
+    }
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    public EucharisticYouth(Guid id, string code, FullName name, DateOnly dateOfBirth, string? address, bool isMale) : base(id, name, dateOfBirth, address, isMale)
+    {
+        Code = code;
+    }
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    public EucharisticYouth(Guid id, string code, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id, name, dateOfBirth, address, isMale, photos, patronSaints)
+    {
+        Code = code;
         _milestones.AddRange(milestones);
     }
 
     #endregion
 
     #region Properties
+
+    /// <summary>
+    /// Eucharistic Youth Code
+    /// </summary>
+    public string Code { get; }
 
     /// <summary>
     /// Milestone

@@ -1,3 +1,4 @@
+using MediatR;
 using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
 using TNTTBD.Services.Domain.Catechism.Members;
@@ -8,21 +9,19 @@ namespace TNTTBD.Services.Application.EucharisticYouths.Handlers;
 /// <summary>
 /// Add milestone handler
 /// </summary>
-public class AddMilestoneHandler
+public class AddMilestoneHandler : IRequestHandler<AddMilestoneCommand>
 {
     #region Fields
 
     private readonly IEucharisticYouthRepository _repository;
-    private readonly IUnitOfWork  _unitOfWork;
 
     #endregion
 
     #region Constructors
 
-    public AddMilestoneHandler(IEucharisticYouthRepository repository, IUnitOfWork unitOfWork)
+    public AddMilestoneHandler(IEucharisticYouthRepository repository)
     {
         _repository = repository;
-        _unitOfWork = unitOfWork;
     }
 
     #endregion
@@ -33,7 +32,6 @@ public class AddMilestoneHandler
     {
         SpiritualMilestone milestone = new(Guid.NewGuid(), command.Type, command.Date, command.DocumentCode, command.Place, command.Note);
         await _repository.AddMilestone(command.EucharisticYouthId, milestone, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     #endregion

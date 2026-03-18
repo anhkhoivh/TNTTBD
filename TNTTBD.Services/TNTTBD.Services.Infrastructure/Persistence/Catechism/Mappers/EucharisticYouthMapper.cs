@@ -18,7 +18,7 @@ public static class EucharisticYouthMapper
     {
         IEnumerable<SpiritualMilestone> milestones = entity.SpiritualMilestones.Select(m => m.ToDomain());
         IEnumerable<PhotoReference> photos = entity.Photos.Select(m => m.ToDomain());
-        EucharisticYouth domain = new EucharisticYouth(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, photos, milestones, entity.PatronSaints);
+        EucharisticYouth domain = new EucharisticYouth(entity.Id, entity.Code, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, photos, milestones, entity.PatronSaints);
 
         return domain;
     }
@@ -35,6 +35,7 @@ public static class EucharisticYouthMapper
         EucharisticYouthEntity entity = new EucharisticYouthEntity
         {
             Id = domain.Id,
+            Code = domain.Code,
             FullName = domain.FullName,
             Address = domain.Address,
             DateOfBirth = domain.DateOfBirth,

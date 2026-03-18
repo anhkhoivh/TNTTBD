@@ -5,7 +5,7 @@ namespace TNTTBD.Services.Domain.ValueObjects;
 /// <summary>
 /// Full name
 /// </summary>
-public sealed class FullName : ValueObject
+public class FullName : ValueObject
 {
     #region Constructors
 

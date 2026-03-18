@@ -38,7 +38,8 @@ public class GetYouthPhotosHandler : IRequestHandler<GetYouthPhotosQuery, List<P
             throw new Exception(DomainErrors.ValidationNotFound);
         }
 
-        return youth.Photos.Select(m => new PhotoReferenceDto
+        return youth.Photos.Select(
+            m => new PhotoReferenceDto
                 {
                     Purpose = m.Purpose.ToString(),
                     ContentType = m.ContentType,

@@ -45,10 +45,10 @@ public class EucharisticYouthController : Controller
     /// <summary>
     /// Get by id
     /// </summary>
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    [HttpGet]
+    public async Task<IActionResult> GetById(GetEucharisticYouthByIdQuery query, CancellationToken cancellationToken)
     {
-        EucharisticYouthDto? result = await _mediator.Send(new GetEucharisticYouthByIdQuery(id), cancellationToken);
+        EucharisticYouthDto? result = await _mediator.Send(query, cancellationToken);
 
         if (result == null)
         {
@@ -61,40 +61,71 @@ public class EucharisticYouthController : Controller
     /// <summary>
     /// Add milestone
     /// </summary>
-    [HttpPost("{id}/milestones")]
-    public async Task<IActionResult> AddMilestone(Guid id, AddMilestoneCommand command, CancellationToken cancellationToken)
+    [HttpPost("milestones")]
+    public async Task<IActionResult> AddMilestone(AddMilestoneCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Add milestone
+    /// </summary>
+    [HttpPut("milestones")]
+    public async Task<IActionResult> UpdateMilestone(Guid id, AddMilestoneCommand command, CancellationToken cancellationToken)
     {
         AddMilestoneCommand finalCommand = command with { EucharisticYouthId = id };
         await _mediator.Send(finalCommand, cancellationToken);
         return Ok();
     }
 
-    /// <summary>
-    /// Add Patron Saints
-    /// </summary>
-    [HttpPost("{id}/patronSaints")]
-    public async Task<IActionResult> AddPatronSaint(Guid id, AddPatronSaintCommand command, CancellationToken cancellationToken)
+    [HttpDelete("milestones")]
+    public async Task<IActionResult> RemoveMilestone(RemoveMilestoneCommand command, CancellationToken cancellationToken)
     {
-        AddPatronSaintCommand finalCommand = command with { EucharisticYouthId = id };
-        await _mediator.Send(finalCommand, cancellationToken);
+        await _mediator.Send(command, cancellationToken);
         return Ok();
     }
 
-    [HttpPost("{youthId}/photos/upload-url")]
-    public async Task<IActionResult> RequestUploadUrl(Guid youthId, RequestYouthPhotoUploadCommand command)
+    /// <summary>
+    /// Add Patron Saints
+    /// </summary>
+    [HttpPost("patronSaints")]
+    public async Task<IActionResult> AddPatronSaint(AddPatronSaintCommand command, CancellationToken cancellationToken)
     {
-        RequestYouthPhotoUploadCommand finalCommand = command with { EucharisticYouthId = youthId };
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
 
-        PhotoReferenceDto result = await _mediator.Send(finalCommand);
+    /// <summary>
+    /// Add Patron Saints
+    /// </summary>
+    [HttpDelete("patronSaints")]
+    public async Task<IActionResult> RemovePatronSaint(RemovePatronSaintCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+
+    [HttpPost("photos/upload-url")]
+    public async Task<IActionResult> RequestUploadUrl(RequestYouthPhotoUploadCommand command, CancellationToken cancellationToken)
+    {
+        PhotoReferenceDto result = await _mediator.Send(command, cancellationToken);
 
         return Ok(result);
     }
 
-    [HttpGet("{youthId}/photos")]
-    public async Task<IActionResult> GetPhotos(Guid youthId)
+    [HttpGet("photos")]
+    public async Task<IActionResult> GetPhotos(GetYouthPhotosQuery query, CancellationToken cancellationToken)
     {
-        List<PhotoReferenceDto> result = await _mediator.Send(new GetYouthPhotosQuery(youthId));
+        List<PhotoReferenceDto> result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
+    }
+
+    [HttpDelete("photos")]
+    public async Task<IActionResult> RemoveYouthPhoto(RemoveYouthPhotoCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
     }
 
     #endregion

@@ -28,6 +28,11 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
         builder.ToTable(nameof(EucharisticYouthEntity));
         builder.HasKey(e => e.Id);
 
+        builder.Property(y => y.Code)
+            .IsRequired();
+        builder.HasIndex(y => y.Code)
+            .IsUnique();
+
         builder.OwnsOne(x => x.FullName, name =>
         {
             name.Property(n => n.ChristName)

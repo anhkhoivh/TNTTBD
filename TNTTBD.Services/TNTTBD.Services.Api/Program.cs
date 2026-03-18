@@ -1,4 +1,6 @@
+using MediatR;
 using TNTTBD.Services.Api.Common.Localization;
+using TNTTBD.Services.Application.Behaviors;
 using TNTTBD.Services.Application.Common;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,7 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(
         typeof(ApplicationAssemblyMarker).Assembly);
 });
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 
 
 var app = builder.Build();

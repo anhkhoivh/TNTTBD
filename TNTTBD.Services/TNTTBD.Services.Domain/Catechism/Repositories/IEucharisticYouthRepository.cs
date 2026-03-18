@@ -16,6 +16,18 @@ public interface IEucharisticYouthRepository
     Task AddAsync(EucharisticYouth youth, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Update basic info
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="fullName"></param>
+    /// <param name="dateOfBirth"></param>
+    /// <param name="address"></param>
+    /// <param name="isMale"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task UpdateEucharisticYouth(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Add milestone
     /// </summary>
     Task AddMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken);
@@ -29,6 +41,11 @@ public interface IEucharisticYouthRepository
     /// Add Patron Saint
     /// </summary>
     Task AddPatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Remove Patron Saint
+    /// </summary>
+    Task RemovePatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken);
 
     /// <summary>
     /// Update milestone
