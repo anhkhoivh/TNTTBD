@@ -101,6 +101,12 @@ public abstract class Member : AggregateRoot<Guid>
         _photos.Add(photo);
     }
 
+    /// <summary>
+    /// Remove photo
+    /// </summary>
+    /// <param name="photoId"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public PhotoReference RemovePhoto(Guid photoId)
     {
         PhotoReference? photo = _photos.FirstOrDefault(p => p.Id == photoId);
@@ -115,7 +121,7 @@ public abstract class Member : AggregateRoot<Guid>
     }
 
     /// <summary>
-    /// Assign patron saint
+    /// Add Patron Saint
     /// </summary>
     public void AddPatronSaint(PatronSaint patronSaint)
     {
@@ -125,6 +131,19 @@ public abstract class Member : AggregateRoot<Guid>
         }
 
         _patronSaints.Add(patronSaint);
+    }
+
+    /// <summary>
+    /// Remove Patron Saint
+    /// </summary>
+    /// <param name="patronSaint"></param>
+    public void RemovePatronSaint(PatronSaint patronSaint)
+    {
+        if (_patronSaints.Any(s => s.SaintName == patronSaint.SaintName && s.Day == patronSaint.Day && s.Month == patronSaint.Month))
+        {
+            throw new DomainException(DomainErrors.ValidationNotFound);
+        }
+        _patronSaints.Remove(patronSaint);
     }
 
     /// <summary>
@@ -143,11 +162,11 @@ public abstract class Member : AggregateRoot<Guid>
     /// <summary>
     /// Update basic info
     /// </summary>
-    public void UpdateInfo(FullName fullName, DateOnly dateOfBirth, string address, bool isMale)
+    public void UpdateInfo(FullName fullName, DateOnly dateOfBirth, string? address, bool isMale)
     {
         FullName = fullName;
         DateOfBirth = dateOfBirth;
-        Address = address;
+        Address = string.IsNullOrWhiteSpace(address) ? string.Empty : address;
         IsMale = isMale;
     }
 

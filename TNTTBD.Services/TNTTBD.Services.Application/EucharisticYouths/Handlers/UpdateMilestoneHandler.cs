@@ -11,7 +11,6 @@ public class UpdateMilestoneHandler : IRequestHandler<UpdateMilestoneCommand>
     #region Fields
 
     private readonly IEucharisticYouthRepository _repository;
-    private readonly IUnitOfWork _unitOfWork;
 
     #endregion
 
@@ -25,7 +24,6 @@ public class UpdateMilestoneHandler : IRequestHandler<UpdateMilestoneCommand>
     public UpdateMilestoneHandler(IEucharisticYouthRepository repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
-        _unitOfWork = unitOfWork;
     }
 
     #endregion
@@ -36,7 +34,6 @@ public class UpdateMilestoneHandler : IRequestHandler<UpdateMilestoneCommand>
     {
         SpiritualMilestone milestone = new(command.MilestoneId, MilestoneType.Baptism, command.Date, command.DocumentCode, command.Place, command.Note);
         await _repository.UpdateMilestone(command.EucharisticYouthId, milestone, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     #endregion

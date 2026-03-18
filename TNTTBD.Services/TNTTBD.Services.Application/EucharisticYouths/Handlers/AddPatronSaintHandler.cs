@@ -14,16 +14,14 @@ public class AddPatronSaintHandler : IRequestHandler<AddPatronSaintCommand>
     #region Fields
 
     private readonly IEucharisticYouthRepository _repository;
-    private readonly IUnitOfWork  _unitOfWork;
 
     #endregion
 
     #region Constructors
 
-    public AddPatronSaintHandler(IEucharisticYouthRepository repository, IUnitOfWork unitOfWork)
+    public AddPatronSaintHandler(IEucharisticYouthRepository repository)
     {
         _repository = repository;
-        _unitOfWork = unitOfWork;
     }
 
     #endregion
@@ -34,7 +32,6 @@ public class AddPatronSaintHandler : IRequestHandler<AddPatronSaintCommand>
     {
         PatronSaint patronSaint = new(command.SaintName, command.Day, command.Month);
         await _repository.AddPatronSaint(command.EucharisticYouthId, patronSaint, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     #endregion

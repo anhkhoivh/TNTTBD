@@ -9,7 +9,6 @@ namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 public class RequestYouthPhotoUploadHandler : IRequestHandler<RequestYouthPhotoUploadCommand, PhotoReferenceDto>
 {
     private readonly IEucharisticYouthRepository _repository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IFileStorage _storage;
 
     #region Constructors
@@ -19,10 +18,9 @@ public class RequestYouthPhotoUploadHandler : IRequestHandler<RequestYouthPhotoU
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="unitOfWork"></param>
-    public RequestYouthPhotoUploadHandler(IEucharisticYouthRepository repository, IUnitOfWork unitOfWork, IFileStorage fileStorage)
+    public RequestYouthPhotoUploadHandler(IEucharisticYouthRepository repository, IFileStorage fileStorage)
     {
         _repository = repository;
-        _unitOfWork = unitOfWork;
         _storage = fileStorage;
     }
 
@@ -38,7 +36,6 @@ public class RequestYouthPhotoUploadHandler : IRequestHandler<RequestYouthPhotoU
         PhotoReference photoReference = new(photoId, storageKey, command.ContentType, command.Purpose, command.UploadedBy, DateTimeOffset.Now, command.Visibility);
         await _repository.AddPhoto(command.EucharisticYouthId, photoReference, cancellationToken);
         string uploadUrl = await _storage.GenerateUploadUrl(storageKey, command.ContentType, TimeSpan.FromMinutes(5));
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new PhotoReferenceDto
         {

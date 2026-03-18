@@ -17,6 +17,11 @@ public class EucharisticYouthEntity
     public Guid Id { get; set; }
 
     /// <summary>
+    /// Code
+    /// </summary>
+    public string Code { get; set; } = null!;
+
+    /// <summary>
     /// Full Name
     /// </summary>
     public FullName FullName { get; set; } = null!;
