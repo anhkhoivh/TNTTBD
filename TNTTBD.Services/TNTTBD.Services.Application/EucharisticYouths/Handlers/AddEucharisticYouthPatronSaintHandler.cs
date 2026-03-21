@@ -1,15 +1,15 @@
 using MediatR;
 using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
-using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Catechism.Repositories;
+using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Handlers;
 
 /// <summary>
 /// Add milestone handler
 /// </summary>
-public class AddMilestoneHandler : IRequestHandler<AddMilestoneCommand>
+public class AddEucharisticYouthPatronSaintHandler : IRequestHandler<AddEucharisticYouthPatronSaintCommand>
 {
     #region Fields
 
@@ -19,7 +19,7 @@ public class AddMilestoneHandler : IRequestHandler<AddMilestoneCommand>
 
     #region Constructors
 
-    public AddMilestoneHandler(IEucharisticYouthRepository repository)
+    public AddEucharisticYouthPatronSaintHandler(IEucharisticYouthRepository repository)
     {
         _repository = repository;
     }
@@ -28,10 +28,10 @@ public class AddMilestoneHandler : IRequestHandler<AddMilestoneCommand>
 
     #region Methods
 
-    public async Task Handle(AddMilestoneCommand command, CancellationToken cancellationToken)
+    public async Task Handle(AddEucharisticYouthPatronSaintCommand command, CancellationToken cancellationToken)
     {
-        SpiritualMilestone milestone = new(Guid.NewGuid(), command.Type, command.Date, command.DocumentCode, command.Place, command.Note);
-        await _repository.AddMilestone(command.EucharisticYouthId, milestone, cancellationToken);
+        PatronSaint patronSaint = new(command.SaintName, command.Day, command.Month);
+        await _repository.AddPatronSaint(command.EucharisticYouthId, patronSaint, cancellationToken);
     }
 
     #endregion

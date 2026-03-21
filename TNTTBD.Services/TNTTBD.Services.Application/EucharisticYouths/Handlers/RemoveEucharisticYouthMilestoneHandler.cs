@@ -4,7 +4,7 @@ using TNTTBD.Services.Domain.Catechism.Repositories;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
-public class RemoveMilestoneHandler : IRequestHandler<RemoveMilestoneCommand>
+public class RemoveEucharisticYouthMilestoneHandler : IRequestHandler<RemoveEucharisticYouthMilestoneCommand>
 {
     #region Fields
 
@@ -19,7 +19,7 @@ public class RemoveMilestoneHandler : IRequestHandler<RemoveMilestoneCommand>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="unitOfWork"></param>
-    public RemoveMilestoneHandler(IEucharisticYouthRepository repository)
+    public RemoveEucharisticYouthMilestoneHandler(IEucharisticYouthRepository repository)
     {
         _repository = repository;
     }
@@ -28,7 +28,7 @@ public class RemoveMilestoneHandler : IRequestHandler<RemoveMilestoneCommand>
 
     #region Methods
 
-    public async Task Handle(RemoveMilestoneCommand command, CancellationToken cancellationToken)
+    public async Task Handle(RemoveEucharisticYouthMilestoneCommand command, CancellationToken cancellationToken)
     {
         await _repository.RemoveMilestone(command.EucharisticYouthId, command.MilestoneId, cancellationToken);
     }

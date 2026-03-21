@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Catechism.Repositories;
+using TNTTBD.Services.Domain.Common;
 using TNTTBD.Services.Domain.ValueObjects;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
@@ -9,21 +10,31 @@ namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Repositories;
 
 public class CatechistRepository : ICatechistRepository
 {
+    #region Fields
+
     private readonly CatechismDbContext _context;
+
+    #endregion
+
+    #region Constructors
 
     public CatechistRepository(CatechismDbContext context)
     {
         _context = context;
     }
 
-    public async Task AddAsync(
-        Catechist catechist,
-        CancellationToken cancellationToken)
+    #endregion
+
+    #region Methods
+
+    /// <inheritdoc />
+    public async Task AddAsync(Catechist catechist, CancellationToken cancellationToken)
     {
         CatechistEntity entity = catechist.ToEntity();
         await _context.Catechists.AddAsync(entity, cancellationToken);
     }
 
+    /// <inheritdoc />
     public async Task<Catechist?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         CatechistEntity? entity = await _context.Catechists
@@ -32,6 +43,20 @@ public class CatechistRepository : ICatechistRepository
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return entity?.ToDomain();
+    }
+
+    /// <inheritdoc />
+    public async Task UpdateCatechist(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken)
+    {
+        CatechistEntity? catechistEntity = await _context.Catechists.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        if (catechistEntity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+
+        Catechist domain = catechistEntity.ToDomain();
+        domain.UpdateInfo(fullName, dateOfBirth, address, isMale);
+        domain.UpdateEntity(catechistEntity);
     }
 
     /// <inheritdoc />
@@ -50,6 +75,22 @@ public class CatechistRepository : ICatechistRepository
     }
 
     /// <inheritdoc />
+    public async Task<string> RemovePhoto(Guid id, Guid photoId, CancellationToken cancellationToken)
+    {
+        CatechistEntity? catechistEntity = await _context.Catechists
+            .Include(y => y.Photos)
+            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        if (catechistEntity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+        Catechist domain = catechistEntity.ToDomain();
+        PhotoReference photoReference = domain.RemovePhoto(photoId);
+        domain.UpdateEntity(catechistEntity);
+        return photoReference.StorageKey;
+    }
+
+    /// <inheritdoc />
     public async Task AddPatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken)
     {
         CatechistEntity? catechistEntity = await _context.Catechists
@@ -63,4 +104,21 @@ public class CatechistRepository : ICatechistRepository
         domain.AddPatronSaint(patronSaint);
         domain.UpdateEntity(catechistEntity);
     }
+
+    /// <inheritdoc />
+    public async Task RemovePatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken)
+    {
+        CatechistEntity? catechistEntity = await _context.Catechists
+            .Include(y => y.PatronSaints)
+            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        if (catechistEntity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+        Catechist domain = catechistEntity.ToDomain();
+        domain.RemovePatronSaint(patronSaint);
+        domain.UpdateEntity(catechistEntity);
+    }
+
+    #endregion
 }

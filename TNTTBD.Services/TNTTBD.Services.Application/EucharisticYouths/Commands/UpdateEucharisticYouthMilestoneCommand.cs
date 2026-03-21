@@ -1,11 +1,10 @@
 using MediatR;
-using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
-public record AddMilestoneCommand(
+public record UpdateEucharisticYouthMilestoneCommand(
     Guid EucharisticYouthId,
-    MilestoneType Type,
+    Guid MilestoneId,
     DateOnly Date,
     string? DocumentCode,
     string? Place,

@@ -59,10 +59,20 @@ public class EucharisticYouthController : Controller
     }
 
     /// <summary>
+    /// Update
+    /// </summary>
+    [HttpPatch]
+    public async Task<IActionResult> Update(UpdateEucharisticYouthCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+
+    /// <summary>
     /// Add milestone
     /// </summary>
     [HttpPost("milestones")]
-    public async Task<IActionResult> AddMilestone(AddMilestoneCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddMilestone(AddEucharisticYouthMilestoneCommand command, CancellationToken cancellationToken)
     {
         await _mediator.Send(command, cancellationToken);
         return Ok();
@@ -72,15 +82,14 @@ public class EucharisticYouthController : Controller
     /// Add milestone
     /// </summary>
     [HttpPut("milestones")]
-    public async Task<IActionResult> UpdateMilestone(Guid id, AddMilestoneCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateMilestone(UpdateEucharisticYouthMilestoneCommand command, CancellationToken cancellationToken)
     {
-        AddMilestoneCommand finalCommand = command with { EucharisticYouthId = id };
-        await _mediator.Send(finalCommand, cancellationToken);
+        await _mediator.Send(command, cancellationToken);
         return Ok();
     }
 
     [HttpDelete("milestones")]
-    public async Task<IActionResult> RemoveMilestone(RemoveMilestoneCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveMilestone(RemoveEucharisticYouthMilestoneCommand command, CancellationToken cancellationToken)
     {
         await _mediator.Send(command, cancellationToken);
         return Ok();
@@ -90,7 +99,7 @@ public class EucharisticYouthController : Controller
     /// Add Patron Saints
     /// </summary>
     [HttpPost("patronSaints")]
-    public async Task<IActionResult> AddPatronSaint(AddPatronSaintCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddPatronSaint(AddEucharisticYouthPatronSaintCommand command, CancellationToken cancellationToken)
     {
         await _mediator.Send(command, cancellationToken);
         return Ok();
@@ -100,14 +109,14 @@ public class EucharisticYouthController : Controller
     /// Add Patron Saints
     /// </summary>
     [HttpDelete("patronSaints")]
-    public async Task<IActionResult> RemovePatronSaint(RemovePatronSaintCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemovePatronSaint(RemoveEucharisticYouthPatronSaintCommand command, CancellationToken cancellationToken)
     {
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
 
     [HttpPost("photos/upload-url")]
-    public async Task<IActionResult> RequestUploadUrl(RequestYouthPhotoUploadCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> RequestUploadUrl(RequestEucharisticYouthPhotoUploadCommand command, CancellationToken cancellationToken)
     {
         PhotoReferenceDto result = await _mediator.Send(command, cancellationToken);
 
@@ -115,14 +124,14 @@ public class EucharisticYouthController : Controller
     }
 
     [HttpGet("photos")]
-    public async Task<IActionResult> GetPhotos(GetYouthPhotosQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPhotos(GetEucharisticYouthPhotosQuery query, CancellationToken cancellationToken)
     {
         List<PhotoReferenceDto> result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
 
     [HttpDelete("photos")]
-    public async Task<IActionResult> RemoveYouthPhoto(RemoveYouthPhotoCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemovePhoto(RemoveEucharisticYouthPhotoCommand command, CancellationToken cancellationToken)
     {
         await _mediator.Send(command, cancellationToken);
         return Ok();

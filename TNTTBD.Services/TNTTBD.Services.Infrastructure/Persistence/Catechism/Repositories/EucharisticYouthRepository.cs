@@ -17,6 +17,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         _context = context;
     }
 
+    /// <inheritdoc />
     public async Task AddAsync(
         EucharisticYouth youth,
         CancellationToken cancellationToken)
@@ -25,6 +26,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         await _context.EucharisticYouths.AddAsync(entity, cancellationToken);
     }
 
+    /// <inheritdoc />
     public async Task<EucharisticYouth?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         EucharisticYouthEntity? entity = await _context.EucharisticYouths
