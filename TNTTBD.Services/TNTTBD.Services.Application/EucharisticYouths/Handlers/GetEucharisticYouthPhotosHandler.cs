@@ -8,7 +8,7 @@ using TNTTBD.Services.Domain.Common;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Handlers;
 
-public class GetYouthPhotosHandler : IRequestHandler<GetYouthPhotosQuery, List<PhotoReferenceDto>>
+public class GetEucharisticYouthPhotosHandler : IRequestHandler<GetEucharisticYouthPhotosQuery, List<PhotoReferenceDto>>
 {
     #region Fields
 
@@ -19,7 +19,7 @@ public class GetYouthPhotosHandler : IRequestHandler<GetYouthPhotosQuery, List<P
 
     #region Constructors
 
-    public GetYouthPhotosHandler(IEucharisticYouthRepository repository, IFileStorage fileStorage)
+    public GetEucharisticYouthPhotosHandler(IEucharisticYouthRepository repository, IFileStorage fileStorage)
     {
         _repository = repository;
         _storage = fileStorage;
@@ -29,7 +29,7 @@ public class GetYouthPhotosHandler : IRequestHandler<GetYouthPhotosQuery, List<P
 
     #region Methods
 
-    public async Task<List<PhotoReferenceDto>> Handle(GetYouthPhotosQuery query, CancellationToken cancellationToken)
+    public async Task<List<PhotoReferenceDto>> Handle(GetEucharisticYouthPhotosQuery query, CancellationToken cancellationToken)
     {
         EucharisticYouth? youth = await _repository.GetByIdAsync(query.Id, cancellationToken);
 

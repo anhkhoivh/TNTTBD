@@ -6,7 +6,7 @@ using TNTTBD.Services.Domain.Catechism.Repositories;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
-public class RequestYouthPhotoUploadHandler : IRequestHandler<RequestYouthPhotoUploadCommand, PhotoReferenceDto>
+public class RequestEucharisticYouthPhotoUploadHandler : IRequestHandler<RequestEucharisticYouthPhotoUploadCommand, PhotoReferenceDto>
 {
     private readonly IEucharisticYouthRepository _repository;
     private readonly IFileStorage _storage;
@@ -18,7 +18,7 @@ public class RequestYouthPhotoUploadHandler : IRequestHandler<RequestYouthPhotoU
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="unitOfWork"></param>
-    public RequestYouthPhotoUploadHandler(IEucharisticYouthRepository repository, IFileStorage fileStorage)
+    public RequestEucharisticYouthPhotoUploadHandler(IEucharisticYouthRepository repository, IFileStorage fileStorage)
     {
         _repository = repository;
         _storage = fileStorage;
@@ -26,7 +26,7 @@ public class RequestYouthPhotoUploadHandler : IRequestHandler<RequestYouthPhotoU
 
     #endregion
 
-    public async Task<PhotoReferenceDto> Handle(RequestYouthPhotoUploadCommand command, CancellationToken cancellationToken)
+    public async Task<PhotoReferenceDto> Handle(RequestEucharisticYouthPhotoUploadCommand command, CancellationToken cancellationToken)
     {
         Guid photoId = Guid.NewGuid();
 

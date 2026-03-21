@@ -6,7 +6,7 @@ using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
-public class UpdateMilestoneHandler : IRequestHandler<UpdateMilestoneCommand>
+public class UpdateEucharisticYouthMilestoneHandler : IRequestHandler<UpdateEucharisticYouthMilestoneCommand>
 {
     #region Fields
 
@@ -21,7 +21,7 @@ public class UpdateMilestoneHandler : IRequestHandler<UpdateMilestoneCommand>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="unitOfWork"></param>
-    public UpdateMilestoneHandler(IEucharisticYouthRepository repository, IUnitOfWork unitOfWork)
+    public UpdateEucharisticYouthMilestoneHandler(IEucharisticYouthRepository repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
     }
@@ -30,7 +30,7 @@ public class UpdateMilestoneHandler : IRequestHandler<UpdateMilestoneCommand>
 
     #region Methods
 
-    public async Task Handle(UpdateMilestoneCommand command, CancellationToken cancellationToken)
+    public async Task Handle(UpdateEucharisticYouthMilestoneCommand command, CancellationToken cancellationToken)
     {
         SpiritualMilestone milestone = new(command.MilestoneId, MilestoneType.Baptism, command.Date, command.DocumentCode, command.Place, command.Note);
         await _repository.UpdateMilestone(command.EucharisticYouthId, milestone, cancellationToken);

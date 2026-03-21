@@ -1,0 +1,49 @@
+using MediatR;
+using TNTTBD.Services.Application.Catechists.Commands;
+using TNTTBD.Services.Domain.Catechism.Members;
+using TNTTBD.Services.Domain.Catechism.Repositories;
+using TNTTBD.Services.Domain.ValueObjects;
+
+namespace TNTTBD.Services.Application.Catechists.Handlers;
+
+/// <summary>
+/// Create Catechist handler
+/// </summary>
+public class CreateCatechistHandler : IRequestHandler<CreateCatechistCommand, Guid>
+{
+    #region Fields
+
+    private readonly ICatechistRepository _repository;
+
+    #endregion
+
+    #region Constructors
+
+    public CreateCatechistHandler(ICatechistRepository repository)
+    {
+        _repository = repository;
+    }
+
+    #endregion
+
+    #region Methods
+
+    public async Task<Guid> Handle(CreateCatechistCommand command, CancellationToken cancellationToken)
+    {
+        FullName fullName = new FullName(command.GivenName, command.ChristName, command.FamilyName, command.MiddleName);
+
+        Catechist catechist = new (
+            Guid.NewGuid(),
+            fullName,
+            command.DateOfBirth,
+            command.Address,
+            command.IsMale
+        );
+
+        await _repository.AddAsync(catechist, cancellationToken);
+
+        return catechist.Id;
+    }
+
+    #endregion
+}

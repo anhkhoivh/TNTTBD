@@ -3,7 +3,7 @@ using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
-public record AddPhotoCommand(
+public record AddEucharisticYouthPhotoCommand(
     Guid EucharisticYouthId,
     string StorageKey,
     string ContentType,

@@ -2,9 +2,7 @@ using MediatR;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
-public record RemovePatronSaintCommand(
+public record RemoveEucharisticYouthPhotoCommand(
     Guid EucharisticYouthId,
-    string SaintName,
-    int Day, 
-    int Month
+    Guid PhotoId
 ) : IRequest;

@@ -6,14 +6,26 @@ namespace TNTTBD.Services.Domain.Catechism.Repositories;
 public interface ICatechistRepository
 {
     /// <summary>
-    /// Get Eucharistic Youth by id
+    /// Get catechist by id
     /// </summary>
     Task<Catechist?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Add new Eucharistic Youth
+    /// Add new catechist
     /// </summary>
     Task AddAsync(Catechist catechist, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Update basic info
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="fullName"></param>
+    /// <param name="dateOfBirth"></param>
+    /// <param name="address"></param>
+    /// <param name="isMale"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task UpdateCatechist(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken);
 
     /// <summary>
     /// Add photo
@@ -24,4 +36,14 @@ public interface ICatechistRepository
     /// Add Patron Saint
     /// </summary>
     Task AddPatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Remove Patron Saint
+    /// </summary>
+    Task RemovePatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Add Patron Saint
+    /// </summary>
+    Task<string> RemovePhoto(Guid id, Guid photoId, CancellationToken cancellationToken);
 }
