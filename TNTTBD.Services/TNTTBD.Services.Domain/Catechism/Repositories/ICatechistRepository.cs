@@ -25,7 +25,15 @@ public interface ICatechistRepository
     /// <param name="isMale"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task UpdateCatechist(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken);
+    Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Remove
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task Remove(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Add photo

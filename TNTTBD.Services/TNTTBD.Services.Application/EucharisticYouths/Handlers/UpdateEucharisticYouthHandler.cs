@@ -32,7 +32,7 @@ public class UpdateEucharisticYouthHandler : IRequestHandler<UpdateEucharisticYo
     public async Task Handle(UpdateEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
         FullName fullName = new FullName(command.GivenName, command.ChristName, command.FamilyName, command.MiddleName);
-        await _repository.UpdateEucharisticYouth(command.EucharisticYouthId, fullName, command.DateOfBirth, command.Address, command.IsMale, cancellationToken);
+        await _repository.Update(command.EucharisticYouthId, fullName, command.DateOfBirth, command.Address, command.IsMale, cancellationToken);
     }
 
     #endregion

@@ -68,6 +68,13 @@ public class CatechistController : Controller
         return Ok();
     }
 
+    [HttpDelete]
+    public async Task<IActionResult> Remove(RemoveCatechistCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+
     /// <summary>
     /// Add Patron Saints
     /// </summary>

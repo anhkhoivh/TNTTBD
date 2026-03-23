@@ -68,6 +68,13 @@ public class EucharisticYouthController : Controller
         return Ok();
     }
 
+    [HttpDelete]
+    public async Task<IActionResult> Remove(RemoveEucharisticYouthCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+
     /// <summary>
     /// Add milestone
     /// </summary>
@@ -115,6 +122,12 @@ public class EucharisticYouthController : Controller
         return Ok();
     }
 
+    /// <summary>
+    /// Request photo upload
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpPost("photos/upload-url")]
     public async Task<IActionResult> RequestUploadUrl(RequestEucharisticYouthPhotoUploadCommand command, CancellationToken cancellationToken)
     {
@@ -123,6 +136,12 @@ public class EucharisticYouthController : Controller
         return Ok(result);
     }
 
+    /// <summary>
+    /// Get list of photos
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet("photos")]
     public async Task<IActionResult> GetPhotos(GetEucharisticYouthPhotosQuery query, CancellationToken cancellationToken)
     {
@@ -130,6 +149,12 @@ public class EucharisticYouthController : Controller
         return Ok(result);
     }
 
+    /// <summary>
+    /// Remove photo
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpDelete("photos")]
     public async Task<IActionResult> RemovePhoto(RemoveEucharisticYouthPhotoCommand command, CancellationToken cancellationToken)
     {

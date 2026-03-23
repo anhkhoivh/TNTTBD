@@ -30,7 +30,7 @@ public class UpdateCatechistHandler : IRequestHandler<UpdateCatechistCommand>
     public async Task Handle(UpdateCatechistCommand command, CancellationToken cancellationToken)
     {
         FullName fullName = new FullName(command.GivenName, command.ChristName, command.FamilyName, command.MiddleName);
-        await _repository.UpdateCatechist(command.CatechistId, fullName, command.DateOfBirth, command.Address, command.IsMale, cancellationToken);
+        await _repository.Update(command.CatechistId, fullName, command.DateOfBirth, command.Address, command.IsMale, cancellationToken);
     }
 
     #endregion

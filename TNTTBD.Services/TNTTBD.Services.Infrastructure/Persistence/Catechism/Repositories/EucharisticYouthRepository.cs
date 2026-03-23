@@ -39,7 +39,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
     }
 
     /// <inheritdoc />
-    public async Task UpdateEucharisticYouth(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken)
+    public async Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken)
     {
         EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
@@ -50,6 +50,18 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.UpdateInfo(fullName, dateOfBirth, address, isMale);
         domain.UpdateEntity(youthEntity);
+    }
+
+    /// <inheritdoc />
+    public async Task Remove(Guid id, CancellationToken cancellationToken)
+    {
+        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
+            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        if (youthEntity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+        _context.Remove(youthEntity);
     }
 
     /// <inheritdoc />

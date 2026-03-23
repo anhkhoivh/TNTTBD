@@ -25,7 +25,12 @@ public interface IEucharisticYouthRepository
     /// <param name="isMale"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task UpdateEucharisticYouth(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken);
+    Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Remove Eucharistic Youth
+    /// </summary>
+    Task Remove(Guid id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Add milestone

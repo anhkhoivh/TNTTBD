@@ -48,4 +48,17 @@ public class CatechismYear : AggregateRoot<Guid>
 
     #endregion
 
+    #region Methods
+
+    /// <summary>
+    /// Update basic info
+    /// </summary>
+    public void UpdateInfo(DateOnly startDate, DateOnly endDate, string? theme)
+    {
+        StartDate = startDate;
+        EndDate = endDate;
+        Theme = theme;
+    }
+
+    #endregion
 }
