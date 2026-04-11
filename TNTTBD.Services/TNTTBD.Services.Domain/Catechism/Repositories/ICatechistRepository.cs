@@ -6,11 +6,6 @@ namespace TNTTBD.Services.Domain.Catechism.Repositories;
 public interface ICatechistRepository
 {
     /// <summary>
-    /// Get catechist by id
-    /// </summary>
-    Task<Catechist?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Add new catechist
     /// </summary>
     Task AddAsync(Catechist catechist, CancellationToken cancellationToken);

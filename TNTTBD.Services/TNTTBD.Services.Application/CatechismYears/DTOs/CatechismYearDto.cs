@@ -1,3 +1,5 @@
+using TNTTBD.Services.Application.CatechismClasses.DTOs;
+
 namespace TNTTBD.Services.Application.CatechismYears.DTOs;
 
 public class CatechismYearDto
@@ -21,4 +23,9 @@ public class CatechismYearDto
     /// Theme
     /// </summary>
     public string? Theme { get; set; }
+
+    /// <summary>
+    /// List of classes
+    /// </summary>
+    public List<CatechismClassDto> CatechismClasses { get; set; } = new();
 }

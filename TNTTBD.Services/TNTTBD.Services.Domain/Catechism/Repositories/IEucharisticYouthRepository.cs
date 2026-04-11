@@ -6,11 +6,6 @@ namespace TNTTBD.Services.Domain.Catechism.Repositories;
 public interface IEucharisticYouthRepository
 {
     /// <summary>
-    /// Get Eucharistic Youth by id
-    /// </summary>
-    Task<EucharisticYouth?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Add new Eucharistic Youth
     /// </summary>
     Task AddAsync(EucharisticYouth youth, CancellationToken cancellationToken);

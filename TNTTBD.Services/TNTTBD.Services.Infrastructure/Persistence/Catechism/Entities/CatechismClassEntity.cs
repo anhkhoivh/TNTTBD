@@ -46,5 +46,4 @@ public class CatechismClassEntity
     public ICollection<ExamEntity> Exams { get; set; } = new List<ExamEntity>();
 
     #endregion
-
 }

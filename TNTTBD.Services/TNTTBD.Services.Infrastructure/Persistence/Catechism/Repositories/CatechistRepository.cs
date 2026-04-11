@@ -35,17 +35,6 @@ public class CatechistRepository : ICatechistRepository
     }
 
     /// <inheritdoc />
-    public async Task<Catechist?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
-    {
-        CatechistEntity? entity = await _context.Catechists
-            .Include(x => x.Photos)
-            .Include(x => x.PatronSaints)
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-
-        return entity?.ToDomain();
-    }
-
-    /// <inheritdoc />
     public async Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken)
     {
         CatechistEntity? catechistEntity = await _context.Catechists.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);

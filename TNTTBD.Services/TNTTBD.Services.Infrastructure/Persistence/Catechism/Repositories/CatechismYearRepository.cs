@@ -34,16 +34,6 @@ public class CatechismYearRepository : ICatechismYearRepository
     }
 
     /// <inheritdoc />
-    public async Task<CatechismYear?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
-    {
-        CatechismYearEntity? entity = await _context.CatechismYears
-            .Include(y => y.CatechismClasses)
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-
-        return entity?.ToDomain();
-    }
-
-    /// <inheritdoc />
     public async Task Update(Guid id, DateOnly startDate, DateOnly endDate, string? theme, CancellationToken cancellationToken)
     {
         CatechismYearEntity? yearEntity = await _context.CatechismYears.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);

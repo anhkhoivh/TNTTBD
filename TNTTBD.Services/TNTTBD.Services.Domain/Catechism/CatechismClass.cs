@@ -45,4 +45,16 @@ public class CatechismClass : AggregateRoot<Guid>
 
     #endregion
 
+    #region Methods
+
+    /// <summary>
+    /// Update class info
+    /// </summary>
+    /// <param name="name"></param>
+    public void UpdateInfo(string name)
+    {
+        ClassName = name;
+    }
+
+    #endregion
 }

@@ -1,3 +1,5 @@
+using TNTTBD.Services.Application.Abstractions;
+using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
@@ -54,6 +56,24 @@ public static class EucharisticYouthPhotoMapper
         entity.UploadedAt = domain.UploadedAt;
         entity.UploadedBy = domain.UploadedBy;
         entity.Visibility = domain.Visibility;
+    }
+
+    #endregion
+
+    #region Convert methods from entity to DTO
+
+    /// <summary>
+    /// Convert from entity to DTO
+    /// </summary>
+    public static PhotoReferenceDto ToDTO(this EucharisticYouthPhotoEntity entity, IFileStorage storage)
+    {
+        return new PhotoReferenceDto
+            {
+                Purpose = entity.Purpose.ToString(),
+                ContentType = entity.ContentType,
+                UploadedBy = entity.UploadedBy,
+                Url = storage.GetFileUrl(entity.StorageKey)
+            };
     }
 
     #endregion
