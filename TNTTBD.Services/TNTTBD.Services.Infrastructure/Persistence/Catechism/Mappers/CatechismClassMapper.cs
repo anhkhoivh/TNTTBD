@@ -1,3 +1,4 @@
+using TNTTBD.Services.Application.CatechismClasses.DTOs;
 using TNTTBD.Services.Domain.Catechism;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
@@ -45,6 +46,22 @@ public static class CatechismClassMapper
     public static void UpdateEntity(this CatechismClass domain, CatechismClassEntity entity)
     {
         entity.ClassName = domain.ClassName;
+    }
+
+    #endregion
+
+    #region Convert methods from entity to DTO
+
+    /// <summary>
+    /// Convert from entity to DTO
+    /// </summary>
+    public static CatechismClassDto ToDTO(this CatechismClassEntity entity)
+    {
+        return new CatechismClassDto
+            {
+                Id = entity.Id,
+                ClassName = entity.ClassName
+            };
     }
 
     #endregion

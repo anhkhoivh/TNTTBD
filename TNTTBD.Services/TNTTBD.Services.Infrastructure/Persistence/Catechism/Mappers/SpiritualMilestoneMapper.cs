@@ -1,3 +1,4 @@
+using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Domain.Catechism;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
@@ -53,6 +54,24 @@ public static class SpiritualMilestoneMapper
         entity.Type = domain.Type;
         entity.Note = domain.Note;
         entity.Place = domain.Place;
+    }
+
+    #endregion
+
+    #region Convert methods from entity to DTO
+
+    /// <summary>
+    /// Convert from entity to DTO
+    /// </summary>
+    public static SpiritualMilestoneDto ToDTO(this SpiritualMilestoneEntity entity)
+    {
+        return new SpiritualMilestoneDto
+            {
+                Type = entity.Type.ToString(),
+                Date = entity.Date,
+                Place = entity.Place,
+                Note = entity.Note
+            };
     }
 
     #endregion

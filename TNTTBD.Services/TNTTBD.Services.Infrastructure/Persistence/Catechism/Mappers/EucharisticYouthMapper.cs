@@ -1,3 +1,6 @@
+using TNTTBD.Services.Application.Abstractions;
+using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.ValueObjects;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
@@ -115,6 +118,41 @@ public static class EucharisticYouthMapper
         {
             entity.PatronSaints.Add(patronSaint);
         }
+    }
+
+    #endregion
+
+    #region Convert methods from entity to DTO
+
+    /// <summary>
+    /// Convert from entity to DTO
+    /// </summary>
+    public static EucharisticYouthDto ToDTO(this EucharisticYouthEntity entity, IFileStorage storage)
+    {
+        return new EucharisticYouthDto
+        {
+            Id = entity.Id,
+            ChristName = entity.FullName.ChristName,
+            GivenName = entity.FullName.GivenName,
+            FamilyName = entity.FullName.FamilyName,
+            MiddleName = entity.FullName.MiddleName,
+            DateOfBirth = entity.DateOfBirth,
+            IsMale = entity.IsMale,
+            Address = entity.Address,
+
+            Photos = entity.Photos.Select(m => m.ToDTO(storage)).ToList(),
+
+            Milestones = entity.SpiritualMilestones.Select(m => m.ToDTO()).ToList(),
+
+            PatronSaints = entity.PatronSaints
+                .Select(p => new PatronSaintDto
+                {
+                    SaintName = p.SaintName,
+                    Day = p.Day,
+                    Month = p.Month
+                })
+                .ToList()
+        };
     }
 
     #endregion

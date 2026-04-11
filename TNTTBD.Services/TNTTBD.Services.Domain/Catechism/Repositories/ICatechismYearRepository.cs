@@ -6,11 +6,6 @@ namespace TNTTBD.Services.Domain.Catechism.Repositories;
 public interface ICatechismYearRepository
 {
     /// <summary>
-    /// Get year by id
-    /// </summary>
-    Task<CatechismYear?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Add new year
     /// </summary>
     Task AddAsync(CatechismYear catechismYear, CancellationToken cancellationToken);

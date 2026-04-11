@@ -1,6 +1,8 @@
 using MediatR;
 using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Application.EucharisticYouths.DTOs;
+using TNTTBD.Services.Application.EucharisticYouths.Interfaces;
 using TNTTBD.Services.Application.EucharisticYouths.Queries;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Catechism.Repositories;
@@ -12,16 +14,16 @@ public class GetEucharisticYouthPhotosHandler : IRequestHandler<GetEucharisticYo
 {
     #region Fields
 
-    private readonly IEucharisticYouthRepository _repository;
+    private readonly IEucharisticYouthQueryService _queryService;
     private readonly IFileStorage _storage;
 
     #endregion
 
     #region Constructors
 
-    public GetEucharisticYouthPhotosHandler(IEucharisticYouthRepository repository, IFileStorage fileStorage)
+    public GetEucharisticYouthPhotosHandler(IEucharisticYouthQueryService queryService, IFileStorage fileStorage)
     {
-        _repository = repository;
+        _queryService = queryService;
         _storage = fileStorage;
     }
 
@@ -31,21 +33,14 @@ public class GetEucharisticYouthPhotosHandler : IRequestHandler<GetEucharisticYo
 
     public async Task<List<PhotoReferenceDto>> Handle(GetEucharisticYouthPhotosQuery query, CancellationToken cancellationToken)
     {
-        EucharisticYouth? youth = await _repository.GetByIdAsync(query.Id, cancellationToken);
+        EucharisticYouthDto? youth = await _queryService.GetByIdAsync(query.Id, _storage, cancellationToken);
 
         if (youth == null)
         {
             throw new Exception(DomainErrors.ValidationNotFound);
         }
 
-        return youth.Photos.Select(
-            m => new PhotoReferenceDto
-                {
-                    Purpose = m.Purpose.ToString(),
-                    ContentType = m.ContentType,
-                    UploadedBy = m.UploadedBy,
-                    Url = _storage.GetFileUrl(m.StorageKey)
-                }).ToList();
+        return youth.Photos;
     }
 
     #endregion
