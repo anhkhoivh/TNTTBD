@@ -7,17 +7,17 @@ namespace TNTTBD.Services.Application.CatechismClasses.Handlers;
 /// <summary>
 /// Create Catechist handler
 /// </summary>
-public class UpdateCatechismYearHandler : IRequestHandler<UpdateCatechismClassCommand>
+public class UpdateCatechismClassHandler : IRequestHandler<UpdateCatechismClassCommand>
 {
     #region Fields
 
-    private readonly ICatechismYearRepository _repository;
+    private readonly ICatechismClassRepository _repository;
 
     #endregion
 
     #region Constructors
 
-    public UpdateCatechismYearHandler(ICatechismYearRepository repository)
+    public UpdateCatechismClassHandler(ICatechismClassRepository repository)
     {
         _repository = repository;
     }
@@ -28,7 +28,7 @@ public class UpdateCatechismYearHandler : IRequestHandler<UpdateCatechismClassCo
 
     public async Task Handle(UpdateCatechismClassCommand command, CancellationToken cancellationToken)
     {
-        await _repository.Update(command.CatechismClassId, command.StartDate, command.EndDate, command.Theme, cancellationToken);
+        await _repository.Update(command.CatechismClassId, command.ClassName, cancellationToken);
     }
 
     #endregion

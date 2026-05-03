@@ -32,7 +32,7 @@ public class CatechismYearQueryService : ICatechismYearQueryService
             .Where(y => y.Id == id)
             .Select(y => y.ToDTO())
             .AsNoTracking()
-            .FirstOrDefaultAsync(cancellationToken) ?? throw new Exception(DomainErrors.ValidationNotFound);
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     #endregion

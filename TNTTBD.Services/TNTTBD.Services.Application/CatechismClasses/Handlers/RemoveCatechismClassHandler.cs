@@ -5,9 +5,9 @@ namespace TNTTBD.Services.Application.CatechismClasses.Commands;
 
 public class RemoveCatechismClassHandler : IRequestHandler<RemoveCatechismClassCommand>
 {
-    private readonly ICatechismYearRepository _repository;
+    private readonly ICatechismClassRepository _repository;
 
-    public RemoveCatechismClassHandler(ICatechismYearRepository repository)
+    public RemoveCatechismClassHandler(ICatechismClassRepository repository)
     {
         _repository = repository;
     }

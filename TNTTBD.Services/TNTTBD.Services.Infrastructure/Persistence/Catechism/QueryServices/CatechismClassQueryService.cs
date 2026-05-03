@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.CatechismClasses.DTOs;
 using TNTTBD.Services.Application.CatechismClasses.Interfaces;
-using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
@@ -28,11 +27,11 @@ public class CatechismClassQueryService : ICatechismClassQueryService
     /// <inheritdoc />
     public async Task<CatechismClassDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        CatechismClassEntity? entity = await _context.CatechismClasses
+        return await _context.CatechismClasses
+            .Where(x => x.Id == id)
+            .Select(x => x.ToDTO())
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-
-        return entity?.ToDTO();
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     /// <inheritdoc />

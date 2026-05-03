@@ -27,12 +27,12 @@ public class CatechismSession : AggregateRoot<Guid>
     /// <summary>
     /// Constructor from details
     /// </summary>
-    public CatechismSession(Guid id, Guid classId, DateTimeOffset dateTime, string title, IEnumerable<CatechismSessionAttendance> attendances) : base(id)
+    public CatechismSession(Guid id, Guid classId, DateTimeOffset dateTime, string title, IEnumerable<CatechismSessionAttendance>? attendances = null) : base(id)
     {
         CatechismClassId = classId;
         DateTime = dateTime;
         Title = title;
-        _attendances.AddRange(attendances);
+        _attendances = attendances?.ToList() ?? new List<CatechismSessionAttendance>();
     }
 
     #endregion
@@ -62,6 +62,17 @@ public class CatechismSession : AggregateRoot<Guid>
     #endregion
 
     #region Methods
+
+    /// <summary>
+    /// Update info
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <param name="title"></param>
+    public void UpdateInfo(DateTimeOffset dateTime, string title)
+    {
+        DateTime = dateTime;
+        Title = title;
+    }
 
     /// <summary>
     /// Mark attendance

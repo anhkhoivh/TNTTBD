@@ -1,5 +1,6 @@
 using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Catechists.DTOs;
+using TNTTBD.Services.Application.Common.DTOs;
 
 namespace TNTTBD.Services.Application.Catechists.Interfaces;
 
@@ -9,4 +10,13 @@ public interface ICatechistQueryService
     /// Get catechist by id
     /// </summary>
     Task<CatechistDto?> GetByIdAsync(Guid id, IFileStorage storage, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Get photo list
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="storage"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<List<PhotoReferenceDto>?> GetPhotosByCatechistId(Guid catechistId, IFileStorage storage, CancellationToken cancellationToken);
 }

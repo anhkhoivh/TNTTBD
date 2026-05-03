@@ -97,6 +97,16 @@ public class CatechismDbContext : DbContext
     /// </summary>
     public DbSet<EucharisticYouthRunningNumberEntity> EucharisticYouthRunningNumbers => Set<EucharisticYouthRunningNumberEntity>();
 
+    /// <summary>
+    /// Entity of CatechistPhotoEntity
+    /// </summary>
+    public DbSet<CatechistPhotoEntity> CatechistPhotos => Set<CatechistPhotoEntity>();
+
+    /// <summary>
+    /// Entity of CatechistPhotoEntity
+    /// </summary>
+    public DbSet<EucharisticYouthPhotoEntity> EucharisticYouthPhotos => Set<EucharisticYouthPhotoEntity>();
+
     #endregion
 
     #region Methods
