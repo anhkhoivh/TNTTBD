@@ -1,46 +1,33 @@
 using MediatR;
 using TNTTBD.Services.Application.CatechismYears.DTOs;
+using TNTTBD.Services.Application.CatechismYears.Interfaces;
 using TNTTBD.Services.Application.CatechismYears.Queries;
-using TNTTBD.Services.Domain.Catechism;
-using TNTTBD.Services.Domain.Catechism.Repositories;
+using TNTTBD.Services.Domain.Common;
 
 namespace TNTTBD.Services.Application.CatechismYears.Handlers;
 
-public class GetCatechismYearByIdHandler : IRequestHandler<GetCatechismYearByIdQuery, CatechismYearDto?>
+public class GetCatechismYearByIdHandler : IRequestHandler<GetCatechismYearByIdQuery, CatechismYearDto>
 {
     #region Fields
 
-    private readonly ICatechismYearRepository _repository;
+    private readonly ICatechismYearQueryService _queryService;
 
     #endregion
 
     #region Constructors
 
-    public GetCatechismYearByIdHandler(ICatechismYearRepository repository)
+    public GetCatechismYearByIdHandler(ICatechismYearQueryService queryService)
     {
-        _repository = repository;
+        _queryService = queryService;
     }
 
     #endregion
 
     #region Methods
 
-    public async Task<CatechismYearDto?> Handle(GetCatechismYearByIdQuery query, CancellationToken cancellationToken)
+    public async Task<CatechismYearDto> Handle(GetCatechismYearByIdQuery query, CancellationToken cancellationToken)
     {
-        CatechismYear? year = await _repository.GetByIdAsync(query.Id, cancellationToken);
-
-        if (year == null)
-        {
-            return null;
-        }
-
-        return new CatechismYearDto
-        {
-            Id = year.Id,
-            StartDate = year.StartDate,
-            EndDate = year.EndDate,
-            Theme = year.Theme
-        };
+        return await _queryService.GetByIdAsync(query.Id, cancellationToken) ?? throw new Exception(DomainErrors.ValidationNotFound);
     }
 
     #endregion

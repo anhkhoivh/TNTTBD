@@ -56,7 +56,7 @@ public class CatechismYearRepository : ICatechismYearRepository
         {
             throw new Exception(DomainErrors.ValidationNotFound);
         }
-        _context.Remove(yearEntity);
+        _context.CatechismYears.Remove(yearEntity);
     }
 
     #endregion

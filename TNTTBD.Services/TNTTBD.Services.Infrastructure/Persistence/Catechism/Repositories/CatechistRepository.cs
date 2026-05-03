@@ -57,7 +57,7 @@ public class CatechistRepository : ICatechistRepository
         {
             throw new Exception(DomainErrors.ValidationNotFound);
         }
-        _context.Remove(catechistEntity);
+        _context.Catechists.Remove(catechistEntity);
     }
 
     /// <inheritdoc />

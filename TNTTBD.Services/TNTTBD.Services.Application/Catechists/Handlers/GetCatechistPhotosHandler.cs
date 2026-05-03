@@ -1,9 +1,8 @@
 using MediatR;
 using TNTTBD.Services.Application.Abstractions;
+using TNTTBD.Services.Application.Catechists.Interfaces;
 using TNTTBD.Services.Application.Catechists.Queries;
 using TNTTBD.Services.Application.Common.DTOs;
-using TNTTBD.Services.Domain.Catechism.Members;
-using TNTTBD.Services.Domain.Catechism.Repositories;
 using TNTTBD.Services.Domain.Common;
 
 namespace TNTTBD.Services.Application.Catechists.Handlers;
@@ -12,16 +11,16 @@ public class GetCatechistPhotosHandler : IRequestHandler<GetCatechistPhotosQuery
 {
     #region Fields
 
-    private readonly ICatechistRepository _repository;
+    private readonly ICatechistQueryService _queryService;
     private readonly IFileStorage _storage;
 
     #endregion
 
     #region Constructors
 
-    public GetCatechistPhotosHandler(ICatechistRepository repository, IFileStorage fileStorage)
+    public GetCatechistPhotosHandler(ICatechistQueryService queryService, IFileStorage fileStorage)
     {
-        _repository = repository;
+        _queryService = queryService;
         _storage = fileStorage;
     }
 
@@ -31,21 +30,7 @@ public class GetCatechistPhotosHandler : IRequestHandler<GetCatechistPhotosQuery
 
     public async Task<List<PhotoReferenceDto>> Handle(GetCatechistPhotosQuery query, CancellationToken cancellationToken)
     {
-        Catechist? catechist = await _repository.GetByIdAsync(query.Id, cancellationToken);
-
-        if (catechist == null)
-        {
-            throw new Exception(DomainErrors.ValidationNotFound);
-        }
-
-        return catechist.Photos.Select(
-            m => new PhotoReferenceDto
-                {
-                    Purpose = m.Purpose.ToString(),
-                    ContentType = m.ContentType,
-                    UploadedBy = m.UploadedBy,
-                    Url = _storage.GetFileUrl(m.StorageKey)
-                }).ToList();
+        return await _queryService.GetPhotosByCatechistId(query.CatechistId, _storage, cancellationToken) ?? throw new Exception(DomainErrors.ValidationNotFound);
     }
 
     #endregion

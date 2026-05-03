@@ -56,7 +56,7 @@ public class CatechismClassRepository : ICatechismClassRepository
         {
             throw new Exception(DomainErrors.ValidationNotFound);
         }
-        _context.Remove(entity);
+        _context.CatechismClasses.Remove(entity);
     }
 
     #endregion

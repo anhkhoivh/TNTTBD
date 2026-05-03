@@ -49,7 +49,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         {
             throw new Exception(DomainErrors.ValidationNotFound);
         }
-        _context.Remove(youthEntity);
+        _context.EucharisticYouths.Remove(youthEntity);
     }
 
     /// <inheritdoc />

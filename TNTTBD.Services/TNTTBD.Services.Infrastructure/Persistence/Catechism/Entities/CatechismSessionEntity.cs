@@ -46,5 +46,4 @@ public class CatechismSessionEntity
     public ICollection<CatechismSessionAttendanceEntity> EucharisticYouthAttendances { get; set; } = new List<CatechismSessionAttendanceEntity>();
 
     #endregion
-
 }

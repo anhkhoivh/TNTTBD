@@ -1,17 +1,15 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.CatechismClasses.DTOs;
+using TNTTBD.Services.Application.CatechismClasses.Queries;
 using TNTTBD.Services.Application.CatechismYears.Commands;
 using TNTTBD.Services.Application.CatechismYears.DTOs;
 using TNTTBD.Services.Application.CatechismYears.Queries;
-using TNTTBD.Services.Application.Catechists.Commands;
-using TNTTBD.Services.Application.Catechists.DTOs;
-using TNTTBD.Services.Application.Catechists.Queries;
-using TNTTBD.Services.Application.Common.DTOs;
 
 namespace TNTTBD.Services.Api.Controllers;
 
 [ApiController]
-[Route("api/catechism-years")]
+[Route("api/years")]
 public class CatechismYearController : Controller
 {
     #region Fields
@@ -51,14 +49,26 @@ public class CatechismYearController : Controller
     [HttpGet]
     public async Task<IActionResult> GetById(GetCatechismYearByIdQuery query, CancellationToken cancellationToken)
     {
-        CatechismYearDto? result = await _mediator.Send(query, cancellationToken);
+        CatechismYearDto result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
 
-        if (result == null)
+    /// <summary>
+    /// Get classes by year
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPost("classes")]
+    public async Task<IActionResult> GetClassesByYear([FromBody] GetClassesByYearQuery query, CancellationToken cancellationToken)
+    {
+        List<CatechismClassDto> classes = await _mediator.Send(query, cancellationToken);
+        if (classes == null || classes.Count == 0)
         {
             return NotFound();
         }
 
-        return Ok(result);
+        return Ok(classes);
     }
 
     /// <summary>
