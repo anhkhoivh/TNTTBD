@@ -23,6 +23,7 @@ public class CatechismSessionAttendanceEntity
     /// Id of session
     /// </summary>
     public Guid CatechismSessionId { get; set; }
+    
     /// <summary>
     /// Status
     /// </summary>

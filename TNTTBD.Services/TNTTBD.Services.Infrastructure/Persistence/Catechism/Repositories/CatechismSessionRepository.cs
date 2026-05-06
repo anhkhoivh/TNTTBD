@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Domain.Catechism;
 using TNTTBD.Services.Domain.Catechism.Repositories;
 using TNTTBD.Services.Domain.Common;
+using TNTTBD.Services.Domain.Enums;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
 
@@ -57,6 +58,23 @@ public class CatechismSessionRepository : ICatechismSessionRepository
             throw new Exception(DomainErrors.ValidationNotFound);
         }
         _context.CatechismSessions.Remove(entity);
+    }
+
+    public async Task MarkAttendanceList(
+        Guid sessionId,
+        IEnumerable<(Guid CatechismClassEucharisticYouthId, AttendanceStatus Status)> attendances,
+        Guid catechistId,
+        CancellationToken cancellationToken)
+    {
+        CatechismSessionEntity? entity = await _context.CatechismSessions.FirstOrDefaultAsync(y => y.Id == sessionId, cancellationToken);
+        if (entity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+
+        CatechismSession domain = entity.ToDomain();
+        domain.MarkAttendances(attendances, catechistId);
+        domain.UpdateEntity(entity);
     }
 
     #endregion
