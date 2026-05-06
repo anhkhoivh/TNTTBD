@@ -68,5 +68,12 @@ public class CatechismSessionController : Controller
         return Ok();
     }
 
+    [HttpPost("attendances")]
+    public async Task<IActionResult> MarkAttendance([FromBody] MarkAttendanceListCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+
     #endregion
 }

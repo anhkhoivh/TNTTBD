@@ -95,5 +95,18 @@ public class CatechismSession : AggregateRoot<Guid>
         ));
     }
 
+    /// <summary>
+    /// For multiple attendances
+    /// </summary>
+    /// <param name="attendances"></param>
+    /// <param name="catechistId"></param>
+    public void MarkAttendances(IEnumerable<(Guid CatechismClassEucharisticYouthId, AttendanceStatus Status)> attendances, Guid catechistId)
+    {
+        foreach (var (youthId, status) in attendances)
+        {
+            MarkAttendance(youthId, status, catechistId);
+        }
+    }
+
     #endregion
 }

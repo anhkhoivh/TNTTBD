@@ -1,3 +1,5 @@
+using TNTTBD.Services.Domain.Enums;
+
 namespace TNTTBD.Services.Domain.Catechism.Repositories;
 
 public interface ICatechismSessionRepository
@@ -16,4 +18,9 @@ public interface ICatechismSessionRepository
     /// Remove session
     /// </summary>
     Task Remove(Guid id, CancellationToken cancellationToken);
+
+    Task MarkAttendanceList(Guid sessionId, 
+        IEnumerable<(Guid CatechismClassEucharisticYouthId, AttendanceStatus Status)> attendances,
+        Guid catechistId,
+        CancellationToken cancellationToken);
 }
