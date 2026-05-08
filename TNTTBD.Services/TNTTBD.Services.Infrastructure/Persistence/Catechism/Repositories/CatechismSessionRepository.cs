@@ -60,13 +60,14 @@ public class CatechismSessionRepository : ICatechismSessionRepository
         _context.CatechismSessions.Remove(entity);
     }
 
+    /// <inheritdoc />
     public async Task MarkAttendanceList(
         Guid sessionId,
         IEnumerable<(Guid CatechismClassEucharisticYouthId, AttendanceStatus Status)> attendances,
         Guid catechistId,
         CancellationToken cancellationToken)
     {
-        CatechismSessionEntity? entity = await _context.CatechismSessions.FirstOrDefaultAsync(y => y.Id == sessionId, cancellationToken);
+        CatechismSessionEntity? entity = await _context.CatechismSessions.Include(s => s.EucharisticYouthAttendances).FirstOrDefaultAsync(y => y.Id == sessionId, cancellationToken);
         if (entity == null)
         {
             throw new Exception(DomainErrors.ValidationNotFound);
@@ -74,7 +75,25 @@ public class CatechismSessionRepository : ICatechismSessionRepository
 
         CatechismSession domain = entity.ToDomain();
         domain.MarkAttendances(attendances, catechistId);
-        domain.UpdateEntity(entity);
+        domain.UpdateAttendances(entity);
+    }
+
+    /// <inheritdoc />
+    public async Task MarkAttendance(
+        Guid sessionId,
+        Guid catechismClassEucharisticYouthId, 
+        AttendanceStatus status,
+        Guid catechistId,
+        CancellationToken cancellationToken)
+    {
+        CatechismSessionEntity? entity = await _context.CatechismSessions.Include(s => s.EucharisticYouthAttendances).FirstOrDefaultAsync(y => y.Id == sessionId, cancellationToken);
+        if (entity == null)
+        {
+            throw new Exception(DomainErrors.ValidationNotFound);
+        }
+        CatechismSession domain = entity.ToDomain();
+        CatechismSessionAttendance attendance = domain.MarkAttendance(catechismClassEucharisticYouthId, status, catechistId);
+        entity.UpdateAttendance(attendance);
     }
 
     #endregion

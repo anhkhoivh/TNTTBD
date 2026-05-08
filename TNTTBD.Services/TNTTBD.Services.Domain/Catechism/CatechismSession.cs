@@ -77,22 +77,21 @@ public class CatechismSession : AggregateRoot<Guid>
     /// <summary>
     /// Mark attendance
     /// </summary>
-    public void MarkAttendance(
-        Guid catechismClassEucharisticYouthId,
-        AttendanceStatus status,
-        Guid markedBy)
+    public CatechismSessionAttendance MarkAttendance(Guid catechismClassEucharisticYouthId, AttendanceStatus status, Guid markedBy)
     {
-        if (_attendances.Any(x => x.CatechismClassEucharisticYouthId == catechismClassEucharisticYouthId))
-            throw new DomainException(DomainErrors.AttendanceAlreadyRecorded);
+        CatechismSessionAttendance? existingAttendance = _attendances.FirstOrDefault(x => x.CatechismClassEucharisticYouthId == catechismClassEucharisticYouthId);
 
-        _attendances.Add(new CatechismSessionAttendance(
-            Guid.NewGuid(),
-            Id,
-            catechismClassEucharisticYouthId,
-            status,
-            DateTimeOffset.Now,
-            markedBy
-        ));
+        if (existingAttendance == null)
+        {
+            CatechismSessionAttendance newAttendance = new(Guid.NewGuid(), Id, catechismClassEucharisticYouthId, status, DateTimeOffset.Now, markedBy);
+            _attendances.Add(newAttendance);
+            return newAttendance;
+        }
+        else
+        {
+            existingAttendance.Update(status, DateTimeOffset.Now, markedBy);
+            return existingAttendance;
+        }
     }
 
     /// <summary>

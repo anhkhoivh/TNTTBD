@@ -69,7 +69,14 @@ public class CatechismSessionController : Controller
     }
 
     [HttpPost("attendances")]
-    public async Task<IActionResult> MarkAttendance([FromBody] MarkAttendanceListCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> MarkAttendances([FromBody] MarkAttendanceListCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+
+    [HttpPost("attendance")]
+    public async Task<IActionResult> MarkAttendance([FromBody] MarkAttendanceCommand command, CancellationToken cancellationToken)
     {
         await _mediator.Send(command, cancellationToken);
         return Ok();
