@@ -70,10 +70,7 @@ public class CatechismSessionAttendance : DomainEntity<Guid>
     /// <summary>
     /// Update
     /// </summary>
-    public void Update(
-        AttendanceStatus status,
-        DateTimeOffset markedAt,
-        Guid markedBy)
+    public void Update(AttendanceStatus status, DateTimeOffset markedAt, Guid markedBy)
     {
         AttendanceStatus = status;
         MarkedTime = markedAt;

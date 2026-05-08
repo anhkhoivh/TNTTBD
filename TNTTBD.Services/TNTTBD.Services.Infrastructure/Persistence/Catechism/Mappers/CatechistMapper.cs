@@ -59,8 +59,7 @@ public static class CatechistMapper
         // Photo
         foreach (PhotoReference photo in domain.Photos)
         {
-            CatechistPhotoEntity? existingEntity = entity.Photos
-                .FirstOrDefault(x => x.Id == photo.Id);
+            CatechistPhotoEntity? existingEntity = entity.Photos.FirstOrDefault(x => x.Id == photo.Id);
 
             if (existingEntity == null)
             {

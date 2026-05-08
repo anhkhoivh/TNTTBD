@@ -49,13 +49,29 @@ public static class CatechismSessionMapper
         entity.DateTime = domain.DateTime;
         entity.CatechismClassId = domain.CatechismClassId;
         entity.Title = domain.Title;
-        entity.EucharisticYouthAttendances.Clear();
+    }
 
+    /// <summary>
+    /// Update Attendances
+    /// </summary>
+    public static void UpdateAttendances(this CatechismSession domain, CatechismSessionEntity entity)
+    {
         foreach (CatechismSessionAttendance attendance in domain.Attendances)
         {
-            entity.EucharisticYouthAttendances.Add(attendance.ToEntity());
+            CatechismSessionAttendanceEntity? existingEntity = entity.EucharisticYouthAttendances.FirstOrDefault(x => x.Id == attendance.Id);
+
+            if (existingEntity == null)
+            {
+                entity.EucharisticYouthAttendances.Add(attendance.ToEntity());
+            }
+            else
+            {
+                attendance.UpdateEntity(existingEntity);
+            }
         }
     }
+
+    
 
     #endregion
 
@@ -73,6 +89,23 @@ public static class CatechismSessionMapper
                 CatechismClassId = entity.CatechismClassId,
                 DateTime = entity.DateTime
             };
+    }
+
+    /// <summary>
+    /// Update Attendance
+    /// </summary>
+    public static void UpdateAttendance(this CatechismSessionEntity entity, CatechismSessionAttendance attendance)
+    {
+        CatechismSessionAttendanceEntity? existingEntity = entity.EucharisticYouthAttendances.FirstOrDefault(x => x.Id == attendance.Id);
+
+        if (existingEntity == null)
+        {
+            entity.EucharisticYouthAttendances.Add(attendance.ToEntity());
+        }
+        else
+        {
+            attendance.UpdateEntity(existingEntity);
+        }
     }
 
     #endregion

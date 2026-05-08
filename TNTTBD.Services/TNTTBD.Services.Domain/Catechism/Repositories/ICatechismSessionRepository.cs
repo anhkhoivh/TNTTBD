@@ -19,8 +19,31 @@ public interface ICatechismSessionRepository
     /// </summary>
     Task Remove(Guid id, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Mark attendance list
+    /// </summary>
+    /// <param name="sessionId"></param>
+    /// <param name="attendances"></param>
+    /// <param name="catechistId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     Task MarkAttendanceList(Guid sessionId, 
         IEnumerable<(Guid CatechismClassEucharisticYouthId, AttendanceStatus Status)> attendances,
+        Guid catechistId,
+        CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Mark attendance
+    /// </summary>
+    /// <param name="sessionId"></param>
+    /// <param name="catechismClassEucharisticYouthId"></param>
+    /// <param name="status"></param>
+    /// <param name="catechistId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task MarkAttendance(Guid sessionId,
+        Guid catechismClassEucharisticYouthId, 
+        AttendanceStatus status,
         Guid catechistId,
         CancellationToken cancellationToken);
 }
