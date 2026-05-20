@@ -80,7 +80,7 @@ public class CatechismDbContext : DbContext
     /// <summary>
     /// Join entity CatechismClassEucharisticYouthEntity
     /// </summary>
-    public DbSet<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouth => Set<CatechismClassEucharisticYouthEntity>();
+    public DbSet<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouths => Set<CatechismClassEucharisticYouthEntity>();
 
     /// <summary>
     /// Entity of Users
