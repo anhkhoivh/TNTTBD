@@ -1,0 +1,12 @@
+.picker-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+
+  mat-form-field { min-width: 260px; flex: 1; }
+}
+
+table.full-width { width: 100%; }
+
+.actions { display: flex; justify-content: flex-end; }

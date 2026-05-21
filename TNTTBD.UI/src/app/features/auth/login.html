@@ -1,0 +1,67 @@
+<div class="login-page">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>{{ 'auth.signIn' | t }}</mat-card-title>
+      <mat-card-subtitle>{{ 'app.title' | t }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="submit()" #form="ngForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'auth.email' | t }}</mat-label>
+          <input
+            matInput
+            type="email"
+            name="email"
+            [ngModel]="email()"
+            (ngModelChange)="email.set($event)"
+            required
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'auth.password' | t }}</mat-label>
+          <input
+            matInput
+            type="password"
+            name="password"
+            [ngModel]="password()"
+            (ngModelChange)="password.set($event)"
+          />
+        </mat-form-field>
+
+        @if (error()) {
+          <p class="error">{{ error()! | t }}</p>
+        }
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="full-width"
+          [disabled]="loading()"
+        >
+          @if (loading()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            {{ 'auth.signIn' | t }}
+          }
+        </button>
+      </form>
+
+      <div class="divider-or">
+        <mat-divider></mat-divider>
+        <span>{{ 'auth.or' | t }}</span>
+        <mat-divider></mat-divider>
+      </div>
+
+      <button mat-stroked-button class="full-width sso" (click)="loginSSO('google')">
+        <mat-icon>login</mat-icon>
+        {{ 'auth.signInWithGoogle' | t }}
+      </button>
+      <button mat-stroked-button class="full-width sso" (click)="loginSSO('microsoft')">
+        <mat-icon>login</mat-icon>
+        {{ 'auth.signInWithMicrosoft' | t }}
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

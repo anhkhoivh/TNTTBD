@@ -1,0 +1,102 @@
+@if (data(); as d) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ d.youth.fullName | fullName }}</mat-card-title>
+      <mat-card-subtitle>{{ d.youth.code }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="field"><mat-icon>cake</mat-icon> {{ d.youth.dateOfBirth | dateLocale }}</div>
+      <div class="field">
+        <mat-icon>{{ d.youth.isMale ? 'male' : 'female' }}</mat-icon>
+        {{ (d.youth.isMale ? 'common.male' : 'common.female') | t }}
+      </div>
+      @if (d.youth.address) {
+        <div class="field"><mat-icon>home</mat-icon> {{ d.youth.address }}</div>
+      }
+      <mat-chip-set>
+        @for (ps of d.youth.patronSaints; track ps.saintName) {
+          <mat-chip>{{ ps.saintName }} ({{ ps.day }}/{{ ps.month }})</mat-chip>
+        }
+      </mat-chip-set>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-tab-group class="mt-16">
+    <mat-tab [label]="('youth.milestones' | t) + ' (' + d.youth.milestones.length + ')'">
+      <mat-list class="mt-16">
+        @for (m of d.youth.milestones; track m.id) {
+          <mat-list-item>
+            <mat-icon matListItemIcon>celebration</mat-icon>
+            <span matListItemTitle>{{ milestoneKey(m.type) | t }}</span>
+            <span matListItemLine>{{ m.date | dateLocale }}@if (m.place) { · {{ m.place }} }</span>
+          </mat-list-item>
+        } @empty {
+          <p>{{ 'common.noData' | t }}</p>
+        }
+      </mat-list>
+    </mat-tab>
+
+    <mat-tab [label]="('youth.photos' | t) + ' (' + d.youth.photos.length + ')'">
+      <div class="photo-grid mt-16">
+        @for (p of d.youth.photos; track p.id) {
+          <img [src]="photoService.url(p.storageKey)" [alt]="p.id" class="photo" />
+        } @empty {
+          <p>{{ 'common.noData' | t }}</p>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab [label]="('youth.contacts' | t) + ' (' + d.youthContacts.total + ')'">
+      <mat-list class="mt-16">
+        @for (yc of d.youthContacts.items; track yc.id) {
+          @if (contactOf(yc.contactId, d.contacts.items); as c) {
+            <mat-list-item>
+              <mat-icon matListItemIcon>person</mat-icon>
+              <span matListItemTitle>{{ c.fullName | fullName }}</span>
+              <span matListItemLine>
+                {{ relationKey(yc.contactRelationType) | t }}
+                @if (c.phoneNumber) { · {{ c.phoneNumber }} }
+                @if (c.email) { · {{ c.email }} }
+              </span>
+            </mat-list-item>
+          }
+        } @empty {
+          <p>{{ 'common.noData' | t }}</p>
+        }
+      </mat-list>
+    </mat-tab>
+
+    <mat-tab [label]="('youth.classHistory' | t) + ' (' + d.enrollments.total + ')'">
+      <mat-list class="mt-16">
+        @for (e of d.enrollments.items; track e.id) {
+          @if (classOf(e.catechismClassId, d.classes.items); as cls) {
+            <mat-list-item>
+              <mat-icon matListItemIcon>class</mat-icon>
+              <a
+                matListItemTitle
+                [routerLink]="['/app/classes/detail']"
+                [queryParams]="{ id: cls.id }"
+              >{{ cls.className }}</a>
+              <span matListItemLine>
+                {{ enrollmentStatusKey(e.status) | t }} ·
+                {{ e.enrolledAt | dateLocale: 'date' }}
+                @if (e.leftAt) { → {{ e.leftAt | dateLocale: 'date' }} }
+              </span>
+            </mat-list-item>
+          }
+        } @empty {
+          <p>{{ 'common.noData' | t }}</p>
+        }
+      </mat-list>
+    </mat-tab>
+  </mat-tab-group>
+
+  <div class="mt-16">
+    <a mat-button routerLink="/app/youth"><mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}</a>
+    <a mat-stroked-button [routerLink]="['/app/youth/edit']" [queryParams]="{ id: d.youth.id }">
+      <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
+    </a>
+  </div>
+} @else {
+  <p>{{ 'common.loading' | t }}</p>
+}

@@ -1,0 +1,61 @@
+@if (data(); as d) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ d.catechist.fullName | fullName }}</mat-card-title>
+      <mat-card-subtitle>
+        {{ d.catechist.dateOfBirth | dateLocale }} ·
+        {{ (d.catechist.isMale ? 'common.male' : 'common.female') | t }}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (d.catechist.address) {
+        <div class="field"><mat-icon>home</mat-icon> {{ d.catechist.address }}</div>
+      }
+      <mat-chip-set>
+        @for (ps of d.catechist.patronSaints; track ps.saintName) {
+          <mat-chip>{{ ps.saintName }} ({{ ps.day }}/{{ ps.month }})</mat-chip>
+        }
+      </mat-chip-set>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-tab-group class="mt-16">
+    <mat-tab [label]="('youth.photos' | t) + ' (' + d.catechist.photos.length + ')'">
+      <div class="photo-grid mt-16">
+        @for (p of d.catechist.photos; track p.id) {
+          <img [src]="photoService.url(p.storageKey)" [alt]="p.id" class="photo" />
+        } @empty {
+          <p>{{ 'common.noData' | t }}</p>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab [label]="('class.catechists' | t) + ' (' + d.assignments.total + ')'">
+      <mat-list class="mt-16">
+        @for (a of d.assignments.items; track a.id) {
+          @if (classOf(a.catechismClassId, d.classes.items); as cls) {
+            <mat-list-item>
+              <mat-icon matListItemIcon>class</mat-icon>
+              <a
+                matListItemTitle
+                [routerLink]="['/app/classes/detail']"
+                [queryParams]="{ id: cls.id }"
+              >{{ cls.className }}</a>
+              <span matListItemLine>{{ roleKey(a.role) | t }}</span>
+            </mat-list-item>
+          }
+        } @empty {
+          <p>{{ 'common.noData' | t }}</p>
+        }
+      </mat-list>
+    </mat-tab>
+  </mat-tab-group>
+
+  <div class="mt-16">
+    <a mat-button routerLink="/app/catechists">
+      <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
+    </a>
+  </div>
+} @else {
+  <p>{{ 'common.loading' | t }}</p>
+}

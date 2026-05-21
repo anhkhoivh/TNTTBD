@@ -1,0 +1,152 @@
+<mat-toolbar color="primary">
+  <mat-icon>person_add</mat-icon>
+  <span class="title">{{ 'register.title' | t }}</span>
+</mat-toolbar>
+
+<div class="register-page">
+  <mat-card class="register-card">
+    <mat-card-content>
+      <mat-stepper linear>
+        <mat-step [stepControl]="youthForm" [label]="'register.step.youth' | t">
+          <form [formGroup]="youthForm" class="step-form">
+            <div class="grid-2">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'fullName.christ' | t }}</mat-label>
+                <input matInput formControlName="christName" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'fullName.family' | t }}</mat-label>
+                <input matInput formControlName="familyName" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'fullName.middle' | t }}</mat-label>
+                <input matInput formControlName="middleName" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'fullName.given' | t }} *</mat-label>
+                <input matInput formControlName="givenName" required />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'youth.dateOfBirth' | t }} *</mat-label>
+                <input matInput [matDatepicker]="dob" formControlName="dateOfBirth" required />
+                <mat-datepicker-toggle matIconSuffix [for]="dob"></mat-datepicker-toggle>
+                <mat-datepicker #dob></mat-datepicker>
+              </mat-form-field>
+              <div class="field-gender">
+                <label>{{ 'youth.gender' | t }}</label>
+                <mat-radio-group formControlName="isMale">
+                  <mat-radio-button [value]="true">{{ 'common.male' | t }}</mat-radio-button>
+                  <mat-radio-button [value]="false">{{ 'common.female' | t }}</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <mat-form-field appearance="outline" class="span-2">
+                <mat-label>{{ 'youth.address' | t }}</mat-label>
+                <input matInput formControlName="address" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'register.baptismDate' | t }}</mat-label>
+                <input matInput [matDatepicker]="bp" formControlName="baptismDate" />
+                <mat-datepicker-toggle matIconSuffix [for]="bp"></mat-datepicker-toggle>
+                <mat-datepicker #bp></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'milestone.place' | t }}</mat-label>
+                <input matInput formControlName="baptismPlace" />
+              </mat-form-field>
+            </div>
+            <div class="step-actions">
+              <button mat-button matStepperNext type="button">{{ 'common.next' | t }}</button>
+            </div>
+          </form>
+        </mat-step>
+
+        <mat-step [stepControl]="contactsForm" [label]="'register.step.contacts' | t">
+          <form [formGroup]="contactsForm" class="step-form">
+            <div formArrayName="contacts">
+              @for (c of contacts.controls; track $index; let i = $index) {
+                <div [formGroupName]="i" class="contact-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'fullName.family' | t }}</mat-label>
+                    <input matInput formControlName="familyName" />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'fullName.given' | t }} *</mat-label>
+                    <input matInput formControlName="givenName" required />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'contact.relation' | t }}</mat-label>
+                    <mat-select formControlName="relation">
+                      @for (r of relations; track r.v) {
+                        <mat-option [value]="r.v">{{ r.k | t }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'contact.phone' | t }} *</mat-label>
+                    <input matInput formControlName="phoneNumber" required />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'auth.email' | t }}</mat-label>
+                    <input matInput type="email" formControlName="email" />
+                  </mat-form-field>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    color="warn"
+                    (click)="removeContact(i)"
+                    [disabled]="contacts.length === 1"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+            <button mat-stroked-button type="button" (click)="addContact()">
+              <mat-icon>add</mat-icon> {{ 'common.add' | t }}
+            </button>
+            <div class="step-actions">
+              <button mat-button matStepperPrevious type="button">{{ 'common.back' | t }}</button>
+              <button mat-button matStepperNext type="button">{{ 'common.next' | t }}</button>
+            </div>
+          </form>
+        </mat-step>
+
+        <mat-step [label]="'register.step.account' | t">
+          <form [formGroup]="accountForm" class="step-form">
+            <mat-checkbox formControlName="hasAccount">{{ 'register.hasAccount' | t }}</mat-checkbox>
+            @if (accountForm.get('hasAccount')?.value) {
+              <mat-form-field appearance="outline" class="full-width mt-16">
+                <mat-label>{{ 'auth.email' | t }}</mat-label>
+                <input matInput type="email" formControlName="email" />
+              </mat-form-field>
+            }
+            <div class="step-actions">
+              <button mat-button matStepperPrevious type="button">{{ 'common.back' | t }}</button>
+              <button mat-button matStepperNext type="button">{{ 'common.next' | t }}</button>
+            </div>
+          </form>
+        </mat-step>
+
+        <mat-step [label]="'register.step.review' | t">
+          <div class="step-form">
+            <p>{{ youthForm.value.christName }} {{ youthForm.value.familyName }} {{ youthForm.value.middleName }} {{ youthForm.value.givenName }}</p>
+            <p>{{ 'youth.dateOfBirth' | t }}: {{ youthForm.value.dateOfBirth }}</p>
+            <p>{{ 'youth.contacts' | t }}: {{ contacts.length }}</p>
+            <div class="step-actions">
+              <button mat-button matStepperPrevious type="button">{{ 'common.back' | t }}</button>
+              <button
+                mat-flat-button
+                color="primary"
+                type="button"
+                (click)="submit()"
+                [disabled]="loading()"
+              >
+                {{ 'common.submit' | t }}
+              </button>
+            </div>
+          </div>
+        </mat-step>
+      </mat-stepper>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,1 @@
+import{Fc as a,_ as o,va as n}from"./chunk-WJUDORRU.js";var i=class t{counter=n(0);isLoading=a(()=>this.counter()>0);begin(){this.counter.update(e=>e+1)}end(){this.counter.update(e=>Math.max(0,e-1))}static \u0275fac=function(r){return new(r||t)};static \u0275prov=o({token:t,factory:t.\u0275fac,providedIn:"root"})};export{i as a};

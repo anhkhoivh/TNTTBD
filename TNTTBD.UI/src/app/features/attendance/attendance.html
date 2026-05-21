@@ -1,0 +1,74 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ 'nav.attendance' | t }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="picker-row">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'nav.classes' | t }}</mat-label>
+        <mat-select
+          [value]="selectedClassId()"
+          (selectionChange)="onClassChange($event.value)"
+        >
+          @for (c of classes().items; track c.id) {
+            <mat-option [value]="c.id">{{ c.className }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'class.sessions' | t }}</mat-label>
+        <mat-select
+          [value]="selectedSessionId()"
+          (selectionChange)="onSessionChange($event.value)"
+          [disabled]="!selectedClassId()"
+        >
+          @for (s of sessions(); track s.id) {
+            <mat-option [value]="s.id">
+              {{ s.dateTime | dateLocale: 'datetime' }} — {{ s.title }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (rows().length > 0) {
+      <table mat-table [dataSource]="rows()" class="full-width">
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef>{{ 'youth.code' | t }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.youth?.code }}</td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>{{ 'youth.fullName' | t }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.youth?.fullName | fullName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>{{ 'attendance.markFor' | t }}</th>
+          <td mat-cell *matCellDef="let row">
+            <mat-button-toggle-group
+              [value]="row.status"
+              (change)="setStatus(row.enrollmentId, $event.value)"
+            >
+              @for (s of statuses; track s.v) {
+                <mat-button-toggle [value]="s.v">
+                  <mat-icon>{{ s.icon }}</mat-icon>
+                  {{ s.k | t }}
+                </mat-button-toggle>
+              }
+            </mat-button-toggle-group>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['code', 'name', 'status']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['code', 'name', 'status']"></tr>
+      </table>
+      <div class="actions mt-16">
+        <button mat-flat-button color="primary" (click)="saveAll()">
+          <mat-icon>save</mat-icon>
+          {{ 'attendance.saveAll' | t }}
+        </button>
+      </div>
+    } @else if (selectedSessionId()) {
+      <p class="text-center mt-16">{{ 'common.noData' | t }}</p>
+    }
+  </mat-card-content>
+</mat-card>

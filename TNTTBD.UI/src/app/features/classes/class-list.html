@@ -1,0 +1,56 @@
+<div class="toolbar">
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'class.year' | t }}</mat-label>
+    <mat-select [ngModel]="selectedYearId()" (ngModelChange)="selectedYearId.set($event)">
+      <mat-option [value]="null">{{ 'common.noData' | t }}</mat-option>
+      @for (y of years(); track y.id) {
+        <mat-option [value]="y.id">{{ yearLabel(y.id) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <span class="spacer"></span>
+  @if (canManage()) {
+    <button mat-stroked-button (click)="newYear()">
+      <mat-icon>event</mat-icon> {{ 'class.year' | t }} +
+    </button>
+    <button mat-flat-button color="primary" (click)="newClass()">
+      <mat-icon>add</mat-icon> {{ 'common.add' | t }}
+    </button>
+  }
+</div>
+
+<mat-card>
+  <mat-card-content>
+    <table mat-table [dataSource]="filtered()" class="full-width">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>{{ 'class.name' | t }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.className }}</td>
+      </ng-container>
+      <ng-container matColumnDef="year">
+        <th mat-header-cell *matHeaderCellDef>{{ 'class.year' | t }}</th>
+        <td mat-cell *matCellDef="let row">{{ yearLabel(row.catechismYearId) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <a mat-icon-button [routerLink]="['/app/classes/detail']" [queryParams]="{ id: row.id }">
+            <mat-icon>visibility</mat-icon>
+          </a>
+          @if (canManage()) {
+            <button mat-icon-button (click)="editClass(row)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteClass(row)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="cols"></tr>
+      <tr mat-row *matRowDef="let row; columns: cols"></tr>
+    </table>
+    @if (filtered().length === 0) {
+      <p class="text-center mt-16">{{ 'common.noData' | t }}</p>
+    }
+  </mat-card-content>
+</mat-card>

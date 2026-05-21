@@ -1,0 +1,45 @@
+// TNTTBD.UI global styles
+// Material 3: Blue primary + Orange (amber) tertiary
+// Supports light/dark via .dark-theme class on <html>
+
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+
+  @include mat.theme((
+    color: (
+      primary: mat.$blue-palette,
+      tertiary: mat.$orange-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+
+  color-scheme: light;
+
+  &.dark-theme {
+    color-scheme: dark;
+  }
+}
+
+body {
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  height: 100%;
+}
+
+.flex-row { display: flex; flex-direction: row; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-1 { flex: 1; }
+.gap-8 { gap: 8px; }
+.gap-16 { gap: 16px; }
+.spacer { flex: 1 1 auto; }
+.full-width { width: 100%; }
+.text-center { text-align: center; }
+.mt-16 { margin-top: 16px; }
+.mb-16 { margin-bottom: 16px; }
+.p-16 { padding: 16px; }
+
