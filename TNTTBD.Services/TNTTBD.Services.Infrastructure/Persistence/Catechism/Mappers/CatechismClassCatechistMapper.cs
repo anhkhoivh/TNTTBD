@@ -15,7 +15,9 @@ public static class CatechismClassCatechistMapper
     /// </summary>
     public static CatechismClassCatechist ToDomain(this CatechismClassCatechistEntity entity)
     {
-        CatechismClassCatechist domain = new CatechismClassCatechist(entity.Id, entity.CatechistId, entity.CatechismClassId, entity.Role);
+        CatechismClassCatechist domain = new CatechismClassCatechist(
+            entity.Id, entity.CatechistId, entity.CatechismClassId, entity.Role,
+            entity.EnrolledAt, entity.LeftAt, entity.Status, entity.Note);
 
         return domain;
     }
@@ -34,7 +36,11 @@ public static class CatechismClassCatechistMapper
             Id = domain.Id,
             CatechismClassId = domain.CatechismClassId,
             CatechistId = domain.CatechistId,
-            Role = domain.Role
+            Role = domain.Role,
+            EnrolledAt = domain.EnrolledAt,
+            LeftAt = domain.LeftAt,
+            Status = domain.Status,
+            Note = domain.Note
         };
 
         return entity;
@@ -48,6 +54,9 @@ public static class CatechismClassCatechistMapper
         entity.CatechismClassId = domain.CatechismClassId;
         entity.CatechistId = domain.CatechistId;
         entity.Role = domain.Role;
+        entity.LeftAt = domain.LeftAt;
+        entity.Status = domain.Status;
+        entity.Note = domain.Note;
     }
 
     #endregion

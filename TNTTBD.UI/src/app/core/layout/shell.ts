@@ -84,18 +84,6 @@ export class Shell {
       roles: [UserRole.Admin, UserRole.Catechist, UserRole.EucharisticYouth, UserRole.EucharisticYouthContact],
     },
     {
-      labelKey: 'nav.attendance',
-      route: '/app/attendance',
-      icon: 'how_to_reg',
-      roles: [UserRole.Admin, UserRole.Catechist],
-    },
-    {
-      labelKey: 'nav.exams',
-      route: '/app/exams',
-      icon: 'quiz',
-      roles: [UserRole.Admin, UserRole.Catechist],
-    },
-    {
       labelKey: 'nav.admin',
       route: '/app/admin/users',
       icon: 'admin_panel_settings',

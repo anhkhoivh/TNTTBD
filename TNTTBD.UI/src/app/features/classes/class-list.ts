@@ -12,7 +12,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { AuthService } from '../../core/auth/auth.service';
-import { CatechismClass, CatechismYear } from '../../shared/models';
+import { CatechismClass, CatechismClassCatechist, CatechismYear } from '../../shared/models';
 import { UserRole } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { YearFormDialog } from '../../shared/components/year-form-dialog';
@@ -47,6 +47,8 @@ import { ConfirmDialog } from '../../shared/components/confirm-dialog';
       }
       .toolbar .spacer { flex: 1; }
       mat-form-field { min-width: 220px; }
+      .my-class { font-weight: 600; }
+      .star-icon { font-size: 18px; height: 18px; width: 18px; vertical-align: middle; color: var(--mat-sys-primary); margin-right: 4px; }
     `,
   ],
 })
@@ -61,10 +63,18 @@ export class ClassList {
   protected years = signal<CatechismYear[]>([]);
   protected classes = signal<CatechismClass[]>([]);
   protected selectedYearId = signal<string | null>(null);
+  protected myClassIds = signal<Set<string>>(new Set());
 
   protected filtered = computed(() => {
     const yid = this.selectedYearId();
-    return yid ? this.classes().filter((c) => c.catechismYearId === yid) : this.classes();
+    const list = yid ? this.classes().filter((c) => c.catechismYearId === yid) : this.classes();
+    const mine = this.myClassIds();
+    if (mine.size === 0) return list;
+    return [...list].sort((a, b) => {
+      const aIsMine = mine.has(a.id) ? 0 : 1;
+      const bIsMine = mine.has(b.id) ? 0 : 1;
+      return aIsMine - bIsMine;
+    });
   });
 
   protected cols = ['name', 'year', 'actions'];
@@ -75,6 +85,10 @@ export class ClassList {
 
   protected canManage(): boolean {
     return this.auth.hasRole([UserRole.Admin]);
+  }
+
+  protected isMyClass(id: string): boolean {
+    return this.myClassIds().has(id);
   }
 
   protected yearLabel(id: string): string {
@@ -91,6 +105,16 @@ export class ClassList {
       }
     });
     this.api.list<CatechismClass>('/classes').subscribe((r) => this.classes.set(r.items));
+
+    const user = this.auth.currentUser();
+    if (user?.catechistId) {
+      this.api.list<CatechismClassCatechist>('/class-catechist').subscribe((r) => {
+        const ids = new Set(
+          r.items.filter((c) => c.catechistId === user.catechistId).map((c) => c.catechismClassId),
+        );
+        this.myClassIds.set(ids);
+      });
+    }
   }
 
   protected newYear(): void {

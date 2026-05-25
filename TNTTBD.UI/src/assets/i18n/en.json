@@ -32,6 +32,8 @@
   "common.actions": "Actions",
   "common.male": "Male",
   "common.female": "Female",
+  "common.new": "New",
+  "common.profile": "Profile",
   "common.view": "View",
   "common.date": "Date",
   "common.time": "Time",
@@ -63,6 +65,7 @@
   "youth.list": "Youth list",
   "youth.create": "Create youth",
   "youth.edit": "Edit youth",
+  "youth.addToMyClass": "Add to my class",
 
   "fullName.given": "Given name",
   "fullName.middle": "Middle name",
@@ -110,6 +113,7 @@
   "session.title": "Session title",
   "session.dateTime": "Date & time",
 
+  "attendance.title": "Attendance",
   "attendance.markFor": "Mark attendance for",
   "attendance.present": "Present",
   "attendance.absent": "Absent",
@@ -131,6 +135,9 @@
   "catechistRole.Main": "Main",
   "catechistRole.Member": "Member",
   "catechistRole.Assistance": "Assistance",
+  "catechist.classHistory": "Class history",
+  "catechist.create": "New catechist",
+  "catechist.edit": "Edit catechist",
 
   "register.title": "Register a new Eucharistic Youth",
   "register.step.youth": "Youth info",

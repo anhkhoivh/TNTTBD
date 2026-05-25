@@ -82,10 +82,14 @@ export class Dashboard {
     const u = this.auth.currentUser();
     const d = this.data();
     if (!u?.catechistId || !d) return [];
+    // Find latest year
+    const years = d.years.items;
+    if (years.length === 0) return [];
+    const latestYear = [...years].sort((a, b) => b.startDate.localeCompare(a.startDate))[0];
     const ids = new Set(
       d.classCatechists.items.filter((c) => c.catechistId === u.catechistId).map((c) => c.catechismClassId),
     );
-    return d.classes.items.filter((c) => ids.has(c.id));
+    return d.classes.items.filter((c) => ids.has(c.id) && c.catechismYearId === latestYear.id);
   });
 
   protected myYouthEnrollments = computed(() => {

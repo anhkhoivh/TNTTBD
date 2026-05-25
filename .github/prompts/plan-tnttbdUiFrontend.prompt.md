@@ -13,9 +13,14 @@ Build an Angular 21 SPA with Material 3 for managing a parish Eucharistic Youth 
 | Phase 3 — Shared Components & Models | ✅ Complete — models, pipes, FullNameInput, PatronSaintInput, PhotoUpload, ConfirmDialog, StatusBadge, DataTable, year/class/session/exam form dialogs |
 | Phase 4 — Authentication | ✅ Complete (mock SSO + mock login; real OAuth deferred to backend) |
 | Phase 5 — Feature Modules | ✅ Complete (5.1 Landing, 5.2 role-aware Dashboard, 5.3 Youth list/detail/form, 5.4 Class list/detail with CRUD dialogs, 5.5 Attendance, 5.6 Exams + results, 5.7 Guest registration stepper, 5.8 Admin/Users, 5.9 Catechist list/detail) |
-| Phase 6 — Polish & Production | ✅ Complete (6.1 global error interceptor + 404, 6.2 loading service/skeletons, 6.3 build output → `wwwroot`) |
+| Phase 6 — Polish & Production | ✅ Complete (6.1 global error interceptor + 404, 6.2 loading service/skeletons, 6.3 ~~build output → `wwwroot`~~ replaced by Phase 7) |
+| Bug Fixes — Detail Pages | ✅ Fixed: (1) `catchError` added to forkJoin in catechist-detail and youth-detail so API errors show empty state instead of sticking on "Loading…"; (2) youth-detail removed redundant `/contacts` request — contact data now embedded in `EucharisticYouthContact.contact` from mock; (3) contacts tab uses `yc.contact` directly; (4) content-projection fix: `matListItemTitle`/`matListItemLine` moved to top-level of `mat-list-item` (not inside `@if`) with conditional content rendered inside the span/ng-container; (5) class-history and assignment tabs now show fallback ID when class lookup fails; (6) `enrollmentStatusKey`/`relationKey` helpers simplified to template-literal (`\`enrollment.status.${s}\``) |
+| Phase 7 — Decouple Frontend from API | ✅ Complete — Angular outputs to `dist/TNTTBD.UI` (independent deployment); CORS added to ASP.NET Core `Program.cs` (origins from `appsettings.json`); per-environment API URLs (dev/staging/prod); `proxy.conf.json` for local dev DX; `wwwroot` removed from API project |
+| Phase 8 — Catechist One-Class-Per-Year + Lazy Tabs | ✅ Complete |
+| Phase 9 — Patron Saints, Catechist Form & Profile Tabs | ✅ Complete |
+| Phase 10 — Remove Attendance/Exams Pages + Role-Based UX | ✅ Complete |
 
-Build verified: `npm run build` passes (~498 kB raw / ~129 kB transfer). Mocks active via `environment.useMocks: true`.
+Build verified: `npm run build` outputs to `dist/TNTTBD.UI`. `ng serve` proxies `/api` → `http://localhost:5062`. Mocks active via `environment.useMocks: true`.
 
 ---
 
@@ -102,6 +107,37 @@ Build verified: `npm run build` passes (~498 kB raw / ~129 kB transfer). Mocks a
 
 ---
 
+## Phase 8: Catechist One-Class-Per-Year + Enrollment History + Lazy-Load Tabs
+
+**Business rule:** A catechist cannot be registered to more than one class in the same catechism year (regardless of role).
+
+**Backend changes (Domain + Infrastructure):**
+| Step | Task |
+|------|------|
+| 8.1 | `CatechismClassCatechist` domain entity — added `EnrolledAt`, `LeftAt`, `Status` (reuses `EnrollmentStatus`), `Note` + `EndEnrollment()` method |
+| 8.2 | `CatechismClassCatechistEntity` — added matching persistence columns |
+| 8.3 | `CatechismClassCatechistMapper` — maps all new fields in `ToDomain()`, `ToEntity()`, `UpdateEntity()` |
+| 8.4 | Fixed FK bug in `CatechismClassCatechistEntityConfiguration` — `CatechistEntity` FK was incorrectly pointing to `CatechismClassId` instead of `CatechistId` |
+| 8.5 | Fixed pre-existing bug in `CatechismClassEucharisticYouthMapper.ToDomain()` — was missing temporal args in constructor call |
+
+**Frontend changes:**
+| Step | Task |
+|------|------|
+| 8.6 | `CatechismClassCatechist` TS interface — added `enrolledAt`, `leftAt`, `status`, `note` |
+| 8.7 | Mock data — enforced one-class-per-year (removed duplicate assignments); added historical entries with `Completed` status |
+| 8.8 | **Catechist detail** — lazy-loads assignments/history tab on click; shows `enrolledAt`, `leftAt`, `status` per assignment (mirrors youth class-history) |
+| 8.9 | **Youth detail** — lazy-loads contacts tab and class-history tab on click; milestones+photos remain embedded |
+| 8.10 | **Class detail** — lazy-loads all 4 tabs independently (enrollments, catechists, sessions, exams); CRUD refreshes only the affected tab |
+| 8.11 | Added i18n key `catechist.classHistory` (en/vi) |
+
+**Backend gaps remaining (Phase 8):**
+- [ ] `ICatechismClassCatechistRepository` with `HasActiveAssignmentInYear(catechistId, yearId)` validation
+- [ ] `AddCatechistToClassCommand` handler — query `CatechismClass → CatechismYear`, reject if duplicate year
+- [ ] EF migration for new `CatechismClassCatechistEntity` columns
+- [ ] Wire up `CatechismClassCatechistController` endpoints (POST/PATCH/DELETE)
+
+---
+
 ## Relevant Files (Backend Reference)
 - `TNTTBD.Services/TNTTBD.Services.Domain/Catechism/Members/` — EucharisticYouth, Catechist, Contact, Member base
 - `TNTTBD.Services/TNTTBD.Services.Domain/Catechism/` — CatechismYear, CatechismClass, CatechismSession, Exam, attendance/results
@@ -121,6 +157,11 @@ Build verified: `npm run build` passes (~498 kB raw / ~129 kB transfer). Mocks a
 6. Manual: language toggle vi↔en, verify translations
 7. Manual: dark/light theme toggle
 8. Lighthouse: accessibility ≥ 90, performance ≥ 80
+9. Phase 8: `ng build` + `dotnet build` pass after all changes
+10. Phase 8: catechist detail → assignments tab only loads on click
+11. Phase 8: youth detail → contacts & class history tabs only load on click
+12. Phase 8: class detail → each tab loads independently on click
+13. Phase 8: mock data respects one-class-per-year constraint
 
 ---
 
@@ -134,6 +175,8 @@ Build verified: `npm run build` passes (~498 kB raw / ~129 kB transfer). Mocks a
 - **No upload size/type limits** in v1 — frontend sends file as-is via multipart; backend will enforce later.
 - **Mock SSO flow** — `loginWithSSO(provider)` returns a fake JWT for a seeded user (one per role) so role-based UI can be exercised without real OAuth. Real Google/Microsoft integration deferred.
 - **Locale & timezone** — default locale `vi-VN` (UTC+7), switchable to `en-US`. Register Angular locales (`registerLocaleData(localeVi)`) and use `LOCALE_ID` provider tied to the language signal. Material date adapter set to native with locale.
+- **Catechist one-class-per-year** — strictly one class regardless of role. Backend validates on add; frontend shows warning in assign dialog. `EnrollmentStatus` enum reused for catechist lifecycle.
+- **Lazy-load detail tabs** — all detail pages (catechist, youth, class) defer non-embedded data to tab-click. Embedded data (photos, milestones inside entity response) loads with the initial entity fetch. Pattern: `signal<T | null>` + `onTabChange(index)` + load-once flag.
 - **API convention — no IDs in URL path.** All IDs (and other params) travel in the request payload (body for POST/PATCH/DELETE, query string for GET). Matches existing backend pattern (e.g., `GET /api/classes` with `GetCatechismClassByIdQuery` query binding, `PATCH /api/classes` with command body). Frontend services follow this for every entity.
 - **Photo URLs** — backend `PhotoReference.storageKey` is a relative path only. Frontend prepends an absolute prefix from `environment.photoBaseUrl` (e.g., `https://cdn.tnttbd.example/photos/` in prod, `/mock-photos/` for mocks). A helper `photoUrl(storageKey: string): string` lives in `core/services/photo.service.ts`. Mocks return seeded storageKeys that resolve to placeholder images bundled in `assets/mock-photos/`.
 

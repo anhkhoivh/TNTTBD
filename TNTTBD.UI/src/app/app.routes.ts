@@ -70,6 +70,13 @@ export const routes: Routes = [
           import('./features/catechist/catechist-detail').then((m) => m.CatechistDetail),
       },
       {
+        path: 'catechists/edit',
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.Admin, UserRole.Catechist] },
+        loadComponent: () =>
+          import('./features/catechist/catechist-form').then((m) => m.CatechistForm),
+      },
+      {
         path: 'classes',
         loadComponent: () =>
           import('./features/classes/class-list').then((m) => m.ClassList),
@@ -78,20 +85,6 @@ export const routes: Routes = [
         path: 'classes/detail',
         loadComponent: () =>
           import('./features/classes/class-detail').then((m) => m.ClassDetail),
-      },
-      {
-        path: 'attendance',
-        canActivate: [roleGuard],
-        data: { roles: [UserRole.Admin, UserRole.Catechist] },
-        loadComponent: () =>
-          import('./features/attendance/attendance').then((m) => m.AttendancePage),
-      },
-      {
-        path: 'exams',
-        canActivate: [roleGuard],
-        data: { roles: [UserRole.Admin, UserRole.Catechist] },
-        loadComponent: () =>
-          import('./features/exams/exams').then((m) => m.ExamsPage),
       },
       {
         path: 'admin/users',

@@ -32,7 +32,7 @@ public class CatechismClassCatechistEntityConfiguration : IEntityTypeConfigurati
 
         builder.HasOne<CatechistEntity>()
             .WithMany()
-            .HasForeignKey(c => c.CatechismClassId)
+            .HasForeignKey(c => c.CatechistId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 

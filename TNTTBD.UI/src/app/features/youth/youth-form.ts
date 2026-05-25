@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of } from 'rxjs';
+import { switchMap, of, forkJoin } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -19,11 +19,20 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { EucharisticYouth } from '../../shared/models';
-import { MilestoneType } from '../../shared/enums';
+import { AuthService } from '../../core/auth/auth.service';
+import {
+  CatechismClassCatechist,
+  CatechismYear,
+  CatechismClass,
+  EucharisticYouth,
+  PatronSaint,
+} from '../../shared/models';
+import { ContactRelationType, MilestoneType, UserRole } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { PatronSaintInput } from '../../shared/components/patron-saint-input';
 
 @Component({
   selector: 'app-youth-form',
@@ -42,7 +51,9 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
     MatNativeDateModule,
     MatDividerModule,
     MatRadioModule,
+    MatCheckboxModule,
     TranslatePipe,
+    PatronSaintInput,
   ],
   templateUrl: './youth-form.html',
   styleUrl: './youth-form.scss',
@@ -53,6 +64,9 @@ export class YouthForm {
   private router = inject(Router);
   private api = inject(ApiService);
   private notify = inject(NotificationService);
+  private auth = inject(AuthService);
+
+  protected readonly UserRole = UserRole;
 
   protected readonly milestoneTypes = [
     { v: MilestoneType.Baptism, k: 'milestone.baptism' },
@@ -63,8 +77,25 @@ export class YouthForm {
     { v: MilestoneType.Graduation, k: 'milestone.graduation' },
   ];
 
+  protected readonly relationTypes = [
+    { v: ContactRelationType.Father, k: 'contact.relation.Father' },
+    { v: ContactRelationType.Mother, k: 'contact.relation.Mother' },
+    { v: ContactRelationType.Guardian, k: 'contact.relation.Guardian' },
+    { v: ContactRelationType.Grandfather, k: 'contact.relation.Grandfather' },
+    { v: ContactRelationType.Grandmother, k: 'contact.relation.Grandmother' },
+    { v: ContactRelationType.Babysitter, k: 'contact.relation.Babysitter' },
+    { v: ContactRelationType.Sibling, k: 'contact.relation.Sibling' },
+    { v: ContactRelationType.Undefined, k: 'contact.relation.Undefined' },
+  ];
+
+  protected readonly ContactRelationType = ContactRelationType;
+
   protected loading = signal(false);
   protected isEdit = signal(false);
+  protected addToMyClass = signal(true);
+  protected myCurrentClassId = signal<string | null>(null);
+  protected myClassName = signal<string | null>(null);
+  protected isCatechist = signal(false);
 
   protected form = this.fb.group({
     code: ['', Validators.required],
@@ -75,12 +106,48 @@ export class YouthForm {
     dateOfBirth: [null as Date | null, Validators.required],
     isMale: [true, Validators.required],
     address: [''],
+    patronSaints: [[] as PatronSaint[]],
     milestones: this.fb.array<ReturnType<typeof this.makeMilestone>>([]),
+    contacts: this.fb.array<ReturnType<typeof this.makeContact>>([]),
   });
 
   protected milestones = this.form.get('milestones') as FormArray;
+  protected contacts = this.form.get('contacts') as FormArray;
 
   constructor() {
+    // Pre-populate Father and Mother contacts for new youth
+    this.contacts.push(this.makeContact(ContactRelationType.Father));
+    this.contacts.push(this.makeContact(ContactRelationType.Mother));
+
+    // Resolve catechist's current class for "add to my class" checkbox
+    const user = this.auth.currentUser();
+    if (user?.userRole === UserRole.Catechist && user.catechistId) {
+      this.isCatechist.set(true);
+      forkJoin({
+        years: this.api.list<CatechismYear>('/catechism-years'),
+        assignments: this.api.list<CatechismClassCatechist>('/class-catechist'),
+        classes: this.api.list<CatechismClass>('/classes'),
+      }).subscribe(({ years, assignments, classes }) => {
+        const latestYear = [...years.items].sort((a, b) =>
+          b.startDate.localeCompare(a.startDate),
+        )[0];
+        if (!latestYear) return;
+        const currentYearClassIds = new Set(
+          classes.items.filter((c) => c.catechismYearId === latestYear.id).map((c) => c.id),
+        );
+        const myAssignment = assignments.items.find(
+          (a) =>
+            a.catechistId === user.catechistId &&
+            currentYearClassIds.has(a.catechismClassId),
+        );
+        if (myAssignment) {
+          this.myCurrentClassId.set(myAssignment.catechismClassId);
+          const cls = classes.items.find((c) => c.id === myAssignment.catechismClassId);
+          this.myClassName.set(cls?.className ?? null);
+        }
+      });
+    }
+
     this.route.queryParamMap
       .pipe(
         switchMap((qp) => {
@@ -101,6 +168,7 @@ export class YouthForm {
           dateOfBirth: y.dateOfBirth ? new Date(y.dateOfBirth + 'T00:00:00') : null,
           isMale: y.isMale,
           address: y.address ?? '',
+          patronSaints: y.patronSaints ?? [],
         });
         this.milestones.clear();
         for (const m of y.milestones) {
@@ -114,6 +182,8 @@ export class YouthForm {
             ),
           );
         }
+        // In edit mode contacts are managed via the detail page — clear defaults
+        this.contacts.clear();
       });
   }
 
@@ -123,6 +193,14 @@ export class YouthForm {
 
   protected removeMilestone(i: number): void {
     this.milestones.removeAt(i);
+  }
+
+  protected addContact(): void {
+    this.contacts.push(this.makeContact(ContactRelationType.Undefined));
+  }
+
+  protected removeContact(i: number): void {
+    this.contacts.removeAt(i);
   }
 
   protected submit(): void {
@@ -142,6 +220,7 @@ export class YouthForm {
       dateOfBirth: this.toIsoDate(v.dateOfBirth),
       isMale: v.isMale,
       address: v.address || null,
+      patronSaints: v.patronSaints,
       milestones: (v.milestones as Array<{ type: MilestoneType; date: Date | null; place: string; documentCode: string; note: string }>).map((m) => ({
         type: m.type,
         date: this.toIsoDate(m.date),
@@ -149,6 +228,21 @@ export class YouthForm {
         documentCode: m.documentCode || null,
         note: m.note || null,
       })),
+      ...(this.isEdit() ? {} : {
+        contacts: (v.contacts as Array<{ relationType: ContactRelationType; christName: string; familyName: string; middleName: string; givenName: string; phoneNumber: string; email: string }>).map((c) => ({
+          relationType: c.relationType,
+          contact: {
+            fullName: {
+              givenName: c.givenName,
+              christName: c.christName || null,
+              familyName: c.familyName || null,
+              middleName: c.middleName || null,
+            },
+            phoneNumber: c.phoneNumber || null,
+            email: c.email || null,
+          },
+        })),
+      }),
     };
 
     this.loading.set(true);
@@ -157,7 +251,32 @@ export class YouthForm {
       : this.api.post('/youths', payload);
 
     req$.subscribe({
-      next: () => {
+      next: (result: unknown) => {
+        // If creating + "add to my class" checked, create enrollment join entity
+        if (!this.isEdit() && this.addToMyClass() && this.myCurrentClassId()) {
+          const youthId = (result as { id?: string })?.id;
+          if (youthId) {
+            this.api
+              .post('/class-youth', {
+                eucharisticYouthId: youthId,
+                catechismClassId: this.myCurrentClassId(),
+              })
+              .subscribe({
+                next: () => {
+                  this.loading.set(false);
+                  this.notify.success('Saved');
+                  this.router.navigate(['/app/youth']);
+                },
+                error: () => {
+                  // Youth created but enrollment failed
+                  this.loading.set(false);
+                  this.notify.success('Youth saved, but class enrollment failed');
+                  this.router.navigate(['/app/youth']);
+                },
+              });
+            return;
+          }
+        }
         this.loading.set(false);
         this.notify.success('Saved');
         this.router.navigate(['/app/youth']);
@@ -166,6 +285,26 @@ export class YouthForm {
         this.loading.set(false);
         this.notify.error('Save failed');
       },
+    });
+  }
+
+  private makeContact(
+    relationType: ContactRelationType,
+    christName = '',
+    familyName = '',
+    middleName = '',
+    givenName = '',
+    phoneNumber = '',
+    email = '',
+  ) {
+    return this.fb.group({
+      relationType: [relationType, Validators.required],
+      christName: [christName],
+      familyName: [familyName],
+      middleName: [middleName],
+      givenName: [givenName, Validators.required],
+      phoneNumber: [phoneNumber],
+      email: [email],
     });
   }
 

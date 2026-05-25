@@ -51,7 +51,7 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
   if (!req.url.startsWith(base)) return next(req);
 
   const path = req.url.substring(base.length).split('?')[0];
-  const url = new URL(req.url, 'http://localhost');
+  const url = new URL(req.urlWithParams, 'http://localhost');
   const qs = url.searchParams;
   const method = req.method.toUpperCase();
   const body = (req.body as Record<string, unknown> | null) ?? null;
@@ -84,6 +84,11 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
 
   // ===== Youths =====
   if (path === '/youths' && method === 'GET') {
+    const id = qs.get('id');
+    if (id) {
+      const item = mockYouth.find((y) => y.id === id);
+      return item ? ok(item) : notFound();
+    }
     const search = (qs.get('search') ?? '').toLowerCase();
     const list = search
       ? mockYouth.filter((y) =>
@@ -115,7 +120,18 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
 
   // ===== Catechists =====
   if (path === '/catechists' && method === 'GET') {
+    const id = qs.get('id');
+    if (id) {
+      const item = mockCatechists.find((c) => c.id === id);
+      return item ? ok(item) : notFound();
+    }
     return ok(paginate(mockCatechists));
+  }
+  if (path === '/catechists' && method === 'POST') {
+    return ok({ id: crypto.randomUUID(), ...body });
+  }
+  if (path === '/catechists' && method === 'PATCH') {
+    return ok(body);
   }
   if (path === '/catechists/detail' && method === 'GET') {
     const item = mockCatechists.find((c) => c.id === qs.get('id'));
@@ -177,6 +193,9 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
       ? mockClassYouth.filter((c) => c.catechismClassId === classId)
       : mockClassYouth;
     return ok(paginate(items));
+  }
+  if (path === '/class-youth' && method === 'POST') {
+    return ok({ id: crypto.randomUUID(), ...body });
   }
 
   // ===== Class-Catechist =====

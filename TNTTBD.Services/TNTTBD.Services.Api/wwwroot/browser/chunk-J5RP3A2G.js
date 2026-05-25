@@ -1,1 +1,0 @@
-import{nb as m}from"./chunk-WJUDORRU.js";var t=class i{transform(e){return e?[e.christName,e.familyName,e.middleName,e.givenName].filter(r=>!!r&&r.trim().length>0).join(" "):""}static \u0275fac=function(r){return new(r||i)};static \u0275pipe=m({name:"fullName",type:i,pure:!0})};export{t as a};

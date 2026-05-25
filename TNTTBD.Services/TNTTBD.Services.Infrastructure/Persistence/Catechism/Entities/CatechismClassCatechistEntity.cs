@@ -28,5 +28,25 @@ public class CatechismClassCatechistEntity
     /// </summary>
     public CatechismClassCatechistRole Role { get; set; }
 
+    /// <summary>
+    /// Date enrolled
+    /// </summary>
+    public DateTimeOffset EnrolledAt { get; set; }
+
+    /// <summary>
+    /// Date left
+    /// </summary>
+    public DateTimeOffset? LeftAt { get; set; }
+
+    /// <summary>
+    /// Status
+    /// </summary>
+    public EnrollmentStatus Status { get; set; }
+
+    /// <summary>
+    /// Note
+    /// </summary>
+    public string? Note { get; set; }
+
     #endregion
 }

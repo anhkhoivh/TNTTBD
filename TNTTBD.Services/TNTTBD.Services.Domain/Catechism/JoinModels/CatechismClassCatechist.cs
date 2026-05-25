@@ -22,11 +22,19 @@ public class CatechismClassCatechist : DomainEntity<Guid>
         Guid id,
         Guid catechistId, 
         Guid catechismClassId, 
-        CatechismClassCatechistRole role) : base(id)
+        CatechismClassCatechistRole role,
+        DateTimeOffset enrolledAt,
+        DateTimeOffset? leftAt,
+        EnrollmentStatus status,
+        string? note) : base(id)
     {
         CatechistId = catechistId;
         CatechismClassId = catechismClassId;
         Role = role;
+        EnrolledAt = enrolledAt;
+        LeftAt = leftAt;
+        Status = status;
+        Note = note;
     }
 
     #endregion
@@ -48,6 +56,26 @@ public class CatechismClassCatechist : DomainEntity<Guid>
     /// </summary>
     public CatechismClassCatechistRole Role { get; private set; }
 
+    /// <summary>
+    /// Date enrolled
+    /// </summary>
+    public DateTimeOffset EnrolledAt { get; init; }
+
+    /// <summary>
+    /// Date left
+    /// </summary>
+    public DateTimeOffset? LeftAt { get; private set; }
+
+    /// <summary>
+    /// Status
+    /// </summary>
+    public EnrollmentStatus Status { get; private set; }
+
+    /// <summary>
+    /// Note
+    /// </summary>
+    public string? Note { get; private set; }
+
     #endregion
 
     #region Methods
@@ -55,6 +83,13 @@ public class CatechismClassCatechist : DomainEntity<Guid>
     public void ChangeRole(CatechismClassCatechistRole newRole)
     {
         Role = newRole;
+    }
+
+    public void EndEnrollment(EnrollmentStatus status, string? note = null)
+    {
+        Status = status;
+        LeftAt = DateTimeOffset.UtcNow;
+        Note = note;
     }
 
     #endregion

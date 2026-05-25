@@ -52,8 +52,20 @@
           <input matInput formControlName="address" />
         </mat-form-field>
       </div>
+
+      <app-patron-saint-input formControlName="patronSaints" class="mt-16"></app-patron-saint-input>
     </mat-card-content>
   </mat-card>
+
+  @if (isCatechist() && !isEdit() && myCurrentClassId()) {
+    <mat-card class="mt-16">
+      <mat-card-content>
+        <mat-checkbox [checked]="addToMyClass()" (change)="addToMyClass.set($event.checked)">
+          {{ 'youth.addToMyClass' | t }}: <strong>{{ myClassName() }}</strong>
+        </mat-checkbox>
+      </mat-card-content>
+    </mat-card>
+  }
 
   <mat-card class="mt-16">
     <mat-card-header>
@@ -106,6 +118,79 @@
       </div>
     </mat-card-content>
   </mat-card>
+
+  @if (!isEdit()) {
+    <mat-card class="mt-16">
+      <mat-card-header>
+        <mat-card-title>{{ 'youth.contacts' | t }}</mat-card-title>
+        <span class="spacer"></span>
+        <button mat-icon-button type="button" (click)="addContact()" aria-label="Add contact">
+          <mat-icon>person_add</mat-icon>
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <div formArrayName="contacts">
+          @for (c of contacts.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="contact-card">
+              <div class="contact-header">
+                <mat-form-field appearance="outline" class="relation-field">
+                  <mat-label>{{ 'contact.relation' | t }}</mat-label>
+                  <mat-select formControlName="relationType" required>
+                    @for (r of relationTypes; track r.v) {
+                      <mat-option [value]="r.v">{{ r.k | t }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <button
+                  mat-icon-button
+                  type="button"
+                  color="warn"
+                  (click)="removeContact(i)"
+                  aria-label="Remove contact"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+
+              <div class="grid-2">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'fullName.christ' | t }}</mat-label>
+                  <input matInput formControlName="christName" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'fullName.family' | t }}</mat-label>
+                  <input matInput formControlName="familyName" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'fullName.middle' | t }}</mat-label>
+                  <input matInput formControlName="middleName" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'fullName.given' | t }}</mat-label>
+                  <input matInput formControlName="givenName" required />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'contact.phone' | t }}</mat-label>
+                  <input matInput formControlName="phoneNumber" type="tel" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Email</mat-label>
+                  <input matInput formControlName="email" type="email" />
+                </mat-form-field>
+              </div>
+
+              @if (i < contacts.length - 1) {
+                <mat-divider></mat-divider>
+              }
+            </div>
+          }
+          @if (contacts.length === 0) {
+            <p class="text-center">{{ 'common.noData' | t }}</p>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
 
   <div class="actions mt-16">
     <a mat-button routerLink="/app/youth">{{ 'common.cancel' | t }}</a>

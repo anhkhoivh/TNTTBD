@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: '/api',
-  photoBaseUrl: '/photos/',
+  apiBaseUrl: 'https://api.tnttbd.local/api',
+  photoBaseUrl: 'https://api.tnttbd.local/photos/',
   useMocks: false,
 };

@@ -15,7 +15,9 @@ public static class CatechismClassEucharisticYouthMapper
     /// </summary>
     public static CatechismClassEucharisticYouth ToDomain(this CatechismClassEucharisticYouthEntity entity)
     {
-        CatechismClassEucharisticYouth domain = new CatechismClassEucharisticYouth(entity.Id, entity.EucharisticYouthId, entity.CatechismClassId);
+        CatechismClassEucharisticYouth domain = new CatechismClassEucharisticYouth(
+            entity.Id, entity.EucharisticYouthId, entity.CatechismClassId,
+            entity.EnrolledAt, entity.LeftAt, entity.Status, entity.Note);
 
         return domain;
     }

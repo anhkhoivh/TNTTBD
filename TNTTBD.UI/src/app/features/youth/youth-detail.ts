@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of, forkJoin } from 'rxjs';
+import { switchMap, of, forkJoin, catchError, map } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,14 +14,18 @@ import { PhotoService } from '../../core/services/photo.service';
 import {
   CatechismClass,
   CatechismClassEucharisticYouth,
-  Contact,
   EucharisticYouth,
   EucharisticYouthContact,
+  PaginatedResult,
 } from '../../shared/models';
 import { ContactRelationType, EnrollmentStatus, MilestoneType } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
+
+function emptyPage<T>(): PaginatedResult<T> {
+  return { items: [], total: 0, page: 1, pageSize: 50 };
+}
 
 @Component({
   selector: 'app-youth-detail',
@@ -47,30 +51,64 @@ export class YouthDetail {
   private api = inject(ApiService);
   protected photoService = inject(PhotoService);
 
+  /** Initial load: youth profile only (milestones + photos embedded) */
   protected data = toSignal(
     this.route.queryParamMap.pipe(
       switchMap((qp) => {
         const id = qp.get('id');
         if (!id) return of(null);
-        return forkJoin({
-          youth: this.api.get<EucharisticYouth>('/youths/detail', { id }),
-          enrollments: this.api.list<CatechismClassEucharisticYouth>(
-            '/youths/enrollments',
-            { youthId: id },
-          ),
-          youthContacts: this.api.list<EucharisticYouthContact>('/youths/contacts', {
-            youthId: id,
-          }),
-          contacts: this.api.list<Contact>('/contacts'),
-          classes: this.api.list<CatechismClass>('/classes'),
-        });
+        return this.api.get<EucharisticYouth>('/youths', { id }).pipe(catchError(() => of(null)));
       }),
     ),
     { initialValue: null },
   );
 
-  protected contactOf(id: string, list: Contact[]): Contact | undefined {
-    return list.find((c) => c.id === id);
+  /** Lazy-loaded contacts tab */
+  protected contactsData = signal<PaginatedResult<EucharisticYouthContact> | null>(null);
+  private contactsLoaded = false;
+
+  /** Lazy-loaded class history tab */
+  protected historyData = signal<{
+    enrollments: PaginatedResult<CatechismClassEucharisticYouth>;
+    classes: PaginatedResult<CatechismClass>;
+  } | null>(null);
+  private historyLoaded = false;
+
+  protected onTabChange(index: number): void {
+    if (index === 3 && !this.contactsLoaded) {
+      this.contactsLoaded = true;
+      this.loadContacts();
+    }
+    if (index === 4 && !this.historyLoaded) {
+      this.historyLoaded = true;
+      this.loadHistory();
+    }
+  }
+
+  private loadContacts(): void {
+    const id = this.route.snapshot.queryParamMap.get('id');
+    if (!id) return;
+    this.api
+      .list<EucharisticYouthContact>('/youths/contacts', { youthId: id })
+      .pipe(catchError(() => of(emptyPage<EucharisticYouthContact>())))
+      .subscribe((data) => this.contactsData.set(data));
+  }
+
+  private loadHistory(): void {
+    const id = this.route.snapshot.queryParamMap.get('id');
+    if (!id) return;
+    forkJoin({
+      enrollments: this.api.list<CatechismClassEucharisticYouth>('/class-youth').pipe(
+        map((result) => {
+          const items = result.items.filter((item) => item.eucharisticYouthId === id);
+          return { ...result, items, total: items.length };
+        }),
+        catchError(() => of(emptyPage<CatechismClassEucharisticYouth>())),
+      ),
+      classes: this.api
+        .list<CatechismClass>('/classes')
+        .pipe(catchError(() => of(emptyPage<CatechismClass>()))),
+    }).subscribe((data) => this.historyData.set(data));
   }
 
   protected classOf(id: string, list: CatechismClass[]): CatechismClass | undefined {
@@ -90,10 +128,10 @@ export class YouthDetail {
   }
 
   protected relationKey(r: ContactRelationType): string {
-    return `contact.relation.${ContactRelationType[r]}`;
+    return `contact.relation.${r}`;
   }
 
   protected enrollmentStatusKey(s: EnrollmentStatus): string {
-    return `enrollment.status.${EnrollmentStatus[s]}`;
+    return `enrollment.status.${s}`;
   }
 }

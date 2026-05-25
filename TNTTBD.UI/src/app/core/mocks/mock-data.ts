@@ -149,10 +149,16 @@ export const mockContacts: Contact[] = [
 ];
 
 export const mockYouthContacts: EucharisticYouthContact[] = [
-  { id: 'yc-1', eucharisticYouthId: 'y-1', contactId: 'co-1', contactRelationType: ContactRelationType.Father },
-  { id: 'yc-2', eucharisticYouthId: 'y-2', contactId: 'co-2', contactRelationType: ContactRelationType.Mother },
-  { id: 'yc-3', eucharisticYouthId: 'y-3', contactId: 'co-3', contactRelationType: ContactRelationType.Mother },
-  { id: 'yc-4', eucharisticYouthId: 'y-4', contactId: 'co-4', contactRelationType: ContactRelationType.Father },
+  { id: 'yc-1', eucharisticYouthId: 'y-1', contactId: 'co-1', contactRelationType: ContactRelationType.Father,
+    contact: { id: 'co-1', fullName: { givenName: 'Hùng', familyName: 'Nguyễn' }, phoneNumber: '0901234567', email: 'parent1@tnttbd.local' } },
+  { id: 'yc-2', eucharisticYouthId: 'y-2', contactId: 'co-2', contactRelationType: ContactRelationType.Mother,
+    contact: { id: 'co-2', fullName: { givenName: 'Lan', familyName: 'Lê' }, phoneNumber: '0907654321', email: 'parent2@tnttbd.local' } },
+  { id: 'yc-3', eucharisticYouthId: 'y-3', contactId: 'co-3', contactRelationType: ContactRelationType.Mother,
+    contact: { id: 'co-3', fullName: { givenName: 'Tâm', familyName: 'Phạm' }, phoneNumber: '0912345678' } },
+  { id: 'yc-4', eucharisticYouthId: 'y-4', contactId: 'co-4', contactRelationType: ContactRelationType.Father,
+    contact: { id: 'co-4', fullName: { givenName: 'Hồng', familyName: 'Hoàng' }, phoneNumber: '0987654321' } },
+  { id: 'yc-5', eucharisticYouthId: 'y-1', contactId: 'co-2', contactRelationType: ContactRelationType.Mother,
+    contact: { id: 'co-2', fullName: { givenName: 'Lan', familyName: 'Lê' }, phoneNumber: '0907654321', email: 'parent2@tnttbd.local' } },
 ];
 
 export const mockYears: CatechismYear[] = [
@@ -169,11 +175,13 @@ export const mockClasses: CatechismClass[] = [
 ];
 
 export const mockClassCatechists: CatechismClassCatechist[] = [
-  { id: 'clc-1', catechismClassId: 'cl-1', catechistId: 'c-1', role: CatechismClassCatechistRole.Main },
-  { id: 'clc-2', catechismClassId: 'cl-1', catechistId: 'c-2', role: CatechismClassCatechistRole.Member },
-  { id: 'clc-3', catechismClassId: 'cl-2', catechistId: 'c-2', role: CatechismClassCatechistRole.Main },
-  { id: 'clc-4', catechismClassId: 'cl-2', catechistId: 'c-3', role: CatechismClassCatechistRole.Assistance },
-  { id: 'clc-5', catechismClassId: 'cl-3', catechistId: 'c-1', role: CatechismClassCatechistRole.Main },
+  // yr-2025: each catechist in exactly ONE class
+  { id: 'clc-1', catechismClassId: 'cl-1', catechistId: 'c-1', role: CatechismClassCatechistRole.Main, enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
+  { id: 'clc-2', catechismClassId: 'cl-1', catechistId: 'c-2', role: CatechismClassCatechistRole.Member, enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
+  { id: 'clc-4', catechismClassId: 'cl-2', catechistId: 'c-3', role: CatechismClassCatechistRole.Main, enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
+  // yr-2024 history (completed)
+  { id: 'clc-h1', catechismClassId: 'cl-prev-1', catechistId: 'c-1', role: CatechismClassCatechistRole.Main, enrolledAt: '2024-09-01T08:00:00+07:00', leftAt: '2025-06-30T17:00:00+07:00', status: EnrollmentStatus.Completed },
+  { id: 'clc-h2', catechismClassId: 'cl-prev-1', catechistId: 'c-3', role: CatechismClassCatechistRole.Member, enrolledAt: '2024-09-01T08:00:00+07:00', leftAt: '2025-06-30T17:00:00+07:00', status: EnrollmentStatus.Completed },
 ];
 
 export const mockClassYouth: CatechismClassEucharisticYouth[] = [

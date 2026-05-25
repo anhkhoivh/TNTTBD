@@ -34,7 +34,23 @@
   gap: 8px;
 }
 
+.contact-card {
+  padding: 8px 0 12px;
+}
+
+.contact-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.relation-field {
+  flex: 0 0 200px;
+}
+
 @media (max-width: 700px) {
   .grid-2 { grid-template-columns: 1fr; }
   .milestone-row { grid-template-columns: 1fr; }
+  .relation-field { flex: 1; }
 }

@@ -45,4 +45,8 @@ export interface CatechismClassCatechist {
   catechismClassId: string;
   catechistId: string;
   role: CatechismClassCatechistRole;
+  enrolledAt: IsoDateTime;
+  leftAt?: IsoDateTime | null;
+  status: EnrollmentStatus;
+  note?: string | null;
 }

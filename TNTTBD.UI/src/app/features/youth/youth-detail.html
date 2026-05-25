@@ -1,30 +1,42 @@
 @if (data(); as d) {
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>{{ d.youth.fullName | fullName }}</mat-card-title>
-      <mat-card-subtitle>{{ d.youth.code }}</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="field"><mat-icon>cake</mat-icon> {{ d.youth.dateOfBirth | dateLocale }}</div>
-      <div class="field">
-        <mat-icon>{{ d.youth.isMale ? 'male' : 'female' }}</mat-icon>
-        {{ (d.youth.isMale ? 'common.male' : 'common.female') | t }}
-      </div>
-      @if (d.youth.address) {
-        <div class="field"><mat-icon>home</mat-icon> {{ d.youth.address }}</div>
-      }
-      <mat-chip-set>
-        @for (ps of d.youth.patronSaints; track ps.saintName) {
-          <mat-chip>{{ ps.saintName }} ({{ ps.day }}/{{ ps.month }})</mat-chip>
-        }
-      </mat-chip-set>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-tab-group class="mt-16">
-    <mat-tab [label]="('youth.milestones' | t) + ' (' + d.youth.milestones.length + ')'">
+  <mat-tab-group (selectedTabChange)="onTabChange($event.index)">
+    <mat-tab [label]="'common.profile' | t">
       <mat-list class="mt-16">
-        @for (m of d.youth.milestones; track m.id) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>badge</mat-icon>
+          <span matListItemTitle>{{ d.code }}</span>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>person</mat-icon>
+          <span matListItemTitle>{{ d.fullName | fullName }}</span>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>cake</mat-icon>
+          <span matListItemTitle>{{ d.dateOfBirth | dateLocale }}</span>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>{{ d.isMale ? 'male' : 'female' }}</mat-icon>
+          <span matListItemTitle>{{ (d.isMale ? 'common.male' : 'common.female') | t }}</span>
+        </mat-list-item>
+        @if (d.address) {
+          <mat-list-item>
+            <mat-icon matListItemIcon>home</mat-icon>
+            <span matListItemTitle>{{ d.address }}</span>
+          </mat-list-item>
+        }
+      </mat-list>
+      @if (d.patronSaints.length) {
+        <mat-chip-set class="mt-16">
+          @for (ps of d.patronSaints; track ps.saintName) {
+            <mat-chip><mat-icon>church</mat-icon> {{ ps.saintName }} ({{ ps.day }}/{{ ps.month }})</mat-chip>
+          }
+        </mat-chip-set>
+      }
+    </mat-tab>
+
+    <mat-tab [label]="('youth.milestones' | t) + ' (' + d.milestones.length + ')'">
+      <mat-list class="mt-16">
+        @for (m of d.milestones; track m.id) {
           <mat-list-item>
             <mat-icon matListItemIcon>celebration</mat-icon>
             <span matListItemTitle>{{ milestoneKey(m.type) | t }}</span>
@@ -36,9 +48,9 @@
       </mat-list>
     </mat-tab>
 
-    <mat-tab [label]="('youth.photos' | t) + ' (' + d.youth.photos.length + ')'">
+    <mat-tab [label]="('youth.photos' | t) + ' (' + d.photos.length + ')'">
       <div class="photo-grid mt-16">
-        @for (p of d.youth.photos; track p.id) {
+        @for (p of d.photos; track p.id) {
           <img [src]="photoService.url(p.storageKey)" [alt]="p.id" class="photo" />
         } @empty {
           <p>{{ 'common.noData' | t }}</p>
@@ -46,54 +58,63 @@
       </div>
     </mat-tab>
 
-    <mat-tab [label]="('youth.contacts' | t) + ' (' + d.youthContacts.total + ')'">
-      <mat-list class="mt-16">
-        @for (yc of d.youthContacts.items; track yc.id) {
-          @if (contactOf(yc.contactId, d.contacts.items); as c) {
+    <mat-tab [label]="'youth.contacts' | t">
+      @if (contactsData(); as cd) {
+        <mat-list class="mt-16">
+          @for (yc of cd.items; track yc.id) {
             <mat-list-item>
               <mat-icon matListItemIcon>person</mat-icon>
-              <span matListItemTitle>{{ c.fullName | fullName }}</span>
+              <span matListItemTitle>
+                @if (yc.contact) { {{ yc.contact.fullName | fullName }} }
+                @else { {{ relationKey(yc.contactRelationType) | t }} }
+              </span>
               <span matListItemLine>
                 {{ relationKey(yc.contactRelationType) | t }}
-                @if (c.phoneNumber) { · {{ c.phoneNumber }} }
-                @if (c.email) { · {{ c.email }} }
+                @if (yc.contact?.phoneNumber) { · {{ yc.contact!.phoneNumber }} }
+                @if (yc.contact?.email) { · {{ yc.contact!.email }} }
               </span>
             </mat-list-item>
+          } @empty {
+            <p>{{ 'common.noData' | t }}</p>
           }
-        } @empty {
-          <p>{{ 'common.noData' | t }}</p>
-        }
-      </mat-list>
+        </mat-list>
+      } @else {
+        <p class="mt-16">{{ 'common.loading' | t }}</p>
+      }
     </mat-tab>
 
-    <mat-tab [label]="('youth.classHistory' | t) + ' (' + d.enrollments.total + ')'">
-      <mat-list class="mt-16">
-        @for (e of d.enrollments.items; track e.id) {
-          @if (classOf(e.catechismClassId, d.classes.items); as cls) {
+    <mat-tab [label]="'youth.classHistory' | t">
+      @if (historyData(); as hd) {
+        <mat-list class="mt-16">
+          @for (e of hd.enrollments.items; track e.id) {
             <mat-list-item>
               <mat-icon matListItemIcon>class</mat-icon>
-              <a
-                matListItemTitle
-                [routerLink]="['/app/classes/detail']"
-                [queryParams]="{ id: cls.id }"
-              >{{ cls.className }}</a>
+              <span matListItemTitle>
+                @if (classOf(e.catechismClassId, hd.classes.items); as cls) {
+                  <a [routerLink]="['/app/classes/detail']" [queryParams]="{ id: cls.id }">{{ cls.className }}</a>
+                } @else {
+                  {{ e.catechismClassId }}
+                }
+              </span>
               <span matListItemLine>
                 {{ enrollmentStatusKey(e.status) | t }} ·
-                {{ e.enrolledAt | dateLocale: 'date' }}
-                @if (e.leftAt) { → {{ e.leftAt | dateLocale: 'date' }} }
+                {{ e.enrolledAt | dateLocale: 'datetime' }}
+                @if (e.leftAt) { → {{ e.leftAt | dateLocale: 'datetime' }} }
               </span>
             </mat-list-item>
+          } @empty {
+            <p>{{ 'common.noData' | t }}</p>
           }
-        } @empty {
-          <p>{{ 'common.noData' | t }}</p>
-        }
-      </mat-list>
+        </mat-list>
+      } @else {
+        <p class="mt-16">{{ 'common.loading' | t }}</p>
+      }
     </mat-tab>
   </mat-tab-group>
 
   <div class="mt-16">
     <a mat-button routerLink="/app/youth"><mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}</a>
-    <a mat-stroked-button [routerLink]="['/app/youth/edit']" [queryParams]="{ id: d.youth.id }">
+    <a mat-stroked-button [routerLink]="['/app/youth/edit']" [queryParams]="{ id: d.id }">
       <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
     </a>
   </div>

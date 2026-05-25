@@ -11,6 +11,19 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// CORS — read allowed origins from configuration
+var corsOrigins = builder.Configuration.GetSection("CorsOrigins").Get<string[]>() ?? [];
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(corsOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 builder.Services.AddSingleton<ILocalizationService, JsonLocalizationService>();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -38,6 +51,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseRequestLocalization();
 

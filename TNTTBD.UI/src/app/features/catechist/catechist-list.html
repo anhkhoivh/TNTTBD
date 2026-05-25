@@ -1,6 +1,10 @@
 <mat-card>
   <mat-card-header>
     <mat-card-title>{{ 'nav.catechists' | t }}</mat-card-title>
+    <span class="spacer"></span>
+    <a mat-flat-button color="primary" routerLink="/app/catechists/edit">
+      <mat-icon>add</mat-icon> {{ 'common.new' | t }}
+    </a>
   </mat-card-header>
   <mat-card-content>
     <table mat-table [dataSource]="data().items" class="full-width">
