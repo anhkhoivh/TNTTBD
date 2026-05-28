@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -27,6 +27,8 @@ import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
     DateLocalePipe,
   ],
   templateUrl: './catechist-list.html',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatechistList {
   private api = inject(ApiService);

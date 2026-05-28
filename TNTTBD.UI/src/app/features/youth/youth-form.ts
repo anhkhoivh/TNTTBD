@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
@@ -57,6 +57,8 @@ import { PatronSaintInput } from '../../shared/components/patron-saint-input';
   ],
   templateUrl: './youth-form.html',
   styleUrl: './youth-form.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class YouthForm {
   private fb = inject(FormBuilder);

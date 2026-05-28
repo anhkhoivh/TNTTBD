@@ -1,7 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, of, forkJoin, catchError } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -58,6 +58,8 @@ function emptyPage<T>(): PaginatedResult<T> {
   ],
   templateUrl: './class-detail.html',
   styleUrl: './class-detail.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClassDetail {
   private route = inject(ActivatedRoute);
@@ -93,84 +95,59 @@ export class ClassDetail {
   );
 
   /** Lazy-loaded tab data signals */
-  protected enrollmentsData = signal<{
+  protected activeTabs = signal(new Set<number>([0]));
+  protected classId = computed(() => this.data()?.id ?? this.route.snapshot.queryParamMap.get('id'));
+
+  protected enrollmentsRes = rxResource<{
     enrollments: PaginatedResult<CatechismClassEucharisticYouth>;
     youthLookup: PaginatedResult<EucharisticYouth>;
-  } | null>(null);
-
-  protected catechistsData = signal<{
-    catechists: PaginatedResult<CatechismClassCatechist>;
-    catechistLookup: PaginatedResult<Catechist>;
-  } | null>(null);
-
-  protected sessionsData = signal<PaginatedResult<CatechismSession> | null>(null);
-  protected examsData = signal<PaginatedResult<Exam> | null>(null);
-
-  private tabsLoaded = { enrollments: false, catechists: false, sessions: false, exams: false };
-
-  protected onTabChange(index: number): void {
-    const classId = this.route.snapshot.queryParamMap.get('id');
-    if (!classId) return;
-    switch (index) {
-      case 0:
-        if (!this.tabsLoaded.enrollments) {
-          this.tabsLoaded.enrollments = true;
-          this.loadEnrollments(classId);
-        }
-        break;
-      case 1:
-        if (!this.tabsLoaded.catechists) {
-          this.tabsLoaded.catechists = true;
-          this.loadCatechists(classId);
-        }
-        break;
-      case 2:
-        if (!this.tabsLoaded.sessions) {
-          this.tabsLoaded.sessions = true;
-          this.loadSessions(classId);
-        }
-        break;
-      case 3:
-        if (!this.tabsLoaded.exams) {
-          this.tabsLoaded.exams = true;
-          this.loadExams(classId);
-        }
-        break;
-    }
-  }
-
-  private loadEnrollments(classId: string): void {
-    forkJoin({
-      enrollments: this.api.list<CatechismClassEucharisticYouth>('/class-youth', { classId }).pipe(
+  }, string>({
+    params: () => this.classId() && this.activeTabs().has(0) ? this.classId()! : '',
+    stream: (loaderParams) => forkJoin({
+      enrollments: this.api.list<CatechismClassEucharisticYouth>('/class-youth', { classId: loaderParams.params }).pipe(
         catchError(() => of(emptyPage<CatechismClassEucharisticYouth>())),
       ),
       youthLookup: this.api.list<EucharisticYouth>('/youths').pipe(
         catchError(() => of(emptyPage<EucharisticYouth>())),
       ),
-    }).subscribe((d) => this.enrollmentsData.set(d));
-  }
+    })
+  });
 
-  private loadCatechists(classId: string): void {
-    forkJoin({
-      catechists: this.api.list<CatechismClassCatechist>('/class-catechist', { classId }).pipe(
+  protected catechistsRes = rxResource<{
+    catechists: PaginatedResult<CatechismClassCatechist>;
+    catechistLookup: PaginatedResult<Catechist>;
+  }, string>({
+    params: () => this.classId() && this.activeTabs().has(1) ? this.classId()! : '',
+    stream: (loaderParams) => forkJoin({
+      catechists: this.api.list<CatechismClassCatechist>('/class-catechist', { classId: loaderParams.params }).pipe(
         catchError(() => of(emptyPage<CatechismClassCatechist>())),
       ),
       catechistLookup: this.api.list<Catechist>('/catechists').pipe(
         catchError(() => of(emptyPage<Catechist>())),
       ),
-    }).subscribe((d) => this.catechistsData.set(d));
-  }
+    })
+  });
 
-  private loadSessions(classId: string): void {
-    this.api.list<CatechismSession>('/sessions', { classId }).pipe(
+  protected sessionsRes = rxResource<PaginatedResult<CatechismSession>, string>({
+    params: () => this.classId() && this.activeTabs().has(2) ? this.classId()! : '',
+    stream: (loaderParams) => this.api.list<CatechismSession>('/sessions', { classId: loaderParams.params }).pipe(
       catchError(() => of(emptyPage<CatechismSession>())),
-    ).subscribe((d) => this.sessionsData.set(d));
-  }
+    )
+  });
 
-  private loadExams(classId: string): void {
-    this.api.list<Exam>('/exams', { classId }).pipe(
+  protected examsRes = rxResource<PaginatedResult<Exam>, string>({
+    params: () => this.classId() && this.activeTabs().has(3) ? this.classId()! : '',
+    stream: (loaderParams) => this.api.list<Exam>('/exams', { classId: loaderParams.params }).pipe(
       catchError(() => of(emptyPage<Exam>())),
-    ).subscribe((d) => this.examsData.set(d));
+    )
+  });
+
+  protected onTabChange(index: number): void {
+    this.activeTabs.update(s => {
+      const ns = new Set(s);
+      ns.add(index);
+      return ns;
+    });
   }
 
   /** Auto-load first tab on init */
@@ -179,7 +156,7 @@ export class ClassDetail {
   }
 
   protected youthOfEnrollment(enrollmentId: string): EucharisticYouth | undefined {
-    const ed = this.enrollmentsData();
+    const ed = this.enrollmentsRes.value();
     if (!ed) return undefined;
     const e = ed.enrollments.items.find((x) => x.id === enrollmentId);
     if (!e) return undefined;
@@ -187,7 +164,7 @@ export class ClassDetail {
   }
 
   protected catechistOf(id: string): Catechist | undefined {
-    return this.catechistsData()?.catechistLookup.items.find((c) => c.id === id);
+    return this.catechistsRes.value()?.catechistLookup.items.find((c) => c.id === id);
   }
 
   protected statusKey(status: EnrollmentStatus): string {
@@ -206,7 +183,7 @@ export class ClassDetail {
         if (!v) return;
         this.api.post('/sessions', v).subscribe(() => {
           this.notify.success('Saved');
-          this.loadSessions(classId);
+          this.sessionsRes.reload();
         });
       });
   }
@@ -219,13 +196,12 @@ export class ClassDetail {
         if (!v) return;
         this.api.patch('/sessions', v).subscribe(() => {
           this.notify.success('Saved');
-          this.loadSessions(classId);
+          this.sessionsRes.reload();
         });
       });
   }
 
   protected deleteSession(id: string): void {
-    const classId = this.route.snapshot.queryParamMap.get('id')!;
     this.dialog
       .open(ConfirmDialog, { data: { destructive: true, confirmKey: 'common.delete', message: 'Delete this session?' } })
       .afterClosed()
@@ -233,7 +209,7 @@ export class ClassDetail {
         if (!ok) return;
         this.api.delete('/sessions', { id }).subscribe(() => {
           this.notify.success('Deleted');
-          this.loadSessions(classId);
+          this.sessionsRes.reload();
         });
       });
   }
@@ -246,7 +222,7 @@ export class ClassDetail {
         if (!v) return;
         this.api.post('/exams', v).subscribe(() => {
           this.notify.success('Saved');
-          this.loadExams(classId);
+          this.examsRes.reload();
         });
       });
   }
@@ -259,13 +235,12 @@ export class ClassDetail {
         if (!v) return;
         this.api.patch('/exams', v).subscribe(() => {
           this.notify.success('Saved');
-          this.loadExams(classId);
+          this.examsRes.reload();
         });
       });
   }
 
   protected deleteExam(id: string): void {
-    const classId = this.route.snapshot.queryParamMap.get('id')!;
     this.dialog
       .open(ConfirmDialog, { data: { destructive: true, confirmKey: 'common.delete', message: 'Delete this exam?' } })
       .afterClosed()
@@ -273,7 +248,7 @@ export class ClassDetail {
         if (!ok) return;
         this.api.delete('/exams', { id }).subscribe(() => {
           this.notify.success('Deleted');
-          this.loadExams(classId);
+          this.examsRes.reload();
         });
       });
   }

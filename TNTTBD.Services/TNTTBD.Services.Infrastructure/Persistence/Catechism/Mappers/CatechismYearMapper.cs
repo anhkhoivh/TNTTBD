@@ -63,6 +63,7 @@ public static class CatechismYearMapper
         return new CatechismYearDto
             {
                 Id = entity.Id,
+                Title = $"{entity.StartDate.Year}-{entity.EndDate.Year}",
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 Theme = entity.Theme,

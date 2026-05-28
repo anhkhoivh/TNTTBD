@@ -49,7 +49,7 @@ export const mockCatechists: Catechist[] = [
     fullName: { givenName: 'Anh', familyName: 'Nguyễn', christName: 'Phêrô' },
     dateOfBirth: '1995-03-12',
     isMale: true,
-    address: 'Giáo xứ Bùi Đậu',
+    address: 'Giáo xứ Bình Đông',
     photos: [photo('cat-1')],
     patronSaints: [{ saintName: 'Phêrô', day: 29, month: 6 }],
   },
@@ -58,7 +58,7 @@ export const mockCatechists: Catechist[] = [
     fullName: { givenName: 'Mai', familyName: 'Trần', christName: 'Maria' },
     dateOfBirth: '1997-08-05',
     isMale: false,
-    address: 'Giáo xứ Bùi Đậu',
+    address: 'Giáo xứ Bình Đông',
     photos: [photo('cat-2')],
     patronSaints: [{ saintName: 'Maria', day: 15, month: 8 }],
   },
@@ -67,7 +67,7 @@ export const mockCatechists: Catechist[] = [
     fullName: { givenName: 'Hoà', familyName: 'Vũ', christName: 'Gioan' },
     dateOfBirth: '1999-11-20',
     isMale: true,
-    address: 'Giáo xứ Bùi Đậu',
+    address: 'Giáo xứ Bình Đông',
     photos: [photo('cat-3')],
     patronSaints: [{ saintName: 'Gioan', day: 27, month: 12 }],
   },
@@ -88,14 +88,14 @@ const youthSeed = (
   fullName: { givenName: given, familyName: family, christName: christ },
   dateOfBirth: dob,
   isMale,
-  address: 'Giáo xứ Bùi Đậu',
+  address: 'Giáo xứ Bình Đông',
   photos: [photo(id)],
   patronSaints: [{ saintName: christ, day: 1, month: 1 }],
   milestones: milestones.map((m, i) => ({
     id: `m-${id}-${i}`,
     type: m.type,
     date: m.date,
-    place: m.place ?? 'Giáo xứ Bùi Đậu',
+    place: m.place ?? 'Giáo xứ Bình Đông',
   })),
 });
 
@@ -162,8 +162,8 @@ export const mockYouthContacts: EucharisticYouthContact[] = [
 ];
 
 export const mockYears: CatechismYear[] = [
-  { id: 'yr-2024', startDate: '2024-09-01', endDate: '2025-06-30', theme: 'Yêu thương và phục vụ' },
-  { id: 'yr-2025', startDate: '2025-09-01', endDate: '2026-06-30', theme: 'Sống Lời Chúa' },
+  { id: 'yr-2024', startDate: '2024-09-01', endDate: '2025-06-30', theme: 'Yêu thương và phục vụ', title: '2024-2025' },
+  { id: 'yr-2025', startDate: '2025-09-01', endDate: '2026-06-30', theme: 'Sống Lời Chúa', title: '2025-2026' },
 ];
 
 export const mockClasses: CatechismClass[] = [

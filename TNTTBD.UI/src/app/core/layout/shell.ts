@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -46,6 +46,8 @@ interface NavItem {
   ],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Shell {
   private breakpoint = inject(BreakpointObserver);

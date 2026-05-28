@@ -19,7 +19,7 @@ export class DateLocalePipe implements PipeTransform {
     if (!value) return '';
     const lang = this.t.currentLang();
     const locale = lang === 'vi' ? 'vi-VN' : 'en-US';
-    const fmt = type === 'date' ? 'shortDate' : 'short';
+    const fmt = type === 'date' ? 'dd/MM/yyyy' : 'dd/MM/yyyy HH:mm';
     // For IsoDate (YYYY-MM-DD), append T00:00 to avoid TZ shift in some browsers
     const input = type === 'date' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value + 'T00:00:00' : value;
     const datePipe = new DatePipe(locale);

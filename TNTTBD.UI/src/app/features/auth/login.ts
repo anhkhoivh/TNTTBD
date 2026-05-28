@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -29,6 +29,8 @@ import { AuthService } from '../../core/auth/auth.service';
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Login {
   private auth = inject(AuthService);

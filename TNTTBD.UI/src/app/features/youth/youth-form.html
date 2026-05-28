@@ -9,14 +9,20 @@
       <div class="grid-2">
         <mat-form-field appearance="outline">
           <mat-label>{{ 'youth.code' | t }}</mat-label>
-          <input matInput formControlName="code" />
+          <input matInput formControlName="code" required />
+          @if (form.controls.code.hasError('required')) {
+            <mat-error>{{ 'validation.required' | t }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'youth.dateOfBirth' | t }}</mat-label>
-          <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" />
+          <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" required />
           <mat-datepicker-toggle matIconSuffix [for]="dobPicker"></mat-datepicker-toggle>
           <mat-datepicker #dobPicker></mat-datepicker>
+          @if (form.controls.dateOfBirth.hasError('required')) {
+            <mat-error>{{ 'validation.required' | t }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -36,7 +42,10 @@
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'fullName.given' | t }}</mat-label>
-          <input matInput formControlName="givenName" />
+          <input matInput formControlName="givenName" required />
+          @if (form.controls.givenName.hasError('required')) {
+            <mat-error>{{ 'validation.required' | t }}</mat-error>
+          }
         </mat-form-field>
 
         <div class="field-gender">
@@ -81,17 +90,23 @@
           <div [formGroupName]="i" class="milestone-row">
             <mat-form-field appearance="outline">
               <mat-label>{{ 'milestone.date' | t }}</mat-label>
-              <mat-select formControlName="type">
+              <mat-select formControlName="type" required>
                 @for (t of milestoneTypes; track t.v) {
                   <mat-option [value]="t.v">{{ t.k | t }}</mat-option>
                 }
               </mat-select>
+              @if (m.get('type')?.hasError('required')) {
+                <mat-error>{{ 'validation.required' | t }}</mat-error>
+              }
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>{{ 'milestone.date' | t }}</mat-label>
-              <input matInput [matDatepicker]="dp" formControlName="date" />
+              <input matInput [matDatepicker]="dp" formControlName="date" required />
               <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
               <mat-datepicker #dp></mat-datepicker>
+              @if (m.get('date')?.hasError('required')) {
+                <mat-error>{{ 'validation.required' | t }}</mat-error>
+              }
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>{{ 'milestone.place' | t }}</mat-label>
@@ -140,6 +155,9 @@
                       <mat-option [value]="r.v">{{ r.k | t }}</mat-option>
                     }
                   </mat-select>
+                  @if (c.get('relationType')?.hasError('required')) {
+                    <mat-error>{{ 'validation.required' | t }}</mat-error>
+                  }
                 </mat-form-field>
                 <button
                   mat-icon-button
@@ -168,6 +186,9 @@
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'fullName.given' | t }}</mat-label>
                   <input matInput formControlName="givenName" required />
+                  @if (c.get('givenName')?.hasError('required')) {
+                    <mat-error>{{ 'validation.required' | t }}</mat-error>
+                  }
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'contact.phone' | t }}</mat-label>

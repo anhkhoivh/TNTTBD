@@ -1,4 +1,4 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, forwardRef , ChangeDetectionStrategy, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ControlValueAccessor,
@@ -58,9 +58,11 @@ import { FullName } from '../models';
       }
     `,
   ],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FullNameInput implements ControlValueAccessor {
-  private fb = new FormBuilder();
+  private fb = inject(FormBuilder);
 
   form = this.fb.nonNullable.group({
     christName: [''],

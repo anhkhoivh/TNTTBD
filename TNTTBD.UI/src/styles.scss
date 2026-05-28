@@ -43,3 +43,63 @@ body {
 .mb-16 { margin-bottom: 16px; }
 .p-16 { padding: 16px; }
 
+
+// Skeleton Loader animations
+@keyframes placeholder-shimmer {
+  0% { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+.skeleton {
+  background: var(--mat-sys-surface-variant);
+  background-image: linear-gradient(
+    to right,
+    var(--mat-sys-surface-variant) 0%,
+    var(--mat-sys-surface-container-highest) 20%,
+    var(--mat-sys-surface-variant) 40%,
+    var(--mat-sys-surface-variant) 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 800px 100%;
+  animation: placeholder-shimmer 1.5s linear infinite forwards;
+  border-radius: 4px;
+  color: transparent !important;
+  pointer-events: none;
+  user-select: none;
+  
+  &::before, &::after, * {
+    visibility: hidden;
+  }
+}
+
+.skeleton-text {
+  height: 1rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+.skeleton-title {
+  height: 2rem;
+  width: 50%;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+.skeleton-row {
+  height: 3rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+.skeleton-rect {
+  min-height: 100px;
+  width: 100%;
+  border-radius: 8px;
+}
+
+// Responsive utilities
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

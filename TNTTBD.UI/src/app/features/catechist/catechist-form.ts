@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -67,6 +67,8 @@ import { PatronSaintInput } from '../../shared/components/patron-saint-input';
       }
     `,
   ],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CatechistForm {
   private fb = inject(FormBuilder);

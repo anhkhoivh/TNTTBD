@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -37,6 +37,8 @@ import { UserRole } from '../../shared/enums';
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Dashboard {
   protected auth = inject(AuthService);
@@ -66,7 +68,7 @@ export class Dashboard {
     const ys = this.data()?.years.items ?? [];
     if (ys.length === 0) return '—';
     const latest = [...ys].sort((a, b) => b.startDate.localeCompare(a.startDate))[0];
-    return `${latest.startDate.slice(0, 4)}–${latest.endDate.slice(0, 4)}`;
+    return latest.title;
   });
 
   protected upcomingSessions = computed(() => {

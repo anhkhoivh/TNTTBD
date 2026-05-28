@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -33,6 +33,8 @@ export interface ConfirmData {
       </button>
     </mat-dialog-actions>
   `,
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfirmDialog {
   protected ref = inject(MatDialogRef<ConfirmDialog, boolean>);

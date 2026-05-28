@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -23,6 +23,8 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
   ],
   templateUrl: './admin.html',
   styleUrl: './admin.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminPage {
   private api = inject(ApiService);

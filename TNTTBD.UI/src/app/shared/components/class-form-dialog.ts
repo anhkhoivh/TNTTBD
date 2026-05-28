@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -10,8 +10,7 @@ import { CatechismClass, CatechismYear } from '../../shared/models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 export interface ClassFormData {
-  klass?: CatechismClass;
-  years: CatechismYear[];
+  catechismClass?: CatechismClass;
   defaultYearId?: string;
 }
 
@@ -32,14 +31,6 @@ export interface ClassFormData {
     <h2 mat-dialog-title>{{ 'class.name' | t }}</h2>
     <form [formGroup]="form" (ngSubmit)="save()">
       <mat-dialog-content class="form">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'class.year' | t }}</mat-label>
-          <mat-select formControlName="catechismYearId" required>
-            @for (y of data.years; track y.id) {
-              <mat-option [value]="y.id">{{ y.startDate }} – {{ y.endDate }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>{{ 'class.name' | t }}</mat-label>
           <input matInput formControlName="className" required />
@@ -65,6 +56,8 @@ export interface ClassFormData {
       }
     `,
   ],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClassFormDialog {
   protected ref = inject(MatDialogRef<ClassFormDialog>);
@@ -72,12 +65,8 @@ export class ClassFormDialog {
   protected data = inject<ClassFormData>(MAT_DIALOG_DATA);
 
   protected form = this.fb.nonNullable.group({
-    id: [this.data.klass?.id ?? ''],
-    catechismYearId: [
-      this.data.klass?.catechismYearId ?? this.data.defaultYearId ?? '',
-      Validators.required,
-    ],
-    className: [this.data.klass?.className ?? '', Validators.required],
+    id: [this.data.catechismClass?.id ?? ''],
+    className: [this.data.catechismClass?.className ?? '', Validators.required],
   });
 
   protected save(): void {

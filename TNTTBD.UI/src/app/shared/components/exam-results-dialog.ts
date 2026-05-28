@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -120,6 +120,8 @@ function emptyPage<T>(): PaginatedResult<T> {
     `.score-field { width: 80px; }`,
     `.remark-field { width: 160px; }`,
   ],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExamResultsDialog implements OnInit {
   private api = inject(ApiService);

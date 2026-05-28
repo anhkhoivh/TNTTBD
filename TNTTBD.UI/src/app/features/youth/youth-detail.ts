@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, of, forkJoin, catchError, map } from 'rxjs';
@@ -31,6 +31,7 @@ function emptyPage<T>(): PaginatedResult<T> {
   selector: 'app-youth-detail',
   standalone: true,
   imports: [
+    NgOptimizedImage,
     CommonModule,
     RouterLink,
     MatCardModule,
@@ -45,6 +46,8 @@ function emptyPage<T>(): PaginatedResult<T> {
   ],
   templateUrl: './youth-detail.html',
   styleUrl: './youth-detail.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class YouthDetail {
   private route = inject(ActivatedRoute);

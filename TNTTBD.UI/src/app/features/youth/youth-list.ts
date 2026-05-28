@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin, map, of, switchMap } from 'rxjs';
@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import {
@@ -22,6 +23,8 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
 
+import { EmptyState } from '../../shared/components/empty-state';
+
 @Component({
   selector: 'app-youth-list',
   standalone: true,
@@ -34,12 +37,16 @@ import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatPaginatorModule,
     TranslatePipe,
     FullNamePipe,
     DateLocalePipe,
+    EmptyState,
   ],
   templateUrl: './youth-list.html',
   styleUrl: './youth-list.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class YouthList {
   private api = inject(ApiService);

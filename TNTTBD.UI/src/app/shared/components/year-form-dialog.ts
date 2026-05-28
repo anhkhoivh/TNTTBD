@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -72,6 +72,8 @@ export interface YearFormData {
       }
     `,
   ],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class YearFormDialog {
   protected ref = inject(MatDialogRef<YearFormDialog>);

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , ChangeDetectionStrategy} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,6 +23,8 @@ import { ThemeService } from '../../core/services/theme.service';
   ],
   templateUrl: './landing.html',
   styleUrl: './landing.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Landing {
   protected theme = inject(ThemeService);

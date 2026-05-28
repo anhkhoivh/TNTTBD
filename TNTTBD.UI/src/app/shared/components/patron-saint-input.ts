@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject } from '@angular/core';
+import { Component, forwardRef, inject , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ControlValueAccessor,
@@ -82,6 +82,8 @@ import { PatronSaint } from '../models';
       }
     `,
   ],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PatronSaintInput implements ControlValueAccessor {
   private fb = inject(FormBuilder);

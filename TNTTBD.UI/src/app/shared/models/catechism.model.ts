@@ -3,6 +3,7 @@ import { AttendanceStatus, EnrollmentStatus, CatechismClassCatechistRole } from 
 
 export interface CatechismYear {
   id: string;
+  title: string;
   startDate: IsoDate;
   endDate: IsoDate;
   theme?: string | null;

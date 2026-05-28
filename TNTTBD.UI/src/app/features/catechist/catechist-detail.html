@@ -1,6 +1,8 @@
 @if (data(); as d) {
   <mat-tab-group (selectedTabChange)="onTabChange($event.index)">
     <mat-tab [label]="'common.profile' | t">
+  <ng-template matTabContent>
+    @defer {
       <mat-list class="mt-16">
         <mat-list-item>
           <mat-icon matListItemIcon>person</mat-icon>
@@ -35,19 +37,37 @@
           </a>
         </div>
       }
-    </mat-tab>
+    
+    } @placeholder {
+      <div class="p-4">
+        <p>{{ 'common.loading' | t }}</p>
+      </div>
+    }
+  </ng-template>
+</mat-tab>
 
     <mat-tab [label]="('youth.photos' | t) + ' (' + d.photos.length + ')'">
+  <ng-template matTabContent>
+    @defer {
       <div class="photo-grid mt-16">
         @for (p of d.photos; track p.id) {
-          <img [src]="photoService.url(p.storageKey)" [alt]="p.id" class="photo" />
+          <img [ngSrc]="photoService.url(p.storageKey)" [alt]="p.id" class="photo" fill style="object-fit: cover;">
         } @empty {
           <p>{{ 'common.noData' | t }}</p>
         }
       </div>
-    </mat-tab>
+    
+    } @placeholder {
+      <div class="p-4">
+        <p>{{ 'common.loading' | t }}</p>
+      </div>
+    }
+  </ng-template>
+</mat-tab>
 
     <mat-tab [label]="'catechist.classHistory' | t">
+  <ng-template matTabContent>
+    @defer {
       @if (assignmentsData(); as ad) {
         <mat-list class="mt-16">
           @for (a of ad.items.items; track a.id) {
@@ -74,7 +94,14 @@
       } @else {
         <p class="mt-16">{{ 'common.loading' | t }}</p>
       }
-    </mat-tab>
+    
+    } @placeholder {
+      <div class="p-4">
+        <p>{{ 'common.loading' | t }}</p>
+      </div>
+    }
+  </ng-template>
+</mat-tab>
   </mat-tab-group>
 
   <div class="mt-16">

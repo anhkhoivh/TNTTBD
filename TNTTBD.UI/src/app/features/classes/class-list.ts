@@ -1,4 +1,5 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy, effect } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +19,9 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { YearFormDialog } from '../../shared/components/year-form-dialog';
 import { ClassFormDialog } from '../../shared/components/class-form-dialog';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { EmptyState } from '../../shared/components/empty-state';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-class-list',
@@ -31,9 +35,12 @@ import { ConfirmDialog } from '../../shared/components/confirm-dialog';
     MatIconModule,
     MatButtonModule,
     MatFormFieldModule,
+    MatInputModule,
+    MatPaginatorModule,
     MatSelectModule,
     MatDialogModule,
     TranslatePipe,
+    EmptyState,
   ],
   templateUrl: './class-list.html',
   styles: [
@@ -51,6 +58,8 @@ import { ConfirmDialog } from '../../shared/components/confirm-dialog';
       .star-icon { font-size: 18px; height: 18px; width: 18px; vertical-align: middle; color: var(--mat-sys-primary); margin-right: 4px; }
     `,
   ],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClassList {
   private api = inject(ApiService);
@@ -64,10 +73,21 @@ export class ClassList {
   protected classes = signal<CatechismClass[]>([]);
   protected selectedYearId = signal<string | null>(null);
   protected myClassIds = signal<Set<string>>(new Set());
+  protected searchQuery = signal<string>('');
 
   protected filtered = computed(() => {
     const yid = this.selectedYearId();
-    const list = yid ? this.classes().filter((c) => c.catechismYearId === yid) : this.classes();
+    const query = this.searchQuery().toLowerCase().trim();
+    let list = this.classes();
+    
+    if (yid) {
+      list = list.filter((c) => c.catechismYearId === yid);
+    }
+    
+    if (query) {
+      list = list.filter((c) => c.className.toLowerCase().includes(query));
+    }
+    
     const mine = this.myClassIds();
     if (mine.size === 0) return list;
     return [...list].sort((a, b) => {
@@ -77,10 +97,24 @@ export class ClassList {
     });
   });
 
-  protected cols = ['name', 'year', 'actions'];
+  protected pageIndex = signal(0);
+  protected pageSize = signal(50);
+  
+  protected paginatedFiltered = computed(() => {
+    const list = this.filtered();
+    const start = this.pageIndex() * this.pageSize();
+    return list.slice(start, start + this.pageSize());
+  });
+
+  protected cols = ['name', 'actions'];
 
   constructor() {
     this.reload();
+  }
+
+  protected onPageChange(event: PageEvent): void {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
   }
 
   protected canManage(): boolean {
@@ -93,7 +127,7 @@ export class ClassList {
 
   protected yearLabel(id: string): string {
     const y = this.years().find((x) => x.id === id);
-    return y ? `${y.startDate} – ${y.endDate}` : id;
+    return y ? `${y.startDate.substring(0, 4)}-${y.endDate.substring(0, 4)}` : id;
   }
 
   private reload(): void {
@@ -145,9 +179,9 @@ export class ClassList {
       });
   }
 
-  protected editClass(klass: CatechismClass): void {
+  protected editClass(catechismClass: CatechismClass): void {
     this.dialog
-      .open(ClassFormDialog, { data: { klass, years: this.years() } })
+      .open(ClassFormDialog, { data: { catechismClass, years: this.years() } })
       .afterClosed()
       .subscribe((v) => {
         if (!v) return;
@@ -158,11 +192,11 @@ export class ClassList {
       });
   }
 
-  protected deleteClass(klass: CatechismClass): void {
+  protected deleteClass(catechismClass: CatechismClass): void {
     this.dialog
       .open(ConfirmDialog, {
         data: {
-          message: `Delete class "${klass.className}"?`,
+          message: `Delete class "${catechismClass.className}"?`,
           destructive: true,
           confirmKey: 'common.delete',
         },
@@ -170,7 +204,7 @@ export class ClassList {
       .afterClosed()
       .subscribe((ok) => {
         if (!ok) return;
-        this.api.delete('/classes', { id: klass.id }).subscribe(() => {
+        this.api.delete('/classes', { id: catechismClass.id }).subscribe(() => {
           this.notify.success('Deleted');
           this.reload();
         });

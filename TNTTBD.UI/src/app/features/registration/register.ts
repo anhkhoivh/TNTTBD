@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
@@ -41,6 +41,8 @@ import { ContactRelationType } from '../../shared/enums';
   ],
   templateUrl: './register.html',
   styleUrl: './register.scss',
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterPage {
   private fb = inject(FormBuilder);

@@ -1,4 +1,4 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, computed , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
@@ -43,6 +43,8 @@ export type BadgeVariant = 'success' | 'warn' | 'error' | 'info' | 'neutral';
       }
     `,
   ],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusBadge {
   /** i18n key to translate and display */

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -91,6 +91,8 @@ function emptyPage<T>(): PaginatedResult<T> {
     </mat-dialog-actions>
   `,
   styles: [`.center { display: flex; justify-content: center; padding: 2rem; }`],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AttendanceDialog implements OnInit {
   private api = inject(ApiService);

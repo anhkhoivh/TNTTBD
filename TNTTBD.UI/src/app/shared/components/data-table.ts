@@ -9,6 +9,7 @@ import {
   computed,
   signal,
   inject,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
@@ -129,6 +130,8 @@ export interface ColumnConfig {
       }
     `,
   ],
+
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataTable<T = unknown> {
   /** Full data array */
