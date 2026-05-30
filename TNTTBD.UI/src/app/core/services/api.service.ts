@@ -25,8 +25,8 @@ export class ApiService {
     return this.http.patch<T>(`${this.base}${path}`, body);
   }
 
-  delete<T>(path: string, params?: Record<string, string | number | undefined>): Observable<T> {
-    return this.http.delete<T>(`${this.base}${path}`, { params: this.toParams(params) });
+  delete<T>(path: string, body: unknown): Observable<T> {
+    return this.http.delete<T>(`${this.base}${path}`, { body });
   }
 
   private toParams(params?: Record<string, string | number | undefined>): HttpParams {

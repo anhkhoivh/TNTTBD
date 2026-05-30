@@ -35,4 +35,38 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
+
+    /// <inheritdoc />
+    public async Task<PaginatedResult<EucharisticYouthDto>> GetAllAsync(string? search, int page, int pageSize, IFileStorage storage, CancellationToken cancellationToken)
+    {
+        var query = _context.EucharisticYouths.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.Trim().ToLower();
+            query = query.Where(y =>
+                y.Code.ToLower().Contains(term) ||
+                (y.FullName.GivenName != null && y.FullName.GivenName.ToLower().Contains(term)) ||
+                (y.FullName.FamilyName != null && y.FullName.FamilyName.ToLower().Contains(term)) ||
+                (y.FullName.ChristName != null && y.FullName.ChristName.ToLower().Contains(term)));
+        }
+
+        int total = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(y => y.FullName.FamilyName)
+            .ThenBy(y => y.FullName.GivenName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(y => y.ToDTO(storage))
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<EucharisticYouthDto>
+        {
+            Items = items,
+            Total = total,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
 }

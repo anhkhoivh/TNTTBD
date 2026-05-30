@@ -25,16 +25,17 @@ API Layer (Controllers) → Application Layer (Commands/Queries + Handlers) → 
 
 | Area | Commands (Write) | Queries (Read) |
 |------|------------------|----------------|
-| CatechismYear | Create, Update, Remove | GetById |
-| CatechismClass | Create, Update, Remove | GetById, GetClassesByYear |
-| CatechismSession | Create, Update, Remove, MarkAttendance, MarkAttendanceList | GetById, GetSessionsByClass |
-| EucharisticYouth | Create, Update, Remove, Milestones CRUD, PatronSaints CRUD, Photos | GetById, GetPhotos |
-| Catechist | Create, Update, Remove, PatronSaints CRUD, Photos | GetById, GetPhotos |
-| ClassEucharisticYouth | Add, Update, Remove, MarkCompleted | GetById, GetByClass, GetByYouth |
+| CatechismYear | Create, Update, Remove | GetById, **GetAll (paginated)** |
+| CatechismClass | Create, Update, Remove | GetById, GetClassesByYear, **GetAll (paginated, ?yearId)** |
+| CatechismSession | Create, Update, Remove, MarkAttendance, MarkAttendanceList | GetById, GetSessionsByClass, **GetAll (paginated, ?classId)** |
+| EucharisticYouth | Create, Update, Remove, Milestones CRUD, PatronSaints CRUD, Photos | GetById, GetPhotos, **GetAll (paginated, ?search)** |
+| Catechist | Create, Update, Remove, PatronSaints CRUD, Photos | GetById, GetPhotos, **GetAll (paginated)** |
+| ClassEucharisticYouth | Add, Update, Remove, MarkCompleted | GetById, GetByClass, GetByYouth, **GetAll (paginated, ?classId)** |
+| Exam | Create, Update, Remove, **SaveResults** | GetById (with results), **GetAll (paginated, ?classId)** |
 
 ---
 
-## Phase 1: List/Paginated Queries (Foundation)
+## Phase 1: List/Paginated Queries (Foundation) ✅ COMPLETED
 
 **Why**: The frontend uses `api.list<T>(path)` which expects `PaginatedResult<T>` (`{ items, total, page, pageSize }`). Most existing queries return a single item or a flat `List<T>`. The frontend calls list endpoints for: `/classes`, `/catechism-years`, `/youths`, `/catechists`, `/sessions`, `/class-youth`, `/class-catechist`.
 

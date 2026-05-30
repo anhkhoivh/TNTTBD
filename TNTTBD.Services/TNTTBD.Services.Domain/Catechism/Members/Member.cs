@@ -112,7 +112,7 @@ public abstract class Member : AggregateRoot<Guid>
         PhotoReference? photo = _photos.FirstOrDefault(p => p.Id == photoId);
         if (photo == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
 
         _photos.Remove(photo);

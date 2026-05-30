@@ -1,6 +1,6 @@
-import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,7 +17,7 @@ import { AuthService } from '../../core/auth/auth.service';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -36,15 +36,23 @@ export class Login {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  protected email = signal('admin@tnttbd.local');
-  protected password = signal('');
+  private fb = inject(FormBuilder);
+  protected form = this.fb.nonNullable.group({
+    email: ['admin@tnttbd.local', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]],
+  });
   protected loading = signal(false);
   protected error = signal<string | null>(null);
 
   protected submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.loading.set(true);
     this.error.set(null);
-    this.auth.login(this.email(), this.password()).subscribe({
+    const { email, password } = this.form.getRawValue();
+    this.auth.login(email, password).subscribe({
       next: () => {
         this.loading.set(false);
         this.router.navigate(['/app/dashboard']);

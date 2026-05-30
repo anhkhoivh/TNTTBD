@@ -165,5 +165,14 @@
   "error.server": "Server error. Please try again later.",
 
   "notFound.message": "The page you are looking for does not exist.",
-  "notFound.backHome": "Back to home"
+  "notFound.backHome": "Back to home",
+
+  "form.error.required": "is required.",
+  "form.error.min": "Minimum value is",
+  "form.error.max": "Maximum value is",
+  "form.error.scoreRange": "Score must be between",
+  "form.error.and": "and",
+  "form.error.scoreStep": "Score must be in steps of 0.5.",
+  "form.error.isoDate": "Date must be in YYYY-MM-DD format.",
+  "form.error.maxlength": "Maximum length is"
 }

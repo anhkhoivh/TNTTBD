@@ -5,15 +5,14 @@
       <mat-card-subtitle>{{ 'app.title' | t }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <form (ngSubmit)="submit()" #form="ngForm">
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ 'auth.email' | t }}</mat-label>
           <input
             matInput
             type="email"
-            name="email"
-            [ngModel]="email()"
-            (ngModelChange)="email.set($event)"
+            formControlName="email"
             required
           />
         </mat-form-field>
@@ -23,9 +22,8 @@
           <input
             matInput
             type="password"
-            name="password"
-            [ngModel]="password()"
-            (ngModelChange)="password.set($event)"
+            formControlName="password"
+            required
           />
         </mat-form-field>
 
@@ -38,7 +36,7 @@
           color="primary"
           type="submit"
           class="full-width"
-          [disabled]="loading()"
+          [disabled]="loading() || form.invalid"
         >
           @if (loading()) {
             <mat-spinner diameter="20"></mat-spinner>

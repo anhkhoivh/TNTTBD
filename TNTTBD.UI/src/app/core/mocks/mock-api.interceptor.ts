@@ -9,7 +9,6 @@ import {
   mockYouthContacts,
   mockYears,
   mockClasses,
-  mockClassCatechists,
   mockClassYouth,
   mockSessions,
   mockAttendances,
@@ -137,13 +136,6 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
     const item = mockCatechists.find((c) => c.id === qs.get('id'));
     return item ? ok(item) : notFound();
   }
-  if (path === '/catechists/assignments' && method === 'GET') {
-    const catechistId = qs.get('catechistId');
-    const items = catechistId
-      ? mockClassCatechists.filter((c) => c.catechistId === catechistId)
-      : mockClassCatechists;
-    return ok(paginate(items));
-  }
 
   // ===== Contacts =====
   if (path === '/contacts' && method === 'GET') {
@@ -198,15 +190,6 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
     return ok({ id: crypto.randomUUID(), ...body });
   }
 
-  // ===== Class-Catechist =====
-  if (path === '/class-catechist' && method === 'GET') {
-    const classId = qs.get('classId');
-    const items = classId
-      ? mockClassCatechists.filter((c) => c.catechismClassId === classId)
-      : mockClassCatechists;
-    return ok(paginate(items));
-  }
-
   // ===== Exams =====
   if (path === '/exams' && method === 'GET') {
     const classId = qs.get('classId');
@@ -228,11 +211,6 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
         .map((r) => ({ exam: ex, result: r })),
     );
     return ok(paginate(results));
-  }
-
-  // ===== Registration (public) =====
-  if (path === '/registration/youth' && method === 'POST') {
-    return ok({ ok: true, id: 'y-new-' + Date.now() });
   }
 
   // ===== Write fallthrough =====

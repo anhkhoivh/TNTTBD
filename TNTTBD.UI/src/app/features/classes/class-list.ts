@@ -125,11 +125,6 @@ export class ClassList {
     return this.myClassIds().has(id);
   }
 
-  protected yearLabel(id: string): string {
-    const y = this.years().find((x) => x.id === id);
-    return y ? `${y.startDate.substring(0, 4)}-${y.endDate.substring(0, 4)}` : id;
-  }
-
   private reload(): void {
     this.api.list<CatechismYear>('/catechism-years').subscribe((r) => {
       this.years.set(r.items);

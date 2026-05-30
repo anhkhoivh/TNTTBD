@@ -3,4 +3,4 @@ using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
 
 namespace TNTTBD.Services.Application.CatechismClassEucharisticYouths.Queries;
 
-public record GetCatechismClassEucharisticYouthsByYouthQuery(Guid EucharisticYouthId) : IRequest<CatechismClassEucharisticYouthDto>;
+public record GetCatechismClassEucharisticYouthsByYouthQuery(Guid EucharisticYouthId) : IRequest<List<CatechismClassEucharisticYouthDto>>;

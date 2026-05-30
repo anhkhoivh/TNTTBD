@@ -47,5 +47,29 @@ public class CatechistQueryService : ICatechistQueryService
             .ToListAsync(cancellationToken);
     }
 
+    /// <inheritdoc />
+    public async Task<PaginatedResult<CatechistDto>> GetAllAsync(int page, int pageSize, IFileStorage storage, CancellationToken cancellationToken)
+    {
+        var query = _context.Catechists.AsNoTracking();
+
+        int total = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(c => c.FullName.FamilyName)
+            .ThenBy(c => c.FullName.GivenName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(c => c.ToDTO(storage))
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<CatechistDto>
+        {
+            Items = items,
+            Total = total,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
+
     #endregion
 }

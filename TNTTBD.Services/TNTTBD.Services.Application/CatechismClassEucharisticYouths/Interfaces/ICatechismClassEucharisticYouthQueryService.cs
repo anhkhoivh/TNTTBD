@@ -1,4 +1,5 @@
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
+using TNTTBD.Services.Application.Common.DTOs;
 
 namespace TNTTBD.Services.Application.CatechismClassEucharisticYouths.Interfaces;
 
@@ -24,4 +25,5 @@ public interface ICatechismClassEucharisticYouthQueryService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<List<CatechismClassEucharisticYouthDto>> GetCatechismClassEucharisticYouthsByYouthAsync(Guid youthId, CancellationToken cancellationToken);
+    Task<PaginatedResult<CatechismClassEucharisticYouthDto>> GetAllAsync(Guid? classId, int page, int pageSize, CancellationToken cancellationToken);
 }

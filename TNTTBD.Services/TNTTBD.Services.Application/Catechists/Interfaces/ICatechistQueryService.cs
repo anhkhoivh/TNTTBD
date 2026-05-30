@@ -19,4 +19,5 @@ public interface ICatechistQueryService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<List<PhotoReferenceDto>?> GetPhotosByCatechistId(Guid catechistId, IFileStorage storage, CancellationToken cancellationToken);
+    Task<PaginatedResult<CatechistDto>> GetAllAsync(int page, int pageSize, IFileStorage storage, CancellationToken cancellationToken);
 }

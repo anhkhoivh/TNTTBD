@@ -1,6 +1,6 @@
-import { Component, inject, signal, OnInit , ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
@@ -19,6 +19,7 @@ import {
 } from '../models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../pipes/full-name.pipe';
+import { FormErrorsDisplayComponent } from './form-errors-display.component';
 
 export interface ExamResultsDialogData {
   classId: string;
@@ -42,7 +43,7 @@ function emptyPage<T>(): PaginatedResult<T> {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatDialogModule,
     MatTableModule,
     MatInputModule,
@@ -52,6 +53,7 @@ function emptyPage<T>(): PaginatedResult<T> {
     MatProgressSpinnerModule,
     TranslatePipe,
     FullNamePipe,
+    FormErrorsDisplayComponent,
   ],
   template: `
     <h2 mat-dialog-title>{{ examTitle() }}</h2>
@@ -59,11 +61,12 @@ function emptyPage<T>(): PaginatedResult<T> {
       @if (loading()) {
         <div class="center"><mat-spinner diameter="40"></mat-spinner></div>
       } @else {
-        <table mat-table [dataSource]="rows()" class="full-width">
+        <form [formGroup]="resultsForm">
+        <table mat-table [dataSource]="resultsArray.controls" class="full-width">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>{{ 'youth.fullName' | t }}</th>
-            <td mat-cell *matCellDef="let row">
-              @if (row.youth) { {{ row.youth.fullName | fullName }} }
+            <td mat-cell *matCellDef="let row; let i = index">
+              @if (row.value.youth) { {{ row.value.youth.fullName | fullName }} }
             </td>
           </ng-container>
           <ng-container matColumnDef="score">
@@ -73,22 +76,19 @@ function emptyPage<T>(): PaginatedResult<T> {
                 <input
                   matInput
                   type="number"
-                  [ngModel]="row.score"
-                  (ngModelChange)="updateRow(i, 'score', $event)"
+                  formControlName="score"
                   min="0"
                   max="10"
                   step="0.5"
                 />
+                <app-form-errors-display [control]="resultsArray.at(i).get('score')" fieldName="Score"></app-form-errors-display>
               </mat-form-field>
             </td>
           </ng-container>
           <ng-container matColumnDef="done">
             <th mat-header-cell *matHeaderCellDef>{{ 'exam.done' | t }}</th>
             <td mat-cell *matCellDef="let row; let i = index">
-              <mat-checkbox
-                [ngModel]="row.isDone"
-                (ngModelChange)="updateRow(i, 'isDone', $event)"
-              ></mat-checkbox>
+              <mat-checkbox formControlName="isDone"></mat-checkbox>
             </td>
           </ng-container>
           <ng-container matColumnDef="remark">
@@ -97,15 +97,17 @@ function emptyPage<T>(): PaginatedResult<T> {
               <mat-form-field appearance="outline" class="remark-field">
                 <input
                   matInput
-                  [ngModel]="row.remark"
-                  (ngModelChange)="updateRow(i, 'remark', $event)"
+                  formControlName="remark"
+                  maxlength="500"
                 />
+                <app-form-errors-display [control]="resultsArray.at(i).get('remark')" fieldName="Remark"></app-form-errors-display>
               </mat-form-field>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="['name', 'score', 'done', 'remark']"></tr>
-          <tr mat-row *matRowDef="let row; columns: ['name', 'score', 'done', 'remark']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['name', 'score', 'done', 'remark']; let i = index" [formGroupName]="i"></tr>
         </table>
+        </form>
       }
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -131,8 +133,14 @@ export class ExamResultsDialog implements OnInit {
 
   protected loading = signal(true);
   protected saving = signal(false);
-  protected rows = signal<ResultRow[]>([]);
   protected examTitle = signal('');
+  private fb = inject(FormBuilder);
+  protected resultsForm = this.fb.group({
+    results: this.fb.array<FormGroup>([]),
+  });
+  get resultsArray() {
+    return this.resultsForm.get('results') as FormArray;
+  }
 
   ngOnInit(): void {
     forkJoin({
@@ -147,34 +155,45 @@ export class ExamResultsDialog implements OnInit {
         .pipe(catchError(() => of(emptyPage<EucharisticYouth>()))),
     }).subscribe(({ enrollments, exam, youth }) => {
       this.examTitle.set(exam?.title ?? '');
-      const rows: ResultRow[] = enrollments.items.map((e) => {
+      const resultsFA = this.fb.array<FormGroup>([]);
+      enrollments.items.forEach((e) => {
         const existing = exam?.examResults?.find(
           (r) => r.catechismClassEucharisticYouthId === e.id,
         );
-        return {
-          enrollmentId: e.id,
-          youth: youth.items.find((y) => y.id === e.eucharisticYouthId),
-          score: existing?.score ?? null,
-          isDone: existing?.isDone ?? false,
-          remark: existing?.remark ?? '',
-        };
+        resultsFA.push(
+          this.fb.group({
+            enrollmentId: this.fb.control(e.id, { nonNullable: true }),
+            youth: this.fb.control(
+              youth.items.find(y => y.id === e.eucharisticYouthId)
+            ),
+            score: this.fb.control(existing?.score ?? null, [
+              Validators.required,
+              Validators.min(0),
+              Validators.max(10)
+            ]),
+            isDone: this.fb.control(existing?.isDone ?? false, { nonNullable: true }),
+            remark: this.fb.control(existing?.remark ?? '', [
+              Validators.maxLength(500)
+            ]),
+          })
+        );
       });
-      this.rows.set(rows);
+      this.resultsForm.setControl('results', resultsFA);
       this.loading.set(false);
     });
   }
 
-  protected updateRow(index: number, field: keyof ResultRow, value: unknown): void {
-    const current = [...this.rows()];
-    current[index] = { ...current[index], [field]: value };
-    this.rows.set(current);
-  }
+
 
   protected save(): void {
+    if (this.resultsForm.invalid) {
+      this.resultsForm.markAllAsTouched();
+      return;
+    }
     this.saving.set(true);
     const payload = {
       examId: this.data.examId,
-      results: this.rows().map((r) => ({
+      results: this.resultsArray.value.map((r: any) => ({
         catechismClassEucharisticYouthId: r.enrollmentId,
         score: r.score,
         isDone: r.isDone,

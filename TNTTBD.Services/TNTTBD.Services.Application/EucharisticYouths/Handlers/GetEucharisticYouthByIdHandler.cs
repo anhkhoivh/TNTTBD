@@ -30,7 +30,7 @@ public class GetEucharisticYouthByIdHandler : IRequestHandler<GetEucharisticYout
 
     public async Task<EucharisticYouthDto> Handle(GetEucharisticYouthByIdQuery query, CancellationToken cancellationToken)
     {
-        return await _queryService.GetByIdAsync(query.Id, _storage, cancellationToken) ?? throw new Exception(DomainErrors.ValidationNotFound);
+        return await _queryService.GetByIdAsync(query.Id, _storage, cancellationToken) ?? throw new DomainException(DomainErrors.ValidationNotFound);
     }
 
     #endregion

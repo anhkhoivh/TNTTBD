@@ -1,28 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.CatechismClasses.DTOs;
 using TNTTBD.Services.Application.CatechismClasses.Interfaces;
+using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
 public class CatechismClassQueryService : ICatechismClassQueryService
 {
-    #region Fields
-
     private readonly CatechismDbContext _context;
-
-    #endregion
-
-    #region Constructors
 
     public CatechismClassQueryService(CatechismDbContext context)
     {
         _context = context;
     }
-
-    #endregion
-
-    #region Methods
 
     /// <inheritdoc />
     public async Task<CatechismClassDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -44,5 +35,29 @@ public class CatechismClassQueryService : ICatechismClassQueryService
             .ToListAsync(cancellationToken);
     }
 
-    #endregion
+    /// <inheritdoc />
+    public async Task<PaginatedResult<CatechismClassDto>> GetAllAsync(Guid? yearId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var query = _context.CatechismClasses.AsNoTracking();
+
+        if (yearId.HasValue)
+            query = query.Where(c => c.CatechismYearId == yearId.Value);
+
+        int total = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(c => c.ClassName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(c => c.ToDTO())
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<CatechismClassDto>
+        {
+            Items = items,
+            Total = total,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
 }

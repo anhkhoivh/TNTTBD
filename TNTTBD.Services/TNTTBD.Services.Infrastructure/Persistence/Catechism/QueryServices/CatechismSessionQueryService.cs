@@ -1,28 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.CatechismSessions.DTOs;
 using TNTTBD.Services.Application.CatechismSessions.Interfaces;
+using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
 public class CatechismSessionQueryService : ICatechismSessionQueryService
 {
-    #region Fields
-
     private readonly CatechismDbContext _context;
-
-    #endregion
-
-    #region Constructors
 
     public CatechismSessionQueryService(CatechismDbContext context)
     {
         _context = context;
     }
-
-    #endregion
-
-    #region Methods
 
     /// <inheritdoc />
     public async Task<CatechismSessionDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -44,5 +35,29 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
             .ToListAsync(cancellationToken);
     }
 
-    #endregion
+    /// <inheritdoc />
+    public async Task<PaginatedResult<CatechismSessionDto>> GetAllAsync(Guid? classId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var query = _context.CatechismSessions.AsNoTracking();
+
+        if (classId.HasValue)
+            query = query.Where(s => s.CatechismClassId == classId.Value);
+
+        int total = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(s => s.DateTime)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(s => s.ToDTO())
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<CatechismSessionDto>
+        {
+            Items = items,
+            Total = total,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
 }

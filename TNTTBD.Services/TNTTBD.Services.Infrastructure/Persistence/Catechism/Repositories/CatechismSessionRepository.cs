@@ -40,7 +40,7 @@ public class CatechismSessionRepository : ICatechismSessionRepository
         CatechismSessionEntity? entity = await _context.CatechismSessions.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (entity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
 
         CatechismSession domain = entity.ToDomain();
@@ -55,7 +55,7 @@ public class CatechismSessionRepository : ICatechismSessionRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (entity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         _context.CatechismSessions.Remove(entity);
     }
@@ -70,7 +70,7 @@ public class CatechismSessionRepository : ICatechismSessionRepository
         CatechismSessionEntity? entity = await _context.CatechismSessions.Include(s => s.EucharisticYouthAttendances).FirstOrDefaultAsync(y => y.Id == sessionId, cancellationToken);
         if (entity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
 
         CatechismSession domain = entity.ToDomain();
@@ -89,7 +89,7 @@ public class CatechismSessionRepository : ICatechismSessionRepository
         CatechismSessionEntity? entity = await _context.CatechismSessions.Include(s => s.EucharisticYouthAttendances).FirstOrDefaultAsync(y => y.Id == sessionId, cancellationToken);
         if (entity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         CatechismSession domain = entity.ToDomain();
         CatechismSessionAttendance attendance = domain.MarkAttendance(catechismClassEucharisticYouthId, status, catechistId);

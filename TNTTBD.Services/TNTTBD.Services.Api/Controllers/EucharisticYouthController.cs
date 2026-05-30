@@ -1,5 +1,9 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Auth.Interfaces;
+using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
+using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Queries;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
@@ -8,20 +12,23 @@ using TNTTBD.Services.Application.EucharisticYouths.Queries;
 namespace TNTTBD.Services.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/youths")]
 public class EucharisticYouthController : Controller
 {
     #region Fields
 
     private readonly IMediator _mediator;
+    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public EucharisticYouthController(IMediator mediator)
+    public EucharisticYouthController(IMediator mediator, IAuthorizationContext authContext)
     {
         _mediator = mediator;
+        _authContext = authContext;
     }
 
     #endregion
@@ -37,16 +44,31 @@ public class EucharisticYouthController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         Guid id = await _mediator.Send(command, cancellationToken);
 
         return CreatedAtAction(nameof(GetById), new { id }, id);
     }
 
     /// <summary>
-    /// Get by id
+    /// Get list (paginated, optional search filter)
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetById(GetEucharisticYouthByIdQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] GetEucharisticYouthsQuery query, CancellationToken cancellationToken)
+    {
+        PaginatedResult<EucharisticYouthDto> result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Get by id
+    /// </summary>
+    [HttpGet("detail")]
+    public async Task<IActionResult> GetById([FromQuery] GetEucharisticYouthByIdQuery query, CancellationToken cancellationToken)
     {
         EucharisticYouthDto? result = await _mediator.Send(query, cancellationToken);
 
@@ -64,6 +86,11 @@ public class EucharisticYouthController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update(UpdateEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanAccessYouthAsync(command.EucharisticYouthId, cancellationToken))
+        {
+            return Forbid();
+        }
+
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -71,6 +98,11 @@ public class EucharisticYouthController : Controller
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -160,6 +192,32 @@ public class EucharisticYouthController : Controller
     {
         await _mediator.Send(command, cancellationToken);
         return Ok();
+    }
+
+    [HttpGet("enrollments")]
+    public async Task<IActionResult> GetEnrollments([FromQuery] Guid youthId, CancellationToken cancellationToken)
+    {
+        if (!await _authContext.CanAccessYouthAsync(youthId, cancellationToken))
+        {
+            return Forbid();
+        }
+
+        List<CatechismClassEucharisticYouthDto> result = await _mediator.Send(
+            new GetCatechismClassEucharisticYouthsByYouthQuery(youthId), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("contacts")]
+    public async Task<IActionResult> GetContacts([FromQuery] Guid youthId, CancellationToken cancellationToken)
+    {
+        if (!await _authContext.CanAccessYouthAsync(youthId, cancellationToken))
+        {
+            return Forbid();
+        }
+
+        List<EucharisticYouthContactDto> result = await _mediator.Send(
+            new GetEucharisticYouthContactsQuery(youthId), cancellationToken);
+        return Ok(result);
     }
 
     #endregion

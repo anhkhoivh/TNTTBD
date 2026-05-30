@@ -1,27 +1,32 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Commands;
-using TNTTBD.Services.Application.CatechismSessions.Commands;
-using TNTTBD.Services.Application.CatechismSessions.DTOs;
-using TNTTBD.Services.Application.CatechismSessions.Queries;
+using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
+using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Queries;
+using TNTTBD.Services.Application.Common.DTOs;
 
 namespace TNTTBD.Services.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/class-youth")]
 public class CatechismClassEucharisticYouthController : Controller
 {
     #region Fields
 
     private readonly IMediator _mediator;
+    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public CatechismClassEucharisticYouthController(IMediator mediator)
+    public CatechismClassEucharisticYouthController(IMediator mediator, IAuthorizationContext authContext)
     {
         _mediator = mediator;
+        _authContext = authContext;
     }
 
     #endregion
@@ -37,18 +42,33 @@ public class CatechismClassEucharisticYouthController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] AddEucharisticYouthToClassCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanAccessClassAsync(command.CatechismClassId, cancellationToken))
+        {
+            return Forbid();
+        }
+
         Guid id = await _mediator.Send(command, cancellationToken);
 
         return CreatedAtAction(nameof(GetById), new { id }, id);
     }
 
     /// <summary>
-    /// Get by id
+    /// Get list (paginated, optional classId filter)
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetById(GetCatechismSessionByIdQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] GetCatechismClassEucharisticYouthsQuery query, CancellationToken cancellationToken)
     {
-        CatechismSessionDto result = await _mediator.Send(query, cancellationToken);
+        PaginatedResult<CatechismClassEucharisticYouthDto> result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Get by id
+    /// </summary>
+    [HttpGet("detail")]
+    public async Task<IActionResult> GetById([FromQuery] GetCatechismClassEucharisticYouthByIdQuery query, CancellationToken cancellationToken)
+    {
+        CatechismClassEucharisticYouthDto result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
 
@@ -58,6 +78,11 @@ public class CatechismClassEucharisticYouthController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update(UpdateCatechismClassEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -68,6 +93,11 @@ public class CatechismClassEucharisticYouthController : Controller
     [HttpPatch("mark-completed")]
     public async Task<IActionResult> MarkCompleted(MarkCatechismClassEucharisticYouthsCompletedCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -75,6 +105,11 @@ public class CatechismClassEucharisticYouthController : Controller
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveEucharisticYouthFromClassCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }

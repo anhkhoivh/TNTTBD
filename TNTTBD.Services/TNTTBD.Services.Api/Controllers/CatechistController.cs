@@ -1,5 +1,7 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.Catechists.Commands;
 using TNTTBD.Services.Application.Catechists.DTOs;
 using TNTTBD.Services.Application.Catechists.Queries;
@@ -8,20 +10,23 @@ using TNTTBD.Services.Application.Common.DTOs;
 namespace TNTTBD.Services.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/catechists")]
 public class CatechistController : Controller
 {
     #region Fields
 
     private readonly IMediator _mediator;
+    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public CatechistController(IMediator mediator)
+    public CatechistController(IMediator mediator, IAuthorizationContext authContext)
     {
         _mediator = mediator;
+        _authContext = authContext;
     }
 
     #endregion
@@ -37,16 +42,31 @@ public class CatechistController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCatechistCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         Guid id = await _mediator.Send(command, cancellationToken);
 
         return CreatedAtAction(nameof(GetById), new { id }, id);
     }
 
     /// <summary>
-    /// Get by id
+    /// Get list (paginated)
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetById(GetCatechistByIdQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] GetCatechistsQuery query, CancellationToken cancellationToken)
+    {
+        PaginatedResult<CatechistDto> result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Get by id
+    /// </summary>
+    [HttpGet("detail")]
+    public async Task<IActionResult> GetById([FromQuery] GetCatechistByIdQuery query, CancellationToken cancellationToken)
     {
         CatechistDto? result = await _mediator.Send(query, cancellationToken);
 
@@ -64,6 +84,11 @@ public class CatechistController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update(UpdateCatechistCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanAccessCatechistAsync(command.CatechistId, cancellationToken))
+        {
+            return Forbid();
+        }
+
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -71,6 +96,11 @@ public class CatechistController : Controller
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveCatechistCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
