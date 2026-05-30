@@ -111,6 +111,13 @@ public class CatechismSessionController : Controller
         return Ok();
     }
 
+    [HttpGet("attendances")]
+    public async Task<IActionResult> GetAttendances([FromQuery] GetAttendancesBySessionQuery query, CancellationToken cancellationToken)
+    {
+        PaginatedResult<CatechismSessionAttendanceDto> result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+
     [HttpPost("attendance")]
     public async Task<IActionResult> MarkAttendance([FromBody] MarkAttendanceCommand command, CancellationToken cancellationToken)
     {

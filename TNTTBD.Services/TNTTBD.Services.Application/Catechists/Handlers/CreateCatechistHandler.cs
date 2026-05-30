@@ -40,6 +40,15 @@ public class CreateCatechistHandler : IRequestHandler<CreateCatechistCommand, Gu
             command.IsMale
         );
 
+        // Add patron saints
+        if (command.PatronSaints != null)
+        {
+            foreach (var ps in command.PatronSaints)
+            {
+                catechist.AddPatronSaint(new PatronSaint(ps.SaintName, ps.Day, ps.Month));
+            }
+        }
+
         await _repository.AddAsync(catechist, cancellationToken);
 
         return catechist.Id;

@@ -107,7 +107,7 @@ export class CatechistForm {
           }
           this.isEdit.set(true);
           this.editId = id;
-          return this.api.get<Catechist>('/catechists', { id });
+          return this.api.get<Catechist>('/catechists/detail', { id });
         }),
       )
       .subscribe((c) => {
@@ -132,13 +132,11 @@ export class CatechistForm {
     }
     const v = this.form.getRawValue();
     const payload = {
-      ...(this.isEdit() ? { id: this.editId } : {}),
-      fullName: {
-        givenName: v.givenName,
-        middleName: v.middleName || null,
-        familyName: v.familyName || null,
-        christName: v.christName || null,
-      },
+      ...(this.isEdit() ? { catechistId: this.editId } : {}),
+      givenName: v.givenName,
+      middleName: v.middleName || null,
+      familyName: v.familyName || null,
+      christName: v.christName || null,
       dateOfBirth: this.toIsoDate(v.dateOfBirth),
       isMale: v.isMale,
       address: v.address || null,

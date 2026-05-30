@@ -60,4 +60,37 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
             PageSize = pageSize
         };
     }
+
+    /// <inheritdoc />
+    public async Task<PaginatedResult<CatechismSessionAttendanceDto>> GetAttendancesBySessionAsync(Guid sessionId, int page, int pageSize, CancellationToken cancellationToken)
+    {
+        var query = _context.CatechismSessionAttendances
+            .AsNoTracking()
+            .Where(a => a.CatechismSessionId == sessionId);
+
+        int total = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(a => a.MarkedTime)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(a => new CatechismSessionAttendanceDto
+            {
+                Id = a.Id,
+                CatechismSessionId = a.CatechismSessionId,
+                CatechismClassEucharisticYouthId = a.CatechismClassEucharisticYouthId,
+                AttendanceStatus = a.AttendanceStatus,
+                MarkedTime = a.MarkedTime,
+                MarkedByCatechistId = a.MarkedByCatechistId
+            })
+            .ToListAsync(cancellationToken);
+
+        return new PaginatedResult<CatechismSessionAttendanceDto>
+        {
+            Items = items,
+            Total = total,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
 }

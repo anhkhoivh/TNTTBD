@@ -60,7 +60,7 @@ export class YouthDetail {
       switchMap((qp) => {
         const id = qp.get('id');
         if (!id) return of(null);
-        return this.api.get<EucharisticYouth>('/youths', { id }).pipe(catchError(() => of(null)));
+        return this.api.get<EucharisticYouth>('/youths/detail', { id }).pipe(catchError(() => of(null)));
       }),
     ),
     { initialValue: null },
@@ -92,8 +92,11 @@ export class YouthDetail {
     const id = this.route.snapshot.queryParamMap.get('id');
     if (!id) return;
     this.api
-      .list<EucharisticYouthContact>('/youths/contacts', { youthId: id })
-      .pipe(catchError(() => of(emptyPage<EucharisticYouthContact>())))
+      .get<EucharisticYouthContact[]>('/youths/contacts', { youthId: id })
+      .pipe(
+        map((items) => ({ items, total: items.length, page: 1, pageSize: items.length })),
+        catchError(() => of(emptyPage<EucharisticYouthContact>())),
+      )
       .subscribe((data) => this.contactsData.set(data));
   }
 
@@ -101,13 +104,12 @@ export class YouthDetail {
     const id = this.route.snapshot.queryParamMap.get('id');
     if (!id) return;
     forkJoin({
-      enrollments: this.api.list<CatechismClassEucharisticYouth>('/class-youth').pipe(
-        map((result) => {
-          const items = result.items.filter((item) => item.eucharisticYouthId === id);
-          return { ...result, items, total: items.length };
-        }),
-        catchError(() => of(emptyPage<CatechismClassEucharisticYouth>())),
-      ),
+      enrollments: this.api
+        .get<CatechismClassEucharisticYouth[]>('/youths/enrollments', { youthId: id })
+        .pipe(
+          map((items) => ({ items, total: items.length, page: 1, pageSize: items.length })),
+          catchError(() => of(emptyPage<CatechismClassEucharisticYouth>())),
+        ),
       classes: this.api
         .list<CatechismClass>('/classes')
         .pipe(catchError(() => of(emptyPage<CatechismClass>()))),

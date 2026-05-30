@@ -87,9 +87,12 @@ builder.Services.AddSingleton<IFileStorage>(new LocalFileStorage(fileStorageBase
 
 // Auth & User services
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient("OAuth");
 builder.Services.AddScoped<IAuthorizationContext, AuthorizationContext>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IOAuthService, OAuthService>();
+builder.Services.AddScoped<IExternalLoginRepository, ExternalLoginRepository>();
 builder.Services.AddSingleton<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
 
 // JWT Authentication

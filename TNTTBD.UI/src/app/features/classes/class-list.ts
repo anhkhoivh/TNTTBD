@@ -199,7 +199,7 @@ export class ClassList {
       .afterClosed()
       .subscribe((ok) => {
         if (!ok) return;
-        this.api.delete('/classes', { id: catechismClass.id }).subscribe(() => {
+        this.api.delete('/classes', { catechismClassId: catechismClass.id }).subscribe(() => {
           this.notify.success('Deleted');
           this.reload();
         });

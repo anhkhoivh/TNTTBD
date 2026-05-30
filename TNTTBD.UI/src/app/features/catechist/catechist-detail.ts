@@ -91,7 +91,7 @@ export class CatechistDetail {
       switchMap((qp) => {
         const id = qp.get('id');
         if (!id) return of(null);
-        return this.api.get<Catechist>('/catechists', { id }).pipe(catchError(() => of(null)));
+        return this.api.get<Catechist>('/catechists/detail', { id }).pipe(catchError(() => of(null)));
       }),
     ),
     { initialValue: null },

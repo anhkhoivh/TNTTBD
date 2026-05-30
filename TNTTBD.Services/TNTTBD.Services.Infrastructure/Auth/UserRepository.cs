@@ -71,6 +71,13 @@ public class UserRepository : IUserRepository
         return result == PasswordVerificationResult.Success || result == PasswordVerificationResult.SuccessRehashNeeded;
     }
 
+    public async Task<bool> HasPasswordAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .AnyAsync(u => u.Id == userId && u.PasswordHash != null, cancellationToken);
+    }
+
     public async Task<Guid> CreateAsync(string email, string userName, string password, UserRole role, CancellationToken cancellationToken)
     {
         var entity = new UserEntity

@@ -52,6 +52,8 @@
   "auth.signInWithMicrosoft": "Đăng nhập bằng Microsoft",
   "auth.or": "hoặc",
   "auth.invalidCredentials": "Thông tin đăng nhập không đúng",
+  "auth.signingIn": "Đang đăng nhập...",
+  "auth.backToLogin": "Quay lại đăng nhập",
 
   "youth.code": "Mã thiếu nhi",
   "youth.fullName": "Họ và tên",

@@ -94,6 +94,7 @@ export class YouthForm {
 
   protected loading = signal(false);
   protected isEdit = signal(false);
+  private editId: string | null = null;
   protected addToMyClass = signal(true);
   protected myCurrentClassId = signal<string | null>(null);
   protected myClassName = signal<string | null>(null);
@@ -156,6 +157,7 @@ export class YouthForm {
           const id = qp.get('id');
           if (!id) return of(null);
           this.isEdit.set(true);
+          this.editId = id;
           return this.api.get<EucharisticYouth>('/youths/detail', { id });
         }),
       )
@@ -212,13 +214,11 @@ export class YouthForm {
     }
     const v = this.form.getRawValue();
     const payload = {
-      code: v.code,
-      fullName: {
-        givenName: v.givenName,
-        middleName: v.middleName || null,
-        familyName: v.familyName || null,
-        christName: v.christName || null,
-      },
+      ...(this.isEdit() ? { eucharisticYouthId: this.editId } : {}),
+      givenName: v.givenName,
+      middleName: v.middleName || null,
+      familyName: v.familyName || null,
+      christName: v.christName || null,
       dateOfBirth: this.toIsoDate(v.dateOfBirth),
       isMale: v.isMale,
       address: v.address || null,
@@ -233,16 +233,12 @@ export class YouthForm {
       ...(this.isEdit() ? {} : {
         contacts: (v.contacts as Array<{ relationType: ContactRelationType; christName: string; familyName: string; middleName: string; givenName: string; phoneNumber: string; email: string }>).map((c) => ({
           relationType: c.relationType,
-          contact: {
-            fullName: {
-              givenName: c.givenName,
-              christName: c.christName || null,
-              familyName: c.familyName || null,
-              middleName: c.middleName || null,
-            },
-            phoneNumber: c.phoneNumber || null,
-            email: c.email || null,
-          },
+          givenName: c.givenName,
+          christName: c.christName || null,
+          familyName: c.familyName || null,
+          middleName: c.middleName || null,
+          phoneNumber: c.phoneNumber || null,
+          email: c.email || null,
         })),
       }),
     };

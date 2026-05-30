@@ -207,7 +207,7 @@ export class ClassDetail {
       .afterClosed()
       .subscribe((ok) => {
         if (!ok) return;
-        this.api.delete('/sessions', { id }).subscribe(() => {
+        this.api.delete('/sessions', { catechismSessionId: id }).subscribe(() => {
           this.notify.success('Deleted');
           this.sessionsRes.reload();
         });

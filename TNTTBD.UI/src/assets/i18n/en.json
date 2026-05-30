@@ -52,6 +52,8 @@
   "auth.signInWithMicrosoft": "Sign in with Microsoft",
   "auth.or": "or",
   "auth.invalidCredentials": "Invalid credentials",
+  "auth.signingIn": "Signing in...",
+  "auth.backToLogin": "Back to login",
 
   "youth.code": "Code",
   "youth.fullName": "Full name",

@@ -10,5 +10,6 @@ public record UpdateCatechistCommand(
     string? MiddleName,
     DateOnly DateOfBirth,
     string? Address,
-    bool IsMale
+    bool IsMale,
+    List<CatechistPatronSaintData>? PatronSaints = null
 ) : IRequest;

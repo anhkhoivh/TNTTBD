@@ -1,4 +1,5 @@
 using MediatR;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
@@ -10,5 +11,7 @@ public record UpdateEucharisticYouthCommand(
     string? MiddleName,
     DateOnly DateOfBirth,
     string? Address,
-    bool IsMale
+    bool IsMale,
+    List<YouthPatronSaintData>? PatronSaints = null,
+    List<YouthMilestoneData>? Milestones = null
 ) : IRequest;

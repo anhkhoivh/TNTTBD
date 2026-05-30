@@ -66,15 +66,7 @@ export class Login {
 
   protected loginSSO(provider: 'google' | 'microsoft'): void {
     this.loading.set(true);
-    this.auth.loginWithSSO(provider).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.router.navigate(['/app/dashboard']);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.error.set('auth.invalidCredentials');
-      },
-    });
+    this.error.set(null);
+    this.auth.loginWithSSO(provider);
   }
 }

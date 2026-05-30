@@ -108,7 +108,7 @@ export class SessionFormDialog {
     const [hh, mm] = v.time.split(':').map(Number);
     d.setHours(hh, mm, 0, 0);
     this.ref.close({
-      id: v.id || undefined,
+      ...(v.id ? { catechismSessionId: v.id } : {}),
       catechismClassId: this.data.classId,
       title: v.title,
       dateTime: d.toISOString(),

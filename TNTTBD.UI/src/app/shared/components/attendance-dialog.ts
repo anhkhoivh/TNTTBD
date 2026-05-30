@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { forkJoin, catchError, of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
 import {
   CatechismClassEucharisticYouth,
@@ -96,6 +97,7 @@ function emptyPage<T>(): PaginatedResult<T> {
 })
 export class AttendanceDialog implements OnInit {
   private api = inject(ApiService);
+  private auth = inject(AuthService);
   private notify = inject(NotificationService);
   protected ref = inject(MatDialogRef<AttendanceDialog>);
   private data: AttendanceDialogData = inject(MAT_DIALOG_DATA);
@@ -148,7 +150,8 @@ export class AttendanceDialog implements OnInit {
     this.saving.set(true);
     const payload = {
       sessionId: this.data.sessionId,
-      records: this.rows()
+      markedByCatechistId: this.auth.currentUser()?.catechistId,
+      attendanceItems: this.rows()
         .filter((r) => r.status !== AttendanceStatus.None)
         .map((r) => ({
           catechismClassEucharisticYouthId: r.enrollmentId,

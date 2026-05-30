@@ -35,7 +35,7 @@ function makeToken(role: UserRole): string {
 
 function loginByEmail(email: string) {
   const user = mockUsers.find((u) => u.email.toLowerCase() === email.toLowerCase()) ?? mockUsers[0];
-  return { token: makeToken(user.userRole), user };
+  return { token: makeToken(user.userRole), refreshToken: 'mock-refresh', user };
 }
 
 /**
@@ -63,7 +63,10 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
     const provider = (body?.['provider'] as string) ?? 'google';
     const role = provider === 'microsoft' ? UserRole.Catechist : UserRole.EucharisticYouthContact;
     const user = mockUsers.find((u) => u.userRole === role) ?? mockUsers[0];
-    return ok({ token: makeToken(user.userRole), user });
+    return ok({ token: makeToken(user.userRole), refreshToken: 'mock-refresh', user });
+  }
+  if (path.startsWith('/auth/sso/url') && method === 'GET') {
+    return ok({ url: '/auth/callback?code=mock-code&state=' + (qs.get('state') ?? 'mock') });
   }
   if (path === '/auth/me' && method === 'GET') {
     return ok(mockUsers[0]);
@@ -107,14 +110,14 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
     const items = youthId
       ? mockClassYouth.filter((c) => c.eucharisticYouthId === youthId)
       : mockClassYouth;
-    return ok(paginate(items));
+    return ok(items);
   }
   if (path === '/youths/contacts' && method === 'GET') {
     const youthId = qs.get('youthId');
     const items = youthId
       ? mockYouthContacts.filter((c) => c.eucharisticYouthId === youthId)
       : mockYouthContacts;
-    return ok(paginate(items));
+    return ok(items);
   }
 
   // ===== Catechists =====

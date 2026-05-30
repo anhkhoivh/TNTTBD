@@ -9,5 +9,8 @@ public record CreateCatechistCommand(
     string? MiddleName,
     DateOnly DateOfBirth,
     string? Address,
-    bool IsMale
+    bool IsMale,
+    List<CatechistPatronSaintData>? PatronSaints = null
 ) : IRequest<Guid>;
+
+public record CatechistPatronSaintData(string SaintName, int Day, int Month);

@@ -35,7 +35,7 @@ API Layer (Controllers) → Application Layer (Commands/Queries + Handlers) → 
 
 ---
 
-## Phase 1: List/Paginated Queries (Foundation) ✅ COMPLETED
+## Phase 1: List/Paginated Queries (Foundation) ✅ DONE
 
 **Why**: The frontend uses `api.list<T>(path)` which expects `PaginatedResult<T>` (`{ items, total, page, pageSize }`). Most existing queries return a single item or a flat `List<T>`. The frontend calls list endpoints for: `/classes`, `/catechism-years`, `/youths`, `/catechists`, `/sessions`, `/class-youth`, `/class-catechist`.
 
@@ -75,9 +75,9 @@ API Layer (Controllers) → Application Layer (Commands/Queries + Handlers) → 
 
 ---
 
-## Phase 2: Exam Management (New Feature Area)
+## Phase 2: Exam Management ✅ DONE
 
-**Domain model exists** (`Exam`, `ExamResult`), but there's **no Application layer or API** for it.
+**Domain model exists** (`Exam`, `ExamResult`). Application layer & API implemented.
 
 ### 2.1 — Application Feature Folder
 Create: `Application/Exams/` with subfolders: `Commands/`, `Queries/`, `Handlers/`, `DTOs/`, `Interfaces/`
@@ -120,9 +120,9 @@ Create: `Application/Exams/` with subfolders: `Commands/`, `Queries/`, `Handlers
 
 ---
 
-## Phase 3: CatechismClassCatechist Management (New Feature Area)
+## Phase 3: CatechismClassCatechist Management ✅ DONE
 
-**Domain model exists** (`CatechismClassCatechist`), but no dedicated Application layer or controller.
+**Domain model exists** (`CatechismClassCatechist`). Application layer & controller implemented.
 
 ### 3.1 — Application Feature Folder
 Create: `Application/CatechismClassCatechists/` with `Commands/`, `Queries/`, `Handlers/`, `DTOs/`, `Interfaces/`
@@ -153,9 +153,9 @@ Create: `Application/CatechismClassCatechists/` with `Commands/`, `Queries/`, `H
 
 ---
 
-## Phase 4: Contacts (New Feature Area)
+## Phase 4: Contacts ✅ DONE
 
-**Domain model exists** (`Contact`, `EucharisticYouthContact`), but no Application layer or controller.
+**Domain model exists** (`Contact`, `EucharisticYouthContact`). Application layer & controller implemented.
 
 ### 4.1 — Application Feature Folder
 Create: `Application/Contacts/` with subfolders
@@ -180,14 +180,19 @@ Create: `Application/Contacts/` with subfolders
 
 ---
 
-## Phase 5: Authentication & User Management
+## Phase 5: Authentication & User Management ✅ DONE
 
-**Frontend expects**:
-- `POST /api/auth/login` → `{ token, user }`
-- `POST /api/auth/sso-callback` → `{ token, user }`
-- `GET /api/users` → `PaginatedResult<User>`
-
-**Domain**: `User` entity is minimal (just `UserRole`). `UserExternalLogin` exists.
+**Implemented**:
+- `POST /api/auth/login` → `{ token, refreshToken, user }`
+- `POST /api/auth/refresh` → refresh token rotation
+- `POST /api/auth/logout` → revoke all refresh tokens
+- `GET /api/auth/me` → current user info
+- `POST /api/auth/sso-callback` → OAuth code exchange (Google + Microsoft)
+- `GET /api/auth/sso/url?provider=` → OAuth authorization URL
+- `GET /api/users` → `PaginatedResult<User>` (Admin only)
+- JWT HS256, 60min access + 7-day refresh with rotation
+- Frontend auth interceptor with 401 retry + concurrent request queuing
+- Frontend SSO flow with popup redirect
 
 ### 5.1 — Expand User Domain Model
 - File: refactor `TNTTBD.Services.Domain/User.cs` (move to `Catechism/` folder or keep at root)
@@ -227,9 +232,9 @@ Create: `Application/Users/`
 
 ---
 
-## Phase 6: Youth Registration (New Feature Area)
+## Phase 6: Youth Registration ✅ DONE
 
-**Frontend POSTs to** `POST /api/registration/youth` with payload:
+**Frontend POSTs to** `POST /api/registration/youth`. Handler creates Youth + Contacts + links.
 ```
 {
   youth: { fullName, dateOfBirth, isMale, address, baptism? },
@@ -256,10 +261,30 @@ Create: `Application/Registration/`
 ## Phase 7: Enrichment (Nice-to-have / Future)
 
 - **Dashboard stats endpoint**: `GET /api/dashboard` — attendance rates, upcoming sessions
-- **CatechismYear list endpoint currently returns `List` but frontend expects paginated**
-- **Validation**: Add FluentValidation behaviors (the `TransactionBehavior` already exists — follow same pattern for validation pipeline)
-- **Authorization middleware**: Role checks per endpoint
+- **Admin user CRUD UI** — backend endpoints ready, frontend not built
+- **Photo upload** — component exists but not wired into form templates
+- **~15 backend CRUD endpoints** for milestones, patron saints, photos, year/class management — frontend features not yet built
+- **UpdateCatechist/UpdateEucharisticYouth handlers** accept PatronSaints/Milestones in command but delegate to individual management endpoints
+- **Validation**: Add FluentValidation behaviors (the `TransactionBehavior` already exists)
 - **Error localization**: Already partially built (`en.json`, `vi.json` in API Resources)
+
+---
+
+## Integration Audit ✅ DONE (All builds pass)
+
+The following integration issues were identified and fixed:
+1. Detail endpoints: `/youths/detail`, `/catechists/detail` (FE was calling wrong paths)
+2. Attendance GET query: new backend query/handler/controller for reading session attendances
+3. Logout: FE now calls `POST /auth/logout` before clearing local state
+4. Token refresh: Full 401 retry interceptor with concurrent request queuing
+5. Response shapes: `/youths/contacts` and `/youths/enrollments` return `List<T>` not paginated
+6. Body mismatches: 8 fixes — all request bodies now use correct field names matching backend commands
+   - catechist-form: flat fields + `catechistId` on update
+   - youth-form: flat fields + `eucharisticYouthId` on update + contacts structure
+   - session-form-dialog: `catechismSessionId` + `catechismClassId`
+   - class-detail: `catechismSessionId` for delete
+   - class-list: `catechismClassId` for delete
+   - attendance-dialog: `markedByCatechistId` + `attendanceItems`
 
 ---
 
