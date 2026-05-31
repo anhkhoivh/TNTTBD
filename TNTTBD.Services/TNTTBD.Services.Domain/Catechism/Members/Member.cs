@@ -74,6 +74,11 @@ public abstract class Member : AggregateRoot<Guid>
     public bool IsMale { get; protected set; }
 
     /// <summary>
+    /// Phone Number
+    /// </summary>
+    public string? PhoneNumber { get; protected set; }
+
+    /// <summary>
     /// Photo list
     /// </summary>
     public IReadOnlyCollection<PhotoReference> Photos => _photos.AsReadOnly();

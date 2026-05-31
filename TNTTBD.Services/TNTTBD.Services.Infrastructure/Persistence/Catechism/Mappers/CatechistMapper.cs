@@ -40,6 +40,7 @@ public static class CatechistMapper
             Address = domain.Address,
             DateOfBirth = domain.DateOfBirth,
             IsMale = domain.IsMale,
+            PhoneNumber = domain.PhoneNumber,
             Photos = domain.Photos.Select(p => p.ToCatechistPhotoEntity(domain.Id)).ToList(),
             PatronSaints = domain.PatronSaints.ToList()
         };
@@ -55,6 +56,7 @@ public static class CatechistMapper
         entity.DateOfBirth = domain.DateOfBirth;
         entity.Address = domain.Address;
         entity.IsMale = domain.IsMale;
+        entity.PhoneNumber = domain.PhoneNumber;
 
         // Photo
         foreach (PhotoReference photo in domain.Photos)
@@ -107,6 +109,7 @@ public static class CatechistMapper
             DateOfBirth = entity.DateOfBirth,
             IsMale = entity.IsMale,
             Address = entity.Address,
+            PhoneNumber = entity.PhoneNumber,
 
             Photos = entity.Photos.Select(m => m.ToDTO(storage)).ToList(),
 

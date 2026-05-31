@@ -31,6 +31,12 @@ public class CatechismClassEntity
     public string ClassName { get; set; } = null!;
 
     /// <summary>
+    /// <summary>
+    /// Class Code
+    /// </summary>
+    public string ClassCode { get; set; } = null!;
+
+    /// <summary>
     /// Catechism Year Id
     /// </summary>
     public Guid CatechismYearId { get; set; }
