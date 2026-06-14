@@ -7,6 +7,7 @@ namespace TNTTBD.Services.Domain.Enums
     {
         Main,
         Member,
-        Assistance,
+        Trainee,
+        Auxiliary
     }
 }

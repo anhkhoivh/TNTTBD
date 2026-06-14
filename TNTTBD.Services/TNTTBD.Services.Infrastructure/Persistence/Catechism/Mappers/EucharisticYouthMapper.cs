@@ -43,6 +43,7 @@ public static class EucharisticYouthMapper
             Address = domain.Address,
             DateOfBirth = domain.DateOfBirth,
             IsMale = domain.IsMale,
+            PhoneNumber = domain.PhoneNumber,
             Photos = domain.Photos.Select(p => p.ToEucharisticYouthPhotoEntity(domain.Id)).ToList(),
             SpiritualMilestones = domain.Milestones.Select(m => m.ToEntity(domain.Id)).ToList(),
             PatronSaints = domain.PatronSaints.ToList()
@@ -60,6 +61,7 @@ public static class EucharisticYouthMapper
         entity.DateOfBirth = domain.DateOfBirth;
         entity.Address = domain.Address;
         entity.IsMale = domain.IsMale;
+        entity.PhoneNumber = domain.PhoneNumber;
 
         // Photo
         foreach (PhotoReference photo in domain.Photos)
@@ -139,6 +141,7 @@ public static class EucharisticYouthMapper
             DateOfBirth = entity.DateOfBirth,
             IsMale = entity.IsMale,
             Address = entity.Address,
+            PhoneNumber = entity.PhoneNumber,
 
             Photos = entity.Photos.Select(m => m.ToDTO(storage)).ToList(),
 

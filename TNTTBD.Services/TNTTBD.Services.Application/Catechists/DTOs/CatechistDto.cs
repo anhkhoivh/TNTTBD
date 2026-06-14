@@ -40,6 +40,11 @@ public class CatechistDto
     public string? Address { get; set; }
 
     /// <summary>
+    /// Phone Number
+    /// </summary>
+    public string? PhoneNumber { get; set; }
+
+    /// <summary>
     /// Is male
     /// </summary>
     public bool IsMale { get; set; }

@@ -1,0 +1,6 @@
+# Import tool build artifacts
+ImportTool/bin/
+ImportTool/obj/
+
+# Generated SQL output
+import-data.sql

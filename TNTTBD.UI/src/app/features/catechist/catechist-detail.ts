@@ -136,7 +136,8 @@ export class CatechistDetail {
     const map: Record<CatechismClassCatechistRole, string> = {
       [CatechismClassCatechistRole.Main]: 'catechistRole.Main',
       [CatechismClassCatechistRole.Member]: 'catechistRole.Member',
-      [CatechismClassCatechistRole.Assistance]: 'catechistRole.Assistance',
+      [CatechismClassCatechistRole.Trainee]: 'catechistRole.Trainee',
+      [CatechismClassCatechistRole.Auxiliary]: 'catechistRole.Auxiliary',
     };
     return map[role];
   }
