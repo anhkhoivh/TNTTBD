@@ -74,7 +74,7 @@ public class CatechistEntityConfiguration : IEntityTypeConfiguration<CatechistEn
         });
 
         builder.Navigation(t => t.Photos)
-               .UsePropertyAccessMode(PropertyAccessMode.Field);
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 
     #endregion
