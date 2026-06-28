@@ -19,7 +19,7 @@ public class SpiritualMilestoneEntityConfiguration : IEntityTypeConfiguration<Sp
         builder.ToTable(nameof(SpiritualMilestoneEntity));
         builder.HasKey(c => c.Id);
 
-        builder.HasOne<EucharisticYouthEntity>()
+        builder.HasOne(m => m.EucharisticYouth)
             .WithMany(y => y.SpiritualMilestones)
             .HasForeignKey(c => c.EucharisticYouthId)
             .OnDelete(DeleteBehavior.Restrict);

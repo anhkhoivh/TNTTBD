@@ -1,3 +1,4 @@
+using TNTTBD.Services.Application.CatechismClassCatechists.DTOs;
 using TNTTBD.Services.Domain.Catechism.JoinModels;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
@@ -15,7 +16,9 @@ public static class CatechismClassCatechistMapper
     /// </summary>
     public static CatechismClassCatechist ToDomain(this CatechismClassCatechistEntity entity)
     {
-        CatechismClassCatechist domain = new CatechismClassCatechist(entity.Id, entity.CatechistId, entity.CatechismClassId, entity.Role);
+        CatechismClassCatechist domain = new CatechismClassCatechist(
+            entity.Id, entity.CatechistId, entity.CatechismClassId, entity.Role,
+            entity.EnrolledAt, entity.LeftAt, entity.Status, entity.Note);
 
         return domain;
     }
@@ -34,7 +37,11 @@ public static class CatechismClassCatechistMapper
             Id = domain.Id,
             CatechismClassId = domain.CatechismClassId,
             CatechistId = domain.CatechistId,
-            Role = domain.Role
+            Role = domain.Role,
+            EnrolledAt = domain.EnrolledAt,
+            LeftAt = domain.LeftAt,
+            Status = domain.Status,
+            Note = domain.Note
         };
 
         return entity;
@@ -48,6 +55,30 @@ public static class CatechismClassCatechistMapper
         entity.CatechismClassId = domain.CatechismClassId;
         entity.CatechistId = domain.CatechistId;
         entity.Role = domain.Role;
+        entity.LeftAt = domain.LeftAt;
+        entity.Status = domain.Status;
+        entity.Note = domain.Note;
+    }
+
+    /// <summary>
+    /// Convert from entity to DTO
+    /// </summary>
+    public static CatechismClassCatechistDto ToDTO(this CatechismClassCatechistEntity entity)
+    {
+        return new CatechismClassCatechistDto
+            {
+                Id = entity.Id,
+                CatechismClassId = entity.CatechismClassId,
+                ClassName = entity.CatechismClass.ClassName,
+                CatechismYearTheme = entity.CatechismClass.CatechismYear.Theme ?? string.Empty,
+                CatechistId = entity.CatechistId,
+                FullName = entity.Catechist.FullName,
+                Role = entity.Role,
+                EnrolledAt = entity.EnrolledAt,
+                LeftAt = entity.LeftAt,
+                Status = entity.Status,
+                Note = entity.Note,
+            };
     }
 
     #endregion

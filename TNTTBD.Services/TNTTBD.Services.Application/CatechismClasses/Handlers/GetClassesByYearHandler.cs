@@ -27,7 +27,7 @@ public class GetClassesByYearHandler : IRequestHandler<GetClassesByYearQuery, Li
 
     public async Task<List<CatechismClassDto>> Handle(GetClassesByYearQuery query, CancellationToken cancellationToken)
     {
-        return await _queryService.GetClassesByYearAsync(query.CatechismYearId, cancellationToken) ?? throw new Exception(DomainErrors.ValidationNotFound);
+        return await _queryService.GetClassesByYearAsync(query.CatechismYearId, cancellationToken) ?? throw new DomainException(DomainErrors.ValidationNotFound);
     }
 
     #endregion

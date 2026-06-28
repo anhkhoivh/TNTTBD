@@ -64,7 +64,7 @@ public class CatechismClassEucharisticYouthRepository : ICatechismClassEucharist
     /// <inheritdoc />
     public async Task Remove(Guid id, CancellationToken cancellationToken)
     {
-        CatechismClassEucharisticYouthEntity? entity = await _context.CatechismClassEucharisticYouths.FirstOrDefaultAsync(y => y.Id == id, cancellationToken) ?? throw new Exception(DomainErrors.ValidationNotFound);
+        CatechismClassEucharisticYouthEntity? entity = await _context.CatechismClassEucharisticYouths.FirstOrDefaultAsync(y => y.Id == id, cancellationToken) ?? throw new DomainException(DomainErrors.ValidationNotFound);
         _context.CatechismClassEucharisticYouths.Remove(entity);
     }
 

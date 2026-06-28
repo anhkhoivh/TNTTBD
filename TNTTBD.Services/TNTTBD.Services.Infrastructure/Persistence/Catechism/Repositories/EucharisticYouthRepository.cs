@@ -32,7 +32,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
 
         EucharisticYouth domain = youthEntity.ToDomain();
@@ -47,7 +47,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         _context.EucharisticYouths.Remove(youthEntity);
     }
@@ -60,7 +60,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.AddMilestone(milestone);
@@ -75,13 +75,13 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         SpiritualMilestoneEntity? milestoneEntity = youthEntity.SpiritualMilestones
             .FirstOrDefault(m => m.Id == milestone.Id);
         if (milestoneEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.UpdateMilestone(milestone.Id, milestone.Date, milestone.DocumentCode, milestone.Place, milestone.Note);
@@ -96,7 +96,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.RemoveMilestone(milestoneId);
@@ -111,7 +111,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.AddPhoto(photoReference);
@@ -126,7 +126,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         EucharisticYouth domain = youthEntity.ToDomain();
         PhotoReference photoReference = domain.RemovePhoto(photoId);
@@ -142,7 +142,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.AddPatronSaint(patronSaint);
@@ -157,7 +157,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.RemovePatronSaint(patronSaint);

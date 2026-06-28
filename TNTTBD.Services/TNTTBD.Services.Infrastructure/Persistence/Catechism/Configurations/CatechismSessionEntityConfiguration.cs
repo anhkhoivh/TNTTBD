@@ -20,12 +20,12 @@ public class CatechismSessionEntityConfiguration : IEntityTypeConfiguration<Cate
         builder.HasKey(c => c.Id);
 
         builder.HasMany(c => c.EucharisticYouthAttendances)
-            .WithOne()
+            .WithOne(a => a.CatechismSession)
             .HasForeignKey(attendance => attendance.CatechismSessionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<CatechismClassEntity>()
-            .WithMany()
+        builder.HasOne(s => s.CatechismClass)
+            .WithMany(c => c.CatechismSessions)
             .HasForeignKey(l => l.CatechismClassId)
             .OnDelete(DeleteBehavior.Restrict);
 

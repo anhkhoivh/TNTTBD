@@ -43,6 +43,7 @@ public static class EucharisticYouthMapper
             Address = domain.Address,
             DateOfBirth = domain.DateOfBirth,
             IsMale = domain.IsMale,
+            PhoneNumber = domain.PhoneNumber,
             Photos = domain.Photos.Select(p => p.ToEucharisticYouthPhotoEntity(domain.Id)).ToList(),
             SpiritualMilestones = domain.Milestones.Select(m => m.ToEntity(domain.Id)).ToList(),
             PatronSaints = domain.PatronSaints.ToList()
@@ -60,6 +61,7 @@ public static class EucharisticYouthMapper
         entity.DateOfBirth = domain.DateOfBirth;
         entity.Address = domain.Address;
         entity.IsMale = domain.IsMale;
+        entity.PhoneNumber = domain.PhoneNumber;
 
         // Photo
         foreach (PhotoReference photo in domain.Photos)
@@ -132,26 +134,34 @@ public static class EucharisticYouthMapper
         return new EucharisticYouthDto
         {
             Id = entity.Id,
-            ChristName = entity.FullName.ChristName,
-            GivenName = entity.FullName.GivenName,
-            FamilyName = entity.FullName.FamilyName,
-            MiddleName = entity.FullName.MiddleName,
+            FullName = entity.FullName,
             DateOfBirth = entity.DateOfBirth,
             IsMale = entity.IsMale,
             Address = entity.Address,
+            PhoneNumber = entity.PhoneNumber,
 
-            Photos = entity.Photos.Select(m => m.ToDTO(storage)).ToList(),
+            Photos = entity.Photos.Select(p => new PhotoReferenceDto
+            {
+                Purpose = p.Purpose.ToString(),
+                ContentType = p.ContentType,
+                UploadedBy = p.UploadedBy,
+                Url = storage.GetFileUrl(p.StorageKey)
+            }).ToList(),
 
-            Milestones = entity.SpiritualMilestones.Select(m => m.ToDTO()).ToList(),
+            Milestones = entity.SpiritualMilestones.Select(m => new SpiritualMilestoneDto
+            {
+                Type = m.Type.ToString(),
+                Date = m.Date,
+                Place = m.Place,
+                Note = m.Note
+            }).ToList(),
 
-            PatronSaints = entity.PatronSaints
-                .Select(p => new PatronSaintDto
-                {
-                    SaintName = p.SaintName,
-                    Day = p.Day,
-                    Month = p.Month
-                })
-                .ToList()
+            PatronSaints = entity.PatronSaints.Select(p => new PatronSaintDto
+            {
+                SaintName = p.SaintName,
+                Day = p.Day,
+                Month = p.Month
+            }).ToList()
         };
     }
 

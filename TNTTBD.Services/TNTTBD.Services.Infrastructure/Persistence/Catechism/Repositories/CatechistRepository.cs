@@ -40,7 +40,7 @@ public class CatechistRepository : ICatechistRepository
         CatechistEntity? catechistEntity = await _context.Catechists.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (catechistEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
 
         Catechist domain = catechistEntity.ToDomain();
@@ -55,7 +55,7 @@ public class CatechistRepository : ICatechistRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (catechistEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         _context.Catechists.Remove(catechistEntity);
     }
@@ -83,7 +83,7 @@ public class CatechistRepository : ICatechistRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (catechistEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         Catechist domain = catechistEntity.ToDomain();
         PhotoReference photoReference = domain.RemovePhoto(photoId);
@@ -114,7 +114,7 @@ public class CatechistRepository : ICatechistRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (catechistEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         Catechist domain = catechistEntity.ToDomain();
         domain.RemovePatronSaint(patronSaint);

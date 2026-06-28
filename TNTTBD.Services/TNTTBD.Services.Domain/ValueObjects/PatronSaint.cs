@@ -10,6 +10,14 @@ public class PatronSaint : ValueObject
     #region Constructors
 
     /// <summary>
+    /// Default
+    /// </summary>
+    public PatronSaint()
+    {
+        SaintName = string.Empty;
+    }
+
+    /// <summary>
     /// Constructor from detail
     /// </summary>
     public PatronSaint(string name, int day, int month)

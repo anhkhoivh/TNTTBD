@@ -21,10 +21,12 @@ public class EucharisticYouthContact : DomainEntity<Guid>
     public EucharisticYouthContact(
         Guid id, 
         Guid eucharisticYouthId,
-        Guid contactId) : base(id)
+        Guid contactId,
+        ContactRelationType contactRelationType) : base(id)
     {
         EucharisticYouthId = eucharisticYouthId;
         ContactId = contactId;
+        ContactRelationType = contactRelationType;
     }
 
     #endregion

@@ -1,0 +1,61 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{ (isEdit() ? 'catechist.edit' : 'catechist.create') | t }}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="grid-2">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.christ' | t }}</mat-label>
+          <input matInput formControlName="christName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.family' | t }}</mat-label>
+          <input matInput formControlName="familyName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.middle' | t }}</mat-label>
+          <input matInput formControlName="middleName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.given' | t }}</mat-label>
+          <input matInput formControlName="givenName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'youth.dateOfBirth' | t }}</mat-label>
+          <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" />
+          <mat-datepicker-toggle matIconSuffix [for]="dobPicker"></mat-datepicker-toggle>
+          <mat-datepicker #dobPicker></mat-datepicker>
+        </mat-form-field>
+
+        <div class="field-gender">
+          <label>{{ 'youth.gender' | t }}</label>
+          <mat-radio-group formControlName="isMale">
+            <mat-radio-button [value]="true">{{ 'common.male' | t }}</mat-radio-button>
+            <mat-radio-button [value]="false">{{ 'common.female' | t }}</mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <mat-form-field appearance="outline" class="span-2">
+          <mat-label>{{ 'youth.address' | t }}</mat-label>
+          <input matInput formControlName="address" />
+        </mat-form-field>
+      </div>
+
+      <app-patron-saint-input formControlName="patronSaints" class="mt-16"></app-patron-saint-input>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="actions mt-16">
+    <a mat-button routerLink="/app/catechists">{{ 'common.cancel' | t }}</a>
+    <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+      {{ 'common.save' | t }}
+    </button>
+  </div>
+</form>

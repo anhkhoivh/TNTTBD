@@ -26,9 +26,25 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
             .IsUnique();
 
         builder.HasMany(u => u.ExternalLogins)
-            .WithOne()
+            .WithOne(l => l.User)
             .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(u => u.Catechist)
+            .WithOne(c => c.User)
+            .HasForeignKey<UserEntity>(u => u.CatechistId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(u => u.Contact)
+            .WithOne(c => c.User)
+            .HasForeignKey<UserEntity>(u => u.ContactId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(u => u.EucharisticYouth)
+            .WithOne(y => y.User)
+            .HasForeignKey<UserEntity>(u => u.EucharisticYouthId)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 
     #endregion

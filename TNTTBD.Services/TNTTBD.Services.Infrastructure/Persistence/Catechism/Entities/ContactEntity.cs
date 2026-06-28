@@ -30,6 +30,21 @@ public class ContactEntity
     /// Email
     /// </summary>
     public string? Email { get; set; }
+
+    /// <summary>
+    /// Contacts
+    /// </summary>
+    public ICollection<EucharisticYouthContactEntity> EucharisticYouthContacts { get; set; } = new List<EucharisticYouthContactEntity>();
+
+    /// <summary>
+    /// Id
+    /// </summary>
+    public Guid? UserId { get; set; }
+
+    /// <summary>
+    /// User
+    /// </summary>
+    public UserEntity? User { get; set; }
     
     #endregion
 

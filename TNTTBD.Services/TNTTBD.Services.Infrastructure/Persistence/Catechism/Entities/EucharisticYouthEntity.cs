@@ -29,12 +29,17 @@ public class EucharisticYouthEntity
     /// <summary>
     /// Date Of Birth
     /// </summary>
-    public DateOnly DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
 
     /// <summary>
     /// Address
     /// </summary>
     public string? Address { get; set; }
+
+    /// <summary>
+    /// Phone Number
+    /// </summary>
+    public string? PhoneNumber { get; set; }
 
     /// <summary>
     /// Is male
@@ -55,6 +60,27 @@ public class EucharisticYouthEntity
     /// Patron Saints
     /// </summary>
     public ICollection<PatronSaint> PatronSaints { get; set; } = new List<PatronSaint>();
+
+    /// <summary>
+    /// Youth List
+    /// </summary>
+    public ICollection<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouths { get; set; } = new List<CatechismClassEucharisticYouthEntity>();
+
+    
+    /// <summary>
+    /// Contacts
+    /// </summary>
+    public ICollection<EucharisticYouthContactEntity> EucharisticYouthContacts { get; set; } = new List<EucharisticYouthContactEntity>();
+
+    /// <summary>
+    /// Id
+    /// </summary>
+    public Guid? UserId { get; set; }
+
+    /// <summary>
+    /// User
+    /// </summary>
+    public UserEntity? User { get; set; }
 
     #endregion
 }

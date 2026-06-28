@@ -25,13 +25,13 @@ public class EucharisticYouthContactEntityConfiguration : IEntityTypeConfigurati
             x.EucharisticYouthId,
         }).IsUnique();
 
-        builder.HasOne<ContactEntity>()
-            .WithMany()
+        builder.HasOne(yc => yc.Contact)
+            .WithMany(c => c.EucharisticYouthContacts)
             .HasForeignKey(c => c.ContactId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne<EucharisticYouthEntity>()
-            .WithMany()
+        builder.HasOne(yc => yc.EucharisticYouth)
+            .WithMany(y => y.EucharisticYouthContacts)
             .HasForeignKey(ey => ey.EucharisticYouthId)
             .OnDelete(DeleteBehavior.Restrict);
     }

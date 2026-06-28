@@ -23,6 +23,11 @@ public class CatechismSessionAttendanceEntity
     /// Id of session
     /// </summary>
     public Guid CatechismSessionId { get; set; }
+
+    /// <summary>
+    /// Session
+    /// </summary>
+    public CatechismSessionEntity CatechismSession { get; set; } = null!;
     
     /// <summary>
     /// Status
@@ -35,9 +40,19 @@ public class CatechismSessionAttendanceEntity
     public Guid CatechismClassEucharisticYouthId { get; set; }
 
     /// <summary>
+    /// Youth
+    /// </summary>
+    public CatechismClassEucharisticYouthEntity CatechismClassEucharisticYouth { get; set; } = null!;
+
+    /// <summary>
     /// Marked by
     /// </summary>
     public Guid MarkedByCatechistId { get; set; }
+
+    /// <summary>
+    /// Catechist mark
+    /// </summary>
+    public CatechistEntity MarkedByCatechist { get; set; } = null!;
 
     /// <summary>
     /// Marked at

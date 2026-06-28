@@ -19,7 +19,7 @@ public class CatechistPhotoEntityConfiguration : IEntityTypeConfiguration<Catech
         builder.ToTable(nameof(CatechistPhotoEntity));
         builder.HasKey(c => c.Id);
 
-        builder.HasOne<CatechistEntity>()
+        builder.HasOne(p => p.Catechist)
             .WithMany(c => c.Photos)
             .HasForeignKey(c => c.CatechistId)
             .OnDelete(DeleteBehavior.Restrict);

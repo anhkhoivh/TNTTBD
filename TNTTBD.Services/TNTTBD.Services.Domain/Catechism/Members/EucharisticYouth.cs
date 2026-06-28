@@ -28,7 +28,7 @@ public class EucharisticYouth : Member
     /// <summary>
     /// Default constructor
     /// </summary>
-    public EucharisticYouth(Guid id, string code, FullName name, DateOnly dateOfBirth, string? address, bool isMale) : base(id, name, dateOfBirth, address, isMale)
+    public EucharisticYouth(Guid id, string code, FullName name, DateOnly? dateOfBirth, string? address, bool isMale) : base(id, name, dateOfBirth, address, isMale)
     {
         Code = code;
     }
@@ -36,7 +36,7 @@ public class EucharisticYouth : Member
     /// <summary>
     /// Default constructor
     /// </summary>
-    public EucharisticYouth(Guid id, string code, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id, name, dateOfBirth, address, isMale, photos, patronSaints)
+    public EucharisticYouth(Guid id, string code, FullName name, DateOnly? dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<SpiritualMilestone> milestones, IEnumerable<PatronSaint> patronSaints) : base(id, name, dateOfBirth, address, isMale, photos, patronSaints)
     {
         Code = code;
         _milestones.AddRange(milestones);

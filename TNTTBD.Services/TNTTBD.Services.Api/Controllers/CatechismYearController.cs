@@ -1,7 +1,10 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClasses.DTOs;
 using TNTTBD.Services.Application.CatechismClasses.Queries;
+using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.CatechismYears.Commands;
 using TNTTBD.Services.Application.CatechismYears.DTOs;
 using TNTTBD.Services.Application.CatechismYears.Queries;
@@ -9,20 +12,23 @@ using TNTTBD.Services.Application.CatechismYears.Queries;
 namespace TNTTBD.Services.Api.Controllers;
 
 [ApiController]
-[Route("api/years")]
+[Authorize]
+[Route("api/catechism-years")]
 public class CatechismYearController : Controller
 {
     #region Fields
 
     private readonly IMediator _mediator;
+    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public CatechismYearController(IMediator mediator)
+    public CatechismYearController(IMediator mediator, IAuthorizationContext authContext)
     {
         _mediator = mediator;
+        _authContext = authContext;
     }
 
     #endregion
@@ -38,16 +44,31 @@ public class CatechismYearController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCatechismYearCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanWriteYearsAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         Guid id = await _mediator.Send(command, cancellationToken);
 
         return CreatedAtAction(nameof(GetById), new { id }, id);
     }
 
     /// <summary>
-    /// Get by id
+    /// Get list (paginated)
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetById(GetCatechismYearByIdQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] GetCatechismYearsQuery query, CancellationToken cancellationToken)
+    {
+        PaginatedResult<CatechismYearDto> result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Get by id
+    /// </summary>
+    [HttpGet("detail")]
+    public async Task<IActionResult> GetById([FromQuery] GetCatechismYearByIdQuery query, CancellationToken cancellationToken)
     {
         CatechismYearDto result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
@@ -56,19 +77,11 @@ public class CatechismYearController : Controller
     /// <summary>
     /// Get classes by year
     /// </summary>
-    /// <param name="query"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    [HttpPost("classes")]
-    public async Task<IActionResult> GetClassesByYear([FromBody] GetClassesByYearQuery query, CancellationToken cancellationToken)
+    [HttpGet("classes")]
+    public async Task<IActionResult> GetClassesByYear([FromQuery] GetClassesByYearQuery query, CancellationToken cancellationToken)
     {
         List<CatechismClassDto> classes = await _mediator.Send(query, cancellationToken);
-        if (classes == null || classes.Count == 0)
-        {
-            return NotFound();
-        }
-
-        return Ok(classes);
+        return Ok(classes ?? []);
     }
 
     /// <summary>
@@ -77,6 +90,11 @@ public class CatechismYearController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update(UpdateCatechismYearCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanWriteYearsAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -84,6 +102,11 @@ public class CatechismYearController : Controller
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveCatechismYearCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanWriteYearsAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }

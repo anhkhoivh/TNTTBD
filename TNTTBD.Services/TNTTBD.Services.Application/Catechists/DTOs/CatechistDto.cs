@@ -1,4 +1,5 @@
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Application.Catechists.DTOs;
 
@@ -10,34 +11,24 @@ public class CatechistDto
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Christ Name
+    /// Full Name
     /// </summary>
-    public string? ChristName { get; set; }
-
-    /// <summary>
-    /// Family Name
-    /// </summary>
-    public string? FamilyName { get; set; }
-
-    /// <summary>
-    /// Middle Name
-    /// </summary>
-    public string? MiddleName { get; set; }
-
-    /// <summary>
-    /// Given Name
-    /// </summary>
-    public required string GivenName { get; set; }
+    public required FullName FullName { get; init; }
 
     /// <summary>
     /// Date Of Birth
     /// </summary>
-    public DateOnly DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
 
     /// <summary>
     /// Address
     /// </summary>
     public string? Address { get; set; }
+
+    /// <summary>
+    /// Phone Number
+    /// </summary>
+    public string? PhoneNumber { get; set; }
 
     /// <summary>
     /// Is male

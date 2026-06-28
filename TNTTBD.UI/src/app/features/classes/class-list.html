@@ -1,0 +1,85 @@
+<div class="toolbar">
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'class.year' | t }}</mat-label>
+    <mat-select [ngModel]="selectedYearId()" (ngModelChange)="selectedYearId.set($event)">
+      <mat-option [value]="null">{{ 'common.noData' | t }}</mat-option>
+      @for (y of years(); track y.id) {
+        <mat-option [value]="y.id">{{ y.title }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  
+  <mat-form-field appearance="outline">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>{{ 'common.search' | t }}</mat-label>
+    <input matInput [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" placeholder="...">
+  </mat-form-field>
+  
+  <span class="spacer"></span>
+  @if (canManage()) {
+    <button mat-stroked-button (click)="newYear()">
+      <mat-icon>event</mat-icon> {{ 'class.year' | t }} +
+    </button>
+    <button mat-flat-button color="primary" (click)="newClass()">
+      <mat-icon>add</mat-icon> {{ 'common.add' | t }}
+    </button>
+  }
+</div>
+
+<mat-card>
+  <mat-card-content class="p-0">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="paginatedFiltered()" class="full-width">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>{{ 'class.name' | t }}</th>
+          <td mat-cell *matCellDef="let row" [class.my-class]="isMyClass(row.id)">
+            @if (isMyClass(row.id)) { <mat-icon class="star-icon">star</mat-icon> }
+            {{ row.className }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="text-right"></th>
+          <td mat-cell *matCellDef="let row" class="text-right">
+            <a mat-icon-button [routerLink]="['/app/classes/detail']" [queryParams]="{ id: row.id }" [attr.aria-label]="'common.view' | t">
+              <mat-icon>visibility</mat-icon>
+            </a>
+            @if (canManage()) {
+              <button mat-icon-button (click)="editClass(row)" [attr.aria-label]="'common.edit' | t">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteClass(row)" [attr.aria-label]="'common.delete' | t">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="cols"></tr>
+        <tr mat-row *matRowDef="let row; columns: cols"></tr>
+      </table>
+    </div>
+
+    @if (filtered().length > 0) {
+      <mat-paginator 
+        [length]="filtered().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        (page)="onPageChange($event)"
+        aria-label="Select page">
+      </mat-paginator>
+    }
+
+    @if (filtered().length === 0) {
+      <app-empty-state 
+        icon="search_off" 
+        titleKey="class.noClasses" 
+        descKey="class.noClassesDesc">
+        @if (canManage()) {
+          <button mat-flat-button color="primary" (click)="newClass()">
+            <mat-icon>add</mat-icon> {{ 'common.add' | t }}
+          </button>
+        }
+      </app-empty-state>
+    }
+  </mat-card-content>
+</mat-card>

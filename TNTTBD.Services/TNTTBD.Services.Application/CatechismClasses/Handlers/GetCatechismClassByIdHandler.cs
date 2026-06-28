@@ -27,7 +27,7 @@ public class GetCatechismClassByIdHandler : IRequestHandler<GetCatechismClassByI
 
     public async Task<CatechismClassDto> Handle(GetCatechismClassByIdQuery query, CancellationToken cancellationToken)
     {
-        return await _queryService.GetByIdAsync(query.Id, cancellationToken) ?? throw new Exception(DomainErrors.ValidationNotFound);
+        return await _queryService.GetByIdAsync(query.Id, cancellationToken) ?? throw new DomainException(DomainErrors.ValidationNotFound);
     }
 
     #endregion

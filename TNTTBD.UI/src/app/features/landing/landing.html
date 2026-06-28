@@ -1,0 +1,33 @@
+<mat-toolbar color="primary" class="landing-toolbar">
+  <mat-icon>church</mat-icon>
+  <span class="title">{{ 'app.title' | t }}</span>
+  <span class="spacer"></span>
+  <button mat-icon-button (click)="theme.toggle()" aria-label="Toggle theme">
+    <mat-icon>{{ theme.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+  <button mat-icon-button [matMenuTriggerFor]="langMenu" aria-label="Language">
+    <mat-icon>translate</mat-icon>
+  </button>
+  <mat-menu #langMenu="matMenu">
+    <button mat-menu-item (click)="setLang('vi')">Tiếng Việt</button>
+    <button mat-menu-item (click)="setLang('en')">English</button>
+  </mat-menu>
+  <a mat-button routerLink="/auth/login">{{ 'nav.login' | t }}</a>
+</mat-toolbar>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>{{ 'landing.welcome' | t }}</h1>
+    <p>{{ 'landing.subtitle' | t }}</p>
+    <div class="hero-actions">
+      <a mat-flat-button color="primary" routerLink="/auth/login">
+        <mat-icon>login</mat-icon>
+        {{ 'landing.signIn' | t }}
+      </a>
+      <a mat-stroked-button routerLink="/register-youth">
+        <mat-icon>person_add</mat-icon>
+        {{ 'landing.registerYouth' | t }}
+      </a>
+    </div>
+  </div>
+</section>

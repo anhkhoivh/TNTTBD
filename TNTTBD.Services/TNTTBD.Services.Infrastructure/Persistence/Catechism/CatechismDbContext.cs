@@ -93,6 +93,11 @@ public class CatechismDbContext : DbContext
     public DbSet<UserExternalLoginEntity> UserExternalLogins => Set<UserExternalLoginEntity>();
 
     /// <summary>
+    /// Entity of Refresh Tokens
+    /// </summary>
+    public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
+
+    /// <summary>
     /// Entity of EucharisticYouthRunningNumber
     /// </summary>
     public DbSet<EucharisticYouthRunningNumberEntity> EucharisticYouthRunningNumbers => Set<EucharisticYouthRunningNumberEntity>();

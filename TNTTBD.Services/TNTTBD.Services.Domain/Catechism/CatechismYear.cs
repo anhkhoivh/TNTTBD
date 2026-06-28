@@ -32,6 +32,11 @@ public class CatechismYear : AggregateRoot<Guid>
     #region Properties
 
     /// <summary>
+    /// Title format (yyyy-yyyy)
+    /// </summary>
+    public string Title => $"{StartDate.Year}-{EndDate.Year}";
+
+    /// <summary>
     /// Start Date
     /// </summary>
     public DateOnly StartDate { get; private set; }

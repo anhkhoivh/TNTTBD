@@ -31,9 +31,20 @@ public class CatechismClassEntity
     public string ClassName { get; set; } = null!;
 
     /// <summary>
+    /// <summary>
+    /// Class Code
+    /// </summary>
+    public string ClassCode { get; set; } = null!;
+
+    /// <summary>
     /// Catechism Year Id
     /// </summary>
     public Guid CatechismYearId { get; set; }
+
+    /// <summary>
+    /// Catechism Year
+    /// </summary>
+    public CatechismYearEntity CatechismYear { get; set; } = null!;
 
     /// <summary>
     /// Catechism Session List
@@ -44,6 +55,16 @@ public class CatechismClassEntity
     /// Exam List
     /// </summary>
     public ICollection<ExamEntity> Exams { get; set; } = new List<ExamEntity>();
+
+    /// <summary>
+    /// Youth List
+    /// </summary>
+    public ICollection<CatechismClassEucharisticYouthEntity> CatechismClassEucharisticYouths { get; set; } = new List<CatechismClassEucharisticYouthEntity>();
+
+    /// <summary>
+    /// Catechist List
+    /// </summary>
+    public ICollection<CatechismClassCatechistEntity> CatechismClassCatechists { get; set; } = new List<CatechismClassCatechistEntity>();
 
     #endregion
 }

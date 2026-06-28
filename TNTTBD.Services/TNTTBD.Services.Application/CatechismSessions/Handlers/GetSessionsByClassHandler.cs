@@ -27,7 +27,7 @@ public class GetSessionsByClassHandler : IRequestHandler<GetSessionsByClassQuery
 
     public async Task<List<CatechismSessionDto>> Handle(GetSessionsByClassQuery query, CancellationToken cancellationToken)
     {
-        return await _queryService.GetSessionsByClassAsync(query.CatechismClassId, cancellationToken) ?? throw new Exception(DomainErrors.ValidationNotFound);
+        return await _queryService.GetSessionsByClassAsync(query.CatechismClassId, cancellationToken) ?? throw new DomainException(DomainErrors.ValidationNotFound);
     }
 
     #endregion

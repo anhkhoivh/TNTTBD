@@ -60,7 +60,9 @@ public static class CatechismClassMapper
         return new CatechismClassDto
             {
                 Id = entity.Id,
-                ClassName = entity.ClassName
+                ClassName = entity.ClassName,
+                CatechismYearId = entity.CatechismYearId,
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
             };
     }
 

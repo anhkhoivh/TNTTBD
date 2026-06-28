@@ -1,0 +1,222 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{ (isEdit() ? 'youth.edit' : 'youth.create') | t }}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="grid-2">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'youth.code' | t }}</mat-label>
+          <input matInput formControlName="code" required />
+          @if (form.controls.code.hasError('required')) {
+            <mat-error>{{ 'validation.required' | t }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'youth.dateOfBirth' | t }}</mat-label>
+          <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" required />
+          <mat-datepicker-toggle matIconSuffix [for]="dobPicker"></mat-datepicker-toggle>
+          <mat-datepicker #dobPicker></mat-datepicker>
+          @if (form.controls.dateOfBirth.hasError('required')) {
+            <mat-error>{{ 'validation.required' | t }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.christ' | t }}</mat-label>
+          <input matInput formControlName="christName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.family' | t }}</mat-label>
+          <input matInput formControlName="familyName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.middle' | t }}</mat-label>
+          <input matInput formControlName="middleName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.given' | t }}</mat-label>
+          <input matInput formControlName="givenName" required />
+          @if (form.controls.givenName.hasError('required')) {
+            <mat-error>{{ 'validation.required' | t }}</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="field-gender">
+          <label>{{ 'youth.gender' | t }}</label>
+          <mat-radio-group formControlName="isMale">
+            <mat-radio-button [value]="true">{{ 'common.male' | t }}</mat-radio-button>
+            <mat-radio-button [value]="false">{{ 'common.female' | t }}</mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <mat-form-field appearance="outline" class="span-2">
+          <mat-label>{{ 'youth.address' | t }}</mat-label>
+          <input matInput formControlName="address" />
+        </mat-form-field>
+      </div>
+
+      <app-patron-saint-input formControlName="patronSaints" class="mt-16"></app-patron-saint-input>
+    </mat-card-content>
+  </mat-card>
+
+  @if (isCatechist() && !isEdit() && myCurrentClassId()) {
+    <mat-card class="mt-16">
+      <mat-card-content>
+        <mat-checkbox [checked]="addToMyClass()" (change)="addToMyClass.set($event.checked)">
+          {{ 'youth.addToMyClass' | t }}: <strong>{{ myClassName() }}</strong>
+        </mat-checkbox>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <mat-card class="mt-16">
+    <mat-card-header>
+      <mat-card-title>{{ 'youth.milestones' | t }}</mat-card-title>
+      <span class="spacer"></span>
+      <button mat-icon-button type="button" (click)="addMilestone()" aria-label="Add">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <div formArrayName="milestones">
+        @for (m of milestones.controls; track $index; let i = $index) {
+          <div [formGroupName]="i" class="milestone-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'milestone.date' | t }}</mat-label>
+              <mat-select formControlName="type" required>
+                @for (t of milestoneTypes; track t.v) {
+                  <mat-option [value]="t.v">{{ t.k | t }}</mat-option>
+                }
+              </mat-select>
+              @if (m.get('type')?.hasError('required')) {
+                <mat-error>{{ 'validation.required' | t }}</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'milestone.date' | t }}</mat-label>
+              <input matInput [matDatepicker]="dp" formControlName="date" required />
+              <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker #dp></mat-datepicker>
+              @if (m.get('date')?.hasError('required')) {
+                <mat-error>{{ 'validation.required' | t }}</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'milestone.place' | t }}</mat-label>
+              <input matInput formControlName="place" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ 'milestone.documentCode' | t }}</mat-label>
+              <input matInput formControlName="documentCode" />
+            </mat-form-field>
+            <button
+              mat-icon-button
+              type="button"
+              color="warn"
+              (click)="removeMilestone(i)"
+              aria-label="Remove"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+        @if (milestones.length === 0) {
+          <p class="text-center">{{ 'common.noData' | t }}</p>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (!isEdit()) {
+    <mat-card class="mt-16">
+      <mat-card-header>
+        <mat-card-title>{{ 'youth.contacts' | t }}</mat-card-title>
+        <span class="spacer"></span>
+        <button mat-icon-button type="button" (click)="addContact()" aria-label="Add contact">
+          <mat-icon>person_add</mat-icon>
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <div formArrayName="contacts">
+          @for (c of contacts.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="contact-card">
+              <div class="contact-header">
+                <mat-form-field appearance="outline" class="relation-field">
+                  <mat-label>{{ 'contact.relation' | t }}</mat-label>
+                  <mat-select formControlName="relationType" required>
+                    @for (r of relationTypes; track r.v) {
+                      <mat-option [value]="r.v">{{ r.k | t }}</mat-option>
+                    }
+                  </mat-select>
+                  @if (c.get('relationType')?.hasError('required')) {
+                    <mat-error>{{ 'validation.required' | t }}</mat-error>
+                  }
+                </mat-form-field>
+                <button
+                  mat-icon-button
+                  type="button"
+                  color="warn"
+                  (click)="removeContact(i)"
+                  aria-label="Remove contact"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+
+              <div class="grid-2">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'fullName.christ' | t }}</mat-label>
+                  <input matInput formControlName="christName" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'fullName.family' | t }}</mat-label>
+                  <input matInput formControlName="familyName" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'fullName.middle' | t }}</mat-label>
+                  <input matInput formControlName="middleName" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'fullName.given' | t }}</mat-label>
+                  <input matInput formControlName="givenName" required />
+                  @if (c.get('givenName')?.hasError('required')) {
+                    <mat-error>{{ 'validation.required' | t }}</mat-error>
+                  }
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'contact.phone' | t }}</mat-label>
+                  <input matInput formControlName="phoneNumber" type="tel" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Email</mat-label>
+                  <input matInput formControlName="email" type="email" />
+                </mat-form-field>
+              </div>
+
+              @if (i < contacts.length - 1) {
+                <mat-divider></mat-divider>
+              }
+            </div>
+          }
+          @if (contacts.length === 0) {
+            <p class="text-center">{{ 'common.noData' | t }}</p>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <div class="actions mt-16">
+    <a mat-button routerLink="/app/youth">{{ 'common.cancel' | t }}</a>
+    <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+      {{ 'common.save' | t }}
+    </button>
+  </div>
+</form>

@@ -21,9 +21,19 @@ public class ExamResultEntity
     public Guid ExamId { get; set; }
 
     /// <summary>
+    /// Exam
+    /// </summary>
+    public ExamEntity Exam { get; set; } = null!;
+
+    /// <summary>
     /// EY id
     /// </summary>
     public Guid CatechismClassEucharisticYouthId { get; set; }
+
+    /// <summary>
+    /// Youth
+    /// </summary>
+    public CatechismClassEucharisticYouthEntity CatechismClassEucharisticYouth { get; set; } = null!;
 
     /// <summary>
     /// Score
@@ -44,6 +54,11 @@ public class ExamResultEntity
     /// Marked by
     /// </summary>
     public Guid MarkedByCatechistId { get; set; }
+
+    /// <summary>
+    /// Catechist mark
+    /// </summary>
+    public CatechistEntity MarkedByCatechist { get; set; } = null!;
 
     /// <summary>
     /// Marked at

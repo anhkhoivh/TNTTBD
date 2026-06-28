@@ -39,7 +39,7 @@ public class CatechismYearRepository : ICatechismYearRepository
         CatechismYearEntity? yearEntity = await _context.CatechismYears.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (yearEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
 
         CatechismYear domain = yearEntity.ToDomain();
@@ -54,7 +54,7 @@ public class CatechismYearRepository : ICatechismYearRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (yearEntity == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
         _context.CatechismYears.Remove(yearEntity);
     }

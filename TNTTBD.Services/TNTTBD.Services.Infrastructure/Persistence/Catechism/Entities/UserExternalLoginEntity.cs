@@ -9,6 +9,8 @@ public class UserExternalLoginEntity
 
     public Guid UserId { get; set; }
 
+    public UserEntity User { get; set; } = null!;
+
     public string Provider { get; set; } = null!; // Google, Microsoft
     public string SubjectId { get; set; } = null!;
 

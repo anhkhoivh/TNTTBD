@@ -37,7 +37,7 @@ public class GetEucharisticYouthPhotosHandler : IRequestHandler<GetEucharisticYo
 
         if (youth == null)
         {
-            throw new Exception(DomainErrors.ValidationNotFound);
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
 
         return youth.Photos;

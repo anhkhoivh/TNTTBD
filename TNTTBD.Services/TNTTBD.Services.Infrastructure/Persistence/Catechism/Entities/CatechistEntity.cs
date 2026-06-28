@@ -24,12 +24,17 @@ public class CatechistEntity
     /// <summary>
     /// Date Of Birth
     /// </summary>
-    public DateOnly DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
 
     /// <summary>
     /// Address
     /// </summary>
     public string? Address { get; set; }
+
+    /// <summary>
+    /// Phone Number
+    /// </summary>
+    public string? PhoneNumber { get; set; }
 
     /// <summary>
     /// Is male
@@ -45,6 +50,21 @@ public class CatechistEntity
     /// Patron Saints
     /// </summary>
     public ICollection<PatronSaint> PatronSaints { get; set; } = new List<PatronSaint>();
+
+    /// <summary>
+    /// Catechist List
+    /// </summary>
+    public ICollection<CatechismClassCatechistEntity> CatechismClassCatechists { get; set; } = new List<CatechismClassCatechistEntity>();
+
+    /// <summary>
+    /// Id
+    /// </summary>
+    public Guid? UserId { get; set; }
+
+    /// <summary>
+    /// User
+    /// </summary>
+    public UserEntity? User { get; set; }
 
     #endregion
 }

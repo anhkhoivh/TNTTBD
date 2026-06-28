@@ -1,0 +1,22 @@
+.dashboard {
+  h1 {
+    font: var(--mat-sys-headline-medium);
+    margin: 0 0 24px;
+  }
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.metric {
+  font: var(--mat-sys-display-small);
+  text-align: center;
+  padding: 16px 0;
+}
+
+.metric.small {
+  font: var(--mat-sys-headline-small);
+}

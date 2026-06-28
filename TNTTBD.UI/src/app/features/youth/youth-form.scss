@@ -1,0 +1,56 @@
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.grid-2 .span-2 { grid-column: 1 / -1; }
+
+.field-gender {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+
+  mat-radio-group {
+    display: flex;
+    gap: 16px;
+  }
+}
+
+.milestone-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.spacer { flex: 1 1 auto; }
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.contact-card {
+  padding: 8px 0 12px;
+}
+
+.contact-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.relation-field {
+  flex: 0 0 200px;
+}
+
+@media (max-width: 700px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .milestone-row { grid-template-columns: 1fr; }
+  .relation-field { flex: 1; }
+}

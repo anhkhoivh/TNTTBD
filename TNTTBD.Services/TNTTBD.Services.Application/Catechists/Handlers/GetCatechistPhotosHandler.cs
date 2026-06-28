@@ -30,7 +30,7 @@ public class GetCatechistPhotosHandler : IRequestHandler<GetCatechistPhotosQuery
 
     public async Task<List<PhotoReferenceDto>> Handle(GetCatechistPhotosQuery query, CancellationToken cancellationToken)
     {
-        return await _queryService.GetPhotosByCatechistId(query.CatechistId, _storage, cancellationToken) ?? throw new Exception(DomainErrors.ValidationNotFound);
+        return await _queryService.GetPhotosByCatechistId(query.CatechistId, _storage, cancellationToken) ?? throw new DomainException(DomainErrors.ValidationNotFound);
     }
 
     #endregion

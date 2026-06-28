@@ -7,6 +7,7 @@ public class EucharisticYouthPhotoEntity
     public Guid Id { get; set; }
 
     public Guid EucharisticYouthId { get; set; }
+    public EucharisticYouthEntity EucharisticYouth { get; set; } = null!;
 
     public string StorageKey { get; set; } = null!;
     public string ContentType { get; set; } = null!;

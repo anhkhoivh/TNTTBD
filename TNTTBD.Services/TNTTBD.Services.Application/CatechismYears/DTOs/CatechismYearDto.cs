@@ -10,6 +10,11 @@ public class CatechismYearDto
     public Guid Id { get; set; }
 
     /// <summary>
+    /// Computed Title (yyyy-yyyy)
+    /// </summary>
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
     /// Start Date
     /// </summary>
     public DateOnly StartDate { get; set; }

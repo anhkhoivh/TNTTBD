@@ -1,0 +1,77 @@
+<mat-sidenav-container class="shell-container">
+  <mat-sidenav
+    #sidenav
+    [mode]="isHandset() ? 'over' : 'side'"
+    [opened]="!isHandset() && sidenavOpened()"
+    (openedChange)="sidenavOpened.set($event)"
+    class="shell-sidenav"
+  >
+    <div class="sidenav-brand">
+      <mat-icon>church</mat-icon>
+      <span>{{ 'app.title' | t }}</span>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-nav-list>
+      @for (item of visibleNav(); track item.route) {
+        <a
+          mat-list-item
+          [routerLink]="item.route"
+          routerLinkActive="active-link"
+          (click)="closeOnHandset()"
+        >
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.labelKey | t }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="shell-toolbar">
+      <button mat-icon-button (click)="toggleSidenav()" aria-label="Toggle navigation">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="toolbar-title">{{ 'app.title' | t }}</span>
+      <span class="spacer"></span>
+
+      <button mat-icon-button (click)="toggleTheme()" [attr.aria-label]="'Toggle dark mode'">
+        <mat-icon>{{ theme.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+
+      <button mat-icon-button [matMenuTriggerFor]="langMenu" aria-label="Language">
+        <mat-icon>translate</mat-icon>
+      </button>
+      <mat-menu #langMenu="matMenu">
+        <button mat-menu-item (click)="setLang('vi')">Tiếng Việt</button>
+        <button mat-menu-item (click)="setLang('en')">English</button>
+      </mat-menu>
+
+      @if (auth.isAuthenticated()) {
+        <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="User menu">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <div class="user-info" mat-menu-item disabled>
+            <div class="user-name">{{ auth.currentUser()?.userName }}</div>
+            <div class="user-email">{{ auth.currentUser()?.email }}</div>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>{{ 'nav.logout' | t }}</span>
+          </button>
+        </mat-menu>
+      } @else {
+        <a mat-button routerLink="/auth/login">{{ 'nav.login' | t }}</a>
+      }
+    </mat-toolbar>
+
+    @if (loading.isLoading()) {
+      <mat-progress-bar mode="indeterminate" class="shell-loading-bar"></mat-progress-bar>
+    }
+
+    <main class="shell-content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

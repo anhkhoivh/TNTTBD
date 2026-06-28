@@ -15,7 +15,7 @@ public static class EucharisticYouthContactMapper
     /// </summary>
     public static EucharisticYouthContact ToDomain(this EucharisticYouthContactEntity entity)
     {
-        EucharisticYouthContact domain = new EucharisticYouthContact(entity.Id, entity.EucharisticYouthId, entity.ContactId);
+        EucharisticYouthContact domain = new EucharisticYouthContact(entity.Id, entity.EucharisticYouthId, entity.ContactId, entity.ContactRelationType);
 
         return domain;
     }

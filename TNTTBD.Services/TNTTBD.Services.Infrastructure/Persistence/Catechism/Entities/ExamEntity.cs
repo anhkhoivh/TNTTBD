@@ -26,12 +26,17 @@ public class ExamEntity
     public Guid CatechismClassId { get; set; }
 
     /// <summary>
+    /// Class
+    /// </summary>
+    public CatechismClassEntity CatechismClass { get; set; } = null!;
+
+    /// <summary>
     /// Exam Date
     /// </summary>
     public DateOnly ExamDate { get; set; }
 
     /// <summary>
-    /// Attendance
+    /// Results
     /// </summary>
     public ICollection<ExamResultEntity> ExamResults { get; set; } = new List<ExamResultEntity>();
 

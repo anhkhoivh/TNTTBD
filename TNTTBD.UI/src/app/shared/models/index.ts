@@ -1,0 +1,7 @@
+export * from './common.model';
+export * from './user.model';
+export * from './youth.model';
+export * from './catechist.model';
+export * from './contact.model';
+export * from './catechism.model';
+export * from './exam.model';
