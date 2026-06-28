@@ -44,13 +44,13 @@ public class CatechistEntityConfiguration : IEntityTypeConfiguration<CatechistEn
                 .IsRequired();
         });
 
-        builder.HasMany<CatechismClassCatechistEntity>()
-            .WithOne()
+        builder.HasMany(c => c.CatechismClassCatechists)
+            .WithOne(cc => cc.Catechist)
             .HasForeignKey(cc => cc.CatechistId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Photos)
-            .WithOne()
+            .WithOne(p => p.Catechist)
             .HasForeignKey(p => p.CatechistId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -72,6 +72,11 @@ public class CatechistEntityConfiguration : IEntityTypeConfiguration<CatechistEn
 
             b.ToTable(CatechistPatronSaints);
         });
+
+        builder.HasOne(c => c.User)
+            .WithOne(u => u.Catechist)
+            .HasForeignKey<CatechistEntity>(c => c.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Navigation(t => t.Photos)
             .UsePropertyAccessMode(PropertyAccessMode.Field);

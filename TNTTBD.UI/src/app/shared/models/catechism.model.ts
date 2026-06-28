@@ -13,6 +13,7 @@ export interface CatechismClass {
   id: string;
   catechismYearId: string;
   className: string;
+  catechismYearTitle: string;
 }
 
 export interface CatechismSession {

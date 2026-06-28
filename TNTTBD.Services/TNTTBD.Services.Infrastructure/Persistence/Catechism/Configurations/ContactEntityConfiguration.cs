@@ -35,6 +35,17 @@ public class ContactEntityConfiguration : IEntityTypeConfiguration<ContactEntity
                 .HasColumnName(nameof(FullName.GivenName))
                 .IsRequired();
         });
+
+        builder.HasMany(y => y.EucharisticYouthContacts)
+            .WithOne(c => c.Contact)
+            .HasForeignKey(ce => ce.ContactId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(c => c.User)
+            .WithOne(u => u.Contact)
+            .HasForeignKey<ContactEntity>(c => c.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
     }
 
     #endregion

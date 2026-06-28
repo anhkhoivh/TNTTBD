@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.Exams.DTOs;
 using TNTTBD.Services.Application.Exams.Interfaces;
-using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -18,7 +17,6 @@ public class ExamQueryService : IExamQueryService
     public async Task<ExamDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _context.Exams
-            .Include(e => e.ExamResults)
             .Where(e => e.Id == id)
             .AsNoTracking()
             .Select(e => new ExamDto
@@ -47,7 +45,9 @@ public class ExamQueryService : IExamQueryService
         var query = _context.Exams.AsNoTracking();
 
         if (classId.HasValue)
+        {
             query = query.Where(e => e.CatechismClassId == classId.Value);
+        }
 
         int total = await query.CountAsync(cancellationToken);
 

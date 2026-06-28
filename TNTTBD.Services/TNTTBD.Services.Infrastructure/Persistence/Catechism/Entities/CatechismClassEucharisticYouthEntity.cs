@@ -19,9 +19,19 @@ public class CatechismClassEucharisticYouthEntity
     public Guid CatechismClassId { get; set; }
 
     /// <summary>
+    /// Catechism Class entity
+    /// </summary>
+    public CatechismClassEntity CatechismClass { get; set; } = null!;
+
+    /// <summary>
     /// EucharisticYouth Id
     /// </summary>
     public Guid EucharisticYouthId { get; set; }
+
+    /// <summary>
+    /// Youth
+    /// </summary>
+    public EucharisticYouthEntity EucharisticYouth { get; set; } = null!;
 
     /// <summary>
     /// Date in
@@ -42,6 +52,16 @@ public class CatechismClassEucharisticYouthEntity
     /// Note
     /// </summary>
     public string? Note { get; set; }
+
+    /// <summary>
+    /// Attendance
+    /// </summary>
+    public ICollection<CatechismSessionAttendanceEntity> EucharisticYouthAttendances { get; set; } = new List<CatechismSessionAttendanceEntity>();
+
+    /// <summary>
+    /// Results
+    /// </summary>
+    public ICollection<ExamResultEntity> ExamResults { get; set; } = new List<ExamResultEntity>();
 
     #endregion
 }

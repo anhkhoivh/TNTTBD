@@ -7,6 +7,8 @@ public class CatechistPhotoEntity
     public Guid Id { get; set; }
 
     public Guid CatechistId { get; set; }
+    
+    public CatechistEntity Catechist { get; set; } = null!;
 
     public string StorageKey { get; set; } = null!;
     public string ContentType { get; set; } = null!;

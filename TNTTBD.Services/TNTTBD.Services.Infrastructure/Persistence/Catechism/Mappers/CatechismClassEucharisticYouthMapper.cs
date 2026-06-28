@@ -1,3 +1,4 @@
+using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
 using TNTTBD.Services.Domain.Catechism.JoinModels;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
@@ -48,6 +49,27 @@ public static class CatechismClassEucharisticYouthMapper
     {
         entity.CatechismClassId = domain.CatechismClassId;
         entity.EucharisticYouthId = domain.EucharisticYouthId;
+    }
+
+    /// <summary>
+    /// Convert from entity to DTO
+    /// </summary>
+    public static CatechismClassEucharisticYouthDto ToDTO(this CatechismClassEucharisticYouthEntity entity)
+    {
+        return new CatechismClassEucharisticYouthDto
+            {
+                Id = entity.Id,
+                CatechismClassId = entity.CatechismClassId,
+                ClassName = entity.CatechismClass.ClassName,
+                CatechismYearTheme = entity.CatechismClass.CatechismYear.Theme ?? string.Empty,
+                EucharisticYouthId = entity.EucharisticYouthId,
+                Code = entity.EucharisticYouth.Code,
+                FullName = entity.EucharisticYouth.FullName,
+                EnrolledAt = entity.EnrolledAt,
+                LeftAt = entity.LeftAt,
+                Status = entity.Status,
+                Note = entity.Note,
+            };
     }
 
     #endregion

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Interfaces;
-using TNTTBD.Services.Infrastructure.Persistence.Catechism;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -16,11 +15,10 @@ public class EucharisticYouthContactQueryService : IEucharisticYouthContactQuery
 
     public async Task<List<EucharisticYouthContactDto>> GetByYouthIdAsync(Guid youthId, CancellationToken cancellationToken)
     {
-        return await (
-            from yc in _context.EucharisticYouthContacts.AsNoTracking()
-            join c in _context.Contacts.AsNoTracking() on yc.ContactId equals c.Id
-            where yc.EucharisticYouthId == youthId
-            select new EucharisticYouthContactDto
+        return await  _context.EucharisticYouthContacts
+            .AsNoTracking()
+            .Where(c => c.EucharisticYouthId == youthId)
+            .Select(yc => new EucharisticYouthContactDto
             {
                 Id = yc.Id,
                 EucharisticYouthId = yc.EucharisticYouthId,
@@ -28,13 +26,12 @@ public class EucharisticYouthContactQueryService : IEucharisticYouthContactQuery
                 ContactRelationType = yc.ContactRelationType,
                 Contact = new ContactInfoDto
                 {
-                    Id = c.Id,
-                    GivenName = c.FullName.GivenName,
-                    FamilyName = c.FullName.FamilyName,
-                    PhoneNumber = c.PhoneNumber,
-                    Email = c.Email
+                    Id = yc.Contact.Id,
+                    FullName = yc.Contact.FullName,
+                    PhoneNumber = yc.Contact.PhoneNumber,
+                    Email = yc.Contact.Email
                 }
-            }
-        ).ToListAsync(cancellationToken);
+            })
+            .ToListAsync(cancellationToken);
     }
 }

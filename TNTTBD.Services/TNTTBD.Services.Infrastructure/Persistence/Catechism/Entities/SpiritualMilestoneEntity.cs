@@ -22,6 +22,11 @@ public class SpiritualMilestoneEntity
     public Guid EucharisticYouthId { get; set; }
 
     /// <summary>
+    /// Youth
+    /// </summary>
+    public EucharisticYouthEntity EucharisticYouth { get; set; } = null!;
+
+    /// <summary>
     /// Type
     /// </summary>
     public MilestoneType Type { get; set; }

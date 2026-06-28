@@ -41,6 +41,11 @@ public class CatechismSessionEntity
     public Guid CatechismClassId { get; set; }
 
     /// <summary>
+    /// Class
+    /// </summary>
+    public CatechismClassEntity CatechismClass { get; set; }
+
+    /// <summary>
     /// Attendance
     /// </summary>
     public ICollection<CatechismSessionAttendanceEntity> EucharisticYouthAttendances { get; set; } = new List<CatechismSessionAttendanceEntity>();

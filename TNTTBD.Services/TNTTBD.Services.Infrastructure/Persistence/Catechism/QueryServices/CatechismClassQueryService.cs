@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.CatechismClasses.DTOs;
 using TNTTBD.Services.Application.CatechismClasses.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
-using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -20,7 +19,13 @@ public class CatechismClassQueryService : ICatechismClassQueryService
     {
         return await _context.CatechismClasses
             .Where(x => x.Id == id)
-            .Select(x => x.ToDTO())
+            .Select(entity => new CatechismClassDto
+            {
+                Id = entity.Id,
+                ClassName = entity.ClassName,
+                CatechismYearId = entity.CatechismYearId,
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
+            })
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -30,7 +35,13 @@ public class CatechismClassQueryService : ICatechismClassQueryService
     {
         return await _context.CatechismClasses
             .Where(c => c.CatechismYearId == yearId)
-            .Select(c => c.ToDTO())
+            .Select(entity => new CatechismClassDto
+            {
+                Id = entity.Id,
+                ClassName = entity.ClassName,
+                CatechismYearId = entity.CatechismYearId,
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
+            })
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -49,7 +60,13 @@ public class CatechismClassQueryService : ICatechismClassQueryService
             .OrderBy(c => c.ClassName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(c => c.ToDTO())
+            .Select(entity => new CatechismClassDto
+            {
+                Id = entity.Id,
+                ClassName = entity.ClassName,
+                CatechismYearId = entity.CatechismYearId,
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
+            })
             .ToListAsync(cancellationToken);
 
         return new PaginatedResult<CatechismClassDto>

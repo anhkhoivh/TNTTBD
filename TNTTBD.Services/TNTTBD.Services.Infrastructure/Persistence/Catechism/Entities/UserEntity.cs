@@ -16,8 +16,13 @@ public sealed class UserEntity
     public bool IsActive { get; set; }
 
     public Guid? CatechistId { get; set; }
+    public CatechistEntity? Catechist { get; set; }
+
     public Guid? ContactId { get; set; }
+    public ContactEntity? Contact { get; set; }
+
     public Guid? EucharisticYouthId { get; set; }
+    public EucharisticYouthEntity? EucharisticYouth { get; set; }
 
     // Authorization
     public UserRole Role { get; set; }

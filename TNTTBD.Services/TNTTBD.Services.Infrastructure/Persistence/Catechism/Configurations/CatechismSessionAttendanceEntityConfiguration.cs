@@ -25,14 +25,19 @@ public class CatechismSessionAttendanceEntityConfiguration : IEntityTypeConfigur
             x.CatechismClassEucharisticYouthId
         }).IsUnique();
 
-        builder.HasOne<CatechismSessionEntity>()
-            .WithMany(x => x.EucharisticYouthAttendances)
-            .HasForeignKey(x => x.CatechismSessionId)
+        builder.HasOne(sa => sa.CatechismSession)
+            .WithMany(s => s.EucharisticYouthAttendances)
+            .HasForeignKey(s => s.CatechismSessionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<EucharisticYouthEntity>()
-            .WithMany()
+        builder.HasOne(sa => sa.CatechismClassEucharisticYouth)
+            .WithMany(cy => cy.EucharisticYouthAttendances)
             .HasForeignKey(x => x.CatechismClassEucharisticYouthId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(sa => sa.MarkedByCatechist)
+            .WithMany()
+            .HasForeignKey(x => x.MarkedByCatechistId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 

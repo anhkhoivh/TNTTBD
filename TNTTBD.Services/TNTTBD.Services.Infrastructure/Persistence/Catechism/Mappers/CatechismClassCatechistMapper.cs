@@ -1,3 +1,4 @@
+using TNTTBD.Services.Application.CatechismClassCatechists.DTOs;
 using TNTTBD.Services.Domain.Catechism.JoinModels;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
@@ -57,6 +58,27 @@ public static class CatechismClassCatechistMapper
         entity.LeftAt = domain.LeftAt;
         entity.Status = domain.Status;
         entity.Note = domain.Note;
+    }
+
+    /// <summary>
+    /// Convert from entity to DTO
+    /// </summary>
+    public static CatechismClassCatechistDto ToDTO(this CatechismClassCatechistEntity entity)
+    {
+        return new CatechismClassCatechistDto
+            {
+                Id = entity.Id,
+                CatechismClassId = entity.CatechismClassId,
+                ClassName = entity.CatechismClass.ClassName,
+                CatechismYearTheme = entity.CatechismClass.CatechismYear.Theme ?? string.Empty,
+                CatechistId = entity.CatechistId,
+                FullName = entity.Catechist.FullName,
+                Role = entity.Role,
+                EnrolledAt = entity.EnrolledAt,
+                LeftAt = entity.LeftAt,
+                Status = entity.Status,
+                Note = entity.Note,
+            };
     }
 
     #endregion

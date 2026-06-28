@@ -19,9 +19,19 @@ public class CatechismClassCatechistEntity
     public Guid CatechismClassId { get; set; }
 
     /// <summary>
+    /// Catechism Class entity
+    /// </summary>
+    public CatechismClassEntity CatechismClass { get; set; } = null!;
+
+    /// <summary>
     /// Catechist Id
     /// </summary>
     public Guid CatechistId { get; set; }
+
+    /// <summary>
+    /// Catechist
+    /// </summary>
+    public CatechistEntity Catechist { get; set; } = null!;
 
     /// <summary>
     /// Catechist role

@@ -1,4 +1,5 @@
 using TNTTBD.Services.Domain.Enums;
+using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Application.CatechismClassCatechists.DTOs;
 
@@ -9,10 +10,7 @@ public class CatechismClassCatechistDto
     public required string ClassName { get; set; }
     public required string CatechismYearTheme { get; set; }
     public Guid CatechistId { get; set; }
-    public string? ChristName { get; set; }
-    public string? FamilyName { get; set; }
-    public string? MiddleName { get; set; }
-    public required string GivenName { get; set; }
+    public required FullName FullName { get; init; }
     public CatechismClassCatechistRole Role { get; set; }
     public DateTimeOffset EnrolledAt { get; set; }
     public DateTimeOffset? LeftAt { get; set; }

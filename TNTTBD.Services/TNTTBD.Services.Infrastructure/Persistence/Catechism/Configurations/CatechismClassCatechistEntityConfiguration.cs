@@ -25,13 +25,13 @@ public class CatechismClassCatechistEntityConfiguration : IEntityTypeConfigurati
             x.CatechistId,
         }).IsUnique();
 
-        builder.HasOne<CatechismClassEntity>()
-            .WithMany()
+        builder.HasOne(cc => cc.CatechismClass)
+            .WithMany(c => c.CatechismClassCatechists)
             .HasForeignKey(c => c.CatechismClassId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne<CatechistEntity>()
-            .WithMany()
+        builder.HasOne(cc => cc.Catechist)
+            .WithMany(c => c.CatechismClassCatechists)
             .HasForeignKey(c => c.CatechistId)
             .OnDelete(DeleteBehavior.Restrict);
     }

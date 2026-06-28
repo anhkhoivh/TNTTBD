@@ -49,23 +49,23 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
                 .IsRequired();
         });
 
-        builder.HasMany<CatechismClassEucharisticYouthEntity>()
-            .WithOne()
+        builder.HasMany(y => y.CatechismClassEucharisticYouths)
+            .WithOne(cy => cy.EucharisticYouth)
             .HasForeignKey(ce => ce.EucharisticYouthId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany<EucharisticYouthContactEntity>()
-            .WithOne()
+        builder.HasMany(y => y.EucharisticYouthContacts)
+            .WithOne(c => c.EucharisticYouth)
             .HasForeignKey(ce => ce.EucharisticYouthId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Photos)
-            .WithOne()
+            .WithOne(p => p.EucharisticYouth)
             .HasForeignKey(p => p.EucharisticYouthId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.SpiritualMilestones)
-            .WithOne()
+            .WithOne(m => m.EucharisticYouth)
             .HasForeignKey(m => m.EucharisticYouthId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -90,6 +90,11 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
 
         builder.Navigation(t => t.Photos)
                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.HasOne(c => c.User)
+            .WithOne(u => u.EucharisticYouth)
+            .HasForeignKey<EucharisticYouthEntity>(c => c.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 
     #endregion

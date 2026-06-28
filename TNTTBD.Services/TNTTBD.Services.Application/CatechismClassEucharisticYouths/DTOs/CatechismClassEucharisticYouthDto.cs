@@ -1,4 +1,5 @@
 using TNTTBD.Services.Domain.Enums;
+using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
 
@@ -35,24 +36,9 @@ public class CatechismClassEucharisticYouthDto
     public string Code { get; set; } = null!;
 
     /// <summary>
-    /// Christ Name
+    /// Full name
     /// </summary>
-    public string? ChristName { get; set; }
-
-    /// <summary>
-    /// Family Name
-    /// </summary>
-    public string? FamilyName { get; set; }
-
-    /// <summary>
-    /// Middle Name
-    /// </summary>
-    public string? MiddleName { get; set; }
-
-    /// <summary>
-    /// Given Name
-    /// </summary>
-    public string GivenName { get; set; } = null!;
+    public required FullName FullName { get; init; }
 
     /// <summary>
     /// Date in

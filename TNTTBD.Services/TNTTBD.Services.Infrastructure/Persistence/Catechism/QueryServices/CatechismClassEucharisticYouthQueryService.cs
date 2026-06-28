@@ -19,24 +19,21 @@ public class CatechismClassEucharisticYouthQueryService : ICatechismClassEuchari
         return await _context.CatechismClassEucharisticYouths
             .AsNoTracking()
             .Where(e => e.Id == id)
-            .Join(_context.EucharisticYouths, e => e.EucharisticYouthId, y => y.Id, (e, y) => new { e, y })
-            .Join(_context.CatechismClasses, ey => ey.e.CatechismClassId, c => c.Id, (ey, c) => new { ey.e, ey.y, c })
-            .Join(_context.CatechismYears, eyc => eyc.c.CatechismYearId, yr => yr.Id, (eyc, yr) => new CatechismClassEucharisticYouthDto
+            .OrderBy(e => e.EucharisticYouth.FullName.GivenName)
+            .ThenBy(e => e.EucharisticYouth.FullName.FamilyName)
+            .Select(entity => new CatechismClassEucharisticYouthDto
             {
-                Id = eyc.e.Id,
-                CatechismClassId = eyc.e.CatechismClassId,
-                ClassName = eyc.c.ClassName,
-                CatechismYearTheme = yr.Theme ?? string.Empty,
-                EucharisticYouthId = eyc.e.EucharisticYouthId,
-                Code = eyc.y.Code,
-                ChristName = eyc.y.FullName.ChristName,
-                FamilyName = eyc.y.FullName.FamilyName,
-                MiddleName = eyc.y.FullName.MiddleName,
-                GivenName = eyc.y.FullName.GivenName,
-                EnrolledAt = eyc.e.EnrolledAt,
-                LeftAt = eyc.e.LeftAt,
-                Status = eyc.e.Status,
-                Note = eyc.e.Note,
+                Id = entity.Id,
+                CatechismClassId = entity.CatechismClassId,
+                ClassName = entity.CatechismClass.ClassName,
+                CatechismYearTheme = entity.CatechismClass.CatechismYear.Theme ?? string.Empty,
+                EucharisticYouthId = entity.EucharisticYouthId,
+                Code = entity.EucharisticYouth.Code,
+                FullName = entity.EucharisticYouth.FullName,
+                EnrolledAt = entity.EnrolledAt,
+                LeftAt = entity.LeftAt,
+                Status = entity.Status,
+                Note = entity.Note,
             })
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -46,24 +43,21 @@ public class CatechismClassEucharisticYouthQueryService : ICatechismClassEuchari
         return await _context.CatechismClassEucharisticYouths
             .AsNoTracking()
             .Where(e => e.CatechismClassId == classId)
-            .Join(_context.EucharisticYouths, e => e.EucharisticYouthId, y => y.Id, (e, y) => new { e, y })
-            .Join(_context.CatechismClasses, ey => ey.e.CatechismClassId, c => c.Id, (ey, c) => new { ey.e, ey.y, c })
-            .Join(_context.CatechismYears, eyc => eyc.c.CatechismYearId, yr => yr.Id, (eyc, yr) => new CatechismClassEucharisticYouthDto
+            .OrderBy(e => e.EucharisticYouth.FullName.GivenName)
+            .ThenBy(e => e.EucharisticYouth.FullName.FamilyName)
+            .Select(entity => new CatechismClassEucharisticYouthDto
             {
-                Id = eyc.e.Id,
-                CatechismClassId = eyc.e.CatechismClassId,
-                ClassName = eyc.c.ClassName,
-                CatechismYearTheme = yr.Theme ?? string.Empty,
-                EucharisticYouthId = eyc.e.EucharisticYouthId,
-                Code = eyc.y.Code,
-                ChristName = eyc.y.FullName.ChristName,
-                FamilyName = eyc.y.FullName.FamilyName,
-                MiddleName = eyc.y.FullName.MiddleName,
-                GivenName = eyc.y.FullName.GivenName,
-                EnrolledAt = eyc.e.EnrolledAt,
-                LeftAt = eyc.e.LeftAt,
-                Status = eyc.e.Status,
-                Note = eyc.e.Note,
+                Id = entity.Id,
+                CatechismClassId = entity.CatechismClassId,
+                ClassName = entity.CatechismClass.ClassName,
+                CatechismYearTheme = entity.CatechismClass.CatechismYear.Theme ?? string.Empty,
+                EucharisticYouthId = entity.EucharisticYouthId,
+                Code = entity.EucharisticYouth.Code,
+                FullName = entity.EucharisticYouth.FullName,
+                EnrolledAt = entity.EnrolledAt,
+                LeftAt = entity.LeftAt,
+                Status = entity.Status,
+                Note = entity.Note,
             })
             .ToListAsync(cancellationToken);
     }
@@ -73,24 +67,21 @@ public class CatechismClassEucharisticYouthQueryService : ICatechismClassEuchari
         return await _context.CatechismClassEucharisticYouths
             .AsNoTracking()
             .Where(e => e.EucharisticYouthId == youthId)
-            .Join(_context.EucharisticYouths, e => e.EucharisticYouthId, y => y.Id, (e, y) => new { e, y })
-            .Join(_context.CatechismClasses, ey => ey.e.CatechismClassId, c => c.Id, (ey, c) => new { ey.e, ey.y, c })
-            .Join(_context.CatechismYears, eyc => eyc.c.CatechismYearId, yr => yr.Id, (eyc, yr) => new CatechismClassEucharisticYouthDto
+            .OrderBy(e => e.EucharisticYouth.FullName.GivenName)
+            .ThenBy(e => e.EucharisticYouth.FullName.FamilyName)
+            .Select(entity => new CatechismClassEucharisticYouthDto
             {
-                Id = eyc.e.Id,
-                CatechismClassId = eyc.e.CatechismClassId,
-                ClassName = eyc.c.ClassName,
-                CatechismYearTheme = yr.Theme ?? string.Empty,
-                EucharisticYouthId = eyc.e.EucharisticYouthId,
-                Code = eyc.y.Code,
-                ChristName = eyc.y.FullName.ChristName,
-                FamilyName = eyc.y.FullName.FamilyName,
-                MiddleName = eyc.y.FullName.MiddleName,
-                GivenName = eyc.y.FullName.GivenName,
-                EnrolledAt = eyc.e.EnrolledAt,
-                LeftAt = eyc.e.LeftAt,
-                Status = eyc.e.Status,
-                Note = eyc.e.Note,
+                Id = entity.Id,
+                CatechismClassId = entity.CatechismClassId,
+                ClassName = entity.CatechismClass.ClassName,
+                CatechismYearTheme = entity.CatechismClass.CatechismYear.Theme ?? string.Empty,
+                EucharisticYouthId = entity.EucharisticYouthId,
+                Code = entity.EucharisticYouth.Code,
+                FullName = entity.EucharisticYouth.FullName,
+                EnrolledAt = entity.EnrolledAt,
+                LeftAt = entity.LeftAt,
+                Status = entity.Status,
+                Note = entity.Note,
             })
             .ToListAsync(cancellationToken);
     }
@@ -105,27 +96,23 @@ public class CatechismClassEucharisticYouthQueryService : ICatechismClassEuchari
         int total = await query.CountAsync(cancellationToken);
 
         var items = await query
-            .OrderBy(e => e.EnrolledAt)
+            .OrderBy(e => e.EucharisticYouth.FullName.GivenName)
+            .ThenBy(e => e.EucharisticYouth.FullName.FamilyName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Join(_context.EucharisticYouths, e => e.EucharisticYouthId, y => y.Id, (e, y) => new { e, y })
-            .Join(_context.CatechismClasses, ey => ey.e.CatechismClassId, c => c.Id, (ey, c) => new { ey.e, ey.y, c })
-            .Join(_context.CatechismYears, eyc => eyc.c.CatechismYearId, yr => yr.Id, (eyc, yr) => new CatechismClassEucharisticYouthDto
+            .Select(entity => new CatechismClassEucharisticYouthDto
             {
-                Id = eyc.e.Id,
-                CatechismClassId = eyc.e.CatechismClassId,
-                ClassName = eyc.c.ClassName,
-                CatechismYearTheme = yr.Theme ?? string.Empty,
-                EucharisticYouthId = eyc.e.EucharisticYouthId,
-                Code = eyc.y.Code,
-                ChristName = eyc.y.FullName.ChristName,
-                FamilyName = eyc.y.FullName.FamilyName,
-                MiddleName = eyc.y.FullName.MiddleName,
-                GivenName = eyc.y.FullName.GivenName,
-                EnrolledAt = eyc.e.EnrolledAt,
-                LeftAt = eyc.e.LeftAt,
-                Status = eyc.e.Status,
-                Note = eyc.e.Note,
+                Id = entity.Id,
+                CatechismClassId = entity.CatechismClassId,
+                ClassName = entity.CatechismClass.ClassName,
+                CatechismYearTheme = entity.CatechismClass.CatechismYear.Theme ?? string.Empty,
+                EucharisticYouthId = entity.EucharisticYouthId,
+                Code = entity.EucharisticYouth.Code,
+                FullName = entity.EucharisticYouth.FullName,
+                EnrolledAt = entity.EnrolledAt,
+                LeftAt = entity.LeftAt,
+                Status = entity.Status,
+                Note = entity.Note,
             })
             .ToListAsync(cancellationToken);
 

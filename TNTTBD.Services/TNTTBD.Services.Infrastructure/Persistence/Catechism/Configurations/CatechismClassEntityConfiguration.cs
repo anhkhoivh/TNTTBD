@@ -19,28 +19,28 @@ public class CatechismClassEntityConfiguration : IEntityTypeConfiguration<Catech
         builder.ToTable(nameof(CatechismClassEntity));
         builder.HasKey(c => c.Id);
 
-        builder.HasOne<CatechismYearEntity>()
+        builder.HasOne(c => c.CatechismYear)
             .WithMany(year => year.CatechismClasses)
             .HasForeignKey(year => year.CatechismYearId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany<CatechismClassEucharisticYouthEntity>()
-            .WithOne()
+        builder.HasMany(c => c.CatechismClassEucharisticYouths)
+            .WithOne(cy => cy.CatechismClass)
             .HasForeignKey(ce => ce.CatechismClassId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany<CatechismClassCatechistEntity>()
-            .WithOne()
+        builder.HasMany(c => c.CatechismClassCatechists)
+            .WithOne(cc => cc.CatechismClass)
             .HasForeignKey(cc => cc.CatechismClassId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(c => c.CatechismSessions)
-            .WithOne()
+            .WithOne(s => s.CatechismClass)
             .HasForeignKey(session => session.CatechismClassId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(c => c.Exams)
-            .WithOne()
+            .WithOne(e => e.CatechismClass)
             .HasForeignKey(exam => exam.CatechismClassId)
             .OnDelete(DeleteBehavior.Cascade);
     }

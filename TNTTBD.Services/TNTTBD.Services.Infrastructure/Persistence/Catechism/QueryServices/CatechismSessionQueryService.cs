@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.CatechismSessions.DTOs;
 using TNTTBD.Services.Application.CatechismSessions.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
-using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -20,7 +19,13 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
     {
         return await _context.CatechismSessions
             .Where(x => x.Id == id)
-            .Select(x => x.ToDTO())
+            .Select(entity => new CatechismSessionDto
+            {
+                Id = entity.Id,
+                Title = entity.Title,
+                CatechismClassId = entity.CatechismClassId,
+                DateTime = entity.DateTime
+            })
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -30,7 +35,13 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
     {
         return await _context.CatechismSessions
             .Where(c => c.CatechismClassId == classId)
-            .Select(c => c.ToDTO())
+            .Select(entity => new CatechismSessionDto
+            {
+                Id = entity.Id,
+                Title = entity.Title,
+                CatechismClassId = entity.CatechismClassId,
+                DateTime = entity.DateTime
+            })
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -49,7 +60,13 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
             .OrderByDescending(s => s.DateTime)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(s => s.ToDTO())
+            .Select(entity => new CatechismSessionDto
+            {
+                Id = entity.Id,
+                Title = entity.Title,
+                CatechismClassId = entity.CatechismClassId,
+                DateTime = entity.DateTime
+            })
             .ToListAsync(cancellationToken);
 
         return new PaginatedResult<CatechismSessionDto>

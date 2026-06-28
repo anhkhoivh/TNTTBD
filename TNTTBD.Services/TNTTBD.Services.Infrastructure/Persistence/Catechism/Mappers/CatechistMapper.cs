@@ -102,16 +102,19 @@ public static class CatechistMapper
         return new CatechistDto
         {
             Id = entity.Id,
-            ChristName = entity.FullName.ChristName,
-            GivenName = entity.FullName.GivenName,
-            FamilyName = entity.FullName.FamilyName,
-            MiddleName = entity.FullName.MiddleName,
+            FullName = entity.FullName,
             DateOfBirth = entity.DateOfBirth,
             IsMale = entity.IsMale,
             Address = entity.Address,
             PhoneNumber = entity.PhoneNumber,
 
-            Photos = entity.Photos.Select(m => m.ToDTO(storage)).ToList(),
+            Photos = entity.Photos.Select(e => new PhotoReferenceDto
+            {
+                Purpose = e.Purpose.ToString(),
+                ContentType = e.ContentType,
+                UploadedBy = e.UploadedBy,
+                Url = storage.GetFileUrl(e.StorageKey)
+            }).ToList(),
 
             PatronSaints = entity.PatronSaints
                 .Select(p => new PatronSaintDto

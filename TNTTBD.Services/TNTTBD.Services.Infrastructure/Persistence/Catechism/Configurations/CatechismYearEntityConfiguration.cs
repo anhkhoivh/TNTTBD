@@ -20,7 +20,7 @@ public class CatechismYearEntityConfiguration : IEntityTypeConfiguration<Catechi
         builder.HasKey(c => c.Id);
 
         builder.HasMany(year => year.CatechismClasses)
-            .WithOne()
+            .WithOne(c => c.CatechismYear)
             .HasForeignKey(c => c.CatechismYearId)
             .OnDelete(DeleteBehavior.Cascade);
     }

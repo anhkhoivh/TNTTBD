@@ -22,9 +22,19 @@ public class EucharisticYouthContactEntity
     public Guid EucharisticYouthId { get; set; }
 
     /// <summary>
+    /// Youth
+    /// </summary>
+    public EucharisticYouthEntity EucharisticYouth { get; set; } = null!;
+
+    /// <summary>
     /// Contact Id
     /// </summary>
     public Guid ContactId { get; set; }
+
+    /// <summary>
+    /// Contact
+    /// </summary>
+    public ContactEntity Contact { get; set; } = null!;
 
     /// <summary>
     /// Contact Relation Type

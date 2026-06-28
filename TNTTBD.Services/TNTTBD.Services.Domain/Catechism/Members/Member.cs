@@ -27,7 +27,7 @@ public abstract class Member : AggregateRoot<Guid>
     /// <summary>
     /// Constructor from parameters
     /// </summary>
-    public Member(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale) : base(id)
+    public Member(Guid id, FullName name, DateOnly? dateOfBirth, string? address, bool isMale) : base(id)
     {
         FullName = name;
         DateOfBirth = dateOfBirth;
@@ -38,7 +38,7 @@ public abstract class Member : AggregateRoot<Guid>
     /// <summary>
     /// Constructor from parameters
     /// </summary>
-    public Member(Guid id, FullName name, DateOnly dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<PatronSaint> patronSaints) : base(id)
+    public Member(Guid id, FullName name, DateOnly? dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<PatronSaint> patronSaints) : base(id)
     {
         FullName = name;
         _photos.AddRange(photos);
@@ -61,7 +61,7 @@ public abstract class Member : AggregateRoot<Guid>
     /// <summary>
     /// Date Of Birth
     /// </summary>
-    public DateOnly DateOfBirth { get; protected set; }
+    public DateOnly? DateOfBirth { get; protected set; }
 
     /// <summary>
     /// Address

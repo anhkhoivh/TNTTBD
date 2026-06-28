@@ -3,7 +3,6 @@ using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Interfaces;
-using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -21,7 +20,38 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
     {
         return await _context.EucharisticYouths
             .Where(y => y.Id == id)
-            .Select(y => y.ToDTO(storage))
+            .Select(entity => new EucharisticYouthDto
+            {
+                Id = entity.Id,
+                FullName = entity.FullName,
+                DateOfBirth = entity.DateOfBirth,
+                IsMale = entity.IsMale,
+                Address = entity.Address,
+                PhoneNumber = entity.PhoneNumber,
+
+                Photos = entity.Photos.Select(p => new PhotoReferenceDto
+                {
+                    Purpose = p.Purpose.ToString(),
+                    ContentType = p.ContentType,
+                    UploadedBy = p.UploadedBy,
+                    Url = storage.GetFileUrl(p.StorageKey)
+                }).ToList(),
+
+                Milestones = entity.SpiritualMilestones.Select(m => new SpiritualMilestoneDto
+                {
+                    Type = m.Type.ToString(),
+                    Date = m.Date,
+                    Place = m.Place,
+                    Note = m.Note
+                }).ToList(),
+
+                PatronSaints = entity.PatronSaints.Select(p => new PatronSaintDto
+                {
+                    SaintName = p.SaintName,
+                    Day = p.Day,
+                    Month = p.Month
+                }).ToList()
+            })
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -31,7 +61,13 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
     {
         return await _context.EucharisticYouthPhotos
             .Where(c => c.EucharisticYouthId == youthId)
-            .Select(c => c.ToDTO(storage))
+            .Select(entity => new PhotoReferenceDto
+            {
+                Purpose = entity.Purpose.ToString(),
+                ContentType = entity.ContentType,
+                UploadedBy = entity.UploadedBy,
+                Url = storage.GetFileUrl(entity.StorageKey)
+            })
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -58,7 +94,38 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
             .ThenBy(y => y.FullName.GivenName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(y => y.ToDTO(storage))
+            .Select(entity => new EucharisticYouthDto
+            {
+                Id = entity.Id,
+                FullName = entity.FullName,
+                DateOfBirth = entity.DateOfBirth,
+                IsMale = entity.IsMale,
+                Address = entity.Address,
+                PhoneNumber = entity.PhoneNumber,
+
+                Photos = entity.Photos.Select(p => new PhotoReferenceDto
+                {
+                    Purpose = p.Purpose.ToString(),
+                    ContentType = p.ContentType,
+                    UploadedBy = p.UploadedBy,
+                    Url = storage.GetFileUrl(p.StorageKey)
+                }).ToList(),
+
+                Milestones = entity.SpiritualMilestones.Select(m => new SpiritualMilestoneDto
+                {
+                    Type = m.Type.ToString(),
+                    Date = m.Date,
+                    Place = m.Place,
+                    Note = m.Note
+                }).ToList(),
+
+                PatronSaints = entity.PatronSaints.Select(p => new PatronSaintDto
+                {
+                    SaintName = p.SaintName,
+                    Day = p.Day,
+                    Month = p.Month
+                }).ToList()
+            })
             .ToListAsync(cancellationToken);
 
         return new PaginatedResult<EucharisticYouthDto>

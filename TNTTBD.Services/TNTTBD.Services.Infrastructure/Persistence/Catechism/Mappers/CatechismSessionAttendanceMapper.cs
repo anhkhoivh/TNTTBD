@@ -1,3 +1,4 @@
+using TNTTBD.Services.Application.CatechismSessions.DTOs;
 using TNTTBD.Services.Domain.Catechism;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
@@ -51,6 +52,22 @@ public static class CatechismSessionAttendanceMapper
         entity.AttendanceStatus = domain.AttendanceStatus;
         entity.MarkedTime = domain.MarkedTime;
         entity.MarkedByCatechistId = domain.MarkedByCatechistId;
+    }
+
+    /// <summary>
+    /// Convert from entity to DTO
+    /// </summary>
+    public static CatechismSessionAttendanceDto ToDTO(this CatechismSessionAttendanceEntity entity)
+    {
+        return new CatechismSessionAttendanceDto
+            {
+                Id = entity.Id,
+                CatechismSessionId = entity.CatechismSessionId,
+                CatechismClassEucharisticYouthId = entity.CatechismClassEucharisticYouthId,
+                AttendanceStatus = entity.AttendanceStatus,
+                MarkedTime = entity.MarkedTime,
+                MarkedByCatechistId = entity.MarkedByCatechistId
+            };
     }
 
     #endregion

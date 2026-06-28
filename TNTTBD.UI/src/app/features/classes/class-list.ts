@@ -81,7 +81,10 @@ export class ClassList {
     let list = this.classes();
     
     if (yid) {
+      console.log(list);
       list = list.filter((c) => c.catechismYearId === yid);
+      console.log("id= ", yid);
+      console.log(list);
     }
     
     if (query) {

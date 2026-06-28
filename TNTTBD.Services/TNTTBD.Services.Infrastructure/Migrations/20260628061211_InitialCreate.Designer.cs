@@ -12,7 +12,7 @@ using TNTTBD.Services.Infrastructure.Persistence.Catechism;
 namespace TNTTBD.Services.Infrastructure.Migrations
 {
     [DbContext(typeof(CatechismDbContext))]
-    [Migration("20260531084917_InitialCreate")]
+    [Migration("20260628061211_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -70,6 +70,10 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
                     b.Property<Guid>("CatechismYearId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("ClassCode")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("ClassName")
                         .IsRequired()
@@ -141,6 +145,8 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
                     b.HasIndex("CatechismClassEucharisticYouthId");
 
+                    b.HasIndex("MarkedByCatechistId");
+
                     b.HasIndex("CatechismSessionId", "CatechismClassEucharisticYouthId")
                         .IsUnique();
 
@@ -151,9 +157,6 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CatechismClassEntityId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CatechismClassId")
@@ -167,8 +170,6 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CatechismClassEntityId");
 
                     b.HasIndex("CatechismClassId");
 
@@ -204,11 +205,17 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("text");
 
-                    b.Property<DateOnly>("DateOfBirth")
+                    b.Property<DateOnly?>("DateOfBirth")
                         .HasColumnType("date");
 
                     b.Property<bool>("IsMale")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -263,6 +270,9 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.ToTable("ContactEntity", (string)null);
@@ -305,11 +315,17 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateOnly>("DateOfBirth")
+                    b.Property<DateOnly?>("DateOfBirth")
                         .HasColumnType("date");
 
                     b.Property<bool>("IsMale")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -378,9 +394,6 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CatechismClassEntityId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("CatechismClassId")
                         .HasColumnType("uuid");
 
@@ -392,8 +405,6 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CatechismClassEntityId");
 
                     b.HasIndex("CatechismClassId");
 
@@ -407,9 +418,6 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CatechismClassEucharisticYouthId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ExamEntityId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ExamId")
@@ -434,7 +442,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
                     b.HasIndex("CatechismClassEucharisticYouthId");
 
-                    b.HasIndex("ExamEntityId");
+                    b.HasIndex("MarkedByCatechistId");
 
                     b.HasIndex("ExamId", "CatechismClassEucharisticYouthId")
                         .IsUnique();
@@ -537,7 +545,16 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CatechistId")
+                        .IsUnique();
+
+                    b.HasIndex("ContactId")
+                        .IsUnique();
+
                     b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("EucharisticYouthId")
                         .IsUnique();
 
                     b.HasIndex("UserName")
@@ -580,76 +597,89 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassCatechistEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", null)
-                        .WithMany()
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", "CatechismClass")
+                        .WithMany("CatechismClassCatechists")
                         .HasForeignKey("CatechismClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", null)
-                        .WithMany()
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", "Catechist")
+                        .WithMany("CatechismClassCatechists")
                         .HasForeignKey("CatechistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CatechismClass");
+
+                    b.Navigation("Catechist");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismYearEntity", null)
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismYearEntity", "CatechismYear")
                         .WithMany("CatechismClasses")
                         .HasForeignKey("CatechismYearId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CatechismYear");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEucharisticYouthEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", null)
-                        .WithMany()
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", "CatechismClass")
+                        .WithMany("CatechismClassEucharisticYouths")
                         .HasForeignKey("CatechismClassId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", null)
-                        .WithMany()
-                        .HasForeignKey("CatechismClassId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", null)
-                        .WithMany()
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
+                        .WithMany("CatechismClassEucharisticYouths")
                         .HasForeignKey("EucharisticYouthId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_CatechismClassEucharisticYouthEntity_EucharisticYouthEntit~1");
+                        .IsRequired();
+
+                    b.Navigation("CatechismClass");
+
+                    b.Navigation("EucharisticYouth");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismSessionAttendanceEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", null)
-                        .WithMany()
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEucharisticYouthEntity", "CatechismClassEucharisticYouth")
+                        .WithMany("EucharisticYouthAttendances")
                         .HasForeignKey("CatechismClassEucharisticYouthId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismSessionEntity", null)
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismSessionEntity", "CatechismSession")
                         .WithMany("EucharisticYouthAttendances")
                         .HasForeignKey("CatechismSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", "MarkedByCatechist")
+                        .WithMany()
+                        .HasForeignKey("MarkedByCatechistId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CatechismClassEucharisticYouth");
+
+                    b.Navigation("CatechismSession");
+
+                    b.Navigation("MarkedByCatechist");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismSessionEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", null)
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", "CatechismClass")
                         .WithMany("CatechismSessions")
-                        .HasForeignKey("CatechismClassEntityId");
-
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", null)
-                        .WithMany()
                         .HasForeignKey("CatechismClassId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("CatechismClass");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", b =>
@@ -721,11 +751,13 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistPhotoEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", null)
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", "Catechist")
                         .WithMany("Photos")
                         .HasForeignKey("CatechistId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Catechist");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ContactEntity", b =>
@@ -766,17 +798,21 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthContactEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ContactEntity", null)
-                        .WithMany()
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ContactEntity", "Contact")
+                        .WithMany("EucharisticYouthContacts")
                         .HasForeignKey("ContactId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", null)
-                        .WithMany()
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
+                        .WithMany("EucharisticYouthContacts")
                         .HasForeignKey("EucharisticYouthId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Contact");
+
+                    b.Navigation("EucharisticYouth");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", b =>
@@ -848,68 +884,115 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthPhotoEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", null)
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
                         .WithMany("Photos")
                         .HasForeignKey("EucharisticYouthId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("EucharisticYouth");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ExamEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", null)
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", "CatechismClass")
                         .WithMany("Exams")
-                        .HasForeignKey("CatechismClassEntityId");
-
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", null)
-                        .WithMany()
                         .HasForeignKey("CatechismClassId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("CatechismClass");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ExamResultEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", null)
-                        .WithMany()
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEucharisticYouthEntity", "CatechismClassEucharisticYouth")
+                        .WithMany("ExamResults")
                         .HasForeignKey("CatechismClassEucharisticYouthId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ExamEntity", null)
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ExamEntity", "Exam")
                         .WithMany("ExamResults")
-                        .HasForeignKey("ExamEntityId");
-
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ExamEntity", null)
-                        .WithMany()
                         .HasForeignKey("ExamId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", "MarkedByCatechist")
+                        .WithMany()
+                        .HasForeignKey("MarkedByCatechistId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CatechismClassEucharisticYouth");
+
+                    b.Navigation("Exam");
+
+                    b.Navigation("MarkedByCatechist");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.SpiritualMilestoneEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", null)
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
                         .WithMany("SpiritualMilestones")
                         .HasForeignKey("EucharisticYouthId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("EucharisticYouth");
+                });
+
+            modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", b =>
+                {
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", "Catechist")
+                        .WithOne("User")
+                        .HasForeignKey("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", "CatechistId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ContactEntity", "Contact")
+                        .WithOne("User")
+                        .HasForeignKey("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", "ContactId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
+                        .WithOne("User")
+                        .HasForeignKey("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", "EucharisticYouthId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Catechist");
+
+                    b.Navigation("Contact");
+
+                    b.Navigation("EucharisticYouth");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserExternalLoginEntity", b =>
                 {
-                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", null)
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", "User")
                         .WithMany("ExternalLogins")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", b =>
                 {
+                    b.Navigation("CatechismClassCatechists");
+
+                    b.Navigation("CatechismClassEucharisticYouths");
+
                     b.Navigation("CatechismSessions");
 
                     b.Navigation("Exams");
+                });
+
+            modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEucharisticYouthEntity", b =>
+                {
+                    b.Navigation("EucharisticYouthAttendances");
+
+                    b.Navigation("ExamResults");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismSessionEntity", b =>
@@ -924,14 +1007,31 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", b =>
                 {
+                    b.Navigation("CatechismClassCatechists");
+
                     b.Navigation("Photos");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ContactEntity", b =>
+                {
+                    b.Navigation("EucharisticYouthContacts");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", b =>
                 {
+                    b.Navigation("CatechismClassEucharisticYouths");
+
+                    b.Navigation("EucharisticYouthContacts");
+
                     b.Navigation("Photos");
 
                     b.Navigation("SpiritualMilestones");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ExamEntity", b =>
