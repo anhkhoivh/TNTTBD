@@ -148,6 +148,8 @@
   "register.step.review": "Review",
   "register.baptismDate": "Date of Baptism",
   "register.hasAccount": "Do you have an account?",
+  "register.submitted": "Register submitted",
+  "register.failed": "Register failed",
 
   "dashboard.welcome": "Welcome",
   "dashboard.myClasses": "My classes",

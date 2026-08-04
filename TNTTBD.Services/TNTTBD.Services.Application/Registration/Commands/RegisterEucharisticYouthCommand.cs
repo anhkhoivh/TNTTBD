@@ -5,8 +5,7 @@ namespace TNTTBD.Services.Application.Registration.Commands;
 
 public record RegisterEucharisticYouthCommand(
     YouthData Youth,
-    List<ContactData> Contacts,
-    string? AccountEmail
+    List<ContactData> Contacts
 ) : IRequest<Guid>;
 
 public record YouthData(
@@ -25,7 +24,9 @@ public record FullNameData(
 );
 
 public record ContactData(
+    string? ChristName,
     string GivenName,
+    string? MiddleName,
     string? FamilyName,
     ContactRelationType Relation,
     string PhoneNumber,
