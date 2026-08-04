@@ -83,8 +83,8 @@ public class CatechistQueryService : ICatechistQueryService
         int total = await query.CountAsync(cancellationToken);
 
         var items = await query
-            .OrderBy(c => c.FullName.FamilyName)
-            .ThenBy(c => c.FullName.GivenName)
+            .OrderBy(c => c.FullName.GivenName)
+            .ThenBy(c => c.FullName.FamilyName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(entity => new CatechistDto

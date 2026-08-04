@@ -98,20 +98,14 @@ export class ClassDetail {
   protected activeTabs = signal(new Set<number>([0]));
   protected classId = computed(() => this.data()?.id ?? this.route.snapshot.queryParamMap.get('id'));
 
-  protected enrollmentsRes = rxResource<{
-    enrollments: PaginatedResult<CatechismClassEucharisticYouth>;
-    youthLookup: PaginatedResult<EucharisticYouth>;
-  }, string>({
+  protected enrollmentsRes = rxResource<PaginatedResult<CatechismClassEucharisticYouth>, string>({
     params: () => this.classId() && this.activeTabs().has(0) ? this.classId()! : '',
-    stream: (loaderParams) => forkJoin({
-      enrollments: this.api.list<CatechismClassEucharisticYouth>('/class-youth', { classId: loaderParams.params }).pipe(
+    stream: (loaderParams) =>
+      this.api.list<CatechismClassEucharisticYouth>('/class-youth', { classId: loaderParams.params }).pipe(
         catchError(() => of(emptyPage<CatechismClassEucharisticYouth>())),
-      ),
-      youthLookup: this.api.list<EucharisticYouth>('/youths').pipe(
-        catchError(() => of(emptyPage<EucharisticYouth>())),
-      ),
-    })
+      )
   });
+
 
   protected catechistsRes = rxResource<{
     catechists: PaginatedResult<CatechismClassCatechist>;
@@ -155,12 +149,13 @@ export class ClassDetail {
     this.onTabChange(0);
   }
 
-  protected youthOfEnrollment(enrollmentId: string): EucharisticYouth | undefined {
+  protected youthOfEnrollment(enrollmentId: string): CatechismClassEucharisticYouth | undefined {
     const ed = this.enrollmentsRes.value();
+    console.log(ed);
     if (!ed) return undefined;
-    const e = ed.enrollments.items.find((x) => x.id === enrollmentId);
+    const e = ed.items.find((x) => x.id === enrollmentId);
     if (!e) return undefined;
-    return ed.youthLookup.items.find((y) => y.id === e.eucharisticYouthId);
+    return e;
   }
 
   protected catechistOf(id: string): Catechist | undefined {
