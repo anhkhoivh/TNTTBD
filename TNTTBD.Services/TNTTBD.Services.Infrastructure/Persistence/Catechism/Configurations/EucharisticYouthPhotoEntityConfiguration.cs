@@ -18,11 +18,6 @@ public class EucharisticYouthPhotoEntityConfiguration : IEntityTypeConfiguration
     {
         builder.ToTable(nameof(EucharisticYouthPhotoEntity));
         builder.HasKey(c => c.Id);
-
-        builder.HasOne(p => p.EucharisticYouth)
-            .WithMany(y => y.Photos)
-            .HasForeignKey(c => c.EucharisticYouthId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 
     #endregion

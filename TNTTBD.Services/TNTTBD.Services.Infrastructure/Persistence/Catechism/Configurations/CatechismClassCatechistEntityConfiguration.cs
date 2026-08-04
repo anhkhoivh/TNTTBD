@@ -24,16 +24,6 @@ public class CatechismClassCatechistEntityConfiguration : IEntityTypeConfigurati
             x.CatechismClassId,
             x.CatechistId,
         }).IsUnique();
-
-        builder.HasOne(cc => cc.CatechismClass)
-            .WithMany(c => c.CatechismClassCatechists)
-            .HasForeignKey(c => c.CatechismClassId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(cc => cc.Catechist)
-            .WithMany(c => c.CatechismClassCatechists)
-            .HasForeignKey(c => c.CatechistId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 
     #endregion

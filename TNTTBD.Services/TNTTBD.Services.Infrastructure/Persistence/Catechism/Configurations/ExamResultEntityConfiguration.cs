@@ -24,21 +24,11 @@ public class ExamEucharisticYouthEntityConfiguration : IEntityTypeConfiguration<
             x.ExamId,
             x.CatechismClassEucharisticYouthId,
         }).IsUnique();
-        
-        builder.HasOne(er => er.Exam)
-            .WithMany(e => e.ExamResults)
-            .HasForeignKey(er => er.ExamId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(er => er.CatechismClassEucharisticYouth)
-            .WithMany(cy => cy.ExamResults)
-            .HasForeignKey(er => er.CatechismClassEucharisticYouthId)
-            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(er => er.MarkedByCatechist)
             .WithMany()
             .HasForeignKey(x => x.MarkedByCatechistId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
     }
 
     #endregion
