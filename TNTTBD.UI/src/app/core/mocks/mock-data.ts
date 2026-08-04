@@ -185,18 +185,7 @@ export const mockClassCatechists: CatechismClassCatechist[] = [
 ];
 
 export const mockClassYouth: CatechismClassEucharisticYouth[] = [
-  { id: 'cly-1', catechismClassId: 'cl-1', eucharisticYouthId: 'y-1', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'cly-2', catechismClassId: 'cl-1', eucharisticYouthId: 'y-2', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'cly-3', catechismClassId: 'cl-1', eucharisticYouthId: 'y-5', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'cly-4', catechismClassId: 'cl-1', eucharisticYouthId: 'y-7', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'cly-5', catechismClassId: 'cl-1', eucharisticYouthId: 'y-10', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Pending },
-  { id: 'cly-6', catechismClassId: 'cl-2', eucharisticYouthId: 'y-3', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'cly-7', catechismClassId: 'cl-2', eucharisticYouthId: 'y-6', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'cly-8', catechismClassId: 'cl-2', eucharisticYouthId: 'y-9', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'cly-9', catechismClassId: 'cl-3', eucharisticYouthId: 'y-4', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'cly-10', catechismClassId: 'cl-3', eucharisticYouthId: 'y-8', enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'cly-h1', catechismClassId: 'cl-prev-1', eucharisticYouthId: 'y-1', enrolledAt: '2024-09-01T08:00:00+07:00', leftAt: '2025-06-30T17:00:00+07:00', status: EnrollmentStatus.Completed },
-  { id: 'cly-h2', catechismClassId: 'cl-prev-1', eucharisticYouthId: 'y-3', enrolledAt: '2024-09-01T08:00:00+07:00', leftAt: '2025-06-30T17:00:00+07:00', status: EnrollmentStatus.Completed },
+ 
 ];
 
 export const mockSessions: CatechismSession[] = [

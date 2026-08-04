@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
-  apiBaseUrl: '/api',
+  apiBaseUrl: 'http://localhost:5062/api',
   photoBaseUrl: '/mock-photos/',
-  useMocks: true,
+  useMocks: false,
   ssoRedirectUri: 'http://localhost:4200/auth/callback',
 };

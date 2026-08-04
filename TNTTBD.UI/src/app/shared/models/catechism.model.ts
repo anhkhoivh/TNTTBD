@@ -1,4 +1,4 @@
-import { IsoDate, IsoDateTime } from './common.model';
+import { FullName, IsoDate, IsoDateTime } from './common.model';
 import { AttendanceStatus, EnrollmentStatus, CatechismClassCatechistRole } from '../enums';
 
 export interface CatechismYear {
@@ -34,8 +34,10 @@ export interface CatechismSessionAttendance {
 
 export interface CatechismClassEucharisticYouth {
   id: string;
+  code: string;
   catechismClassId: string;
   eucharisticYouthId: string;
+  fullName: FullName;
   enrolledAt: IsoDateTime;
   leftAt?: IsoDateTime | null;
   status: EnrollmentStatus;

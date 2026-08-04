@@ -43,7 +43,7 @@ public class CatechismSessionEntity
     /// <summary>
     /// Class
     /// </summary>
-    public CatechismClassEntity CatechismClass { get; set; }
+    public CatechismClassEntity CatechismClass { get; set; } = null!;
 
     /// <summary>
     /// Attendance

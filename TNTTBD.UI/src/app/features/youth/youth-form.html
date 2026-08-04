@@ -7,23 +7,6 @@
     </mat-card-header>
     <mat-card-content>
       <div class="grid-2">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'youth.code' | t }}</mat-label>
-          <input matInput formControlName="code" required />
-          @if (form.controls.code.hasError('required')) {
-            <mat-error>{{ 'validation.required' | t }}</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'youth.dateOfBirth' | t }}</mat-label>
-          <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" required />
-          <mat-datepicker-toggle matIconSuffix [for]="dobPicker"></mat-datepicker-toggle>
-          <mat-datepicker #dobPicker></mat-datepicker>
-          @if (form.controls.dateOfBirth.hasError('required')) {
-            <mat-error>{{ 'validation.required' | t }}</mat-error>
-          }
-        </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'fullName.christ' | t }}</mat-label>
@@ -44,6 +27,16 @@
           <mat-label>{{ 'fullName.given' | t }}</mat-label>
           <input matInput formControlName="givenName" required />
           @if (form.controls.givenName.hasError('required')) {
+            <mat-error>{{ 'validation.required' | t }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'youth.dateOfBirth' | t }}</mat-label>
+          <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth" required />
+          <mat-datepicker-toggle matIconSuffix [for]="dobPicker"></mat-datepicker-toggle>
+          <mat-datepicker #dobPicker></mat-datepicker>
+          @if (form.controls.dateOfBirth.hasError('required')) {
             <mat-error>{{ 'validation.required' | t }}</mat-error>
           }
         </mat-form-field>
