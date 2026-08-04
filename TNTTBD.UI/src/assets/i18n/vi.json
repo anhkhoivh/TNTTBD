@@ -40,10 +40,10 @@
 
   "photo.upload": "Tải ảnh lên",
 
-  "landing.welcome": "Chào mừng đến với Đoàn Thiếu nhi Thánh Thể Giáo xứ",
+  "landing.welcome": "Chào mừng đến với Đoàn Thiếu nhi Thánh Thể Giáo xứ Bình Đông",
   "landing.subtitle": "Quản lý thiếu nhi, lớp giáo lý, điểm danh và nhiều hơn nữa",
   "landing.signIn": "Đăng nhập",
-  "landing.registerYouth": "Đăng ký thiếu nhi mới",
+  "landing.registerYouth": "Ghi danh thiếu nhi mới",
 
   "auth.email": "Email",
   "auth.password": "Mật khẩu",
@@ -86,7 +86,7 @@
   "milestone.graduation": "Tốt nghiệp",
   "milestone.date": "Ngày",
   "milestone.documentCode": "Mã sổ",
-  "milestone.place": "Nơi",
+  "milestone.place": "Tại Giáo xứ",
   "milestone.note": "Ghi chú",
 
   "contact.relation": "Quan hệ",
@@ -139,13 +139,15 @@
   "catechist.create": "Tạo Giáo Lý Viên",
   "catechist.edit": "Sửa Giáo Lý Viên",
 
-  "register.title": "Đăng ký Thiếu nhi mới",
+  "register.title": "Ghi danh Thiếu nhi mới",
   "register.step.youth": "Thông tin thiếu nhi",
   "register.step.contacts": "Liên hệ",
   "register.step.account": "Liên kết tài khoản",
   "register.step.review": "Xem lại",
   "register.baptismDate": "Ngày Rửa tội",
   "register.hasAccount": "Bạn đã có tài khoản chưa?",
+  "register.submitted": "Ghi danh thành công",
+  "register.failed": "Ghi danh bị lỗi",
 
   "dashboard.welcome": "Chào mừng",
   "dashboard.myClasses": "Lớp của tôi",

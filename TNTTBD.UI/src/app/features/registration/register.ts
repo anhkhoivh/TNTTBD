@@ -18,6 +18,7 @@ import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ContactRelationType } from '../../shared/enums';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-register',
@@ -49,6 +50,7 @@ export class RegisterPage {
   private api = inject(ApiService);
   private notify = inject(NotificationService);
   private router = inject(Router);
+  private translate = inject(TranslationService);
 
   protected readonly relations = [
     { v: ContactRelationType.Father, k: 'contact.relation.Father' },
@@ -76,18 +78,16 @@ export class RegisterPage {
   });
 
   protected contactsForm = this.fb.group({
-    contacts: this.fb.array<ReturnType<typeof this.makeContact>>([this.makeContact()]),
-  });
-
-  protected accountForm = this.fb.group({
-    hasAccount: [false],
-    email: [''],
+    contacts: this.fb.array<ReturnType<typeof this.makeContact>>([
+      this.makeContact(ContactRelationType.Father),
+      this.makeContact(ContactRelationType.Mother)
+    ]),
   });
 
   protected contacts = this.contactsForm.get('contacts') as FormArray;
 
   protected addContact(): void {
-    this.contacts.push(this.makeContact());
+    this.contacts.push(this.makeContact(ContactRelationType.Undefined));
   }
 
   protected removeContact(i: number): void {
@@ -113,30 +113,33 @@ export class RegisterPage {
           : null,
       },
       contacts: this.contacts.getRawValue(),
-      accountEmail: this.accountForm.get('hasAccount')?.value ? this.accountForm.get('email')?.value : null,
     };
     this.loading.set(true);
     this.api.post('/registration/youth', payload).subscribe({
       next: () => {
         this.loading.set(false);
-        this.notify.success('Registration submitted');
+        this.notify.success(this.translate.t('register.submitted'));
         this.router.navigate(['/']);
       },
       error: () => {
         this.loading.set(false);
-        this.notify.error('Submit failed');
+        this.notify.error(this.translate.t('register.failed'));
       },
     });
   }
 
-  private makeContact() {
-    return this.fb.group({
-      givenName: ['', Validators.required],
-      familyName: [''],
-      relation: [ContactRelationType.Father, Validators.required],
-      phoneNumber: ['', Validators.required],
-      email: [''],
-    });
+  private makeContact(contactType: ContactRelationType) {
+    return this.fb.group(
+      {
+        givenName: ['', Validators.required],
+        familyName: [''],
+        christName: [''],
+        middleName: [''],
+        relation: [contactType, Validators.required],
+        phoneNumber: ['', Validators.required],
+        email: [''],
+      }
+    );
   }
 
   private toIsoDate(d: Date | null): string | null {

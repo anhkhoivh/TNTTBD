@@ -66,8 +66,16 @@
               @for (c of contacts.controls; track $index; let i = $index) {
                 <div [formGroupName]="i" class="contact-row">
                   <mat-form-field appearance="outline">
+                    <mat-label>{{ 'fullName.christ' | t }}</mat-label>
+                    <input matInput formControlName="christName" />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
                     <mat-label>{{ 'fullName.family' | t }}</mat-label>
                     <input matInput formControlName="familyName" />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'fullName.middle' | t }}</mat-label>
+                    <input matInput formControlName="middleName" />
                   </mat-form-field>
                   <mat-form-field appearance="outline">
                     <mat-label>{{ 'fullName.given' | t }} *</mat-label>
@@ -94,7 +102,7 @@
                     type="button"
                     color="warn"
                     (click)="removeContact(i)"
-                    [disabled]="contacts.length === 1"
+                    [disabled]="contacts.length === 0"
                   >
                     <mat-icon>delete</mat-icon>
                   </button>
@@ -104,22 +112,6 @@
             <button mat-stroked-button type="button" (click)="addContact()">
               <mat-icon>add</mat-icon> {{ 'common.add' | t }}
             </button>
-            <div class="step-actions">
-              <button mat-button matStepperPrevious type="button">{{ 'common.back' | t }}</button>
-              <button mat-button matStepperNext type="button">{{ 'common.next' | t }}</button>
-            </div>
-          </form>
-        </mat-step>
-
-        <mat-step [label]="'register.step.account' | t">
-          <form [formGroup]="accountForm" class="step-form">
-            <mat-checkbox formControlName="hasAccount">{{ 'register.hasAccount' | t }}</mat-checkbox>
-            @if (accountForm.get('hasAccount')?.value) {
-              <mat-form-field appearance="outline" class="full-width mt-16">
-                <mat-label>{{ 'auth.email' | t }}</mat-label>
-                <input matInput type="email" formControlName="email" />
-              </mat-form-field>
-            }
             <div class="step-actions">
               <button mat-button matStepperPrevious type="button">{{ 'common.back' | t }}</button>
               <button mat-button matStepperNext type="button">{{ 'common.next' | t }}</button>

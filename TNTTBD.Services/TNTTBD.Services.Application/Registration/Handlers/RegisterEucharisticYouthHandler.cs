@@ -68,8 +68,9 @@ public class RegisterEucharisticYouthHandler : IRequestHandler<RegisterEucharist
         {
             var contactName = new FullName(
                 contactData.GivenName,
-                null,
-                contactData.FamilyName);
+                contactData.ChristName,
+                contactData.FamilyName,
+                contactData.MiddleName);
 
             var contact = new Contact(
                 Guid.NewGuid(),
