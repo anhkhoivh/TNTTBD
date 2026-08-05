@@ -36,7 +36,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });;
+    }); ;
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -55,20 +55,12 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSingleton<ILocalizationService, JsonLocalizationService>();
 
+builder.Services.AddScoped<SeederAndMigrationHealthCheck>();
+builder.Services.AddHealthChecks()
+    .AddCheck<SeederAndMigrationHealthCheck>("SeederAndMigrations", tags: new[] { "ready" });
+
 // Database
-builder.Services.AddDbContext<CatechismDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (!string.IsNullOrEmpty(connectionString))
-    {
-        options.UseNpgsql(connectionString);
-    }
-    else
-    {
-        // In-memory for development when no connection string is configured
-        options.UseInMemoryDatabase("TNTTBD_Dev");
-    }
-});
+TryConfigureDatabase();
 
 // Unit of Work
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
@@ -147,28 +139,6 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBe
 
 var app = builder.Build();
 
-// Seed admin user
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<CatechismDbContext>();
-    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<UserEntity>>();
-    if (!context.Users.Any(u => u.Email == "admin@tnttbd.org"))
-    {
-        var admin = new UserEntity
-        {
-            Id = Guid.NewGuid(),
-            Email = "admin@tnttbd.org",
-            UserName = "Admin",
-            Role = TNTTBD.Services.Domain.Enums.UserRole.Admin,
-            IsActive = true,
-            CreatedAt = DateTimeOffset.UtcNow
-        };
-        admin.PasswordHash = hasher.HashPassword(admin, "changeme");
-        context.Users.Add(admin);
-        context.SaveChanges();
-    }
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -189,5 +159,56 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
+await TryMigrateDatabase();
 
 app.Run();
+
+void TryConfigureDatabase()
+{
+    builder.Services.AddCatechismDbContext(
+        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
+        commandTimeout: TimeSpan.FromSeconds(60),
+        options => options.EnableSensitiveDataLogging(!builder.Environment.IsProduction())
+    );
+}
+
+
+async Task TryMigrateDatabase()
+{
+    using var scope = app.Services.CreateScope();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        logger.LogInformation("Migrating database...");
+
+
+        scope.ServiceProvider.GetService<CatechismDbContext>()?.Database.Migrate();
+
+
+        logger.LogInformation("Successfully migrated database.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while migrating database.");
+        throw;
+    }
+
+    var context = scope.ServiceProvider.GetRequiredService<CatechismDbContext>();
+    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<UserEntity>>();
+    if (!context.Users.Any(u => u.Email == "admin@tnttbd.org"))
+    {
+        var admin = new UserEntity
+        {
+            Id = Guid.NewGuid(),
+            Email = "admin@tnttbd.org",
+            UserName = "Admin",
+            Role = TNTTBD.Services.Domain.Enums.UserRole.Admin,
+            IsActive = true,
+            CreatedAt = DateTimeOffset.UtcNow
+        };
+        admin.PasswordHash = hasher.HashPassword(admin, "changeme");
+        context.Users.Add(admin);
+        context.SaveChanges();
+    }
+}

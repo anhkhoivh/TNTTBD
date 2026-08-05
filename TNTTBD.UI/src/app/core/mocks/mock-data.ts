@@ -34,7 +34,7 @@ const photo = (seed: string) => ({
 });
 
 export const mockUsers: User[] = [
-  { id: 'u-admin', email: 'admin@tnttbd.local', userName: 'admin', isActive: true, userRole: UserRole.Admin },
+  { id: 'u-admin', email: 'admin@tnttbd.org', userName: 'admin', isActive: true, userRole: UserRole.Admin },
   { id: 'u-cat1', email: 'catechist1@tnttbd.local', userName: 'catechist1', isActive: true, userRole: UserRole.Catechist, catechistId: 'c-1' },
   { id: 'u-cat2', email: 'catechist2@tnttbd.local', userName: 'catechist2', isActive: true, userRole: UserRole.Catechist, catechistId: 'c-2' },
   { id: 'u-cat3', email: 'catechist3@tnttbd.local', userName: 'catechist3', isActive: false, userRole: UserRole.Catechist, catechistId: 'c-3' },
