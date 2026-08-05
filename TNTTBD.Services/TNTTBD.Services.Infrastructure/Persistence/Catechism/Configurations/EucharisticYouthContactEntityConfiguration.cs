@@ -24,16 +24,6 @@ public class EucharisticYouthContactEntityConfiguration : IEntityTypeConfigurati
             x.ContactId,
             x.EucharisticYouthId,
         }).IsUnique();
-
-        builder.HasOne(yc => yc.Contact)
-            .WithMany(c => c.EucharisticYouthContacts)
-            .HasForeignKey(c => c.ContactId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(yc => yc.EucharisticYouth)
-            .WithMany(y => y.EucharisticYouthContacts)
-            .HasForeignKey(ey => ey.EucharisticYouthId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 
     #endregion

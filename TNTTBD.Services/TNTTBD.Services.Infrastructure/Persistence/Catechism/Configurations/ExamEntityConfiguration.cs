@@ -18,11 +18,6 @@ public class ExamEntityConfiguration : IEntityTypeConfiguration<ExamEntity>
     {
         builder.ToTable(nameof(ExamEntity));
         builder.HasKey(c => c.Id);
-        
-        builder.HasOne(e => e.CatechismClass)
-            .WithMany(c => c.Exams)
-            .HasForeignKey(c => c.CatechismClassId)
-            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(e => e.ExamResults)
             .WithOne(r => r.Exam)

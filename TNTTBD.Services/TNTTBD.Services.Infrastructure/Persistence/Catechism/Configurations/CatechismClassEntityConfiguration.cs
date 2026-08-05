@@ -19,11 +19,6 @@ public class CatechismClassEntityConfiguration : IEntityTypeConfiguration<Catech
         builder.ToTable(nameof(CatechismClassEntity));
         builder.HasKey(c => c.Id);
 
-        builder.HasOne(c => c.CatechismYear)
-            .WithMany(year => year.CatechismClasses)
-            .HasForeignKey(year => year.CatechismYearId)
-            .OnDelete(DeleteBehavior.Restrict);
-
         builder.HasMany(c => c.CatechismClassEucharisticYouths)
             .WithOne(cy => cy.CatechismClass)
             .HasForeignKey(ce => ce.CatechismClassId)

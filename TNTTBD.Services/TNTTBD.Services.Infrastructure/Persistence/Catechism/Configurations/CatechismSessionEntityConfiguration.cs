@@ -24,11 +24,6 @@ public class CatechismSessionEntityConfiguration : IEntityTypeConfiguration<Cate
             .HasForeignKey(attendance => attendance.CatechismSessionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(s => s.CatechismClass)
-            .WithMany(c => c.CatechismSessions)
-            .HasForeignKey(l => l.CatechismClassId)
-            .OnDelete(DeleteBehavior.Restrict);
-
         builder.Navigation(l => l.EucharisticYouthAttendances)
             .UsePropertyAccessMode(PropertyAccessMode.Field);
     }

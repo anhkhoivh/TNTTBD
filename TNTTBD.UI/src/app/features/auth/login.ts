@@ -38,7 +38,7 @@ export class Login {
 
   private fb = inject(FormBuilder);
   protected form = this.fb.nonNullable.group({
-    email: ['admin@tnttbd.local', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
   protected loading = signal(false);

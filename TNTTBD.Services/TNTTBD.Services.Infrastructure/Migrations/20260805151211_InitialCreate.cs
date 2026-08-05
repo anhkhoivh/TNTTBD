@@ -175,7 +175,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.CatechistId,
                         principalTable: "CatechistEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -195,7 +195,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.ContactId,
                         principalTable: "ContactEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EucharisticYouthContactEntity_EucharisticYouthEntity_Euchar~",
                         column: x => x.EucharisticYouthId,
@@ -246,7 +246,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.EucharisticYouthId,
                         principalTable: "EucharisticYouthEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -269,7 +269,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.EucharisticYouthId,
                         principalTable: "EucharisticYouthEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -360,7 +360,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.CatechismClassId,
                         principalTable: "CatechismClassEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CatechismClassEucharisticYouthEntity_EucharisticYouthEntity~",
                         column: x => x.EucharisticYouthId,
@@ -386,7 +386,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.CatechismClassId,
                         principalTable: "CatechismClassEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -406,7 +406,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.CatechismClassId,
                         principalTable: "CatechismClassEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -427,7 +427,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "UserEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -449,7 +449,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.CatechismClassEucharisticYouthId,
                         principalTable: "CatechismClassEucharisticYouthEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CatechismSessionAttendanceEntity_CatechismSessionEntity_Cat~",
                         column: x => x.CatechismSessionId,
@@ -461,7 +461,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.MarkedByCatechistId,
                         principalTable: "CatechistEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -485,19 +485,19 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         column: x => x.CatechismClassEucharisticYouthId,
                         principalTable: "CatechismClassEucharisticYouthEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ExamResultEntity_CatechistEntity_MarkedByCatechistId",
                         column: x => x.MarkedByCatechistId,
                         principalTable: "CatechistEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_ExamResultEntity_ExamEntity_ExamId",
                         column: x => x.ExamId,
                         principalTable: "ExamEntity",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

@@ -33,10 +33,5 @@ public class UserExternalLoginEntityConfiguration
 
         // Optional but useful
         builder.HasIndex(x => x.UserId);
-
-        builder.HasOne(l => l.User)
-            .WithMany(u => u.ExternalLogins)
-            .HasForeignKey(l => l.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

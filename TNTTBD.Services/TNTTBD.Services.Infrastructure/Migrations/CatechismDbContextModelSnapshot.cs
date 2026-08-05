@@ -627,7 +627,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", "CatechismClass")
                         .WithMany("CatechismClassEucharisticYouths")
                         .HasForeignKey("CatechismClassId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
@@ -646,7 +646,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEucharisticYouthEntity", "CatechismClassEucharisticYouth")
                         .WithMany("EucharisticYouthAttendances")
                         .HasForeignKey("CatechismClassEucharisticYouthId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismSessionEntity", "CatechismSession")
@@ -658,7 +658,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", "MarkedByCatechist")
                         .WithMany()
                         .HasForeignKey("MarkedByCatechistId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CatechismClassEucharisticYouth");
@@ -673,7 +673,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", "CatechismClass")
                         .WithMany("CatechismSessions")
                         .HasForeignKey("CatechismClassId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CatechismClass");
@@ -751,7 +751,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", "Catechist")
                         .WithMany("Photos")
                         .HasForeignKey("CatechistId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Catechist");
@@ -798,7 +798,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ContactEntity", "Contact")
                         .WithMany("EucharisticYouthContacts")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
@@ -884,7 +884,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
                         .WithMany("Photos")
                         .HasForeignKey("EucharisticYouthId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("EucharisticYouth");
@@ -895,7 +895,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEntity", "CatechismClass")
                         .WithMany("Exams")
                         .HasForeignKey("CatechismClassId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CatechismClass");
@@ -906,19 +906,19 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechismClassEucharisticYouthEntity", "CatechismClassEucharisticYouth")
                         .WithMany("ExamResults")
                         .HasForeignKey("CatechismClassEucharisticYouthId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ExamEntity", "Exam")
                         .WithMany("ExamResults")
                         .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", "MarkedByCatechist")
                         .WithMany()
                         .HasForeignKey("MarkedByCatechistId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.Navigation("CatechismClassEucharisticYouth");
@@ -933,7 +933,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
                         .WithMany("SpiritualMilestones")
                         .HasForeignKey("EucharisticYouthId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("EucharisticYouth");
@@ -968,7 +968,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", "User")
                         .WithMany("ExternalLogins")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");

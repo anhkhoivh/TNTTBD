@@ -90,11 +90,6 @@ public class EucharisticYouthEntityConfiguration : IEntityTypeConfiguration<Euch
 
         builder.Navigation(t => t.Photos)
                .UsePropertyAccessMode(PropertyAccessMode.Field);
-
-        builder.HasOne(c => c.User)
-            .WithOne(u => u.EucharisticYouth)
-            .HasForeignKey<EucharisticYouthEntity>(c => c.UserId)
-            .OnDelete(DeleteBehavior.SetNull);
     }
 
     #endregion
