@@ -114,8 +114,4 @@ export class Shell {
   protected toggleSidenav(): void {
     this.sidenavOpened.update((v) => !v);
   }
-
-  protected closeOnHandset(): void {
-    if (this.isHandset()) this.sidenavOpened.set(false);
-  }
 }

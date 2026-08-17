@@ -114,18 +114,6 @@
             </button>
             <div class="step-actions">
               <button mat-button matStepperPrevious type="button">{{ 'common.back' | t }}</button>
-              <button mat-button matStepperNext type="button">{{ 'common.next' | t }}</button>
-            </div>
-          </form>
-        </mat-step>
-
-        <mat-step [label]="'register.step.review' | t">
-          <div class="step-form">
-            <p>{{ youthForm.value.christName }} {{ youthForm.value.familyName }} {{ youthForm.value.middleName }} {{ youthForm.value.givenName }}</p>
-            <p>{{ 'youth.dateOfBirth' | t }}: {{ youthForm.value.dateOfBirth }}</p>
-            <p>{{ 'youth.contacts' | t }}: {{ contacts.length }}</p>
-            <div class="step-actions">
-              <button mat-button matStepperPrevious type="button">{{ 'common.back' | t }}</button>
               <button
                 mat-flat-button
                 color="primary"
@@ -136,7 +124,7 @@
                 {{ 'common.submit' | t }}
               </button>
             </div>
-          </div>
+          </form>
         </mat-step>
       </mat-stepper>
     </mat-card-content>

@@ -1,14 +1,13 @@
 <mat-sidenav-container class="shell-container">
   <mat-sidenav
     #sidenav
-    [mode]="isHandset() ? 'over' : 'side'"
-    [opened]="!isHandset() && sidenavOpened()"
+    [mode]="'over'"
+    [opened]="sidenavOpened()"
     (openedChange)="sidenavOpened.set($event)"
     class="shell-sidenav"
   >
     <div class="sidenav-brand">
       <mat-icon>church</mat-icon>
-      <span>{{ 'app.title' | t }}</span>
     </div>
     <mat-divider></mat-divider>
     <mat-nav-list>
@@ -17,7 +16,6 @@
           mat-list-item
           [routerLink]="item.route"
           routerLinkActive="active-link"
-          (click)="closeOnHandset()"
         >
           <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
           <span matListItemTitle>{{ item.labelKey | t }}</span>
