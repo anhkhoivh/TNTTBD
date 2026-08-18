@@ -29,4 +29,6 @@ public interface ICatechismClassEucharisticYouthRepository
     /// Update collection
     /// </summary>
     Task MarkCompleted(IEnumerable<Guid> ids, CancellationToken cancellationToken);
+
+    Task<List<Guid>> GetActiveEnrollmentIdsAsync(Guid classId, IEnumerable<Guid> youthIds, CancellationToken cancellationToken);
 }

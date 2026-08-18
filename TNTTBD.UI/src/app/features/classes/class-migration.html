@@ -1,0 +1,114 @@
+<div class="migration-layout">
+  <!-- SOURCE column -->
+  <mat-card class="column">
+    <mat-card-header>
+      <mat-card-title>{{ 'class.source' | t }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'class.selectYear' | t }}</mat-label>
+        <mat-select [ngModel]="srcYearId()" (ngModelChange)="srcYearId.set($event); srcClassId.set(null); srcYouth.set([])">
+          @for (y of years(); track y.id) {
+            <mat-option [value]="y.id">{{ y.title || y.theme || y.startDate }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'class.selectClass' | t }}</mat-label>
+        <mat-select [ngModel]="srcClassId()" (ngModelChange)="srcClassId.set($event); onSrcClassChange()">
+          @for (c of srcClasses(); track c.id) {
+            <mat-option [value]="c.id">{{ c.className }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (srcYouth().length > 0) {
+        <mat-checkbox
+          [checked]="allSelected()"
+          [indeterminate]="someSelected() && !allSelected()"
+          (change)="toggleAll($event.checked)"
+        >
+          {{ 'class.selectAll' | t }} ({{ srcYouth().length }})
+        </mat-checkbox>
+      }
+
+      <mat-selection-list class="youth-list">
+        @for (y of srcYouth(); track y.eucharisticYouthId) {
+          <mat-list-option
+            [selected]="isSelected(y.eucharisticYouthId)"
+            (selectedChange)="toggleOne(y.eucharisticYouthId, $event)"
+          >
+            <span>{{ y.code }} — {{ y.fullName | fullName }}</span>
+          </mat-list-option>
+        } @empty {
+          @if (srcClassId()) {
+            <p class="empty">{{ 'class.noActiveYouth' | t }}</p>
+          }
+        }
+      </mat-selection-list>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- CENTER action -->
+  <div class="center-action">
+    <button
+      mat-fab
+      color="primary"
+      [disabled]="!someSelected() || !dstClassId() || migrating()"
+      (click)="migrate()"
+      [attr.aria-label]="'class.migrateSelected' | t"
+    >
+      @if (migrating()) {
+        <mat-spinner diameter="24"></mat-spinner>
+      } @else {
+        <mat-icon>arrow_forward</mat-icon>
+      }
+    </button>
+    <span class="migrate-label">{{ 'class.migrateSelected' | t }}</span>
+  </div>
+
+  <!-- DESTINATION column -->
+  <mat-card class="column">
+    <mat-card-header>
+      <mat-card-title>{{ 'class.destination' | t }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'class.selectYear' | t }}</mat-label>
+        <mat-select [ngModel]="dstYearId()" (ngModelChange)="dstYearId.set($event); dstClassId.set(null); dstYouth.set([])">
+          @for (y of years(); track y.id) {
+            <mat-option [value]="y.id">{{ y.title || y.theme || y.startDate }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'class.selectClass' | t }}</mat-label>
+        <mat-select [ngModel]="dstClassId()" (ngModelChange)="dstClassId.set($event); onDstClassChange()">
+          @for (c of dstClasses(); track c.id) {
+            <mat-option [value]="c.id">{{ c.className }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-selection-list class="youth-list" [disabled]="true">
+        @for (y of dstYouth(); track y.eucharisticYouthId) {
+          <mat-list-option [selected]="false" disabled>
+            <span>{{ y.code }} — {{ y.fullName | fullName }}</span>
+          </mat-list-option>
+        } @empty {
+          @if (dstClassId()) {
+            <p class="empty">{{ 'class.noActiveYouth' | t }}</p>
+          }
+        }
+      </mat-selection-list>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="mt-16">
+  <a mat-button routerLink="/app/classes">
+    <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
+  </a>
+</div>

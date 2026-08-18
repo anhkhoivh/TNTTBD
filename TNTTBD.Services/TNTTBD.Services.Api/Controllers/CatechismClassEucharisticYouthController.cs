@@ -114,5 +114,17 @@ public class CatechismClassEucharisticYouthController : Controller
         return Ok();
     }
 
+    [HttpPost("migrate")]
+    public async Task<IActionResult> Migrate([FromBody] MigrateYouthToClassCommand command, CancellationToken cancellationToken)
+    {
+        if (!await _authContext.CanAccessClassAsync(command.SourceClassId, cancellationToken))
+        {
+            return Forbid();
+        }
+
+        int count = await _mediator.Send(command, cancellationToken);
+        return Ok(new { migrated = count });
+    }
+
     #endregion
 }

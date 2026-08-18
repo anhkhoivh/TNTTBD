@@ -91,6 +91,13 @@ export const routes: Routes = [
           import('./features/classes/class-detail').then((m) => m.ClassDetail),
       },
       {
+        path: 'classes/migrate',
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.Admin, UserRole.Catechist] },
+        loadComponent: () =>
+          import('./features/classes/class-migration').then((m) => m.ClassMigration),
+      },
+      {
         path: 'admin/users',
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin] },
