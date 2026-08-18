@@ -86,7 +86,7 @@ public class CatechismSessionRepository : ICatechismSessionRepository
             }
             else
             {
-                entity.EucharisticYouthAttendances.Add(new CatechismSessionAttendanceEntity
+                _context.CatechismSessionAttendances.Add(new CatechismSessionAttendanceEntity
                 {
                     Id = Guid.NewGuid(),
                     CatechismSessionId = sessionId,
@@ -112,9 +112,25 @@ public class CatechismSessionRepository : ICatechismSessionRepository
         {
             throw new DomainException(DomainErrors.ValidationNotFound);
         }
-        CatechismSession domain = entity.ToDomain();
-        CatechismSessionAttendance attendance = domain.MarkAttendance(catechismClassEucharisticYouthId, status, catechistId);
-        entity.UpdateAttendance(attendance);
+        var attendanceEntity = entity.EucharisticYouthAttendances.FirstOrDefault(a => a.CatechismClassEucharisticYouthId == catechismClassEucharisticYouthId);
+        if (attendanceEntity != null)
+        {
+            attendanceEntity.AttendanceStatus = status;
+            attendanceEntity.MarkedTime = DateTimeOffset.UtcNow;
+            attendanceEntity.MarkedByCatechistId = catechistId;
+        }
+        else
+        {
+            entity.EucharisticYouthAttendances.Add(new CatechismSessionAttendanceEntity
+            {
+                Id = Guid.NewGuid(),
+                CatechismSessionId = sessionId,
+                CatechismClassEucharisticYouthId = catechismClassEucharisticYouthId,
+                AttendanceStatus = status,
+                MarkedTime = DateTimeOffset.UtcNow,
+                MarkedByCatechistId = catechistId
+            });
+        }
     }
 
     #endregion

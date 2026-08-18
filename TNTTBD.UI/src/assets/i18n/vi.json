@@ -199,5 +199,12 @@
   "error.server": "Lỗi máy chủ. Vui lòng thử lại sau.",
 
   "notFound.message": "Không tìm thấy trang bạn yêu cầu.",
-  "notFound.backHome": "Về trang chủ"
+  "notFound.backHome": "Về trang chủ",
+
+  "form.error.required": "bắt buộc",
+  "form.error.min": "Giá trị nhỏ nhất là",
+  "form.error.max": "Giá trị lớn nhất là",
+  "form.error.scoreRange": "Điểm phải giữa",
+  "form.error.and": "và",
+  "form.error.maxlength": "Số ký tự tối đa là"
 }

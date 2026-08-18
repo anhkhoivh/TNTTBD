@@ -47,8 +47,8 @@ export interface ExamResultsDialogData {
         <table mat-table [dataSource]="resultsArray.controls" class="full-width">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>{{ 'youth.fullName' | t }}</th>
-            <td mat-cell *matCellDef="let row">
-              {{ row.value.fullName | fullName }}
+            <td mat-cell *matCellDef="let row; let i = index">
+              {{ resultsArray.at(i).get('fullName')?.value | fullName }}
             </td>
           </ng-container>
           <ng-container matColumnDef="score">
@@ -61,7 +61,7 @@ export interface ExamResultsDialogData {
                   formControlName="score"
                   min="0"
                   max="10"
-                  step="0.5"
+                  step="0.05"
                 />
                 <app-form-errors-display [control]="resultsArray.at(i).get('score')" fieldName="Score"></app-form-errors-display>
               </mat-form-field>
@@ -151,11 +151,9 @@ export class ExamResultsDialog implements OnInit {
       });
       this.resultsForm.setControl('results', resultsFA);
       this.loading.set(false);
-      this.cdr.markForCheck();
+      this.cdr.detectChanges();
     });
   }
-
-
 
   protected save(): void {
     if (this.resultsForm.invalid) {
