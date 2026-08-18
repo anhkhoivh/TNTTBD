@@ -12,6 +12,7 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { registerLocaleData } from '@angular/common';
 import localeVi from '@angular/common/locales/vi';
 import localeEn from '@angular/common/locales/en';
@@ -34,6 +35,7 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([errorLoadingInterceptor, mockApiInterceptor, authInterceptor]),
     ),
     provideAnimationsAsync(),
+    provideNativeDateAdapter(),
     { provide: LOCALE_ID, useValue: 'vi-VN' },
     provideAppInitializer(async () => {
       const t = inject(TranslationService);

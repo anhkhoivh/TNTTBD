@@ -5,7 +5,6 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { CatechismYear } from '../../shared/models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -24,7 +23,6 @@ export interface YearFormData {
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
-    MatNativeDateModule,
     MatButtonModule,
     TranslatePipe,
   ],
@@ -41,7 +39,7 @@ export interface YearFormData {
         <mat-form-field appearance="outline">
           <mat-label>{{ 'class.endDate' | t }}</mat-label>
           <input matInput [matDatepicker]="ep" formControlName="endDate" required />
-          <mat-datepicker-toggle matSuffix [for]="ep"></mat-datepicker-toggle>
+          <mat-datepicker-toggle matIconSuffix [for]="ep"></mat-datepicker-toggle>
           <mat-datepicker #ep></mat-datepicker>
         </mat-form-field>
         <mat-form-field appearance="outline" class="full">
