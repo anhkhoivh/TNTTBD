@@ -68,5 +68,17 @@ public class CatechismClassEucharisticYouthRepository : ICatechismClassEucharist
         _context.CatechismClassEucharisticYouths.Remove(entity);
     }
 
+    /// <inheritdoc />
+    public async Task<List<Guid>> GetActiveEnrollmentIdsAsync(Guid classId, IEnumerable<Guid> youthIds, CancellationToken cancellationToken)
+    {
+        return await _context.CatechismClassEucharisticYouths
+            .Where(e => e.CatechismClassId == classId
+                && youthIds.Contains(e.EucharisticYouthId)
+                && e.Status == EnrollmentStatus.Active)
+            .AsNoTracking()
+            .Select(e => e.Id)
+            .ToListAsync(cancellationToken);
+    }
+
     #endregion
 }
