@@ -59,6 +59,18 @@
     </mat-card-content>
   </mat-card>
 
+  @if (isEdit() && editIdSignal(); as youthId) {
+    <mat-card class="mt-16">
+      <mat-card-content>
+        <app-photo-upload
+          entityType="youths"
+          [entityId]="youthId"
+          (uploaded)="onPhotoUploaded()"
+        ></app-photo-upload>
+      </mat-card-content>
+    </mat-card>
+  }
+
   @if (isCatechist() && !isEdit() && myCurrentClassId()) {
     <mat-card class="mt-16">
       <mat-card-content>
