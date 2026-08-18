@@ -7,5 +7,8 @@ public record CreateUserCommand(
     string Email,
     string UserName,
     string Password,
-    UserRole Role
+    UserRole Role,
+    Guid? CatechistId = null,
+    Guid? EucharisticYouthId = null,
+    Guid? ContactId = null
 ) : IRequest<Guid>;

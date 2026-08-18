@@ -1,3 +1,15 @@
 table.full-width { width: 100%; }
 .ok { color: var(--mat-sys-primary); }
 .ko { color: var(--mat-sys-error); }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+
+.link-badge {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}

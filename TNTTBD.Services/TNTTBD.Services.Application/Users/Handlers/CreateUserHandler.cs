@@ -15,6 +15,14 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, Guid>
 
     public async Task<Guid> Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
-        return await _userRepository.CreateAsync(command.Email, command.UserName, command.Password, command.Role, cancellationToken);
+        return await _userRepository.CreateAsync(
+            command.Email,
+            command.UserName,
+            command.Password,
+            command.Role,
+            command.CatechistId,
+            command.EucharisticYouthId,
+            command.ContactId,
+            cancellationToken);
     }
 }

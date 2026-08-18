@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.Auth.DTOs;
 using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Application.Users.Commands;
 using TNTTBD.Services.Domain.Enums;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
@@ -78,7 +79,7 @@ public class UserRepository : IUserRepository
             .AnyAsync(u => u.Id == userId && u.PasswordHash != null, cancellationToken);
     }
 
-    public async Task<Guid> CreateAsync(string email, string userName, string password, UserRole role, CancellationToken cancellationToken)
+    public async Task<Guid> CreateAsync(string email, string userName, string password, UserRole role, Guid? catechistId, Guid? eucharisticYouthId, Guid? contactId, CancellationToken cancellationToken)
     {
         var entity = new UserEntity
         {
@@ -87,6 +88,9 @@ public class UserRepository : IUserRepository
             UserName = userName,
             Role = role,
             IsActive = true,
+            CatechistId = catechistId,
+            EucharisticYouthId = eucharisticYouthId,
+            ContactId = contactId,
             CreatedAt = DateTimeOffset.UtcNow
         };
 
@@ -96,7 +100,7 @@ public class UserRepository : IUserRepository
         return entity.Id;
     }
 
-    public async Task UpdateAsync(Guid id, string? userName, bool? isActive, UserRole? role, CancellationToken cancellationToken)
+    public async Task UpdateAsync(Guid id, string? userName, bool? isActive, UserRole? role, UserEntityLink? link, CancellationToken cancellationToken)
     {
         var entity = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken)
             ?? throw new KeyNotFoundException($"User {id} not found.");
@@ -104,6 +108,21 @@ public class UserRepository : IUserRepository
         if (userName != null) entity.UserName = userName;
         if (isActive.HasValue) entity.IsActive = isActive.Value;
         if (role.HasValue) entity.Role = role.Value;
+
+        if (link != null)
+        {
+            entity.CatechistId = link.Kind == UserEntityLinkKind.Catechist ? link.Id : null;
+            entity.EucharisticYouthId = link.Kind == UserEntityLinkKind.Youth ? link.Id : null;
+            entity.ContactId = link.Kind == UserEntityLinkKind.Contact ? link.Id : null;
+        }
+    }
+
+    public async Task DeactivateAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var entity = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken)
+            ?? throw new KeyNotFoundException($"User {id} not found.");
+
+        entity.IsActive = false;
     }
 
     public async Task<PaginatedResult<UserDto>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken)

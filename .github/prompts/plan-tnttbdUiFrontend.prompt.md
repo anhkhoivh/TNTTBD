@@ -19,6 +19,14 @@ Build an Angular 21 SPA with Material 3 for managing a parish Eucharistic Youth 
 | Phase 8 — Catechist One-Class-Per-Year + Lazy Tabs | ✅ Complete |
 | Phase 9 — Patron Saints, Catechist Form & Profile Tabs | ✅ Complete |
 | Phase 10 — Remove Attendance/Exams Pages + Role-Based UX | ✅ Complete |
+| Phase 11 — MVP Gap Closure (User Mgmt, Photos, Exam auth, Config) | ✅ Complete — see notes below |
+
+**Phase 11 highlights:**
+- **User Management** — backend `RemoveUserCommand` + `DELETE /api/users` (soft delete via isActive=false); `GetUserByIdQuery` + `GET /api/users/detail`; `CreateUserCommand`/`UpdateUserCommand` now accept optional catechist/youth/contact link fields; UI `user-form-dialog` supports create/edit with role select, isActive toggle, and searchable entity-link (Catechist/Youth/Contact); admin list wires create/edit/deactivate/toggle-active with confirm dialog and inactive-filter toggle.
+- **Contacts lookup endpoint** — added `IContactQueryService` + `GET /api/contacts` (paginated + search) so the user-form dialog can pick contacts for linking.
+- **Photo upload wiring** — rewrote `PhotoUpload` to match the real backend's two-step flow: `POST /api/{catechists\|youths}/photos/upload-url` returns a pre-signed URL → multipart `POST` to that URL with `file`. Integrated into `youth-form` and `catechist-form` (edit mode only, since we need an entity ID).
+- **Exam handler auth fix** — `SaveExamResultsHandler` now injects `IAuthorizationContext.GetCurrentCatechistIdAsync()` and rejects the request if the caller isn't a catechist. No more `Guid.Empty` audit rows.
+- **Startup config validation** — in Production, `Program.cs` fails fast if `ConnectionStrings:DefaultConnection`, `Jwt:Secret` (must not equal the dev default), or `CorsOrigins` are missing.
 
 Build verified: `npm run build` outputs to `dist/TNTTBD.UI`. `ng serve` proxies `/api` → `http://localhost:5062`. Mocks active via `environment.useMocks: true`.
 

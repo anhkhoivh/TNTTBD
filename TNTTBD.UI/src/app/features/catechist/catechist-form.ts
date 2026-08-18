@@ -17,6 +17,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { Catechist, PatronSaint } from '../../shared/models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../shared/components/patron-saint-input';
+import { PhotoUpload } from '../../shared/components/photo-upload';
 
 @Component({
   selector: 'app-catechist-form',
@@ -35,6 +36,7 @@ import { PatronSaintInput } from '../../shared/components/patron-saint-input';
     MatRadioModule,
     TranslatePipe,
     PatronSaintInput,
+    PhotoUpload,
   ],
   templateUrl: './catechist-form.html',
   styles: [
@@ -80,7 +82,9 @@ export class CatechistForm {
 
   protected loading = signal(false);
   protected isEdit = signal(false);
-  private editId: string | null = null;
+  protected editIdSignal = signal<string | null>(null);
+  private get editId(): string | null { return this.editIdSignal(); }
+  private set editId(v: string | null) { this.editIdSignal.set(v); }
 
   protected form = this.fb.group({
     givenName: ['', Validators.required],
@@ -167,5 +171,9 @@ export class CatechistForm {
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const dd = String(d.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
+  }
+
+  protected onPhotoUploaded(): void {
+    this.notify.success('photo.uploaded');
   }
 }

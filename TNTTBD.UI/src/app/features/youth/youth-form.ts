@@ -33,6 +33,7 @@ import {
 import { ContactRelationType, MilestoneType, UserRole } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../shared/components/patron-saint-input';
+import { PhotoUpload } from '../../shared/components/photo-upload';
 
 @Component({
   selector: 'app-youth-form',
@@ -54,6 +55,7 @@ import { PatronSaintInput } from '../../shared/components/patron-saint-input';
     MatCheckboxModule,
     TranslatePipe,
     PatronSaintInput,
+    PhotoUpload,
   ],
   templateUrl: './youth-form.html',
   styleUrl: './youth-form.scss',
@@ -94,7 +96,9 @@ export class YouthForm {
 
   protected loading = signal(false);
   protected isEdit = signal(false);
-  private editId: string | null = null;
+  protected editIdSignal = signal<string | null>(null);
+  private get editId(): string | null { return this.editIdSignal(); }
+  private set editId(v: string | null) { this.editIdSignal.set(v); }
   protected addToMyClass = signal(true);
   protected myCurrentClassId = signal<string | null>(null);
   protected myClassName = signal<string | null>(null);
@@ -205,6 +209,10 @@ export class YouthForm {
 
   protected removeContact(i: number): void {
     this.contacts.removeAt(i);
+  }
+
+  protected onPhotoUploaded(): void {
+    this.notify.success('photo.uploaded');
   }
 
   protected submit(): void {

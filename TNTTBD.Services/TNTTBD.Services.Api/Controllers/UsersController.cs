@@ -27,6 +27,17 @@ public class UsersController : Controller
         return Ok(result);
     }
 
+    [HttpGet("detail")]
+    public async Task<IActionResult> GetById([FromQuery] GetUserByIdQuery query, CancellationToken cancellationToken)
+    {
+        UserDto? user = await _mediator.Send(query, cancellationToken);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return Ok(user);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserCommand command, CancellationToken cancellationToken)
     {
@@ -39,5 +50,12 @@ public class UsersController : Controller
     {
         await _mediator.Send(command, cancellationToken);
         return Ok();
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Remove([FromBody] RemoveUserCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return NoContent();
     }
 }

@@ -29,6 +29,12 @@ public class AuthorizationContext : IAuthorizationContext
         return null;
     }
 
+    public async Task<Guid?> GetCurrentCatechistIdAsync(CancellationToken cancellationToken)
+    {
+        var user = await GetCurrentUserAsync(cancellationToken);
+        return user?.CatechistId;
+    }
+
     public async Task<bool> IsAdminAsync(CancellationToken cancellationToken)
     {
         var user = await GetCurrentUserAsync(cancellationToken);

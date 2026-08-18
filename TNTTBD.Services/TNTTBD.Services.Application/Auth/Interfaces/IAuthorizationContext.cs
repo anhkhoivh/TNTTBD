@@ -3,6 +3,7 @@ namespace TNTTBD.Services.Application.Auth.Interfaces;
 public interface IAuthorizationContext
 {
     Guid? GetCurrentUserId();
+    Task<Guid?> GetCurrentCatechistIdAsync(CancellationToken cancellationToken);
     Task<bool> IsAdminAsync(CancellationToken cancellationToken);
     Task<bool> CanAccessClassAsync(Guid classId, CancellationToken cancellationToken);
     Task<bool> CanAccessYouthAsync(Guid youthId, CancellationToken cancellationToken);
