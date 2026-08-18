@@ -51,6 +51,9 @@
           <button mat-icon-button (click)="edit(row)" [attr.aria-label]="'common.edit' | t">
             <mat-icon>edit</mat-icon>
           </button>
+          <button mat-icon-button (click)="resetPassword(row)" [attr.aria-label]="'password.reset' | t">
+            <mat-icon>lock_reset</mat-icon>
+          </button>
           <button
             mat-icon-button
             (click)="toggleActive(row)"

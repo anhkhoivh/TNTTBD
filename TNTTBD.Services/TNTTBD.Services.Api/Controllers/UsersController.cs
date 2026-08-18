@@ -58,4 +58,11 @@ public class UsersController : Controller
         await _mediator.Send(command, cancellationToken);
         return NoContent();
     }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] AdminResetPasswordCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
 }

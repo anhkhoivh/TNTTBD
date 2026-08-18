@@ -25,12 +25,11 @@ export interface CatechismSession {
 }
 
 export interface CatechismSessionAttendance {
-  id: string;
-  catechismSessionId: string;
+  id?: string | null;
   catechismClassEucharisticYouthId: string;
+  youthCode?: string | null;
+  youthFullName?: FullName | null;
   attendanceStatus: AttendanceStatus;
-  markedTime: IsoDateTime;
-  markedByCatechistId: string;
 }
 
 export interface CatechismClassEucharisticYouth {

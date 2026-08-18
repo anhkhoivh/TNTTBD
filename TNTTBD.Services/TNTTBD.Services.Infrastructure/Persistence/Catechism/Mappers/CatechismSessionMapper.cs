@@ -57,22 +57,19 @@ public static class CatechismSessionMapper
     /// </summary>
     public static void UpdateAttendances(this CatechismSession domain, CatechismSessionEntity entity)
     {
-        foreach (CatechismSessionAttendance attendance in domain.Attendances)
+        var existingDict = entity.EucharisticYouthAttendances.ToDictionary(x => x.Id);
+        foreach (var attendance in domain.Attendances)
         {
-            CatechismSessionAttendanceEntity? existingEntity = entity.EucharisticYouthAttendances.FirstOrDefault(x => x.Id == attendance.Id);
-
-            if (existingEntity == null)
-            {
-                entity.EucharisticYouthAttendances.Add(attendance.ToEntity());
-            }
-            else
+            if (existingDict.TryGetValue(attendance.Id, out var existingEntity))
             {
                 attendance.UpdateEntity(existingEntity);
             }
+            else
+            {
+                entity.EucharisticYouthAttendances.Add(attendance.ToEntity());
+            }
         }
     }
-
-    
 
     #endregion
 

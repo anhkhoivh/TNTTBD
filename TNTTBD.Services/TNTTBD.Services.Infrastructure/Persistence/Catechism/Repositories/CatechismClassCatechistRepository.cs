@@ -41,4 +41,12 @@ public class CatechismClassCatechistRepository : ICatechismClassCatechistReposit
 
         _context.CatechismClassCatechists.Remove(entity);
     }
+
+    public async Task<bool> HasActiveMainCatechistAsync(Guid classId, CancellationToken cancellationToken)
+    {
+        return await _context.CatechismClassCatechists
+            .AnyAsync(e => e.CatechismClassId == classId
+                && e.Role == CatechismClassCatechistRole.Main
+                && e.Status == EnrollmentStatus.Active, cancellationToken);
+    }
 }

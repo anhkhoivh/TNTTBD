@@ -125,6 +125,14 @@ public class UserRepository : IUserRepository
         entity.IsActive = false;
     }
 
+    public async Task ChangePasswordAsync(Guid userId, string newPassword, CancellationToken cancellationToken)
+    {
+        var entity = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken)
+            ?? throw new KeyNotFoundException($"User {userId} not found.");
+
+        entity.PasswordHash = _passwordHasher.HashPassword(entity, newPassword);
+    }
+
     public async Task<PaginatedResult<UserDto>> GetAllAsync(int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.Users.AsNoTracking();

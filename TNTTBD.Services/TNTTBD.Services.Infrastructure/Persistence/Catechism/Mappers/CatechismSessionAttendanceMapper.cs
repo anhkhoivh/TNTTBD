@@ -47,8 +47,6 @@ public static class CatechismSessionAttendanceMapper
     /// </summary>
     public static void UpdateEntity(this CatechismSessionAttendance domain, CatechismSessionAttendanceEntity entity)
     {
-        entity.CatechismSessionId = domain.CatechismSessionId;
-        entity.CatechismClassEucharisticYouthId = domain.CatechismClassEucharisticYouthId;
         entity.AttendanceStatus = domain.AttendanceStatus;
         entity.MarkedTime = domain.MarkedTime;
         entity.MarkedByCatechistId = domain.MarkedByCatechistId;
@@ -62,11 +60,8 @@ public static class CatechismSessionAttendanceMapper
         return new CatechismSessionAttendanceDto
             {
                 Id = entity.Id,
-                CatechismSessionId = entity.CatechismSessionId,
                 CatechismClassEucharisticYouthId = entity.CatechismClassEucharisticYouthId,
                 AttendanceStatus = entity.AttendanceStatus,
-                MarkedTime = entity.MarkedTime,
-                MarkedByCatechistId = entity.MarkedByCatechistId
             };
     }
 

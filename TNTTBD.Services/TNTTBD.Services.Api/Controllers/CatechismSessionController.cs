@@ -118,6 +118,13 @@ public class CatechismSessionController : Controller
         return Ok(result);
     }
 
+    [HttpGet("attendance-sheet")]
+    public async Task<IActionResult> GetAttendanceSheet([FromQuery] GetAttendanceSheetQuery query, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+
     [HttpPost("attendance")]
     public async Task<IActionResult> MarkAttendance([FromBody] MarkAttendanceCommand command, CancellationToken cancellationToken)
     {

@@ -1,12 +1,11 @@
-import { IsoDate, IsoDateTime } from './common.model';
+import { FullName, IsoDate } from './common.model';
 
 export interface ExamResult {
-  id: string;
-  examId: string;
+  id?: string | null;
   catechismClassEucharisticYouthId: string;
-  markedByCatechistId: string;
-  markedTime: IsoDateTime;
-  score: number;
+  youthCode?: string | null;
+  youthFullName?: FullName | null;
+  score: number | null;
   isDone: boolean;
   remark?: string | null;
 }

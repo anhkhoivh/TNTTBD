@@ -48,7 +48,7 @@
       } @else {
         <p class="mt-16">{{ 'common.loading' | t }}</p>
       }
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
@@ -61,6 +61,13 @@
   <ng-template matTabContent>
     @defer {
       @if (catechistsRes.value(); as cd) {
+        @if (canAssignCatechists()) {
+          <div class="tab-toolbar mt-16">
+            <button mat-flat-button color="primary" (click)="assignCatechist(d.id)">
+              <mat-icon>person_add</mat-icon> {{ 'catechist.assign' | t }}
+            </button>
+          </div>
+        }
         <mat-list class="mt-16">
           @for (cc of cd.catechists.items; track cc.id) {
             @if (catechistOf(cc.catechistId); as c) {
@@ -72,6 +79,11 @@
                   {{ cc.enrolledAt | dateLocale: 'date' }}
                   @if (cc.leftAt) { → {{ cc.leftAt | dateLocale: 'date' }} }
                 </span>
+                @if (canAssignCatechists()) {
+                  <button mat-icon-button color="warn" (click)="removeCatechist(cc.id)" [attr.aria-label]="'common.delete' | t">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
               </mat-list-item>
             }
           }
@@ -79,7 +91,7 @@
       } @else {
         <p class="mt-16">{{ 'common.loading' | t }}</p>
       }
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
@@ -112,9 +124,13 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let row">
-              <button mat-icon-button (click)="openAttendance(d.id, row.id)" [attr.aria-label]="'session.attendance' | t">
+              <a mat-icon-button
+                [routerLink]="['/app/classes/attendance']"
+                [queryParams]="{ classId: d.id, sessionId: row.id }"
+                [attr.aria-label]="'session.attendance' | t"
+              >
                 <mat-icon>how_to_reg</mat-icon>
-              </button>
+              </a>
               @if (canManage()) {
                 <button mat-icon-button (click)="editSession(d.id, row)" [attr.aria-label]="'common.edit' | t">
                   <mat-icon>edit</mat-icon>
@@ -131,7 +147,7 @@
       } @else {
         <p class="mt-16">{{ 'common.loading' | t }}</p>
       }
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
@@ -163,9 +179,12 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let row">
-              <button mat-icon-button (click)="openExamResults(d.id, row.id)">
+              <a mat-icon-button
+                [routerLink]="['/app/classes/exam-results']"
+                [queryParams]="{ classId: d.id, examId: row.id }"
+              >
                 <mat-icon>edit_note</mat-icon>
-              </button>
+              </a>
               @if (canManage()) {
                 <button mat-icon-button (click)="editExam(d.id, row)">
                   <mat-icon>edit</mat-icon>
@@ -182,7 +201,7 @@
       } @else {
         <p class="mt-16">{{ 'common.loading' | t }}</p>
       }
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>

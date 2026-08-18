@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.Exams.DTOs;
 using TNTTBD.Services.Application.Exams.Interfaces;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -16,28 +17,51 @@ public class ExamQueryService : IExamQueryService
 
     public async Task<ExamDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await _context.Exams
+        var examHeader = await _context.Exams
             .Where(e => e.Id == id)
             .AsNoTracking()
-            .Select(e => new ExamDto
-            {
-                Id = e.Id,
-                Title = e.Title,
-                CatechismClassId = e.CatechismClassId,
-                ExamDate = e.ExamDate,
-                ExamResults = e.ExamResults.Select(r => new ExamResultDto
-                {
-                    Id = r.Id,
-                    ExamId = r.ExamId,
-                    CatechismClassEucharisticYouthId = r.CatechismClassEucharisticYouthId,
-                    Score = r.Score,
-                    IsDone = r.IsDone,
-                    Remark = r.Remark,
-                    MarkedByCatechistId = r.MarkedByCatechistId,
-                    MarkedTime = r.MarkedTime
-                }).ToList()
-            })
+            .Select(e => new { e.Id, e.Title, e.CatechismClassId, e.ExamDate })
             .FirstOrDefaultAsync(cancellationToken);
+
+        if (examHeader == null) return null;
+
+        var existingResults = await _context.ExamResults
+            .Where(r => r.ExamId == id)
+            .AsNoTracking()
+            .Select(r => new { r.Id, r.CatechismClassEucharisticYouthId, r.Score, r.IsDone, r.Remark })
+            .ToListAsync(cancellationToken);
+
+        var resultLookup = existingResults.ToDictionary(r => r.CatechismClassEucharisticYouthId);
+
+        var enrollments = await _context.CatechismClassEucharisticYouths
+            .Where(cy => cy.CatechismClassId == examHeader.CatechismClassId && cy.Status == EnrollmentStatus.Active)
+            .AsNoTracking()
+            .Select(cy => new { cy.Id, cy.EucharisticYouth.Code, cy.EucharisticYouth.FullName })
+            .ToListAsync(cancellationToken);
+
+        var flatResults = enrollments.Select(e =>
+        {
+            resultLookup.TryGetValue(e.Id, out var r);
+            return new ExamResultDto
+            {
+                Id = r?.Id,
+                CatechismClassEucharisticYouthId = e.Id,
+                YouthCode = e.Code,
+                YouthFullName = e.FullName,
+                Score = r?.Score,
+                IsDone = r?.IsDone ?? false,
+                Remark = r?.Remark,
+            };
+        }).ToList();
+
+        return new ExamDto
+        {
+            Id = examHeader.Id,
+            Title = examHeader.Title,
+            CatechismClassId = examHeader.CatechismClassId,
+            ExamDate = examHeader.ExamDate,
+            ExamResults = flatResults
+        };
     }
 
     public async Task<PaginatedResult<ExamDto>> GetAllAsync(Guid? classId, int page, int? pageSize, CancellationToken cancellationToken)
@@ -67,13 +91,10 @@ public class ExamQueryService : IExamQueryService
                 ExamResults = e.ExamResults.Select(r => new ExamResultDto
                 {
                     Id = r.Id,
-                    ExamId = r.ExamId,
                     CatechismClassEucharisticYouthId = r.CatechismClassEucharisticYouthId,
                     Score = r.Score,
                     IsDone = r.IsDone,
                     Remark = r.Remark,
-                    MarkedByCatechistId = r.MarkedByCatechistId,
-                    MarkedTime = r.MarkedTime
                 }).ToList()
             })
             .ToListAsync(cancellationToken);

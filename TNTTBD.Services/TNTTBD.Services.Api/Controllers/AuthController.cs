@@ -146,4 +146,12 @@ public class AuthController : Controller
 
         return Ok();
     }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangeOwnPasswordCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
 }

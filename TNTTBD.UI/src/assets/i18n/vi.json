@@ -30,6 +30,7 @@
   "common.submit": "Gửi",
   "common.required": "Bắt buộc",
   "common.actions": "Thao tác",
+  "common.note": "Ghi chú",
   "common.male": "Nam",
   "common.female": "Nữ",
   "common.new": "Tạo mới",
@@ -150,10 +151,19 @@
 
   "catechistRole.Main": "Trưởng lớp",
   "catechistRole.Member": "Thành viên",
+  "catechistRole.Trainee": "Dự trưởng",
+  "catechistRole.Auxiliary": "Tông đồ",
   "catechistRole.Assistance": "Phụ tá",
   "catechist.classHistory": "Lịch sử lớp",
   "catechist.create": "Tạo Giáo Lý Viên",
   "catechist.edit": "Sửa Giáo Lý Viên",
+  "catechist.assign": "Phân công GLV",
+  "catechist.selectCatechist": "Tìm Giáo Lý Viên",
+  "catechist.role": "Vai trò",
+  "catechist.alreadyHasMain": "đã phân công",
+  "catechist.assigned": "Đã phân công GLV.",
+  "catechist.removed": "Đã gỡ GLV.",
+  "catechist.changeRole": "Đổi vai trò",
 
   "register.title": "Ghi danh Thiếu nhi mới",
   "register.step.youth": "Thông tin thiếu nhi",
@@ -191,6 +201,16 @@
   "user.role.EucharisticYouth": "Thiếu nhi",
   "user.role.EucharisticYouthContact": "Người liên hệ",
 
+  "password.change": "Đổi mật khẩu",
+  "password.current": "Mật khẩu hiện tại",
+  "password.new": "Mật khẩu mới",
+  "password.confirm": "Xác nhận mật khẩu mới",
+  "password.mismatch": "Mật khẩu không khớp.",
+  "password.changed": "Đã đổi mật khẩu.",
+  "password.currentIncorrect": "Mật khẩu hiện tại không đúng.",
+  "password.reset": "Đặt lại mật khẩu",
+  "password.resetSuccess": "Đã đặt lại mật khẩu.",
+
   "error.generic": "Đã xảy ra lỗi. Vui lòng thử lại.",
   "error.network": "Không thể kết nối máy chủ.",
   "error.unauthorized": "Bạn chưa đăng nhập.",
@@ -199,5 +219,12 @@
   "error.server": "Lỗi máy chủ. Vui lòng thử lại sau.",
 
   "notFound.message": "Không tìm thấy trang bạn yêu cầu.",
-  "notFound.backHome": "Về trang chủ"
+  "notFound.backHome": "Về trang chủ",
+
+  "form.error.required": "bắt buộc",
+  "form.error.min": "Giá trị nhỏ nhất là",
+  "form.error.max": "Giá trị lớn nhất là",
+  "form.error.scoreRange": "Điểm phải giữa",
+  "form.error.and": "và",
+  "form.error.maxlength": "Số ký tự tối đa là"
 }
