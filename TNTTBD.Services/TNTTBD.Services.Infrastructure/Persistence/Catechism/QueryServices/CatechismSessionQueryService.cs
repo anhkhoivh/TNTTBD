@@ -47,7 +47,7 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
     }
 
     /// <inheritdoc />
-    public async Task<PaginatedResult<CatechismSessionDto>> GetAllAsync(Guid? classId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<CatechismSessionDto>> GetAllAsync(Guid? classId, int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.CatechismSessions.AsNoTracking();
 
@@ -56,10 +56,13 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderByDescending(s => s.DateTime)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(entity => new CatechismSessionDto
             {
                 Id = entity.Id,
@@ -74,12 +77,12 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 
     /// <inheritdoc />
-    public async Task<PaginatedResult<CatechismSessionAttendanceDto>> GetAttendancesBySessionAsync(Guid sessionId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<CatechismSessionAttendanceDto>> GetAttendancesBySessionAsync(Guid sessionId, int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.CatechismSessionAttendances
             .AsNoTracking()
@@ -87,10 +90,13 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderBy(a => a.MarkedTime)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(a => new CatechismSessionAttendanceDto
             {
                 Id = a.Id,
@@ -107,7 +113,7 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 }

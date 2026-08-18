@@ -37,6 +37,10 @@ public static class CatechismClassEucharisticYouthMapper
             Id = domain.Id,
             CatechismClassId = domain.CatechismClassId,
             EucharisticYouthId = domain.EucharisticYouthId,
+            EnrolledAt = domain.EnrolledAt,
+            LeftAt = domain.LeftAt,
+            Status = domain.Status,
+            Note = domain.Note,
         };
 
         return entity;

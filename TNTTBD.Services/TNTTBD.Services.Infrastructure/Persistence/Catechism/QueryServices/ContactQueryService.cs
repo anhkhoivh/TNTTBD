@@ -14,7 +14,7 @@ public class ContactQueryService : IContactQueryService
         _context = context;
     }
 
-    public async Task<PaginatedResult<ContactDto>> GetAllAsync(int page, int pageSize, string? search, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<ContactDto>> GetAllAsync(int page, int? pageSize, string? search, CancellationToken cancellationToken)
     {
         var query = _context.Contacts.AsNoTracking();
 
@@ -32,8 +32,6 @@ public class ContactQueryService : IContactQueryService
 
         var items = await query
             .OrderBy(c => c.FullName.GivenName)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(c => new ContactDto
             {
                 Id = c.Id,
@@ -48,7 +46,7 @@ public class ContactQueryService : IContactQueryService
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize,
+            PageSize = pageSize ?? total,
         };
     }
 }

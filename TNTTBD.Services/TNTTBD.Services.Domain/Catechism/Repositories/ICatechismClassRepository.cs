@@ -10,7 +10,7 @@ public interface ICatechismClassRepository
     /// <summary>
     /// Update class info
     /// </summary>
-    Task Update(Guid id, string className, CancellationToken cancellationToken);
+    Task Update(Guid id, string className, string classCode, CancellationToken cancellationToken);
 
     /// <summary>
     /// Remove class

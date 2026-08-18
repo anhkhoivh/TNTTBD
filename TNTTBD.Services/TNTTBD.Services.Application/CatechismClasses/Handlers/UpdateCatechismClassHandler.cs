@@ -28,7 +28,7 @@ public class UpdateCatechismClassHandler : IRequestHandler<UpdateCatechismClassC
 
     public async Task Handle(UpdateCatechismClassCommand command, CancellationToken cancellationToken)
     {
-        await _repository.Update(command.CatechismClassId, command.ClassName, cancellationToken);
+        await _repository.Update(command.CatechismClassId, command.ClassCode, command.ClassName, cancellationToken);
     }
 
     #endregion

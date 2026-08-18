@@ -23,6 +23,7 @@ public class CatechismClassQueryService : ICatechismClassQueryService
             {
                 Id = entity.Id,
                 ClassName = entity.ClassName,
+                ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
                 CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
             })
@@ -39,6 +40,7 @@ public class CatechismClassQueryService : ICatechismClassQueryService
             {
                 Id = entity.Id,
                 ClassName = entity.ClassName,
+                ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
                 CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
             })
@@ -47,7 +49,7 @@ public class CatechismClassQueryService : ICatechismClassQueryService
     }
 
     /// <inheritdoc />
-    public async Task<PaginatedResult<CatechismClassDto>> GetAllAsync(Guid? yearId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<CatechismClassDto>> GetAllAsync(Guid? yearId, int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.CatechismClasses.AsNoTracking();
 
@@ -56,14 +58,18 @@ public class CatechismClassQueryService : ICatechismClassQueryService
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderBy(c => c.ClassName)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(entity => new CatechismClassDto
             {
                 Id = entity.Id,
                 ClassName = entity.ClassName,
+                ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
                 CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
             })
@@ -74,7 +80,7 @@ public class CatechismClassQueryService : ICatechismClassQueryService
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 }

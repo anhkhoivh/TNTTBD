@@ -16,7 +16,7 @@ public static class CatechismClassMapper
     /// </summary>
     public static CatechismClass ToDomain(this CatechismClassEntity entity)
     {
-        CatechismClass domain = new CatechismClass(entity.Id, entity.CatechismYearId, entity.ClassName);
+        CatechismClass domain = new CatechismClass(entity.Id, entity.CatechismYearId, entity.ClassName, entity.ClassCode);
 
         return domain;
     }
@@ -34,7 +34,8 @@ public static class CatechismClassMapper
         {
             Id = domain.Id,
             CatechismYearId = domain.CatechismYearId,
-            ClassName = domain.ClassName
+            ClassName = domain.ClassName,
+            ClassCode = domain.ClassCode
         };
 
         return entity;
@@ -46,6 +47,7 @@ public static class CatechismClassMapper
     public static void UpdateEntity(this CatechismClass domain, CatechismClassEntity entity)
     {
         entity.ClassName = domain.ClassName;
+        entity.ClassCode = domain.ClassCode;
     }
 
     #endregion
@@ -61,6 +63,7 @@ public static class CatechismClassMapper
             {
                 Id = entity.Id,
                 ClassName = entity.ClassName,
+                ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
                 CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
             };

@@ -11,7 +11,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 export interface ClassFormData {
   catechismClass?: CatechismClass;
-  defaultYearId?: string;
+  catechismYearId?: string;
 }
 
 @Component({
@@ -33,7 +33,11 @@ export interface ClassFormData {
       <mat-dialog-content class="form">
         <mat-form-field appearance="outline">
           <mat-label>{{ 'class.name' | t }}</mat-label>
-          <input matInput formControlName="className" required />
+          <input matInput formControlName="name" required />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'class.code' | t }}</mat-label>
+          <input matInput formControlName="code" />
         </mat-form-field>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
@@ -66,7 +70,9 @@ export class ClassFormDialog {
 
   protected form = this.fb.nonNullable.group({
     id: [this.data.catechismClass?.id ?? ''],
-    className: [this.data.catechismClass?.className ?? '', Validators.required],
+    name: [this.data.catechismClass?.className ?? '', Validators.required],
+    code: [this.data.catechismClass?.classCode ?? '', Validators.required],
+    catechismYearId: [this.data.catechismYearId ?? null],
   });
 
   protected save(): void {

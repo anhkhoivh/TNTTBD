@@ -36,7 +36,7 @@ public class CatechismClassRepository : ICatechismClassRepository
     }
 
     /// <inheritdoc />
-    public async Task Update(Guid id, string className, CancellationToken cancellationToken)
+    public async Task Update(Guid id, string className, string classCode, CancellationToken cancellationToken)
     {
         CatechismClassEntity? entity = await _context.CatechismClasses.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (entity == null)
@@ -45,7 +45,7 @@ public class CatechismClassRepository : ICatechismClassRepository
         }
 
         CatechismClass domain = entity.ToDomain();
-        domain.UpdateInfo(className);
+        domain.UpdateInfo(className, classCode);
         domain.UpdateEntity(entity);
     }
 

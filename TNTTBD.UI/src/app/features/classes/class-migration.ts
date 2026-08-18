@@ -16,11 +16,11 @@ import {
   CatechismYear,
   CatechismClass,
   CatechismClassEucharisticYouth,
-  PaginatedResult,
 } from '../../shared/models';
 import { EnrollmentStatus } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-class-migration',
@@ -47,6 +47,7 @@ import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 export class ClassMigration {
   private api = inject(ApiService);
   private notify = inject(NotificationService);
+  private translate = inject(TranslationService);
 
   protected years = signal<CatechismYear[]>([]);
   protected allClasses = signal<CatechismClass[]>([]);
@@ -145,7 +146,7 @@ export class ClassMigration {
       })
       .subscribe({
         next: (res) => {
-          this.notify.success(`class.migrateSuccess`);
+          this.notify.success(this.translate.t(`class.migrateSuccess`));
           this.migrating.set(false);
           this.selected.set(new Set());
           this.onSrcClassChange();

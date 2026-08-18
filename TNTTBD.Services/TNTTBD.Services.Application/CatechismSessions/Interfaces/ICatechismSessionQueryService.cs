@@ -7,6 +7,6 @@ public interface ICatechismSessionQueryService
 {
     Task<CatechismSessionDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<List<CatechismSessionDto>?> GetSessionsByClassAsync(Guid classId, CancellationToken cancellationToken);
-    Task<PaginatedResult<CatechismSessionDto>> GetAllAsync(Guid? classId, int page, int pageSize, CancellationToken cancellationToken);
-    Task<PaginatedResult<CatechismSessionAttendanceDto>> GetAttendancesBySessionAsync(Guid sessionId, int page, int pageSize, CancellationToken cancellationToken);
+    Task<PaginatedResult<CatechismSessionDto>> GetAllAsync(Guid? classId, int page, int? pageSize, CancellationToken cancellationToken);
+    Task<PaginatedResult<CatechismSessionAttendanceDto>> GetAttendancesBySessionAsync(Guid sessionId, int page, int? pageSize, CancellationToken cancellationToken);
 }

@@ -7,5 +7,5 @@ namespace TNTTBD.Services.Application.CatechismClassCatechists.Queries;
 public record GetCatechismClassCatechistsQuery(
     Guid? ClassId = null,
     int Page = 1,
-    int PageSize = 50
+    int? PageSize = null
 ) : IRequest<PaginatedResult<CatechismClassCatechistDto>>;

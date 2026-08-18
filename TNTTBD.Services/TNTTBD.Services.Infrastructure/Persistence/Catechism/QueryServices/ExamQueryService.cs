@@ -40,7 +40,7 @@ public class ExamQueryService : IExamQueryService
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<PaginatedResult<ExamDto>> GetAllAsync(Guid? classId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<ExamDto>> GetAllAsync(Guid? classId, int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.Exams.AsNoTracking();
 
@@ -51,10 +51,13 @@ public class ExamQueryService : IExamQueryService
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderByDescending(e => e.ExamDate)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(e => new ExamDto
             {
                 Id = e.Id,
@@ -80,11 +83,11 @@ public class ExamQueryService : IExamQueryService
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 
-    public async Task<PaginatedResult<MyExamResultDto>> GetMyResultsAsync(Guid youthId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<MyExamResultDto>> GetMyResultsAsync(Guid youthId, int page, int? pageSize, CancellationToken cancellationToken)
     {
         // Find all enrollments for this youth
         var enrollmentIds = await _context.CatechismClassEucharisticYouths
@@ -99,6 +102,11 @@ public class ExamQueryService : IExamQueryService
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .Join(_context.Exams, r => r.ExamId, e => e.Id, (r, e) => new MyExamResultDto
             {
@@ -110,8 +118,6 @@ public class ExamQueryService : IExamQueryService
                 Remark = r.Remark
             })
             .OrderByDescending(x => x.ExamDate)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .ToListAsync(cancellationToken);
 
         return new PaginatedResult<MyExamResultDto>
@@ -119,7 +125,7 @@ public class ExamQueryService : IExamQueryService
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 }

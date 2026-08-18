@@ -76,17 +76,20 @@ public class CatechistQueryService : ICatechistQueryService
     }
 
     /// <inheritdoc />
-    public async Task<PaginatedResult<CatechistDto>> GetAllAsync(int page, int pageSize, IFileStorage storage, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<CatechistDto>> GetAllAsync(int page, int? pageSize, IFileStorage storage, CancellationToken cancellationToken)
     {
         var query = _context.Catechists.AsNoTracking();
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderBy(c => c.FullName.GivenName)
             .ThenBy(c => c.FullName.FamilyName)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(entity => new CatechistDto
             {
                 Id = entity.Id,
@@ -118,7 +121,7 @@ public class CatechistQueryService : ICatechistQueryService
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 
