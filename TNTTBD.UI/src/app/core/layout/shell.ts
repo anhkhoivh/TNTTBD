@@ -12,12 +12,14 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ThemeService } from '../services/theme.service';
 import { LoadingService } from '../services/loading.service';
 import { TranslationService, Lang } from '../i18n/translation.service';
 import { TranslatePipe } from '../i18n/translate.pipe';
 import { AuthService } from '../auth/auth.service';
 import { UserRole } from '../../shared/enums';
+import { ChangePasswordDialog } from '../../shared/components/change-password-dialog';
 
 interface NavItem {
   labelKey: string;
@@ -42,6 +44,7 @@ interface NavItem {
     MatMenuModule,
     MatDividerModule,
     MatProgressBarModule,
+    MatDialogModule,
     TranslatePipe,
   ],
   templateUrl: './shell.html',
@@ -51,6 +54,7 @@ interface NavItem {
 })
 export class Shell {
   private breakpoint = inject(BreakpointObserver);
+  private dialog = inject(MatDialog);
   protected theme = inject(ThemeService);
   protected loading = inject(LoadingService);
   protected translation = inject(TranslationService);
@@ -109,6 +113,10 @@ export class Shell {
 
   protected logout(): void {
     this.auth.logout();
+  }
+
+  protected changePassword(): void {
+    this.dialog.open(ChangePasswordDialog);
   }
 
   protected toggleSidenav(): void {

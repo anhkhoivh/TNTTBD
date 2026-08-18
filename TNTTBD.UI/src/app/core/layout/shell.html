@@ -54,6 +54,10 @@
             <div class="user-email">{{ auth.currentUser()?.email }}</div>
           </div>
           <mat-divider></mat-divider>
+          <button mat-menu-item (click)="changePassword()">
+            <mat-icon>lock</mat-icon>
+            <span>{{ 'password.change' | t }}</span>
+          </button>
           <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
             <span>{{ 'nav.logout' | t }}</span>

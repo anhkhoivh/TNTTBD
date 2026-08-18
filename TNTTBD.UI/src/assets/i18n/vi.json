@@ -191,6 +191,16 @@
   "user.role.EucharisticYouth": "Thiếu nhi",
   "user.role.EucharisticYouthContact": "Người liên hệ",
 
+  "password.change": "Đổi mật khẩu",
+  "password.current": "Mật khẩu hiện tại",
+  "password.new": "Mật khẩu mới",
+  "password.confirm": "Xác nhận mật khẩu mới",
+  "password.mismatch": "Mật khẩu không khớp.",
+  "password.changed": "Đã đổi mật khẩu.",
+  "password.currentIncorrect": "Mật khẩu hiện tại không đúng.",
+  "password.reset": "Đặt lại mật khẩu",
+  "password.resetSuccess": "Đã đặt lại mật khẩu.",
+
   "error.generic": "Đã xảy ra lỗi. Vui lòng thử lại.",
   "error.network": "Không thể kết nối máy chủ.",
   "error.unauthorized": "Bạn chưa đăng nhập.",

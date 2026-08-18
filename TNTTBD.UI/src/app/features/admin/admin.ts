@@ -16,6 +16,7 @@ import { UserRole } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ConfirmDialog, ConfirmData } from '../../shared/components/confirm-dialog';
 import { UserFormDialog, UserFormData, UserFormResult } from './user-form-dialog';
+import { ResetPasswordDialog, ResetPasswordData } from './reset-password-dialog';
 
 @Component({
   selector: 'app-admin',
@@ -124,6 +125,19 @@ export class AdminPage {
           this.notify.info('user.deactivated');
           this.reload$.next();
         },
+        error: () => this.notify.error('error.generic'),
+      });
+    });
+  }
+
+  protected resetPassword(user: User): void {
+    const ref = this.dialog.open<ResetPasswordDialog, ResetPasswordData>(ResetPasswordDialog, {
+      data: { userId: user.id, userName: user.userName },
+    });
+    ref.afterClosed().subscribe((result) => {
+      if (!result) return;
+      this.api.post('/users/reset-password', result).subscribe({
+        next: () => this.notify.success('password.resetSuccess'),
         error: () => this.notify.error('error.generic'),
       });
     });

@@ -193,6 +193,16 @@
   "user.role.EucharisticYouth": "Youth",
   "user.role.EucharisticYouthContact": "Youth contact",
 
+  "password.change": "Change password",
+  "password.current": "Current password",
+  "password.new": "New password",
+  "password.confirm": "Confirm new password",
+  "password.mismatch": "Passwords do not match.",
+  "password.changed": "Password changed.",
+  "password.currentIncorrect": "Current password is incorrect.",
+  "password.reset": "Reset password",
+  "password.resetSuccess": "Password has been reset.",
+
   "error.generic": "Something went wrong. Please try again.",
   "error.network": "Cannot reach server.",
   "error.unauthorized": "You are not signed in.",
