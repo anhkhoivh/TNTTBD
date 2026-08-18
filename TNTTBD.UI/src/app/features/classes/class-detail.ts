@@ -31,8 +31,6 @@ import { EnrollmentStatus, CatechismClassCatechistRole, UserRole } from '../../s
 import { SessionFormDialog } from '../../shared/components/session-form-dialog';
 import { ExamFormDialog } from '../../shared/components/exam-form-dialog';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog';
-import { AttendanceDialog } from '../../shared/components/attendance-dialog';
-import { ExamResultsDialog } from '../../shared/components/exam-results-dialog';
 
 function emptyPage<T>(): PaginatedResult<T> {
   return { items: [], total: 0, page: 1, pageSize: 50 };
@@ -246,19 +244,5 @@ export class ClassDetail {
           this.examsRes.reload();
         });
       });
-  }
-
-  protected openAttendance(classId: string, sessionId: string): void {
-    this.dialog.open(AttendanceDialog, {
-      data: { classId, sessionId },
-      width: '700px',
-    });
-  }
-
-  protected openExamResults(classId: string, examId: string): void {
-    this.dialog.open(ExamResultsDialog, {
-      data: { classId, examId },
-      width: '800px',
-    });
   }
 }

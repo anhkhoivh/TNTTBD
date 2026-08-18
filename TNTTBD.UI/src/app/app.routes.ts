@@ -98,6 +98,20 @@ export const routes: Routes = [
           import('./features/classes/class-migration').then((m) => m.ClassMigration),
       },
       {
+        path: 'classes/attendance',
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.Admin, UserRole.Catechist] },
+        loadComponent: () =>
+          import('./features/classes/class-attendance').then((m) => m.ClassAttendance),
+      },
+      {
+        path: 'classes/exam-results',
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.Admin, UserRole.Catechist] },
+        loadComponent: () =>
+          import('./features/classes/class-exam-results').then((m) => m.ClassExamResults),
+      },
+      {
         path: 'admin/users',
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin] },
