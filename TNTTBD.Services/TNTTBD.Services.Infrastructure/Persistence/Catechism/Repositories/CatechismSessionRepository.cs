@@ -73,9 +73,30 @@ public class CatechismSessionRepository : ICatechismSessionRepository
             throw new DomainException(DomainErrors.ValidationNotFound);
         }
 
-        CatechismSession domain = entity.ToDomain();
-        domain.MarkAttendances(attendances, catechistId);
-        domain.UpdateAttendances(entity);
+        var now = DateTimeOffset.UtcNow;
+        var existingDict = entity.EucharisticYouthAttendances.ToDictionary(a => a.CatechismClassEucharisticYouthId);
+
+        foreach (var (youthId, status) in attendances)
+        {
+            if (existingDict.TryGetValue(youthId, out var existing))
+            {
+                existing.AttendanceStatus = status;
+                existing.MarkedTime = now;
+                existing.MarkedByCatechistId = catechistId;
+            }
+            else
+            {
+                entity.EucharisticYouthAttendances.Add(new CatechismSessionAttendanceEntity
+                {
+                    Id = Guid.NewGuid(),
+                    CatechismSessionId = sessionId,
+                    CatechismClassEucharisticYouthId = youthId,
+                    AttendanceStatus = status,
+                    MarkedTime = now,
+                    MarkedByCatechistId = catechistId
+                });
+            }
+        }
     }
 
     /// <inheritdoc />

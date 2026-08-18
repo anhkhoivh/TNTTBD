@@ -8,15 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { forkJoin, catchError, of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
-import {
-  CatechismClassEucharisticYouth,
-  EucharisticYouth,
-  Exam,
-  PaginatedResult,
-} from '../models';
+import { Exam } from '../models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../pipes/full-name.pipe';
 import { FormErrorsDisplayComponent } from './form-errors-display.component';
@@ -24,18 +18,6 @@ import { FormErrorsDisplayComponent } from './form-errors-display.component';
 export interface ExamResultsDialogData {
   classId: string;
   examId: string;
-}
-
-interface ResultRow {
-  enrollmentId: string;
-  youth?: EucharisticYouth;
-  score: number | null;
-  isDone: boolean;
-  remark: string;
-}
-
-function emptyPage<T>(): PaginatedResult<T> {
-  return { items: [], total: 0, page: 1, pageSize: 50 };
 }
 
 @Component({
@@ -65,8 +47,8 @@ function emptyPage<T>(): PaginatedResult<T> {
         <table mat-table [dataSource]="resultsArray.controls" class="full-width">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>{{ 'youth.fullName' | t }}</th>
-            <td mat-cell *matCellDef="let row; let i = index">
-              @if (row.value.youth) { {{ row.value.youth.fullName | fullName }} }
+            <td mat-cell *matCellDef="let row">
+              {{ row.value.fullName | fullName }}
             </td>
           </ng-container>
           <ng-container matColumnDef="score">
@@ -143,39 +125,27 @@ export class ExamResultsDialog implements OnInit {
   }
 
   ngOnInit(): void {
-    forkJoin({
-      enrollments: this.api
-        .list<CatechismClassEucharisticYouth>('/class-youth', { classId: this.data.classId })
-        .pipe(catchError(() => of(emptyPage<CatechismClassEucharisticYouth>()))),
-      exam: this.api
-        .get<Exam>('/exams/detail', { id: this.data.examId })
-        .pipe(catchError(() => of(null))),
-      youth: this.api
-        .list<EucharisticYouth>('/youths')
-        .pipe(catchError(() => of(emptyPage<EucharisticYouth>()))),
-    }).subscribe(({ enrollments, exam, youth }) => {
-      this.examTitle.set(exam?.title ?? '');
+    this.api.get<Exam>('/exams/detail', { id: this.data.examId }).subscribe((exam) => {
+      if (!exam) {
+        this.loading.set(false);
+        return;
+      }
+      this.examTitle.set(exam.title);
       const resultsFA = this.fb.array<FormGroup>([]);
-      enrollments.items.forEach((e) => {
-        const existing = exam?.examResults?.find(
-          (r) => r.catechismClassEucharisticYouthId === e.id,
-        );
+
+      exam.examResults.forEach((r) => {
         resultsFA.push(
           this.fb.group({
-            enrollmentId: this.fb.control(e.id, { nonNullable: true }),
-            youth: this.fb.control(
-              youth.items.find(y => y.id === e.eucharisticYouthId)
-            ),
-            score: this.fb.control(existing?.score ?? null, [
+            enrollmentId: this.fb.control(r.catechismClassEucharisticYouthId, { nonNullable: true }),
+            fullName: this.fb.control(r.youthFullName),
+            score: this.fb.control(r.score, [
               Validators.required,
               Validators.min(0),
-              Validators.max(10)
+              Validators.max(10),
             ]),
-            isDone: this.fb.control(existing?.isDone ?? false, { nonNullable: true }),
-            remark: this.fb.control(existing?.remark ?? '', [
-              Validators.maxLength(500)
-            ]),
-          })
+            isDone: this.fb.control(r.isDone, { nonNullable: true }),
+            remark: this.fb.control(r.remark ?? '', [Validators.maxLength(500)]),
+          }),
         );
       });
       this.resultsForm.setControl('results', resultsFA);
