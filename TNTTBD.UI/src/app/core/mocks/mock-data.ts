@@ -199,12 +199,12 @@ export const mockSessions: CatechismSession[] = [
 ];
 
 export const mockAttendances: CatechismSessionAttendance[] = [
-  { id: 'a-1', catechismSessionId: 's-1', catechismClassEucharisticYouthId: 'cly-1', attendanceStatus: AttendanceStatus.Present, markedTime: '2025-11-09T08:15:00+07:00', markedByCatechistId: 'c-1' },
-  { id: 'a-2', catechismSessionId: 's-1', catechismClassEucharisticYouthId: 'cly-2', attendanceStatus: AttendanceStatus.Absent, markedTime: '2025-11-09T08:15:00+07:00', markedByCatechistId: 'c-1' },
-  { id: 'a-3', catechismSessionId: 's-1', catechismClassEucharisticYouthId: 'cly-3', attendanceStatus: AttendanceStatus.Present, markedTime: '2025-11-09T08:15:00+07:00', markedByCatechistId: 'c-1' },
-  { id: 'a-4', catechismSessionId: 's-1', catechismClassEucharisticYouthId: 'cly-4', attendanceStatus: AttendanceStatus.Excused, markedTime: '2025-11-09T08:15:00+07:00', markedByCatechistId: 'c-1' },
-  { id: 'a-5', catechismSessionId: 's-2', catechismClassEucharisticYouthId: 'cly-1', attendanceStatus: AttendanceStatus.Present, markedTime: '2025-11-16T08:15:00+07:00', markedByCatechistId: 'c-1' },
-  { id: 'a-6', catechismSessionId: 's-2', catechismClassEucharisticYouthId: 'cly-2', attendanceStatus: AttendanceStatus.Present, markedTime: '2025-11-16T08:15:00+07:00', markedByCatechistId: 'c-1' },
+  { id: 'a-1', catechismClassEucharisticYouthId: 'cly-1', attendanceStatus: AttendanceStatus.Present },
+  { id: 'a-2', catechismClassEucharisticYouthId: 'cly-2', attendanceStatus: AttendanceStatus.Absent },
+  { id: 'a-3', catechismClassEucharisticYouthId: 'cly-3', attendanceStatus: AttendanceStatus.Present },
+  { id: 'a-4', catechismClassEucharisticYouthId: 'cly-4', attendanceStatus: AttendanceStatus.Excused },
+  { id: 'a-5', catechismClassEucharisticYouthId: 'cly-1', attendanceStatus: AttendanceStatus.Present },
+  { id: 'a-6', catechismClassEucharisticYouthId: 'cly-2', attendanceStatus: AttendanceStatus.Present },
 ];
 
 export const mockExams: Exam[] = [

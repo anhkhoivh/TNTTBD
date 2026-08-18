@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.CatechismSessions.DTOs;
 using TNTTBD.Services.Application.CatechismSessions.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -100,11 +101,10 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
             .Select(a => new CatechismSessionAttendanceDto
             {
                 Id = a.Id,
-                CatechismSessionId = a.CatechismSessionId,
                 CatechismClassEucharisticYouthId = a.CatechismClassEucharisticYouthId,
+                YouthCode = a.CatechismClassEucharisticYouth.EucharisticYouth.Code,
+                YouthFullName = a.CatechismClassEucharisticYouth.EucharisticYouth.FullName,
                 AttendanceStatus = a.AttendanceStatus,
-                MarkedTime = a.MarkedTime,
-                MarkedByCatechistId = a.MarkedByCatechistId
             })
             .ToListAsync(cancellationToken);
 
@@ -115,5 +115,44 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
             Page = page,
             PageSize = pageSize ?? total
         };
+    }
+
+    /// <inheritdoc />
+    public async Task<List<CatechismSessionAttendanceDto>> GetAttendanceSheetAsync(Guid sessionId, CancellationToken cancellationToken)
+    {
+        var session = await _context.CatechismSessions
+            .AsNoTracking()
+            .Where(s => s.Id == sessionId)
+            .Select(s => new { s.CatechismClassId })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (session == null) return [];
+
+        var existingAttendances = await _context.CatechismSessionAttendances
+            .AsNoTracking()
+            .Where(a => a.CatechismSessionId == sessionId)
+            .Select(a => new { a.Id, a.CatechismClassEucharisticYouthId, a.AttendanceStatus })
+            .ToListAsync(cancellationToken);
+
+        var attendanceLookup = existingAttendances.ToDictionary(a => a.CatechismClassEucharisticYouthId);
+
+        var enrollments = await _context.CatechismClassEucharisticYouths
+            .AsNoTracking()
+            .Where(cy => cy.CatechismClassId == session.CatechismClassId && cy.Status == EnrollmentStatus.Active)
+            .Select(cy => new { cy.Id, cy.EucharisticYouth.Code, cy.EucharisticYouth.FullName })
+            .ToListAsync(cancellationToken);
+
+        return enrollments.Select(e =>
+        {
+            attendanceLookup.TryGetValue(e.Id, out var a);
+            return new CatechismSessionAttendanceDto
+            {
+                Id = a?.Id,
+                CatechismClassEucharisticYouthId = e.Id,
+                YouthCode = e.Code,
+                YouthFullName = e.FullName,
+                AttendanceStatus = a?.AttendanceStatus ?? AttendanceStatus.None,
+            };
+        }).ToList();
     }
 }

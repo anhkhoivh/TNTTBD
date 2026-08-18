@@ -174,11 +174,10 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
     return item ? ok(item) : notFound();
   }
   if (path === '/sessions/attendances' && method === 'GET') {
-    const sessionId = qs.get('sessionId');
-    const items = sessionId
-      ? mockAttendances.filter((a) => a.catechismSessionId === sessionId)
-      : mockAttendances;
-    return ok(paginate(items));
+    return ok(paginate(mockAttendances));
+  }
+  if (path === '/sessions/attendance-sheet' && method === 'GET') {
+    return ok(mockAttendances);
   }
 
   // ===== Class-Youth (enrollments) =====

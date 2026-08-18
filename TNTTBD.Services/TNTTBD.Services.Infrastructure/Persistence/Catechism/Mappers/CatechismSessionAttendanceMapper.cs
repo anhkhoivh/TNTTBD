@@ -60,11 +60,8 @@ public static class CatechismSessionAttendanceMapper
         return new CatechismSessionAttendanceDto
             {
                 Id = entity.Id,
-                CatechismSessionId = entity.CatechismSessionId,
                 CatechismClassEucharisticYouthId = entity.CatechismClassEucharisticYouthId,
                 AttendanceStatus = entity.AttendanceStatus,
-                MarkedTime = entity.MarkedTime,
-                MarkedByCatechistId = entity.MarkedByCatechistId
             };
     }
 

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit , ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -7,16 +7,10 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { forkJoin, catchError, of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
-import {
-  CatechismClassEucharisticYouth,
-  CatechismSessionAttendance,
-  EucharisticYouth,
-  PaginatedResult,
-} from '../models';
+import { CatechismSessionAttendance } from '../models';
 import { AttendanceStatus } from '../enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../pipes/full-name.pipe';
@@ -28,12 +22,8 @@ export interface AttendanceDialogData {
 
 interface Row {
   enrollmentId: string;
-  youth?: EucharisticYouth;
+  youthFullName: any;
   status: AttendanceStatus;
-}
-
-function emptyPage<T>(): PaginatedResult<T> {
-  return { items: [], total: 0, page: 1, pageSize: 50 };
 }
 
 @Component({
@@ -61,7 +51,7 @@ function emptyPage<T>(): PaginatedResult<T> {
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>{{ 'youth.fullName' | t }}</th>
             <td mat-cell *matCellDef="let row">
-              @if (row.youth) { {{ row.youth.fullName | fullName }} }
+              {{ row.youthFullName | fullName }}
             </td>
           </ng-container>
           <ng-container matColumnDef="status">
@@ -99,6 +89,7 @@ export class AttendanceDialog implements OnInit {
   private api = inject(ApiService);
   private auth = inject(AuthService);
   private notify = inject(NotificationService);
+  private cdr = inject(ChangeDetectorRef);
   protected ref = inject(MatDialogRef<AttendanceDialog>);
   private data: AttendanceDialogData = inject(MAT_DIALOG_DATA);
 
@@ -113,30 +104,19 @@ export class AttendanceDialog implements OnInit {
   protected rows = signal<Row[]>([]);
 
   ngOnInit(): void {
-    forkJoin({
-      enrollments: this.api
-        .list<CatechismClassEucharisticYouth>('/class-youth', { classId: this.data.classId })
-        .pipe(catchError(() => of(emptyPage<CatechismClassEucharisticYouth>()))),
-      attendance: this.api
-        .list<CatechismSessionAttendance>('/sessions/attendances', { sessionId: this.data.sessionId })
-        .pipe(catchError(() => of(emptyPage<CatechismSessionAttendance>()))),
-      youth: this.api
-        .list<EucharisticYouth>('/youths')
-        .pipe(catchError(() => of(emptyPage<EucharisticYouth>()))),
-    }).subscribe(({ enrollments, attendance, youth }) => {
-      const rows: Row[] = enrollments.items.map((e) => {
-        const existing = attendance.items.find(
-          (a) => a.catechismClassEucharisticYouthId === e.id,
+    this.api
+      .get<CatechismSessionAttendance[]>('/sessions/attendance-sheet', { sessionId: this.data.sessionId })
+      .subscribe((items) => {
+        this.rows.set(
+          (items ?? []).map((a) => ({
+            enrollmentId: a.catechismClassEucharisticYouthId,
+            youthFullName: a.youthFullName,
+            status: a.attendanceStatus ?? AttendanceStatus.None,
+          })),
         );
-        return {
-          enrollmentId: e.id,
-          youth: youth.items.find((y) => y.id === e.eucharisticYouthId),
-          status: existing?.attendanceStatus ?? AttendanceStatus.None,
-        };
+        this.loading.set(false);
+        this.cdr.markForCheck();
       });
-      this.rows.set(rows);
-      this.loading.set(false);
-    });
   }
 
   protected setStatus(index: number, status: AttendanceStatus): void {
