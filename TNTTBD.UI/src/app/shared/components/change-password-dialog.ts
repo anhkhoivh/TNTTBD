@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-change-password-dialog',
@@ -30,6 +31,7 @@ export class ChangePasswordDialog {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private notify = inject(NotificationService);
+  private translate = inject(TranslationService);
 
   protected saving = signal(false);
   protected mismatch = signal(false);
@@ -60,12 +62,12 @@ export class ChangePasswordDialog {
       .subscribe({
         next: () => {
           this.saving.set(false);
-          this.notify.success('password.changed');
+          this.notify.success(this.translate.t('password.changed'));
           this.ref.close(true);
         },
         error: () => {
           this.saving.set(false);
-          this.notify.error('password.currentIncorrect');
+          this.notify.error(this.translate.t('password.currentIncorrect'));
         },
       });
   }

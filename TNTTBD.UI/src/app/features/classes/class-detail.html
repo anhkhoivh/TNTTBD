@@ -80,10 +80,7 @@
                   @if (cc.leftAt) { → {{ cc.leftAt | dateLocale: 'date' }} }
                 </span>
                 @if (canAssignCatechists()) {
-                  <button matListItemMeta mat-icon-button (click)="editCatechistRole(cc)" [attr.aria-label]="'catechist.changeRole' | t">
-                    <mat-icon>swap_horiz</mat-icon>
-                  </button>
-                  <button matListItemMeta mat-icon-button color="warn" (click)="removeCatechist(cc.id)" [attr.aria-label]="'common.delete' | t">
+                  <button mat-icon-button color="warn" (click)="removeCatechist(cc.id)" [attr.aria-label]="'common.delete' | t">
                     <mat-icon>delete</mat-icon>
                   </button>
                 }

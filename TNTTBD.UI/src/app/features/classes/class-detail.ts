@@ -192,27 +192,6 @@ export class ClassDetail {
       });
   }
 
-  protected editCatechistRole(assignment: CatechismClassCatechist): void {
-    // Cycle through: prompt is too heavy for MVP — just use a simple role-change via PATCH
-    const roles = [
-      CatechismClassCatechistRole.Main,
-      CatechismClassCatechistRole.Member,
-      CatechismClassCatechistRole.Trainee,
-      CatechismClassCatechistRole.Auxiliary,
-    ];
-    const currentIdx = roles.indexOf(assignment.role);
-    const nextRole = roles[(currentIdx + 1) % roles.length];
-    this.api
-      .patch('/class-catechist', { id: assignment.id, role: nextRole, note: assignment.note })
-      .subscribe({
-        next: () => {
-          this.notify.success('Saved');
-          this.catechistsRes.reload();
-        },
-        error: () => this.notify.error('error.generic'),
-      });
-  }
-
   protected removeCatechist(id: string): void {
     this.dialog
       .open(ConfirmDialog, {

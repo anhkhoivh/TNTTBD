@@ -71,7 +71,7 @@ export class CatechistAssignDialog {
         const s = (search ?? '').trim();
         if (s.length < 1) return of([]);
         return this.api
-          .list<Catechist>('/catechists', { page: 1, pageSize: 20 })
+          .list<Catechist>('/catechists')
           .pipe(
             switchMap((r: PaginatedResult<Catechist>) => {
               const alreadyAssigned = new Set(this.data.existingAssignments.map((a) => a.catechistId));

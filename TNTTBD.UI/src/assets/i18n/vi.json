@@ -151,8 +151,8 @@
 
   "catechistRole.Main": "Trưởng lớp",
   "catechistRole.Member": "Thành viên",
-  "catechistRole.Trainee": "Tập sự",
-  "catechistRole.Auxiliary": "Hỗ trợ",
+  "catechistRole.Trainee": "Dự trưởng",
+  "catechistRole.Auxiliary": "Tông đồ",
   "catechistRole.Assistance": "Phụ tá",
   "catechist.classHistory": "Lịch sử lớp",
   "catechist.create": "Tạo Giáo Lý Viên",
