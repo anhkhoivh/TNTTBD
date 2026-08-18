@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -110,6 +110,7 @@ export interface ExamResultsDialogData {
 export class ExamResultsDialog implements OnInit {
   private api = inject(ApiService);
   private notify = inject(NotificationService);
+  private cdr = inject(ChangeDetectorRef);
   protected ref = inject(MatDialogRef<ExamResultsDialog>);
   private data: ExamResultsDialogData = inject(MAT_DIALOG_DATA);
 
@@ -150,6 +151,7 @@ export class ExamResultsDialog implements OnInit {
       });
       this.resultsForm.setControl('results', resultsFA);
       this.loading.set(false);
+      this.cdr.markForCheck();
     });
   }
 
