@@ -30,7 +30,7 @@ public class AddEucharisticYouthToClassHandler : IRequestHandler<AddEucharisticY
 
     public async Task<Guid> Handle(AddEucharisticYouthToClassCommand command, CancellationToken cancellationToken)
     {
-        CatechismClassEucharisticYouth domain = new(Guid.NewGuid(), command.EucharisticYouthId, command.CatechismClassId, DateTimeOffset.Now, DateTimeOffset.Now, EnrollmentStatus.Active, null);
+        CatechismClassEucharisticYouth domain = new(Guid.NewGuid(), command.EucharisticYouthId, command.CatechismClassId, DateTimeOffset.Now.ToUniversalTime(), null, EnrollmentStatus.Active, null);
         await _repository.AddAsync(domain, cancellationToken);
         return domain.Id;
     }

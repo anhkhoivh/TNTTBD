@@ -83,13 +83,13 @@ public class CatechismSession : AggregateRoot<Guid>
 
         if (existingAttendance == null)
         {
-            CatechismSessionAttendance newAttendance = new(Guid.NewGuid(), Id, catechismClassEucharisticYouthId, status, DateTimeOffset.Now, markedBy);
+            CatechismSessionAttendance newAttendance = new(Guid.NewGuid(), Id, catechismClassEucharisticYouthId, status, DateTimeOffset.Now.ToUniversalTime(), markedBy);
             _attendances.Add(newAttendance);
             return newAttendance;
         }
         else
         {
-            existingAttendance.Update(status, DateTimeOffset.Now, markedBy);
+            existingAttendance.Update(status, DateTimeOffset.Now.ToUniversalTime(), markedBy);
             return existingAttendance;
         }
     }

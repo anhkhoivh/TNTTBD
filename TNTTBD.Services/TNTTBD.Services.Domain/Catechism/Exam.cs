@@ -82,7 +82,7 @@ public class Exam : AggregateRoot<Guid>
             Id,
             catechismClassEucharisticYouthId,
             markedBy,
-            DateTimeOffset.Now,
+            DateTimeOffset.Now.ToUniversalTime(),
             score,
             isDone,
             remark
