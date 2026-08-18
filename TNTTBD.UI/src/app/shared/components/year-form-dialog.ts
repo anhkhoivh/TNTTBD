@@ -41,7 +41,7 @@ export interface YearFormData {
         <mat-form-field appearance="outline">
           <mat-label>{{ 'class.endDate' | t }}</mat-label>
           <input matInput [matDatepicker]="ep" formControlName="endDate" required />
-          <mat-datepicker-toggle matIconSuffix [for]="ep"></mat-datepicker-toggle>
+          <mat-datepicker-toggle matSuffix [for]="ep"></mat-datepicker-toggle>
           <mat-datepicker #ep></mat-datepicker>
         </mat-form-field>
         <mat-form-field appearance="outline" class="full">

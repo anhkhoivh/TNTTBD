@@ -109,6 +109,7 @@
 
   "class.year": "Catechism year",
   "class.name": "Class name",
+  "class.code": "Class code",
   "class.theme": "Theme",
   "class.startDate": "Start date",
   "class.endDate": "End date",

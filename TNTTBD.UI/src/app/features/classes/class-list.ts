@@ -71,12 +71,13 @@ export class ClassList {
 
   protected years = signal<CatechismYear[]>([]);
   protected classes = signal<CatechismClass[]>([]);
-  protected selectedYearId = signal<string | null>(null);
+  protected selectedYear = signal<CatechismYear | null>(null);
   protected myClassIds = signal<Set<string>>(new Set());
   protected searchQuery = signal<string>('');
 
   protected filtered = computed(() => {
-    const yid = this.selectedYearId();
+    console.log(this.years());
+    const yid = this.selectedYear()?.id;
     const query = this.searchQuery().toLowerCase().trim();
     let list = this.classes();
     
@@ -128,9 +129,9 @@ export class ClassList {
   private reload(): void {
     this.api.list<CatechismYear>('/catechism-years').subscribe((r) => {
       this.years.set(r.items);
-      if (!this.selectedYearId() && r.items.length > 0) {
+      if (!this.selectedYear() && r.items.length > 0) {
         const latest = [...r.items].sort((a, b) => b.startDate.localeCompare(a.startDate))[0];
-        this.selectedYearId.set(latest.id);
+        this.selectedYear.set(latest);
       }
     });
     this.api.list<CatechismClass>('/classes').subscribe((r) => this.classes.set(r.items));
@@ -162,7 +163,7 @@ export class ClassList {
   protected newClass(): void {
     this.dialog
       .open(ClassFormDialog, {
-        data: { years: this.years(), defaultYearId: this.selectedYearId() ?? undefined },
+        data: { catechismYearId: this.selectedYear()?.id ?? null },
       })
       .afterClosed()
       .subscribe((v) => {

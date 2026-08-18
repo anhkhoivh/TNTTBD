@@ -125,15 +125,18 @@ public class UserRepository : IUserRepository
         entity.IsActive = false;
     }
 
-    public async Task<PaginatedResult<UserDto>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<UserDto>> GetAllAsync(int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.Users.AsNoTracking();
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderBy(u => u.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(u => new UserDto
             {
                 Id = u.Id,
@@ -152,7 +155,7 @@ public class UserRepository : IUserRepository
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 }

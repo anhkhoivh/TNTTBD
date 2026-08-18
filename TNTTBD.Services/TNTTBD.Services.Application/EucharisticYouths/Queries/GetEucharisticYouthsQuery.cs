@@ -4,4 +4,4 @@ using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Queries;
 
-public record GetEucharisticYouthsQuery(string? Search = null, int Page = 1, int PageSize = 50) : IRequest<PaginatedResult<EucharisticYouthDto>>;
+public record GetEucharisticYouthsQuery(string? Search = null, int Page = 1, int? PageSize = null) : IRequest<PaginatedResult<EucharisticYouthDto>>;

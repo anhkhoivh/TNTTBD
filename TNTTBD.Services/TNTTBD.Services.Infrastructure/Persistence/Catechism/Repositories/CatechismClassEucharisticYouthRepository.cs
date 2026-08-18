@@ -58,7 +58,7 @@ public class CatechismClassEucharisticYouthRepository : ICatechismClassEucharist
             .Where(y => ids.Contains(y.Id))
             .ExecuteUpdateAsync(e => e
                 .SetProperty(y => y.Status, EnrollmentStatus.Completed)
-                .SetProperty(y => y.LeftAt, DateTimeOffset.Now), cancellationToken);
+                .SetProperty(y => y.LeftAt, DateTimeOffset.Now.ToUniversalTime()), cancellationToken);
     }
 
     /// <inheritdoc />

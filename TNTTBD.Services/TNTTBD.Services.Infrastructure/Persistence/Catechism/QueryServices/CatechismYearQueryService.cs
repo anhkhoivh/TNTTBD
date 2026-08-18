@@ -41,6 +41,7 @@ public class CatechismYearQueryService : ICatechismYearQueryService
                 {
                     Id = e.Id,
                     ClassName = e.ClassName,
+                    ClassCode = e.ClassCode,
                     CatechismYearId = e.CatechismYearId,
                     CatechismYearTitle = $"{e.CatechismYear.StartDate.Year}-{e.CatechismYear.EndDate.Year}"
                 }).ToList()
@@ -50,16 +51,19 @@ public class CatechismYearQueryService : ICatechismYearQueryService
     }
 
     /// <inheritdoc />
-    public async Task<PaginatedResult<CatechismYearDto>> GetAllAsync(int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<CatechismYearDto>> GetAllAsync(int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.CatechismYears.AsNoTracking();
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderByDescending(y => y.StartDate)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Include(y => y.CatechismClasses)
             .Select(entity => new CatechismYearDto
             {
@@ -72,6 +76,7 @@ public class CatechismYearQueryService : ICatechismYearQueryService
                 {
                     Id = e.Id,
                     ClassName = e.ClassName,
+                    ClassCode = e.ClassCode,
                     CatechismYearId = e.CatechismYearId,
                     CatechismYearTitle = $"{e.CatechismYear.StartDate.Year}-{e.CatechismYear.EndDate.Year}"
                 }).ToList()
@@ -83,7 +88,7 @@ public class CatechismYearQueryService : ICatechismYearQueryService
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 

@@ -80,7 +80,7 @@ public class CatechismClassCatechistQueryService : ICatechismClassCatechistQuery
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<PaginatedResult<CatechismClassCatechistDto>> GetAllAsync(Guid? classId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<CatechismClassCatechistDto>> GetAllAsync(Guid? classId, int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.CatechismClassCatechists.AsNoTracking();
 
@@ -89,10 +89,13 @@ public class CatechismClassCatechistQueryService : ICatechismClassCatechistQuery
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderBy(e => e.EnrolledAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(entity => new CatechismClassCatechistDto
             {
                 Id = entity.Id,
@@ -114,7 +117,7 @@ public class CatechismClassCatechistQueryService : ICatechismClassCatechistQuery
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 }

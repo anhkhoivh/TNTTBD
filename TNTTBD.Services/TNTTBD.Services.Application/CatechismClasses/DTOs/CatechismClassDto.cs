@@ -13,6 +13,11 @@ public class CatechismClassDto
     public required string ClassName { get; set; }
 
     /// <summary>
+    /// Class Name
+    /// </summary>
+    public required string ClassCode { get; set; }
+
+    /// <summary>
     /// Class Year Id
     /// </summary>
     public Guid CatechismYearId { get; set; }

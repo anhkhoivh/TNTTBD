@@ -73,7 +73,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
     }
 
     /// <inheritdoc />
-    public async Task<PaginatedResult<EucharisticYouthDto>> GetAllAsync(string? search, int page, int pageSize, IFileStorage storage, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<EucharisticYouthDto>> GetAllAsync(string? search, int page, int? pageSize, IFileStorage storage, CancellationToken cancellationToken)
     {
         var query = _context.EucharisticYouths.AsNoTracking();
 
@@ -89,11 +89,14 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderBy(y => y.FullName.FamilyName)
             .ThenBy(y => y.FullName.GivenName)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(entity => new EucharisticYouthDto
             {
                 Id = entity.Id,
@@ -133,7 +136,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 }

@@ -7,5 +7,5 @@ public interface ICatechismClassQueryService
 {
     Task<CatechismClassDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<List<CatechismClassDto>> GetClassesByYearAsync(Guid yearId, CancellationToken cancellationToken);
-    Task<PaginatedResult<CatechismClassDto>> GetAllAsync(Guid? yearId, int page, int pageSize, CancellationToken cancellationToken);
+    Task<PaginatedResult<CatechismClassDto>> GetAllAsync(Guid? yearId, int page, int? pageSize, CancellationToken cancellationToken);
 }

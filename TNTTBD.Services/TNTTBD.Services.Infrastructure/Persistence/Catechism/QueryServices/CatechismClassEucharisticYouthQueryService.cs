@@ -86,7 +86,7 @@ public class CatechismClassEucharisticYouthQueryService : ICatechismClassEuchari
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<PaginatedResult<CatechismClassEucharisticYouthDto>> GetAllAsync(Guid? classId, int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<CatechismClassEucharisticYouthDto>> GetAllAsync(Guid? classId, int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.CatechismClassEucharisticYouths.AsNoTracking();
 
@@ -95,11 +95,14 @@ public class CatechismClassEucharisticYouthQueryService : ICatechismClassEuchari
 
         int total = await query.CountAsync(cancellationToken);
 
+        if (pageSize.HasValue)
+        {
+            query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+
         var items = await query
             .OrderBy(e => e.EucharisticYouth.FullName.GivenName)
             .ThenBy(e => e.EucharisticYouth.FullName.FamilyName)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(entity => new CatechismClassEucharisticYouthDto
             {
                 Id = entity.Id,
@@ -121,7 +124,7 @@ public class CatechismClassEucharisticYouthQueryService : ICatechismClassEuchari
             Items = items,
             Total = total,
             Page = page,
-            PageSize = pageSize
+            PageSize = pageSize ?? total
         };
     }
 }

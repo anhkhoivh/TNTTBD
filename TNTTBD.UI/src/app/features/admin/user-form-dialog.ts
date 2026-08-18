@@ -121,16 +121,16 @@ export class UserFormDialog {
         const s = (search ?? '').trim();
         if (kind === 'Catechist') {
           return this.api
-            .list<Catechist>('/catechists', { page: 1, pageSize: 20 })
+            .list<Catechist>('/catechists')
             .pipe(switchMap((r: PaginatedResult<Catechist>) => of(this.filterCatechists(r.items, s))));
         }
         if (kind === 'Youth') {
           return this.api
-            .list<EucharisticYouth>('/youths', { page: 1, pageSize: 20, search: s || undefined })
+            .list<EucharisticYouth>('/youths', { search: s || undefined })
             .pipe(switchMap((r: PaginatedResult<EucharisticYouth>) => of(this.mapYouths(r.items))));
         }
         return this.api
-          .list<ContactLookup>('/contacts', { page: 1, pageSize: 20, search: s || undefined })
+          .list<ContactLookup>('/contacts', { search: s || undefined })
           .pipe(switchMap((r: PaginatedResult<ContactLookup>) => of(this.mapContacts(r.items))));
       }),
     ),

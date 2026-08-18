@@ -30,7 +30,7 @@ public class MigrateYouthToClassHandler : IRequestHandler<MigrateYouthToClassCom
                 Guid.NewGuid(),
                 youthId,
                 command.DestinationClassId,
-                DateTimeOffset.UtcNow,
+                DateTimeOffset.UtcNow.ToUniversalTime(),
                 null,
                 EnrollmentStatus.Active,
                 null);

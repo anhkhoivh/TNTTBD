@@ -12,13 +12,13 @@ public class CreateCatechismClassHandler : IRequestHandler<CreateCatechismClassC
 {
     #region Fields
 
-    private readonly ICatechismYearRepository _repository;
+    private readonly ICatechismClassRepository _repository;
 
     #endregion
 
     #region Constructors
 
-    public CreateCatechismClassHandler(ICatechismYearRepository repository)
+    public CreateCatechismClassHandler(ICatechismClassRepository repository)
     {
         _repository = repository;
     }
@@ -29,9 +29,9 @@ public class CreateCatechismClassHandler : IRequestHandler<CreateCatechismClassC
 
     public async Task<Guid> Handle(CreateCatechismClassCommand command, CancellationToken cancellationToken)
     {
-        CatechismYear year = new(Guid.NewGuid(), command.StartDate, command.EndDate, command.Theme);
-        await _repository.AddAsync(year, cancellationToken);
-        return year.Id;
+        CatechismClass newClass = new(Guid.NewGuid(), command.CatechismYearId, command.Name, command.Code);
+        await _repository.AddAsync(newClass, cancellationToken);
+        return newClass.Id;
     }
 
     #endregion
