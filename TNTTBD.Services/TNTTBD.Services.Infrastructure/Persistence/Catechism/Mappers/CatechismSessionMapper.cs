@@ -35,6 +35,7 @@ public static class CatechismSessionMapper
             Id = domain.Id,
             CatechismClassId = domain.CatechismClassId,
             Title = domain.Title,
+            DateTime = domain.DateTime,
             EucharisticYouthAttendances = domain.Attendances.Select(a => a.ToEntity()).ToList()
         };
 

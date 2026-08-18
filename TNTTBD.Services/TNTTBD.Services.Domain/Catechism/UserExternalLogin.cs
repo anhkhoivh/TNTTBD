@@ -58,7 +58,7 @@ public sealed class UserExternalLogin : DomainEntity<Guid>
             userId,
             provider,
             subjectId,
-            DateTimeOffset.Now);
+            DateTimeOffset.Now.ToUniversalTime());
     }
 
     #endregion
