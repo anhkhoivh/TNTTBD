@@ -31,6 +31,7 @@ import { EnrollmentStatus, CatechismClassCatechistRole, UserRole } from '../../s
 import { SessionFormDialog } from '../../shared/components/session-form-dialog';
 import { ExamFormDialog } from '../../shared/components/exam-form-dialog';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog';
+import { CatechistAssignDialog, CatechistAssignData } from '../../shared/components/catechist-assign-dialog';
 
 function emptyPage<T>(): PaginatedResult<T> {
   return { items: [], total: 0, page: 1, pageSize: 50 };
@@ -72,6 +73,10 @@ export class ClassDetail {
 
   protected canManage(): boolean {
     return this.auth.hasRole([UserRole.Admin, UserRole.Catechist]);
+  }
+
+  protected canAssignCatechists(): boolean {
+    return this.auth.hasRole([UserRole.Admin]);
   }
 
   protected get isContact(): boolean {
@@ -166,6 +171,64 @@ export class ClassDetail {
 
   protected roleKey(role: CatechismClassCatechistRole): string {
     return `catechistRole.${role}`;
+  }
+
+  protected assignCatechist(classId: string): void {
+    const existing = this.catechistsRes.value()?.catechists.items ?? [];
+    this.dialog
+      .open<CatechistAssignDialog, CatechistAssignData>(CatechistAssignDialog, {
+        data: { classId, existingAssignments: existing },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (!result) return;
+        this.api.post('/class-catechist', result).subscribe({
+          next: () => {
+            this.notify.success('catechist.assigned');
+            this.catechistsRes.reload();
+          },
+          error: () => this.notify.error('error.generic'),
+        });
+      });
+  }
+
+  protected editCatechistRole(assignment: CatechismClassCatechist): void {
+    // Cycle through: prompt is too heavy for MVP — just use a simple role-change via PATCH
+    const roles = [
+      CatechismClassCatechistRole.Main,
+      CatechismClassCatechistRole.Member,
+      CatechismClassCatechistRole.Trainee,
+      CatechismClassCatechistRole.Auxiliary,
+    ];
+    const currentIdx = roles.indexOf(assignment.role);
+    const nextRole = roles[(currentIdx + 1) % roles.length];
+    this.api
+      .patch('/class-catechist', { id: assignment.id, role: nextRole, note: assignment.note })
+      .subscribe({
+        next: () => {
+          this.notify.success('Saved');
+          this.catechistsRes.reload();
+        },
+        error: () => this.notify.error('error.generic'),
+      });
+  }
+
+  protected removeCatechist(id: string): void {
+    this.dialog
+      .open(ConfirmDialog, {
+        data: { destructive: true, confirmKey: 'common.delete', message: 'Remove this catechist from class?' },
+      })
+      .afterClosed()
+      .subscribe((ok) => {
+        if (!ok) return;
+        this.api.delete('/class-catechist', { id }).subscribe({
+          next: () => {
+            this.notify.success('catechist.removed');
+            this.catechistsRes.reload();
+          },
+          error: () => this.notify.error('error.generic'),
+        });
+      });
   }
 
   protected newSession(classId: string): void {

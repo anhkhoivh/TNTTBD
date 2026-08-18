@@ -61,6 +61,13 @@
   <ng-template matTabContent>
     @defer {
       @if (catechistsRes.value(); as cd) {
+        @if (canAssignCatechists()) {
+          <div class="tab-toolbar mt-16">
+            <button mat-flat-button color="primary" (click)="assignCatechist(d.id)">
+              <mat-icon>person_add</mat-icon> {{ 'catechist.assign' | t }}
+            </button>
+          </div>
+        }
         <mat-list class="mt-16">
           @for (cc of cd.catechists.items; track cc.id) {
             @if (catechistOf(cc.catechistId); as c) {
@@ -72,6 +79,14 @@
                   {{ cc.enrolledAt | dateLocale: 'date' }}
                   @if (cc.leftAt) { → {{ cc.leftAt | dateLocale: 'date' }} }
                 </span>
+                @if (canAssignCatechists()) {
+                  <button matListItemMeta mat-icon-button (click)="editCatechistRole(cc)" [attr.aria-label]="'catechist.changeRole' | t">
+                    <mat-icon>swap_horiz</mat-icon>
+                  </button>
+                  <button matListItemMeta mat-icon-button color="warn" (click)="removeCatechist(cc.id)" [attr.aria-label]="'common.delete' | t">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
               </mat-list-item>
             }
           }

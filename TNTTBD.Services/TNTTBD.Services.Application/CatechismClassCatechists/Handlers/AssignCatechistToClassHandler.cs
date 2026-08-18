@@ -17,6 +17,13 @@ public class AssignCatechistToClassHandler : IRequestHandler<AssignCatechistToCl
 
     public async Task<Guid> Handle(AssignCatechistToClassCommand command, CancellationToken cancellationToken)
     {
+        if (command.Role == CatechismClassCatechistRole.Main)
+        {
+            var hasMain = await _repository.HasActiveMainCatechistAsync(command.CatechismClassId, cancellationToken);
+            if (hasMain)
+                throw new InvalidOperationException("Class already has an active primary catechist.");
+        }
+
         var id = Guid.NewGuid();
         var domain = new CatechismClassCatechist(
             id,
