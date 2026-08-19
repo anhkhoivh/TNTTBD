@@ -59,35 +59,4 @@ public class Exam : AggregateRoot<Guid>
     public IReadOnlyCollection<ExamResult> ExamResults => _examResults;
 
     #endregion
-
-    #region Methods
-
-    /// <summary>
-    /// Mark attendance
-    /// </summary>
-    public void MarkResult(
-        Guid catechismClassEucharisticYouthId,
-        double score,
-        Guid markedBy, 
-        bool isDone,
-        string? remark)
-    {
-        if (_examResults.Any(x => x.CatechismClassEucharisticYouthId == catechismClassEucharisticYouthId))
-        {
-            throw new DomainException(DomainErrors.AttendanceAlreadyRecorded);
-        }
-
-        _examResults.Add(new ExamResult(
-            Guid.NewGuid(),
-            Id,
-            catechismClassEucharisticYouthId,
-            markedBy,
-            DateTimeOffset.Now.ToUniversalTime(),
-            score,
-            isDone,
-            remark
-        ));
-    }
-
-    #endregion
 }

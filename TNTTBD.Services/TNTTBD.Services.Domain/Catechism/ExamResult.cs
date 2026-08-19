@@ -15,15 +15,13 @@ public class ExamResult : DomainEntity<Guid>
         Guid catechismClassEucharisticYouthId,
         Guid markedByCatechistId,
         DateTimeOffset markedTime,
-        double score,
-        bool isDone,
+        double? score,
         string? remark) : base(id)
     {
         CatechismClassEucharisticYouthId = catechismClassEucharisticYouthId;
         ExamId = examId;
         MarkedByCatechistId = markedByCatechistId;
         Score = score;
-        IsDone = isDone;
         Remark = remark;
         MarkedTime = markedTime;
     }
@@ -35,7 +33,7 @@ public class ExamResult : DomainEntity<Guid>
     /// <summary>
     /// Score
     /// </summary>
-    public double Score { get; private set; }
+    public double? Score { get; private set; }
 
     /// <summary>
     /// Exam id
@@ -55,11 +53,6 @@ public class ExamResult : DomainEntity<Guid>
     /// <summary>
     /// Is done
     /// </summary>
-    public bool IsDone { get; private set; }
-
-    /// <summary>
-    /// Is done
-    /// </summary>
     public string? Remark { get; private set; }
 
     /// <summary>
@@ -75,8 +68,7 @@ public class ExamResult : DomainEntity<Guid>
     /// Update
     /// </summary>
     public void Update(
-        double score,
-        bool isDone,
+        double? score,
         string? remark,
         DateTimeOffset markedTime,
         Guid markedByCatechistId)
@@ -84,7 +76,6 @@ public class ExamResult : DomainEntity<Guid>
         Score = score;
         MarkedTime = markedTime;
         MarkedByCatechistId = markedByCatechistId;
-        IsDone = isDone;
         Remark = remark;
     }
 

@@ -6,7 +6,6 @@ export interface ExamResult {
   youthCode?: string | null;
   youthFullName?: FullName | null;
   score: number | null;
-  isDone: boolean;
   remark?: string | null;
 }
 

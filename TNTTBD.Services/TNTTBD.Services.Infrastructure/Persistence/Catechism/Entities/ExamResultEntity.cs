@@ -38,12 +38,7 @@ public class ExamResultEntity
     /// <summary>
     /// Score
     /// </summary>
-    public double Score { get; set; }
-
-    /// <summary>
-    /// Is absent
-    /// </summary>
-    public bool IsDone { get; set; }
+    public double? Score { get; set; }
 
     /// <summary>
     /// Remark

@@ -9,7 +9,6 @@ public class ExamResultDto
     public string? YouthCode { get; set; }
     public FullName? YouthFullName { get; set; }
     public double? Score { get; set; }
-    public bool IsDone { get; set; }
     public string? Remark { get; set; }
     public DateTimeOffset MarkedTime { get; set; }
 }

@@ -1,6 +1,6 @@
 import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -37,7 +37,8 @@ import { TranslationService } from '../../core/i18n/translation.service';
     MatCheckboxModule,
     MatToolbarModule,
     TranslatePipe,
-  ],
+    RouterLink
+],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 

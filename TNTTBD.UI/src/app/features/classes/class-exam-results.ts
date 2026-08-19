@@ -1,7 +1,7 @@
 import { Component, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormGroup, FormControl } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
@@ -74,6 +74,10 @@ export class ClassExamResults {
     });
   }
 
+  getScoreControl(i: number): FormControl {
+    return this.resultsArray.at(i).get('score') as FormControl;
+  }
+
   private loadExam(): void {
     this.api.get<Exam>('/exams/detail', { id: this.examId! }).subscribe((exam) => {
       if (!exam) {
@@ -89,11 +93,9 @@ export class ClassExamResults {
             enrollmentId: this.fb.control(r.catechismClassEucharisticYouthId, { nonNullable: true }),
             fullName: this.fb.control(r.youthFullName),
             score: this.fb.control(r.score, [
-              Validators.required,
               Validators.min(0),
               Validators.max(10),
             ]),
-            isDone: this.fb.control(r.isDone, { nonNullable: true }),
             remark: this.fb.control(r.remark ?? '', [Validators.maxLength(500)]),
           }),
         );
@@ -115,7 +117,6 @@ export class ClassExamResults {
       results: this.resultsArray.value.map((r: any) => ({
         catechismClassEucharisticYouthId: r.enrollmentId,
         score: r.score,
-        isDone: r.isDone,
         remark: r.remark || null,
       })),
     };

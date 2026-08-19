@@ -22,7 +22,6 @@ public static class ExamResultMapper
             entity.MarkedByCatechistId,
             entity.MarkedTime,
             entity.Score,
-            entity.IsDone,
             entity.Remark);
 
         return domain;
@@ -45,7 +44,6 @@ public static class ExamResultMapper
             MarkedByCatechistId = domain.MarkedByCatechistId,
             MarkedTime = domain.MarkedTime,
             Score = domain.Score,
-            IsDone = domain.IsDone,
             Remark = domain.Remark
         };
 
@@ -62,7 +60,6 @@ public static class ExamResultMapper
         entity.MarkedByCatechistId = domain.MarkedByCatechistId;
         entity.MarkedTime = domain.MarkedTime;
         entity.Score = domain.Score;
-        entity.IsDone = domain.IsDone;
         entity.Remark = domain.Remark;
     }
 

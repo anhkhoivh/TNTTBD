@@ -10,6 +10,5 @@ public record SaveExamResultsCommand(
 public record ExamResultItem(
     Guid CatechismClassEucharisticYouthId,
     double? Score,
-    bool IsDone,
     string? Remark
 );
