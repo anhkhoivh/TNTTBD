@@ -420,9 +420,6 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.Property<Guid>("ExamId")
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("IsDone")
-                        .HasColumnType("boolean");
-
                     b.Property<Guid>("MarkedByCatechistId")
                         .HasColumnType("uuid");
 
@@ -432,7 +429,7 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.Property<string>("Remark")
                         .HasColumnType("text");
 
-                    b.Property<double>("Score")
+                    b.Property<double?>("Score")
                         .HasColumnType("double precision");
 
                     b.HasKey("Id");

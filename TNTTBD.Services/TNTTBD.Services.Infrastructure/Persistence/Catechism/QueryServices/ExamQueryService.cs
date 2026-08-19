@@ -28,7 +28,7 @@ public class ExamQueryService : IExamQueryService
         var existingResults = await _context.ExamResults
             .Where(r => r.ExamId == id)
             .AsNoTracking()
-            .Select(r => new { r.Id, r.CatechismClassEucharisticYouthId, r.Score, r.IsDone, r.Remark })
+            .Select(r => new { r.Id, r.CatechismClassEucharisticYouthId, r.Score, r.Remark })
             .ToListAsync(cancellationToken);
 
         var resultLookup = existingResults.ToDictionary(r => r.CatechismClassEucharisticYouthId);
@@ -49,7 +49,6 @@ public class ExamQueryService : IExamQueryService
                 YouthCode = e.Code,
                 YouthFullName = e.FullName,
                 Score = r?.Score,
-                IsDone = r?.IsDone ?? false,
                 Remark = r?.Remark,
             };
         }).ToList();
@@ -93,7 +92,6 @@ public class ExamQueryService : IExamQueryService
                     Id = r.Id,
                     CatechismClassEucharisticYouthId = r.CatechismClassEucharisticYouthId,
                     Score = r.Score,
-                    IsDone = r.IsDone,
                     Remark = r.Remark,
                 }).ToList()
             })
@@ -135,7 +133,6 @@ public class ExamQueryService : IExamQueryService
                 ExamTitle = e.Title,
                 ExamDate = e.ExamDate,
                 Score = r.Score,
-                IsDone = r.IsDone,
                 Remark = r.Remark
             })
             .OrderByDescending(x => x.ExamDate)

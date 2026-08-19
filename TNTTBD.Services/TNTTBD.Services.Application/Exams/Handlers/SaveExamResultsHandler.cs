@@ -23,8 +23,7 @@ public class SaveExamResultsHandler : IRequestHandler<SaveExamResultsCommand>
 
         var results = command.Results.Select(r => (
             r.CatechismClassEucharisticYouthId,
-            r.Score ?? 0,
-            r.IsDone,
+            r.Score,
             r.Remark,
             markedBy
         )).ToList();

@@ -44,7 +44,7 @@ public class ExamRepository : IExamRepository
         _context.Exams.Remove(entity);
     }
 
-    public async Task SaveResults(Guid examId, List<(Guid youthId, double score, bool isDone, string? remark, Guid markedBy)> results, CancellationToken cancellationToken)
+    public async Task SaveResults(Guid examId, List<(Guid youthId, double? score, string? remark, Guid markedBy)> results, CancellationToken cancellationToken)
     {
         ExamEntity? exam = await _context.Exams
             .Include(e => e.ExamResults)
@@ -52,26 +52,24 @@ public class ExamRepository : IExamRepository
         if (exam == null)
             throw new DomainException(DomainErrors.ValidationNotFound);
 
-        foreach (var (youthId, score, isDone, remark, markedBy) in results)
+        foreach (var (youthId, score, remark, markedBy) in results)
         {
             var existing = exam.ExamResults.FirstOrDefault(r => r.CatechismClassEucharisticYouthId == youthId);
             if (existing != null)
             {
                 existing.Score = score;
-                existing.IsDone = isDone;
                 existing.Remark = remark;
                 existing.MarkedByCatechistId = markedBy;
                 existing.MarkedTime = DateTimeOffset.UtcNow;
             }
             else
             {
-                exam.ExamResults.Add(new ExamResultEntity
+                _context.ExamResults.Add(new ExamResultEntity
                 {
                     Id = Guid.NewGuid(),
                     ExamId = examId,
                     CatechismClassEucharisticYouthId = youthId,
                     Score = score,
-                    IsDone = isDone,
                     Remark = remark,
                     MarkedByCatechistId = markedBy,
                     MarkedTime = DateTimeOffset.UtcNow

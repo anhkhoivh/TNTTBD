@@ -214,9 +214,9 @@ export const mockExams: Exam[] = [
     examDate: '2025-12-15',
     title: 'Kiểm tra giữa kỳ I',
     examResults: [
-      { id: 'er-1', catechismClassEucharisticYouthId: 'cly-1', score: 8.5, isDone: true },
-      { id: 'er-2', catechismClassEucharisticYouthId: 'cly-2', score: 7.0, isDone: true },
-      { id: 'er-3', catechismClassEucharisticYouthId: 'cly-3', score: 9.0, isDone: true },
+      { id: 'er-1', catechismClassEucharisticYouthId: 'cly-1', score: 8.5 },
+      { id: 'er-2', catechismClassEucharisticYouthId: 'cly-2', score: 7.0},
+      { id: 'er-3', catechismClassEucharisticYouthId: 'cly-3', score: 9.0 },
     ],
   },
   {
@@ -232,7 +232,7 @@ export const mockExams: Exam[] = [
     examDate: '2025-12-20',
     title: 'Kiểm tra giữa kỳ I',
     examResults: [
-      { id: 'er-4', catechismClassEucharisticYouthId: 'cly-6', score: 8.0, isDone: true },
+      { id: 'er-4', catechismClassEucharisticYouthId: 'cly-6', score: 8.0 },
     ],
   },
 ];
