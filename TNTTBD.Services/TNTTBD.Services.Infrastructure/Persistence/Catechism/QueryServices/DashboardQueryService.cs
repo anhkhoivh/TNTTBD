@@ -98,7 +98,7 @@ public class DashboardQueryService : IDashboardQueryService
             {
                 Youth = await _context.EucharisticYouths.CountAsync(cancellationToken),
                 Catechists = await _context.Catechists.CountAsync(cancellationToken),
-                Classes = await _context.CatechismClasses.CountAsync(cancellationToken),
+                Classes = await _context.CatechismClasses.Where(c => c.CatechismYearId == latestYear.Id).CountAsync(cancellationToken),
                 Years = await _context.CatechismYears.CountAsync(cancellationToken),
             };
         }
