@@ -1,12 +1,11 @@
 import { Component, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormGroup, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -28,7 +27,6 @@ import { FormErrorsDisplayComponent } from '../../shared/components/form-errors-
     MatTableModule,
     MatInputModule,
     MatFormFieldModule,
-    MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
@@ -51,6 +49,8 @@ export class ClassExamResults {
   protected saving = signal(false);
   protected examTitle = signal('');
 
+  protected displayedColumns = ['name', 'score', 'remark'];
+
   protected resultsForm = this.fb.group({
     results: this.fb.array<FormGroup>([]),
   });
@@ -72,10 +72,6 @@ export class ClassExamResults {
       }
       this.loadExam();
     });
-  }
-
-  getScoreControl(i: number): FormControl {
-    return this.resultsArray.at(i).get('score') as FormControl;
   }
 
   private loadExam(): void {
@@ -102,7 +98,7 @@ export class ClassExamResults {
       });
       this.resultsForm.setControl('results', resultsFA);
       this.loading.set(false);
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
   }
 

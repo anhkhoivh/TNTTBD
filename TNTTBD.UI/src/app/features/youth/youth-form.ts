@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed , ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of, forkJoin } from 'rxjs';
+import { switchMap, of } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,9 +23,7 @@ import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { AuthService } from '../../core/auth/auth.service';
 import {
-  CatechismClassCatechist,
-  CatechismYear,
-  CatechismClass,
+  CatechistCurrentClass,
   EucharisticYouth,
   PatronSaint,
 } from '../../shared/models';
@@ -101,15 +99,16 @@ export class YouthForm {
   protected myCurrentClassId = signal<string | null>(null);
   protected myClassName = signal<string | null>(null);
   protected isCatechist = signal(false);
+  // Set when navigating from class-detail with ?classId=
+  protected enrollInClassId = signal<string | null>(null);
 
   protected form = this.fb.group({
-    code: ['', Validators.required],
     givenName: ['', Validators.required],
     middleName: [''],
     familyName: [''],
     christName: [''],
     dateOfBirth: [null as Date | null, Validators.required],
-    isMale: [true, Validators.required],
+    isMale: [true],
     address: [''],
     patronSaints: [[] as PatronSaint[]],
     milestones: this.fb.array<ReturnType<typeof this.makeMilestone>>([]),
@@ -124,33 +123,23 @@ export class YouthForm {
     this.contacts.push(this.makeContact(ContactRelationType.Father));
     this.contacts.push(this.makeContact(ContactRelationType.Mother));
 
+    // Check for classId from class-detail navigation
+    const classIdParam = this.route.snapshot.queryParamMap.get('classId');
+    if (classIdParam) {
+      this.enrollInClassId.set(classIdParam);
+    }
+
     // Resolve catechist's current class for "add to my class" checkbox
     const user = this.auth.currentUser();
     if (user?.userRole === UserRole.Catechist && user.catechistId) {
       this.isCatechist.set(true);
-      forkJoin({
-        years: this.api.list<CatechismYear>('/catechism-years'),
-        assignments: this.api.list<CatechismClassCatechist>('/class-catechist'),
-        classes: this.api.list<CatechismClass>('/classes'),
-      }).subscribe(({ years, assignments, classes }) => {
-        const latestYear = [...years.items].sort((a, b) =>
-          b.startDate.localeCompare(a.startDate),
-        )[0];
-        if (!latestYear) return;
-        const currentYearClassIds = new Set(
-          classes.items.filter((c) => c.catechismYearId === latestYear.id).map((c) => c.id),
-        );
-        const myAssignment = assignments.items.find(
-          (a) =>
-            a.catechistId === user.catechistId &&
-            currentYearClassIds.has(a.catechismClassId),
-        );
-        if (myAssignment) {
-          this.myCurrentClassId.set(myAssignment.catechismClassId);
-          const cls = classes.items.find((c) => c.id === myAssignment.catechismClassId);
-          this.myClassName.set(cls?.className ?? null);
-        }
-      });
+      this.api
+        .get<CatechistCurrentClass | null>('/catechists/current-class')
+        .subscribe((current) => {
+          if (!current) return;
+          this.myCurrentClassId.set(current.classId);
+          this.myClassName.set(current.className);
+        });
     }
 
     this.route.queryParamMap
@@ -166,7 +155,6 @@ export class YouthForm {
       .subscribe((y) => {
         if (!y) return;
         this.form.patchValue({
-          code: y.code,
           givenName: y.fullName.givenName,
           middleName: y.fullName.middleName ?? '',
           familyName: y.fullName.familyName ?? '',
@@ -218,6 +206,7 @@ export class YouthForm {
       this.form.markAllAsTouched();
       return;
     }
+
     const v = this.form.getRawValue();
     const payload = {
       ...(this.isEdit() ? { eucharisticYouthId: this.editId } : {}),
@@ -247,6 +236,7 @@ export class YouthForm {
           email: c.email || null,
         })),
       }),
+      catechismClassId: this.enrollInClassId() ?? (this.addToMyClass() && this.myCurrentClassId() ? this.myCurrentClassId() : null),
     };
 
     this.loading.set(true);
@@ -255,41 +245,26 @@ export class YouthForm {
       : this.api.post('/youths', payload);
 
     req$.subscribe({
-      next: (result: unknown) => {
-        // If creating + "add to my class" checked, create enrollment join entity
-        if (!this.isEdit() && this.addToMyClass() && this.myCurrentClassId()) {
-          const youthId = (result as { id?: string })?.id;
-          if (youthId) {
-            this.api
-              .post('/class-youth', {
-                eucharisticYouthId: youthId,
-                catechismClassId: this.myCurrentClassId(),
-              })
-              .subscribe({
-                next: () => {
-                  this.loading.set(false);
-                  this.notify.success('Saved');
-                  this.router.navigate(['/app/youth']);
-                },
-                error: () => {
-                  // Youth created but enrollment failed
-                  this.loading.set(false);
-                  this.notify.success('Youth saved, but class enrollment failed');
-                  this.router.navigate(['/app/youth']);
-                },
-              });
-            return;
-          }
-        }
+      next: () => {
         this.loading.set(false);
         this.notify.success('Saved');
-        this.router.navigate(['/app/youth']);
+        this.navigateBack();
       },
       error: () => {
         this.loading.set(false);
         this.notify.error('Save failed');
       },
     });
+  }
+
+
+  private navigateBack(): void {
+    const classId = this.enrollInClassId();
+    if (classId) {
+      this.router.navigate(['/app/classes/detail'], { queryParams: { id: classId } });
+    } else {
+      this.router.navigate(['/app/youth']);
+    }
   }
 
   private makeContact(

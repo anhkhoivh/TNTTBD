@@ -20,6 +20,6 @@ public class GetEucharisticYouthsHandler : IRequestHandler<GetEucharisticYouthsQ
 
     public async Task<PaginatedResult<EucharisticYouthDto>> Handle(GetEucharisticYouthsQuery query, CancellationToken cancellationToken)
     {
-        return await _queryService.GetAllAsync(query.Search, query.Page, query.PageSize, _fileStorage, cancellationToken);
+        return await _queryService.GetAllAsync(query.Search, query.ClassId, query.Page, query.PageSize, _fileStorage, cancellationToken);
     }
 }

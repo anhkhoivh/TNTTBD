@@ -34,6 +34,22 @@ public class CatechistController : Controller
     #region Methods
 
     /// <summary>
+    /// Resolve the calling catechist's class for the current catechism year.
+    /// </summary>
+    [HttpGet("current-class")]
+    public async Task<IActionResult> GetCurrentClass(CancellationToken cancellationToken)
+    {
+        var catechistId = await _authContext.GetCurrentCatechistIdAsync(cancellationToken);
+        if (catechistId == null)
+        {
+            return Ok(null);
+        }
+
+        var result = await _mediator.Send(new GetCatechistCurrentClassQuery(catechistId.Value), cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Create
     /// </summary>
     /// <param name="command"></param>

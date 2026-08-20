@@ -34,7 +34,7 @@
           }
         </mat-chip-set>
       }
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
@@ -57,7 +57,7 @@
           <p>{{ 'common.noData' | t }}</p>
         }
       </mat-list>
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
@@ -76,7 +76,7 @@
           <p>{{ 'common.noData' | t }}</p>
         }
       </div>
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
@@ -110,7 +110,7 @@
       } @else {
         <p class="mt-16">{{ 'common.loading' | t }}</p>
       }
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
@@ -124,15 +124,11 @@
     @defer {
       @if (historyData(); as hd) {
         <mat-list class="mt-16">
-          @for (e of hd.enrollments.items; track e.id) {
+          @for (e of hd.items; track e.id) {
             <mat-list-item>
               <mat-icon matListItemIcon>class</mat-icon>
               <span matListItemTitle>
-                @if (classOf(e.catechismClassId, hd.classes.items); as cls) {
-                  <a [routerLink]="['/app/classes/detail']" [queryParams]="{ id: cls.id }">{{ cls.className }}</a>
-                } @else {
-                  {{ e.catechismClassId }}
-                }
+                <a [routerLink]="['/app/classes/detail']" [queryParams]="{ id: e.catechismClassId }">{{ e.className }}</a>
               </span>
               <span matListItemLine>
                 {{ enrollmentStatusKey(e.status) | t }} ·
@@ -147,7 +143,7 @@
       } @else {
         <p class="mt-16">{{ 'common.loading' | t }}</p>
       }
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>

@@ -126,6 +126,10 @@
   "class.migrateSelected": "Chuyển đã chọn",
   "class.migrateSuccess": "Chuyển lớp thành công.",
   "class.noActiveYouth": "Không có thiếu nhi hoạt động trong lớp này.",
+  "class.addExistingYouth": "Thêm thiếu nhi có sẵn",
+  "class.addNewYouth": "Thiếu nhi mới",
+  "class.searchYouth": "Tìm thiếu nhi theo tên hoặc mã",
+  "class.youthEnrolled": "Đã ghi danh thiếu nhi vào lớp.",
 
   "session.title": "Tiêu đề buổi học",
   "session.dateTime": "Thời gian",

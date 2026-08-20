@@ -2,6 +2,10 @@ table.full-width { width: 100%; }
 
 .tab-toolbar {
   display: flex;
-  justify-content: flex-end;
+  gap: 0.5rem;
   padding: 0 0 0.5rem;
+}
+
+.status-select {
+  min-width: 120px;
 }

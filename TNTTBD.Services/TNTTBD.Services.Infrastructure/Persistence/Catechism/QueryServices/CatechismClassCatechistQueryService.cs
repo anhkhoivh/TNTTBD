@@ -80,12 +80,15 @@ public class CatechismClassCatechistQueryService : ICatechismClassCatechistQuery
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<PaginatedResult<CatechismClassCatechistDto>> GetAllAsync(Guid? classId, int page, int? pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<CatechismClassCatechistDto>> GetAllAsync(Guid? classId, Guid? catechistId, int page, int? pageSize, CancellationToken cancellationToken)
     {
         var query = _context.CatechismClassCatechists.AsNoTracking();
 
         if (classId.HasValue)
             query = query.Where(e => e.CatechismClassId == classId.Value);
+
+        if (catechistId.HasValue)
+            query = query.Where(e => e.CatechistId == catechistId.Value);
 
         int total = await query.CountAsync(cancellationToken);
 

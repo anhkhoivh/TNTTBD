@@ -3,6 +3,7 @@ using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Catechists.DTOs;
 using TNTTBD.Services.Application.Catechists.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Domain.Enums;
 using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
@@ -123,6 +124,32 @@ public class CatechistQueryService : ICatechistQueryService
             Page = page,
             PageSize = pageSize ?? total
         };
+    }
+
+    /// <inheritdoc />
+    public async Task<CatechistCurrentClassDto?> GetCurrentClassAsync(Guid catechistId, CancellationToken cancellationToken)
+    {
+        var latestYear = await _context.CatechismYears
+            .AsNoTracking()
+            .OrderByDescending(y => y.StartDate)
+            .Select(y => new { y.Id, y.StartDate, y.EndDate })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (latestYear == null) return null;
+
+        return await _context.CatechismClassCatechists
+            .AsNoTracking()
+            .Where(cc => cc.CatechistId == catechistId
+                && cc.Status == EnrollmentStatus.Active
+                && cc.CatechismClass.CatechismYearId == latestYear.Id)
+            .Select(cc => new CatechistCurrentClassDto
+            {
+                ClassId = cc.CatechismClassId,
+                ClassName = cc.CatechismClass.ClassName,
+                CatechismYearId = latestYear.Id,
+                CatechismYearTitle = $"{latestYear.StartDate.Year}-{latestYear.EndDate.Year}",
+            })
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     #endregion

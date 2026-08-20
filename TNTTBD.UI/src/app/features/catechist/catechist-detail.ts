@@ -2,7 +2,7 @@ import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/cor
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of, forkJoin, catchError, map } from 'rxjs';
+import { switchMap, of, catchError, map } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +14,6 @@ import { PhotoService } from '../../core/services/photo.service';
 import { AuthService } from '../../core/auth/auth.service';
 import {
   Catechist,
-  CatechismClass,
   CatechismClassCatechist,
   PaginatedResult,
 } from '../../shared/models';
@@ -98,10 +97,7 @@ export class CatechistDetail {
   );
 
   /** Lazy-loaded assignments tab data */
-  protected assignmentsData = signal<{
-    items: PaginatedResult<CatechismClassCatechist>;
-    classes: PaginatedResult<CatechismClass>;
-  } | null>(null);
+  protected assignmentsData = signal<PaginatedResult<CatechismClassCatechist> | null>(null);
   private assignmentsLoaded = false;
 
   protected onTabChange(index: number): void {
@@ -114,22 +110,10 @@ export class CatechistDetail {
   private loadAssignments(): void {
     const id = this.route.snapshot.queryParamMap.get('id');
     if (!id) return;
-    forkJoin({
-      items: this.api.list<CatechismClassCatechist>('/class-catechist').pipe(
-        map((result) => {
-          const filtered = result.items.filter((item) => item.catechistId === id);
-          return { ...result, items: filtered, total: filtered.length };
-        }),
-        catchError(() => of(emptyPage<CatechismClassCatechist>())),
-      ),
-      classes: this.api
-        .list<CatechismClass>('/classes')
-        .pipe(catchError(() => of(emptyPage<CatechismClass>()))),
-    }).subscribe((data) => this.assignmentsData.set(data));
-  }
-
-  protected classOf(id: string, list: CatechismClass[]): CatechismClass | undefined {
-    return list.find((c) => c.id === id);
+    this.api
+      .list<CatechismClassCatechist>('/class-catechist', { catechistId: id })
+      .pipe(catchError(() => of(emptyPage<CatechismClassCatechist>())))
+      .subscribe((data) => this.assignmentsData.set(data));
   }
 
   protected roleKey(role: CatechismClassCatechistRole): string {

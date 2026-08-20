@@ -19,6 +19,7 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
     private readonly IEucharisticYouthRunningNumberRepository _runningNumberRepository;
     private readonly IContactRepository _contactRepository;
     private readonly IEucharisticYouthContactRepository _youthContactRepository;
+    private readonly ICatechismClassEucharisticYouthRepository _catechismClassEucharisticYouthRepository;
 
     #endregion
 
@@ -28,12 +29,14 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
         IEucharisticYouthRepository repository,
         IEucharisticYouthRunningNumberRepository runningNumberRepository,
         IContactRepository contactRepository,
-        IEucharisticYouthContactRepository youthContactRepository)
+        IEucharisticYouthContactRepository youthContactRepository,
+        ICatechismClassEucharisticYouthRepository catechismClassEucharisticYouthRepository)
     {
         _repository = repository;
         _runningNumberRepository = runningNumberRepository;
         _contactRepository = contactRepository;
         _youthContactRepository = youthContactRepository;
+        _catechismClassEucharisticYouthRepository = catechismClassEucharisticYouthRepository;
     }
 
     #endregion
@@ -100,6 +103,12 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
                     c.RelationType);
                 await _youthContactRepository.AddAsync(link, cancellationToken);
             }
+        }
+
+        if (command.CatechismClassId != null)
+        {
+            CatechismClassEucharisticYouth domain = new(Guid.NewGuid(), youth.Id, command.CatechismClassId.Value, DateTimeOffset.Now.ToUniversalTime(), null, EnrollmentStatus.Active, null);
+            await _catechismClassEucharisticYouthRepository.AddAsync(domain, cancellationToken);
         }
 
         return youth.Id;
