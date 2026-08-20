@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed , ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
@@ -103,13 +103,12 @@ export class YouthForm {
   protected enrollInClassId = signal<string | null>(null);
 
   protected form = this.fb.group({
-    code: ['', Validators.required],
     givenName: ['', Validators.required],
     middleName: [''],
     familyName: [''],
     christName: [''],
     dateOfBirth: [null as Date | null, Validators.required],
-    isMale: [true, Validators.required],
+    isMale: [true],
     address: [''],
     patronSaints: [[] as PatronSaint[]],
     milestones: this.fb.array<ReturnType<typeof this.makeMilestone>>([]),
@@ -156,7 +155,6 @@ export class YouthForm {
       .subscribe((y) => {
         if (!y) return;
         this.form.patchValue({
-          code: y.code,
           givenName: y.fullName.givenName,
           middleName: y.fullName.middleName ?? '',
           familyName: y.fullName.familyName ?? '',
@@ -208,6 +206,7 @@ export class YouthForm {
       this.form.markAllAsTouched();
       return;
     }
+
     const v = this.form.getRawValue();
     const payload = {
       ...(this.isEdit() ? { eucharisticYouthId: this.editId } : {}),
@@ -237,6 +236,7 @@ export class YouthForm {
           email: c.email || null,
         })),
       }),
+      catechismClassId: this.enrollInClassId() ?? (this.addToMyClass() && this.myCurrentClassId() ? this.myCurrentClassId() : null),
     };
 
     this.loading.set(true);
@@ -245,31 +245,7 @@ export class YouthForm {
       : this.api.post('/youths', payload);
 
     req$.subscribe({
-      next: (result: unknown) => {
-        const youthId = (result as { id?: string })?.id;
-        // Auto-enroll in class if classId was provided from class-detail
-        const targetClassId = this.enrollInClassId() ?? (this.addToMyClass() && this.myCurrentClassId() ? this.myCurrentClassId() : null);
-
-        if (!this.isEdit() && targetClassId && youthId) {
-          this.api
-            .post('/class-youth', {
-              eucharisticYouthId: youthId,
-              catechismClassId: targetClassId,
-            })
-            .subscribe({
-              next: () => {
-                this.loading.set(false);
-                this.notify.success('Saved');
-                this.navigateBack();
-              },
-              error: () => {
-                this.loading.set(false);
-                this.notify.success('Youth saved, but class enrollment failed');
-                this.navigateBack();
-              },
-            });
-          return;
-        }
+      next: () => {
         this.loading.set(false);
         this.notify.success('Saved');
         this.navigateBack();
@@ -280,6 +256,7 @@ export class YouthForm {
       },
     });
   }
+
 
   private navigateBack(): void {
     const classId = this.enrollInClassId();

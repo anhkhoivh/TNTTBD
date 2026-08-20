@@ -13,7 +13,8 @@ public record CreateEucharisticYouthCommand(
     bool IsMale,
     List<YouthPatronSaintData>? PatronSaints = null,
     List<YouthMilestoneData>? Milestones = null,
-    List<YouthContactData>? Contacts = null
+    List<YouthContactData>? Contacts = null,
+    Guid? CatechismClassId = null
 ) : IRequest<Guid>;
 
 public record YouthPatronSaintData(string SaintName, int Day, int Month);

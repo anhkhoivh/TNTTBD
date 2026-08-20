@@ -76,7 +76,7 @@ export class EnrollYouthDialog {
         const s = (search ?? '').trim();
         if (s.length < 1) return of([]);
         return this.api
-          .list<EucharisticYouth>('/youths', { search: s, page: 1, pageSize: 20 })
+          .list<EucharisticYouth>('/youths', { search: s })
           .pipe(
             switchMap((r: PaginatedResult<EucharisticYouth>) =>
               of(
