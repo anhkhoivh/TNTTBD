@@ -11,6 +11,16 @@
   <ng-template matTabContent>
     @defer {
       @if (enrollmentsRes.value(); as ed) {
+        @if (canManage()) {
+          <div class="tab-toolbar mt-16">
+            <button mat-flat-button color="primary" (click)="addExistingYouth(d.id)">
+              <mat-icon>person_search</mat-icon> {{ 'class.addExistingYouth' | t }}
+            </button>
+            <a mat-stroked-button [routerLink]="['/app/youth/edit']" [queryParams]="{ classId: d.id }">
+              <mat-icon>person_add</mat-icon> {{ 'class.addNewYouth' | t }}
+            </a>
+          </div>
+        }
         <table mat-table [dataSource]="ed.items" class="full-width mt-16">
           <ng-container matColumnDef="code">
             <th mat-header-cell *matHeaderCellDef>{{ 'youth.code' | t }}</th>
@@ -35,15 +45,42 @@
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef>Status</th>
             <td mat-cell *matCellDef="let row">
-              <mat-chip>{{ statusKey(row.status) | t }}</mat-chip>
+              @if (canManage()) {
+                <mat-select
+                  [value]="row.status"
+                  (selectionChange)="changeEnrollmentStatus(row.id, $event.value)"
+                  class="status-select"
+                >
+                  @for (s of enrollmentStatuses; track s) {
+                    <mat-option [value]="s">{{ statusKey(s) | t }}</mat-option>
+                  }
+                </mat-select>
+              } @else {
+                <mat-chip>{{ statusKey(row.status) | t }}</mat-chip>
+              }
             </td>
           </ng-container>
           <ng-container matColumnDef="enrolledAt">
             <th mat-header-cell *matHeaderCellDef>{{ 'class.startDate' | t }}</th>
             <td mat-cell *matCellDef="let row">{{ row.enrolledAt | dateLocale: 'date' }}</td>
           </ng-container>
-          <tr mat-header-row *matHeaderRowDef="['code', 'name', 'status', 'enrolledAt']"></tr>
-          <tr mat-row *matRowDef="let row; columns: ['code', 'name', 'status', 'enrolledAt']"></tr>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
+              @if (canManage()) {
+                <button mat-icon-button color="warn" (click)="removeYouthFromClass(row.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            </td>
+          </ng-container>
+          @if (canManage()) {
+            <tr mat-header-row *matHeaderRowDef="['code', 'name', 'status', 'enrolledAt', 'actions']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['code', 'name', 'status', 'enrolledAt', 'actions']"></tr>
+          } @else {
+            <tr mat-header-row *matHeaderRowDef="['code', 'name', 'status', 'enrolledAt']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['code', 'name', 'status', 'enrolledAt']"></tr>
+          }
         </table>
       } @else {
         <p class="mt-16">{{ 'common.loading' | t }}</p>

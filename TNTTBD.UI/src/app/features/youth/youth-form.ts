@@ -101,6 +101,8 @@ export class YouthForm {
   protected myCurrentClassId = signal<string | null>(null);
   protected myClassName = signal<string | null>(null);
   protected isCatechist = signal(false);
+  // Set when navigating from class-detail with ?classId=
+  protected enrollInClassId = signal<string | null>(null);
 
   protected form = this.fb.group({
     code: ['', Validators.required],
@@ -123,6 +125,12 @@ export class YouthForm {
     // Pre-populate Father and Mother contacts for new youth
     this.contacts.push(this.makeContact(ContactRelationType.Father));
     this.contacts.push(this.makeContact(ContactRelationType.Mother));
+
+    // Check for classId from class-detail navigation
+    const classIdParam = this.route.snapshot.queryParamMap.get('classId');
+    if (classIdParam) {
+      this.enrollInClassId.set(classIdParam);
+    }
 
     // Resolve catechist's current class for "add to my class" checkbox
     const user = this.auth.currentUser();
@@ -256,40 +264,48 @@ export class YouthForm {
 
     req$.subscribe({
       next: (result: unknown) => {
-        // If creating + "add to my class" checked, create enrollment join entity
-        if (!this.isEdit() && this.addToMyClass() && this.myCurrentClassId()) {
-          const youthId = (result as { id?: string })?.id;
-          if (youthId) {
-            this.api
-              .post('/class-youth', {
-                eucharisticYouthId: youthId,
-                catechismClassId: this.myCurrentClassId(),
-              })
-              .subscribe({
-                next: () => {
-                  this.loading.set(false);
-                  this.notify.success('Saved');
-                  this.router.navigate(['/app/youth']);
-                },
-                error: () => {
-                  // Youth created but enrollment failed
-                  this.loading.set(false);
-                  this.notify.success('Youth saved, but class enrollment failed');
-                  this.router.navigate(['/app/youth']);
-                },
-              });
-            return;
-          }
+        const youthId = (result as { id?: string })?.id;
+        // Auto-enroll in class if classId was provided from class-detail
+        const targetClassId = this.enrollInClassId() ?? (this.addToMyClass() && this.myCurrentClassId() ? this.myCurrentClassId() : null);
+
+        if (!this.isEdit() && targetClassId && youthId) {
+          this.api
+            .post('/class-youth', {
+              eucharisticYouthId: youthId,
+              catechismClassId: targetClassId,
+            })
+            .subscribe({
+              next: () => {
+                this.loading.set(false);
+                this.notify.success('Saved');
+                this.navigateBack();
+              },
+              error: () => {
+                this.loading.set(false);
+                this.notify.success('Youth saved, but class enrollment failed');
+                this.navigateBack();
+              },
+            });
+          return;
         }
         this.loading.set(false);
         this.notify.success('Saved');
-        this.router.navigate(['/app/youth']);
+        this.navigateBack();
       },
       error: () => {
         this.loading.set(false);
         this.notify.error('Save failed');
       },
     });
+  }
+
+  private navigateBack(): void {
+    const classId = this.enrollInClassId();
+    if (classId) {
+      this.router.navigate(['/app/classes/detail'], { queryParams: { id: classId } });
+    } else {
+      this.router.navigate(['/app/youth']);
+    }
   }
 
   private makeContact(
