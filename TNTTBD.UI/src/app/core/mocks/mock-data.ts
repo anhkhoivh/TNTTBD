@@ -176,12 +176,12 @@ export const mockClasses: CatechismClass[] = [
 
 export const mockClassCatechists: CatechismClassCatechist[] = [
   // yr-2025: each catechist in exactly ONE class
-  { id: 'clc-1', catechismClassId: 'cl-1', catechistId: 'c-1', role: CatechismClassCatechistRole.Main, enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'clc-2', catechismClassId: 'cl-1', catechistId: 'c-2', role: CatechismClassCatechistRole.Member, enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
-  { id: 'clc-4', catechismClassId: 'cl-2', catechistId: 'c-3', role: CatechismClassCatechistRole.Main, enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
+  { id: 'clc-1', catechismClassId: 'cl-1', className: 'Khởi đầu 1', catechistId: 'c-1', fullName: { givenName: 'An', familyName: 'Nguyễn' }, role: CatechismClassCatechistRole.Main, enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
+  { id: 'clc-2', catechismClassId: 'cl-1', className: 'Khởi đầu 1', catechistId: 'c-2', fullName: { givenName: 'Bình', familyName: 'Trần' }, role: CatechismClassCatechistRole.Member, enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
+  { id: 'clc-4', catechismClassId: 'cl-2', className: 'Khởi đầu 2', catechistId: 'c-3', fullName: { givenName: 'Cường', familyName: 'Lê' }, role: CatechismClassCatechistRole.Main, enrolledAt: '2025-09-01T08:00:00+07:00', status: EnrollmentStatus.Active },
   // yr-2024 history (completed)
-  { id: 'clc-h1', catechismClassId: 'cl-prev-1', catechistId: 'c-1', role: CatechismClassCatechistRole.Main, enrolledAt: '2024-09-01T08:00:00+07:00', leftAt: '2025-06-30T17:00:00+07:00', status: EnrollmentStatus.Completed },
-  { id: 'clc-h2', catechismClassId: 'cl-prev-1', catechistId: 'c-3', role: CatechismClassCatechistRole.Member, enrolledAt: '2024-09-01T08:00:00+07:00', leftAt: '2025-06-30T17:00:00+07:00', status: EnrollmentStatus.Completed },
+  { id: 'clc-h1', catechismClassId: 'cl-prev-1', className: 'Khởi đầu 1 (2024)', catechistId: 'c-1', fullName: { givenName: 'An', familyName: 'Nguyễn' }, role: CatechismClassCatechistRole.Main, enrolledAt: '2024-09-01T08:00:00+07:00', leftAt: '2025-06-30T17:00:00+07:00', status: EnrollmentStatus.Completed },
+  { id: 'clc-h2', catechismClassId: 'cl-prev-1', className: 'Khởi đầu 1 (2024)', catechistId: 'c-3', fullName: { givenName: 'Cường', familyName: 'Lê' }, role: CatechismClassCatechistRole.Member, enrolledAt: '2024-09-01T08:00:00+07:00', leftAt: '2025-06-30T17:00:00+07:00', status: EnrollmentStatus.Completed },
 ];
 
 export const mockClassYouth: CatechismClassEucharisticYouth[] = [

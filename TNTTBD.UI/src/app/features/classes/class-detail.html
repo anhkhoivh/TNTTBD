@@ -106,23 +106,21 @@
           </div>
         }
         <mat-list class="mt-16">
-          @for (cc of cd.catechists.items; track cc.id) {
-            @if (catechistOf(cc.catechistId); as c) {
-              <mat-list-item>
-                <mat-icon matListItemIcon>person</mat-icon>
-                <span matListItemTitle>{{ c.fullName | fullName }}</span>
-                <span matListItemLine>
-                  {{ roleKey(cc.role) | t }} ·
-                  {{ cc.enrolledAt | dateLocale: 'date' }}
-                  @if (cc.leftAt) { → {{ cc.leftAt | dateLocale: 'date' }} }
-                </span>
-                @if (canAssignCatechists()) {
-                  <button mat-icon-button color="warn" (click)="removeCatechist(cc.id)" [attr.aria-label]="'common.delete' | t">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                }
-              </mat-list-item>
-            }
+          @for (cc of cd.items; track cc.id) {
+            <mat-list-item>
+              <mat-icon matListItemIcon>person</mat-icon>
+              <span matListItemTitle>{{ cc.fullName | fullName }}</span>
+              <span matListItemLine>
+                {{ roleKey(cc.role) | t }} ·
+                {{ cc.enrolledAt | dateLocale: 'date' }}
+                @if (cc.leftAt) { → {{ cc.leftAt | dateLocale: 'date' }} }
+              </span>
+              @if (canAssignCatechists()) {
+                <button mat-icon-button color="warn" (click)="removeCatechist(cc.id)" [attr.aria-label]="'common.delete' | t">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            </mat-list-item>
           }
         </mat-list>
       } @else {

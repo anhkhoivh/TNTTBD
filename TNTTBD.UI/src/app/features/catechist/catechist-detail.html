@@ -37,7 +37,7 @@
           </a>
         </div>
       }
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
@@ -56,7 +56,7 @@
           <p>{{ 'common.noData' | t }}</p>
         }
       </div>
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
@@ -70,15 +70,11 @@
     @defer {
       @if (assignmentsData(); as ad) {
         <mat-list class="mt-16">
-          @for (a of ad.items.items; track a.id) {
+          @for (a of ad.items; track a.id) {
             <mat-list-item>
               <mat-icon matListItemIcon>class</mat-icon>
               <span matListItemTitle>
-                @if (classOf(a.catechismClassId, ad.classes.items); as cls) {
-                  <a [routerLink]="['/app/classes/detail']" [queryParams]="{ id: cls.id }">{{ cls.className }}</a>
-                } @else {
-                  {{ a.catechismClassId }}
-                }
+                <a [routerLink]="['/app/classes/detail']" [queryParams]="{ id: a.catechismClassId }">{{ a.className }}</a>
                 · {{ roleKey(a.role) | t }}
               </span>
               <span matListItemLine>
@@ -94,7 +90,7 @@
       } @else {
         <p class="mt-16">{{ 'common.loading' | t }}</p>
       }
-    
+
     } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>

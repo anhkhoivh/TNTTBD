@@ -2,7 +2,7 @@ import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@a
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of, forkJoin, catchError } from 'rxjs';
+import { switchMap, of, catchError } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
@@ -113,19 +113,12 @@ export class ClassDetail {
   });
 
 
-  protected catechistsRes = rxResource<{
-    catechists: PaginatedResult<CatechismClassCatechist>;
-    catechistLookup: PaginatedResult<Catechist>;
-  }, string>({
+  protected catechistsRes = rxResource<PaginatedResult<CatechismClassCatechist>, string>({
     params: () => this.classId() && this.activeTabs().has(1) ? this.classId()! : '',
-    stream: (loaderParams) => forkJoin({
-      catechists: this.api.list<CatechismClassCatechist>('/class-catechist', { classId: loaderParams.params }).pipe(
+    stream: (loaderParams) =>
+      this.api.list<CatechismClassCatechist>('/class-catechist', { classId: loaderParams.params }).pipe(
         catchError(() => of(emptyPage<CatechismClassCatechist>())),
-      ),
-      catechistLookup: this.api.list<Catechist>('/catechists').pipe(
-        catchError(() => of(emptyPage<Catechist>())),
-      ),
-    })
+      )
   });
 
   protected sessionsRes = rxResource<PaginatedResult<CatechismSession>, string>({
@@ -162,10 +155,6 @@ export class ClassDetail {
     const e = ed.items.find((x) => x.id === enrollmentId);
     if (!e) return undefined;
     return e;
-  }
-
-  protected catechistOf(id: string): Catechist | undefined {
-    return this.catechistsRes.value()?.catechistLookup.items.find((c) => c.id === id);
   }
 
   protected statusKey(status: EnrollmentStatus): string {
@@ -236,7 +225,7 @@ export class ClassDetail {
   }
 
   protected assignCatechist(classId: string): void {
-    const existing = this.catechistsRes.value()?.catechists.items ?? [];
+    const existing = this.catechistsRes.value()?.items ?? [];
     this.dialog
       .open<CatechistAssignDialog, CatechistAssignData>(CatechistAssignDialog, {
         data: { classId, existingAssignments: existing },

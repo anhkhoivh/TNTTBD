@@ -3,6 +3,7 @@ using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Interfaces;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -73,9 +74,17 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
     }
 
     /// <inheritdoc />
-    public async Task<PaginatedResult<EucharisticYouthDto>> GetAllAsync(string? search, int page, int? pageSize, IFileStorage storage, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<EucharisticYouthDto>> GetAllAsync(string? search, Guid? classId, int page, int? pageSize, IFileStorage storage, CancellationToken cancellationToken)
     {
         var query = _context.EucharisticYouths.AsNoTracking();
+
+        if (classId.HasValue)
+        {
+            query = query.Where(y => _context.CatechismClassEucharisticYouths
+                .Any(cy => cy.EucharisticYouthId == y.Id
+                    && cy.CatechismClassId == classId.Value
+                    && cy.Status == EnrollmentStatus.Active));
+        }
 
         if (!string.IsNullOrWhiteSpace(search))
         {

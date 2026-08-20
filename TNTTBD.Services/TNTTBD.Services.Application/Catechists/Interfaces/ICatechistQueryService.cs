@@ -20,4 +20,9 @@ public interface ICatechistQueryService
     /// <returns></returns>
     Task<List<PhotoReferenceDto>?> GetPhotosByCatechistId(Guid catechistId, IFileStorage storage, CancellationToken cancellationToken);
     Task<PaginatedResult<CatechistDto>> GetAllAsync(int page, int? pageSize, IFileStorage storage, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Resolve the catechist's active class in the most recent catechism year.
+    /// </summary>
+    Task<CatechistCurrentClassDto?> GetCurrentClassAsync(Guid catechistId, CancellationToken cancellationToken);
 }

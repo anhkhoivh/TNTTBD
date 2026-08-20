@@ -17,6 +17,6 @@ public class GetCatechismClassCatechistsHandler : IRequestHandler<GetCatechismCl
 
     public async Task<PaginatedResult<CatechismClassCatechistDto>> Handle(GetCatechismClassCatechistsQuery query, CancellationToken cancellationToken)
     {
-        return await _queryService.GetAllAsync(query.ClassId, query.Page, query.PageSize, cancellationToken);
+        return await _queryService.GetAllAsync(query.ClassId, query.CatechistId, query.Page, query.PageSize, cancellationToken);
     }
 }

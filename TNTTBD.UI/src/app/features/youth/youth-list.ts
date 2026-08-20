@@ -1,7 +1,7 @@
 import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { forkJoin, map, of, switchMap } from 'rxjs';
+import { of, switchMap, catchError } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,9 +12,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import {
-  CatechismClassCatechist,
-  CatechismClassEucharisticYouth,
-  CatechismYear,
+  CatechistCurrentClass,
   EucharisticYouth,
   PaginatedResult,
 } from '../../shared/models';
@@ -24,6 +22,10 @@ import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
 
 import { EmptyState } from '../../shared/components/empty-state';
+
+function emptyPage<T>(): PaginatedResult<T> {
+  return { items: [], total: 0, page: 1, pageSize: 50 };
+}
 
 @Component({
   selector: 'app-youth-list',
@@ -68,53 +70,17 @@ export class YouthList {
     const user = this.auth.currentUser();
     if (user?.userRole === UserRole.Catechist && user.catechistId) {
       // Catechist: load only youth in their current-year class
-      forkJoin({
-        years: this.api.list<CatechismYear>('/catechism-years'),
-        assignments: this.api.list<CatechismClassCatechist>('/class-catechist'),
-      })
+      this.api
+        .get<CatechistCurrentClass | null>('/catechists/current-class')
         .pipe(
-          switchMap(({ years, assignments }) => {
-            const latestYear = [...years.items].sort((a, b) =>
-              b.startDate.localeCompare(a.startDate),
-            )[0];
-            const myAssignment = assignments.items.find(
-              (c) =>
-                c.catechistId === user.catechistId &&
-                // we need to cross-ref with classes to check year
-                true,
-            );
-            // Get classes to find current-year class
-            return this.api.list<{ id: string; catechismYearId: string }>('/classes').pipe(
-              switchMap((classes) => {
-                const currentYearClassIds = new Set(
-                  classes.items
-                    .filter((c) => c.catechismYearId === latestYear?.id)
-                    .map((c) => c.id),
-                );
-                const myClassId = assignments.items.find(
-                  (a) =>
-                    a.catechistId === user.catechistId &&
-                    currentYearClassIds.has(a.catechismClassId),
-                )?.catechismClassId;
-                if (!myClassId) return of({ items: [], total: 0, page: 1, pageSize: 50 } as PaginatedResult<EucharisticYouth>);
-                this.myCurrentClassId.set(myClassId);
-                return forkJoin({
-                  enrollments: this.api.list<CatechismClassEucharisticYouth>('/class-youth', {
-                    classId: myClassId,
-                  }),
-                  youth: this.api.list<EucharisticYouth>('/youths'),
-                }).pipe(
-                  map(({ enrollments, youth }) => {
-                    const enrolledIds = new Set(
-                      enrollments.items.map((e) => e.eucharisticYouthId),
-                    );
-                    const filtered = youth.items.filter((y) => enrolledIds.has(y.id));
-                    return { ...youth, items: filtered, total: filtered.length };
-                  }),
-                );
-              }),
-            );
+          switchMap((current) => {
+            if (!current) {
+              return of(emptyPage<EucharisticYouth>());
+            }
+            this.myCurrentClassId.set(current.classId);
+            return this.api.list<EucharisticYouth>('/youths', { classId: current.classId });
           }),
+          catchError(() => of(emptyPage<EucharisticYouth>())),
         )
         .subscribe((result) => this.data.set(result));
     } else {

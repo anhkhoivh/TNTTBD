@@ -2,7 +2,7 @@ import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/cor
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of, forkJoin, catchError, map } from 'rxjs';
+import { switchMap, of, catchError, map } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
@@ -71,10 +71,7 @@ export class YouthDetail {
   private contactsLoaded = false;
 
   /** Lazy-loaded class history tab */
-  protected historyData = signal<{
-    enrollments: PaginatedResult<CatechismClassEucharisticYouth>;
-    classes: PaginatedResult<CatechismClass>;
-  } | null>(null);
+  protected historyData = signal<PaginatedResult<CatechismClassEucharisticYouth> | null>(null);
   private historyLoaded = false;
 
   protected onTabChange(index: number): void {
@@ -103,17 +100,13 @@ export class YouthDetail {
   private loadHistory(): void {
     const id = this.route.snapshot.queryParamMap.get('id');
     if (!id) return;
-    forkJoin({
-      enrollments: this.api
-        .get<CatechismClassEucharisticYouth[]>('/youths/enrollments', { youthId: id })
-        .pipe(
-          map((items) => ({ items, total: items.length, page: 1, pageSize: items.length })),
-          catchError(() => of(emptyPage<CatechismClassEucharisticYouth>())),
-        ),
-      classes: this.api
-        .list<CatechismClass>('/classes')
-        .pipe(catchError(() => of(emptyPage<CatechismClass>()))),
-    }).subscribe((data) => this.historyData.set(data));
+    this.api
+      .get<CatechismClassEucharisticYouth[]>('/youths/enrollments', { youthId: id })
+      .pipe(
+        map((items) => ({ items, total: items.length, page: 1, pageSize: items.length })),
+        catchError(() => of(emptyPage<CatechismClassEucharisticYouth>())),
+      )
+      .subscribe((data) => this.historyData.set(data));
   }
 
   protected classOf(id: string, list: CatechismClass[]): CatechismClass | undefined {

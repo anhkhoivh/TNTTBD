@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of, forkJoin } from 'rxjs';
+import { switchMap, of } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,9 +23,7 @@ import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { AuthService } from '../../core/auth/auth.service';
 import {
-  CatechismClassCatechist,
-  CatechismYear,
-  CatechismClass,
+  CatechistCurrentClass,
   EucharisticYouth,
   PatronSaint,
 } from '../../shared/models';
@@ -136,29 +134,13 @@ export class YouthForm {
     const user = this.auth.currentUser();
     if (user?.userRole === UserRole.Catechist && user.catechistId) {
       this.isCatechist.set(true);
-      forkJoin({
-        years: this.api.list<CatechismYear>('/catechism-years'),
-        assignments: this.api.list<CatechismClassCatechist>('/class-catechist'),
-        classes: this.api.list<CatechismClass>('/classes'),
-      }).subscribe(({ years, assignments, classes }) => {
-        const latestYear = [...years.items].sort((a, b) =>
-          b.startDate.localeCompare(a.startDate),
-        )[0];
-        if (!latestYear) return;
-        const currentYearClassIds = new Set(
-          classes.items.filter((c) => c.catechismYearId === latestYear.id).map((c) => c.id),
-        );
-        const myAssignment = assignments.items.find(
-          (a) =>
-            a.catechistId === user.catechistId &&
-            currentYearClassIds.has(a.catechismClassId),
-        );
-        if (myAssignment) {
-          this.myCurrentClassId.set(myAssignment.catechismClassId);
-          const cls = classes.items.find((c) => c.id === myAssignment.catechismClassId);
-          this.myClassName.set(cls?.className ?? null);
-        }
-      });
+      this.api
+        .get<CatechistCurrentClass | null>('/catechists/current-class')
+        .subscribe((current) => {
+          if (!current) return;
+          this.myCurrentClassId.set(current.classId);
+          this.myClassName.set(current.className);
+        });
     }
 
     this.route.queryParamMap

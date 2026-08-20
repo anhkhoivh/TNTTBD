@@ -36,6 +36,8 @@ export interface CatechismClassEucharisticYouth {
   id: string;
   code: string;
   catechismClassId: string;
+  className: string;
+  catechismYearTheme?: string | null;
   eucharisticYouthId: string;
   fullName: FullName;
   enrolledAt: IsoDateTime;
@@ -47,7 +49,10 @@ export interface CatechismClassEucharisticYouth {
 export interface CatechismClassCatechist {
   id: string;
   catechismClassId: string;
+  className: string;
+  catechismYearTheme?: string | null;
   catechistId: string;
+  fullName: FullName;
   role: CatechismClassCatechistRole;
   enrolledAt: IsoDateTime;
   leftAt?: IsoDateTime | null;
