@@ -26,4 +26,9 @@ public class CatechismClassDto
     /// Class Year Id
     /// </summary>
     public required string CatechismYearTitle { get; set; }
+
+    /// <summary>
+    /// Total
+    /// </summary
+    public int ActiveTotal { get; set; }
 }

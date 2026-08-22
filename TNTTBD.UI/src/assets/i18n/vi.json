@@ -38,6 +38,7 @@
   "common.view": "Xem",
   "common.date": "Ngày",
   "common.time": "Giờ",
+  "common.status": "Tình trạng",
 
   "photo.upload": "Tải ảnh lên",
   "photo.uploaded": "Đã tải ảnh lên.",
@@ -125,11 +126,13 @@
   "class.selectAll": "Chọn tất cả",
   "class.migrateSelected": "Chuyển đã chọn",
   "class.migrateSuccess": "Chuyển lớp thành công.",
-  "class.noActiveYouth": "Không có thiếu nhi hoạt động trong lớp này.",
-  "class.addExistingYouth": "Thêm thiếu nhi có sẵn",
+  "class.noActiveYouth": "Không có thiếu nhi đang học trong lớp này.",
+  "class.addExistingYouth": "Thêm thiếu nhi hiện có",
   "class.addNewYouth": "Thiếu nhi mới",
   "class.searchYouth": "Tìm thiếu nhi theo tên hoặc mã",
   "class.youthEnrolled": "Đã ghi danh thiếu nhi vào lớp.",
+  "class.total": "Sĩ số",
+  "class.index": "STT",
 
   "session.title": "Tiêu đề buổi học",
   "session.dateTime": "Thời gian",

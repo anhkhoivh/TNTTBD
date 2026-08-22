@@ -167,11 +167,11 @@ export const mockYears: CatechismYear[] = [
 ];
 
 export const mockClasses: CatechismClass[] = [
-  { id: 'cl-1', catechismYearId: 'yr-2025', className: 'Khai tâm 1', classCode: 'KT1', catechismYearTitle: "2025-2026" },
-  { id: 'cl-2', catechismYearId: 'yr-2025', className: 'Rước lễ 1', classCode: 'KT1', catechismYearTitle: "2025-2026" },
-  { id: 'cl-3', catechismYearId: 'yr-2025', className: 'Thêm sức 2', classCode: 'KT1', catechismYearTitle: "2025-2026" },
-  { id: 'cl-4', catechismYearId: 'yr-2025', className: 'Bao đồng', classCode: 'KT1', catechismYearTitle: "2025-2026" },
-  { id: 'cl-prev-1', catechismYearId: 'yr-2024', className: 'Khai tâm 1 (2024)', classCode: 'KT1', catechismYearTitle: "2025-2026" },
+  { id: 'cl-1', catechismYearId: 'yr-2025', className: 'Khai tâm 1', classCode: 'KT1', catechismYearTitle: "2025-2026", activeTotal: 5 },
+  { id: 'cl-2', catechismYearId: 'yr-2025', className: 'Rước lễ 1', classCode: 'KT1', catechismYearTitle: "2025-2026", activeTotal: 5 },
+  { id: 'cl-3', catechismYearId: 'yr-2025', className: 'Thêm sức 2', classCode: 'KT1', catechismYearTitle: "2025-2026", activeTotal: 5 },
+  { id: 'cl-4', catechismYearId: 'yr-2025', className: 'Bao đồng', classCode: 'KT1', catechismYearTitle: "2025-2026" , activeTotal: 5},
+  { id: 'cl-prev-1', catechismYearId: 'yr-2024', className: 'Khai tâm 1 (2024)', classCode: 'KT1', catechismYearTitle: "2025-2026", activeTotal: 5 },
 ];
 
 export const mockClassCatechists: CatechismClassCatechist[] = [

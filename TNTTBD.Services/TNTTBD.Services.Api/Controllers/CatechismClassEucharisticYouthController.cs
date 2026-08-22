@@ -6,6 +6,7 @@ using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Commands;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Queries;
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Domain.Catechism.JoinModels;
 
 namespace TNTTBD.Services.Api.Controllers;
 
@@ -17,16 +18,14 @@ public class CatechismClassEucharisticYouthController : Controller
     #region Fields
 
     private readonly IMediator _mediator;
-    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public CatechismClassEucharisticYouthController(IMediator mediator, IAuthorizationContext authContext)
+    public CatechismClassEucharisticYouthController(IMediator mediator)
     {
         _mediator = mediator;
-        _authContext = authContext;
     }
 
     #endregion
@@ -42,14 +41,13 @@ public class CatechismClassEucharisticYouthController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] AddEucharisticYouthToClassCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessClassAsync(command.CatechismClassId, cancellationToken))
+        Guid? id = await _mediator.Send(command, cancellationToken);
+
+        return id switch
         {
-            return Forbid();
-        }
-
-        Guid id = await _mediator.Send(command, cancellationToken);
-
-        return CreatedAtAction(nameof(GetById), new { id }, id);
+            null => Forbid(),
+            _ => CreatedAtAction(nameof(GetById), new { id }, id)
+        };
     }
 
     /// <summary>
@@ -78,13 +76,11 @@ public class CatechismClassEucharisticYouthController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update(UpdateCatechismClassEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
+        if (await _mediator.Send(command, cancellationToken))
         {
-            return Forbid();
+            return Ok();
         }
-
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return Forbid();
     }
 
     /// <summary>
@@ -93,11 +89,6 @@ public class CatechismClassEucharisticYouthController : Controller
     [HttpPatch("mark-completed")]
     public async Task<IActionResult> MarkCompleted(MarkCatechismClassEucharisticYouthsCompletedCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
-        {
-            return Forbid();
-        }
-
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -105,25 +96,23 @@ public class CatechismClassEucharisticYouthController : Controller
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveEucharisticYouthFromClassCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
+        if (await _mediator.Send(command, cancellationToken))
         {
-            return Forbid();
+            return Ok();
         }
-
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return Forbid();
     }
 
     [HttpPost("migrate")]
     public async Task<IActionResult> Migrate([FromBody] MigrateYouthToClassCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessClassAsync(command.SourceClassId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         int count = await _mediator.Send(command, cancellationToken);
-        return Ok(new { migrated = count });
+        return count switch
+        {
+            -1 => Forbid(),
+            0 => BadRequest(),
+            _ => Ok(new { migrated = count })
+        };
     }
 
     #endregion

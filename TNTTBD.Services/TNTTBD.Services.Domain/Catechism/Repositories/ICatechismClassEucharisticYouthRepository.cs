@@ -4,7 +4,7 @@ using TNTTBD.Services.Domain.Enums;
 namespace TNTTBD.Services.Domain.Catechism.Repositories;
 
 public interface ICatechismClassEucharisticYouthRepository
-{
+{    
     /// <summary>
     /// Add 
     /// /// </summary>

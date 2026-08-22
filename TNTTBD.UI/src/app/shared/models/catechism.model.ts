@@ -15,6 +15,7 @@ export interface CatechismClass {
   className: string;
   classCode: string;
   catechismYearTitle: string;
+  activeTotal: number;
 }
 
 export interface CatechismSession {

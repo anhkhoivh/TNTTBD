@@ -40,6 +40,18 @@ public class AuthorizationContext : IAuthorizationContext
         var user = await GetCurrentUserAsync(cancellationToken);
         return user?.Role == UserRole.Admin;
     }
+    
+    public async Task<bool> IsCatechistAsync(CancellationToken cancellationToken)
+    {
+        var user = await GetCurrentUserAsync(cancellationToken);
+        return user?.Role == UserRole.Catechist;
+    }
+
+    public async Task<bool> IsAdminOrCatechistAsync(CancellationToken cancellationToken)
+    {
+        var user = await GetCurrentUserAsync(cancellationToken);
+        return user?.Role == UserRole.Catechist || user?.Role == UserRole.Catechist;
+    }
 
     public async Task<bool> CanAccessClassAsync(Guid classId, CancellationToken cancellationToken)
     {

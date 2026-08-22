@@ -8,4 +8,4 @@ public record UpdateCatechistClassAssignmentCommand(
     CatechismClassCatechistRole Role,
     string? Note,
     DateTimeOffset? LeftAt
-) : IRequest;
+) : IRequest<bool>;

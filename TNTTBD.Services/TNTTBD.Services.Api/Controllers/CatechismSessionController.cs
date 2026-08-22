@@ -78,22 +78,18 @@ public class CatechismSessionController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update(UpdateCatechismSessionCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
+        if (await _mediator.Send(command, cancellationToken))
         {
-            return Forbid();
+            return Ok();
         }
 
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return Forbid();
     }
 
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveCatechismSessionCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
-        {
-            return Forbid();
-        }
+        // Permission to be added
 
         await _mediator.Send(command, cancellationToken);
         return Ok();
@@ -123,18 +119,6 @@ public class CatechismSessionController : Controller
     {
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
-    }
-
-    [HttpPost("attendance")]
-    public async Task<IActionResult> MarkAttendance([FromBody] MarkAttendanceCommand command, CancellationToken cancellationToken)
-    {
-        if (!await _authContext.CanAccessCatechistAsync(command.MarkedByCatechistId, cancellationToken))
-        {
-            return Forbid();
-        }
-
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
     }
 
     #endregion

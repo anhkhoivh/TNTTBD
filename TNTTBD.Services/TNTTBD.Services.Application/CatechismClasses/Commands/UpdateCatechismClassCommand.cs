@@ -6,4 +6,4 @@ public record UpdateCatechismClassCommand(
     Guid CatechismClassId,
     string ClassName,
     string ClassCode
-) : IRequest;
+) : IRequest<bool>;

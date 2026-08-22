@@ -52,11 +52,7 @@ public class ExamController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update([FromBody] UpdateExamCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
-        {
-            return Forbid();
-        }
-
+        // Permission to be added
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -64,10 +60,7 @@ public class ExamController : Controller
     [HttpDelete]
     public async Task<IActionResult> Remove([FromBody] RemoveExamCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
-        {
-            return Forbid();
-        }
+        // Permission to be added
 
         await _mediator.Send(command, cancellationToken);
         return Ok();
@@ -76,10 +69,7 @@ public class ExamController : Controller
     [HttpPost("results")]
     public async Task<IActionResult> SaveResults([FromBody] SaveExamResultsCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
-        {
-            return Forbid();
-        }
+        // Permission to be added
 
         await _mediator.Send(command, cancellationToken);
         return Ok();

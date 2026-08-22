@@ -19,16 +19,14 @@ public class CatechismClassController : Controller
     #region Fields
 
     private readonly IMediator _mediator;
-    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public CatechismClassController(IMediator mediator, IAuthorizationContext authContext)
+    public CatechismClassController(IMediator mediator)
     {
         _mediator = mediator;
-        _authContext = authContext;
     }
 
     #endregion
@@ -44,14 +42,13 @@ public class CatechismClassController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCatechismClassCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
+        Guid? id = await _mediator.Send(command, cancellationToken);
+
+        return id switch
         {
-            return Forbid();
-        }
-
-        Guid id = await _mediator.Send(command, cancellationToken);
-
-        return CreatedAtAction(nameof(GetById), new { id }, id);
+            null => Forbid(),
+            _ => CreatedAtAction(nameof(GetById), new { id }, id)
+        };
     }
 
     /// <summary>
@@ -98,11 +95,6 @@ public class CatechismClassController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update(UpdateCatechismClassCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessClassAsync(command.CatechismClassId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -110,13 +102,12 @@ public class CatechismClassController : Controller
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveCatechismClassCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
+        if (await _mediator.Send(command, cancellationToken))
         {
-            return Forbid();
+            return Ok();
         }
 
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return Forbid();
     }
 
     #endregion

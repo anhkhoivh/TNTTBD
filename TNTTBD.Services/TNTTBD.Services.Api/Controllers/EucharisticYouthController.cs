@@ -44,7 +44,8 @@ public class EucharisticYouthController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
+        if (command.CatechismClassId != null && 
+            !await _authContext.CanAccessClassAsync(command.CatechismClassId.Value, cancellationToken))
         {
             return Forbid();
         }

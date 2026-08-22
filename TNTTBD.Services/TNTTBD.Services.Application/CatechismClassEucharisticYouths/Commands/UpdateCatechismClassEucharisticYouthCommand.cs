@@ -7,4 +7,4 @@ public record UpdateCatechismClassEucharisticYouthCommand(
     Guid Id,
     EnrollmentStatus Status,
     string Note
-) : IRequest;
+) : IRequest<bool>;
