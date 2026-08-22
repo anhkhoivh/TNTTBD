@@ -1,4 +1,5 @@
 using MediatR;
+using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClassCatechists.Commands;
 using TNTTBD.Services.Domain.Catechism.JoinModels;
 using TNTTBD.Services.Domain.Catechism.Repositories;
@@ -6,20 +7,17 @@ using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.CatechismClassCatechists.Handlers;
 
-public class AssignCatechistToClassHandler : IRequestHandler<AssignCatechistToClassCommand, Guid>
+public class AssignCatechistToClassHandler(ICatechismClassCatechistRepository repository, IAuthorizationContext authContext) : IRequestHandler<AssignCatechistToClassCommand, Guid?>
 {
-    private readonly ICatechismClassCatechistRepository _repository;
-
-    public AssignCatechistToClassHandler(ICatechismClassCatechistRepository repository)
+    public async Task<Guid?> Handle(AssignCatechistToClassCommand command, CancellationToken cancellationToken)
     {
-        _repository = repository;
-    }
-
-    public async Task<Guid> Handle(AssignCatechistToClassCommand command, CancellationToken cancellationToken)
-    {
+        if (!await authContext.IsAdminAsync(cancellationToken))
+        {
+            return null;
+        }
         if (command.Role == CatechismClassCatechistRole.Main)
         {
-            var hasMain = await _repository.HasActiveMainCatechistAsync(command.CatechismClassId, cancellationToken);
+            var hasMain = await repository.HasActiveMainCatechistAsync(command.CatechismClassId, cancellationToken);
             if (hasMain)
                 throw new InvalidOperationException("Class already has an active primary catechist.");
         }
@@ -35,7 +33,7 @@ public class AssignCatechistToClassHandler : IRequestHandler<AssignCatechistToCl
             EnrollmentStatus.Active,
             command.Note);
 
-        await _repository.AddAsync(domain, cancellationToken);
+        await repository.AddAsync(domain, cancellationToken);
         return id;
     }
 }

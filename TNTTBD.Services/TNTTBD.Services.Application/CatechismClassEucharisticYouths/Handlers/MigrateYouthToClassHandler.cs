@@ -1,4 +1,5 @@
 using MediatR;
+using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Commands;
 using TNTTBD.Services.Domain.Catechism.JoinModels;
 using TNTTBD.Services.Domain.Catechism.Repositories;
@@ -6,23 +7,23 @@ using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.CatechismClassEucharisticYouths.Handlers;
 
-public class MigrateYouthToClassHandler : IRequestHandler<MigrateYouthToClassCommand, int>
+public class MigrateYouthToClassHandler(ICatechismClassEucharisticYouthRepository repository, IAuthorizationContext authorizationContext) : IRequestHandler<MigrateYouthToClassCommand, int>
 {
-    private readonly ICatechismClassEucharisticYouthRepository _repository;
-
-    public MigrateYouthToClassHandler(ICatechismClassEucharisticYouthRepository repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<int> Handle(MigrateYouthToClassCommand command, CancellationToken cancellationToken)
     {
-        var activeIds = await _repository.GetActiveEnrollmentIdsAsync(
+        if (!await authorizationContext.CanAccessClassAsync(command.SourceClassId, cancellationToken))
+        {
+            return -1;
+        }
+        var activeIds = await repository.GetActiveEnrollmentIdsAsync(
             command.SourceClassId, command.EucharisticYouthIds, cancellationToken);
 
-        if (activeIds.Count == 0) return 0;
+        if (activeIds.Count == 0)
+        {
+           return 0; 
+        } 
 
-        await _repository.MarkCompleted(activeIds, cancellationToken);
+        await repository.MarkCompleted(activeIds, cancellationToken);
 
         foreach (var youthId in command.EucharisticYouthIds)
         {
@@ -35,7 +36,7 @@ public class MigrateYouthToClassHandler : IRequestHandler<MigrateYouthToClassCom
                 EnrollmentStatus.Active,
                 null);
 
-            await _repository.AddAsync(enrollment, cancellationToken);
+            await repository.AddAsync(enrollment, cancellationToken);
         }
 
         return activeIds.Count;

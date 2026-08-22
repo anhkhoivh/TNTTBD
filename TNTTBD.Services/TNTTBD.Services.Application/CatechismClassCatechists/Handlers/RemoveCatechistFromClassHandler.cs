@@ -1,20 +1,19 @@
 using MediatR;
+using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClassCatechists.Commands;
 using TNTTBD.Services.Domain.Catechism.Repositories;
 
 namespace TNTTBD.Services.Application.CatechismClassCatechists.Handlers;
 
-public class RemoveCatechistFromClassHandler : IRequestHandler<RemoveCatechistFromClassCommand>
+public class RemoveCatechistFromClassHandler(ICatechismClassCatechistRepository repository, IAuthorizationContext authorizationContext) : IRequestHandler<RemoveCatechistFromClassCommand, bool>
 {
-    private readonly ICatechismClassCatechistRepository _repository;
-
-    public RemoveCatechistFromClassHandler(ICatechismClassCatechistRepository repository)
+    public async Task<bool> Handle(RemoveCatechistFromClassCommand command, CancellationToken cancellationToken)
     {
-        _repository = repository;
-    }
-
-    public async Task Handle(RemoveCatechistFromClassCommand command, CancellationToken cancellationToken)
-    {
-        await _repository.Remove(command.Id, cancellationToken);
+        if (!await authorizationContext.IsAdminAsync(cancellationToken))
+        {
+            return false;
+        }
+        await repository.Remove(command.Id, cancellationToken);
+        return true;
     }
 }

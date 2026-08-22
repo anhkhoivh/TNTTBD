@@ -8,4 +8,4 @@ public record AssignCatechistToClassCommand(
     Guid CatechistId,
     CatechismClassCatechistRole Role,
     string? Note
-) : IRequest<Guid>;
+) : IRequest<Guid?>;

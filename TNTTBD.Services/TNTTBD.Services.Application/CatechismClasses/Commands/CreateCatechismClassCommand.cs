@@ -6,4 +6,4 @@ public record CreateCatechismClassCommand(
     Guid CatechismYearId,
     string Name,
     string Code
-) : IRequest<Guid>;
+) : IRequest<Guid?>;

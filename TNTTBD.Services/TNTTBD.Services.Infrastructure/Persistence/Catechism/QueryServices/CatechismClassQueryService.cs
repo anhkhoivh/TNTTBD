@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.CatechismClasses.DTOs;
 using TNTTBD.Services.Application.CatechismClasses.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -25,7 +26,8 @@ public class CatechismClassQueryService : ICatechismClassQueryService
                 ClassName = entity.ClassName,
                 ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
-                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}",
+                ActiveTotal = entity.CatechismClassEucharisticYouths.Count(cy => cy.Status == EnrollmentStatus.Active)
             })
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
@@ -42,7 +44,8 @@ public class CatechismClassQueryService : ICatechismClassQueryService
                 ClassName = entity.ClassName,
                 ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
-                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}",
+                ActiveTotal = entity.CatechismClassEucharisticYouths.Count(cy => cy.Status == EnrollmentStatus.Active)
             })
             .AsNoTracking()
             .ToListAsync(cancellationToken);
@@ -71,7 +74,8 @@ public class CatechismClassQueryService : ICatechismClassQueryService
                 ClassName = entity.ClassName,
                 ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
-                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}"
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}",
+                ActiveTotal = entity.CatechismClassEucharisticYouths.Count(cy => cy.Status == EnrollmentStatus.Active)
             })
             .ToListAsync(cancellationToken);
 

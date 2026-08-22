@@ -6,4 +6,4 @@ public record UpdateCatechismSessionCommand(
     Guid CatechismSessionId,
     DateTimeOffset DateTime,
     string Title
-) : IRequest;
+) : IRequest<bool>;
