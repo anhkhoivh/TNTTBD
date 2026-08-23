@@ -22,6 +22,7 @@ import { ConfirmDialog } from '../../shared/components/confirm-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { EmptyState } from '../../shared/components/empty-state';
 import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-class-list',
@@ -41,23 +42,10 @@ import { MatInputModule } from '@angular/material/input';
     MatDialogModule,
     TranslatePipe,
     EmptyState,
+    MatListModule,
   ],
   templateUrl: './class-list.html',
-  styles: [
-    `
-      .toolbar {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-        margin-bottom: 1rem;
-      }
-      .toolbar .spacer { flex: 1; }
-      mat-form-field { min-width: 220px; }
-      .my-class { font-weight: 600; }
-      .star-icon { font-size: 18px; height: 18px; width: 18px; vertical-align: middle; color: var(--mat-sys-primary); margin-right: 4px; }
-    `,
-  ],
+  styleUrl: './class-list.scss',
 
   changeDetection: ChangeDetectionStrategy.OnPush
 })

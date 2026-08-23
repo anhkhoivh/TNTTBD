@@ -62,7 +62,7 @@ export const routes: Routes = [
       {
         path: 'catechists',
         canActivate: [roleGuard],
-        data: { roles: [UserRole.Admin] },
+        data: { roles: [UserRole.Admin, UserRole.Catechist] },
         loadComponent: () =>
           import('./features/catechist/catechist-list').then((m) => m.CatechistList),
       },

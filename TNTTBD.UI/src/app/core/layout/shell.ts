@@ -62,11 +62,6 @@ export class Shell {
 
   protected readonly UserRole = UserRole;
 
-  protected isHandset = toSignal(
-    this.breakpoint.observe([Breakpoints.Handset, Breakpoints.Small]).pipe(map((r) => r.matches)),
-    { initialValue: false },
-  );
-
   protected sidenavOpened = signal(false);
 
   protected navItems: NavItem[] = [
@@ -81,7 +76,7 @@ export class Shell {
       labelKey: 'nav.catechists',
       route: '/app/catechists',
       icon: 'school',
-      roles: [UserRole.Admin],
+      roles: [UserRole.Admin, UserRole.Catechist],
     },
     {
       labelKey: 'nav.classes',
