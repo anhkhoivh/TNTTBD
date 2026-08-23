@@ -150,7 +150,6 @@ export class ClassDetail {
 
   protected youthOfEnrollment(enrollmentId: string): CatechismClassEucharisticYouth | undefined {
     const ed = this.enrollmentsRes.value();
-    console.log(ed);
     if (!ed) return undefined;
     const e = ed.items.find((x) => x.id === enrollmentId);
     if (!e) return undefined;

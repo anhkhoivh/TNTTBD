@@ -39,6 +39,7 @@
   "common.date": "Date",
   "common.time": "Time",
   "common.status": "Status",
+  "common.index": "Index",
 
   "photo.upload": "Upload photo",
   "photo.uploaded": "Photo uploaded.",
@@ -134,7 +135,6 @@
   "class.searchYouth": "Search youth by name or code",
   "class.youthEnrolled": "Youth enrolled in class.",
   "class.total": "Total",
-  "class.index": "Index",
 
   "session.title": "Session title",
   "session.dateTime": "Date & time",

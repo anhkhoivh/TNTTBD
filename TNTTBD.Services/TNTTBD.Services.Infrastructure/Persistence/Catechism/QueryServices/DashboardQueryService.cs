@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.Dashboard.DTOs;
 using TNTTBD.Services.Application.Dashboard.Interfaces;
 using TNTTBD.Services.Domain.Enums;
+using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -25,10 +26,9 @@ public class DashboardQueryService : IDashboardQueryService
         var result = new DashboardSummaryDto();
         if (user == null) return result;
 
-        var latestYear = await _context.CatechismYears
+        CatechismYearEntity? latestYear = await _context.CatechismYears
             .AsNoTracking()
             .OrderByDescending(y => y.StartDate)
-            .Select(y => new { y.Id, y.StartDate, y.EndDate })
             .FirstOrDefaultAsync(cancellationToken);
 
         if (latestYear == null) return result;
@@ -94,9 +94,16 @@ public class DashboardQueryService : IDashboardQueryService
 
         if (user.Role == UserRole.Admin)
         {
+            int youthCount = await _context.CatechismClassEucharisticYouths
+                .AsNoTracking()
+                .Where(cy => (cy.Status == EnrollmentStatus.Active || cy.Status == EnrollmentStatus.Pending || cy.Status == EnrollmentStatus.Completed)
+                    && cy.CatechismClass.CatechismYearId == latestYear.Id)
+                .Select(cy => cy.EucharisticYouthId)
+                .Distinct()
+                .CountAsync(cancellationToken);
             result.Totals = new DashboardTotalsDto
             {
-                Youth = await _context.EucharisticYouths.CountAsync(cancellationToken),
+                Youth = youthCount,
                 Catechists = await _context.Catechists.CountAsync(cancellationToken),
                 Classes = await _context.CatechismClasses.Where(c => c.CatechismYearId == latestYear.Id).CountAsync(cancellationToken),
                 Years = await _context.CatechismYears.CountAsync(cancellationToken),

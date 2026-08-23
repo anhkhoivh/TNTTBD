@@ -8,9 +8,20 @@
   </mat-card-header>
   <mat-card-content>
     <table mat-table [dataSource]="data().items" class="full-width">
+      <ng-container matColumnDef="index">
+        <th mat-header-cell *matHeaderCellDef>{{ 'common.index' | t }}</th>
+        <td mat-cell *matCellDef="let row; let i = index">
+          {{ i + 1 }}
+        </td>
+      </ng-container>
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>{{ 'youth.fullName' | t }}</th>
-        <td mat-cell *matCellDef="let row">{{ row.fullName | fullName }}</td>
+        <td mat-cell *matCellDef="let row" [class.me]="isMe(row.id)">
+          @if (isMe(row.id)) { <mat-icon class="star-icon">star</mat-icon> }
+          <a [routerLink]="['/app/catechists/detail']" [queryParams]="{ id: row.id }" class="item-link">
+            {{ row.fullName | fullName }}
+          </a>
+        </td>
       </ng-container>
       <ng-container matColumnDef="dob">
         <th mat-header-cell *matHeaderCellDef>{{ 'youth.dateOfBirth' | t }}</th>
@@ -20,14 +31,6 @@
         <th mat-header-cell *matHeaderCellDef>{{ 'youth.gender' | t }}</th>
         <td mat-cell *matCellDef="let row">
           {{ (row.isMale ? 'common.male' : 'common.female') | t }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let row">
-          <a mat-icon-button [routerLink]="['/app/catechists/detail']" [queryParams]="{ id: row.id }">
-            <mat-icon>visibility</mat-icon>
-          </a>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="cols"></tr>
