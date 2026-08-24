@@ -1,6 +1,6 @@
 import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
@@ -53,12 +53,12 @@ interface NavItem {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Shell {
-  private breakpoint = inject(BreakpointObserver);
   private dialog = inject(MatDialog);
   protected theme = inject(ThemeService);
   protected loading = inject(LoadingService);
   protected translation = inject(TranslationService);
   protected auth = inject(AuthService);
+  protected router = inject(Router);
 
   protected readonly UserRole = UserRole;
 
@@ -116,5 +116,17 @@ export class Shell {
 
   protected toggleSidenav(): void {
     this.sidenavOpened.update((v) => !v);
+  }
+
+  protected viewProfile(): void {
+    if (!this.auth.currentUser()) {
+      return;
+    }
+    if (this.auth.currentUser() && this.auth.isAdminOrCatechist() && this.auth.currentUser()?.catechistId) {
+      this.router.navigate(['/app/catechists/detail'], { queryParams: { id:  this.auth.currentUser()?.catechistId} });
+    }
+    else if (this.auth.currentUser() && this.auth.currentUser()?.eucharisticYouthId) {
+      this.router.navigate(['/app/youths/detail'], { queryParams: { id:  this.auth.currentUser()?.eucharisticYouthId} });
+    }
   }
 }

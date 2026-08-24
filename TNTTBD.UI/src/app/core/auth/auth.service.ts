@@ -33,6 +33,11 @@ export class AuthService {
     return localStorage.getItem(TOKEN_KEY);
   }
 
+  isAdminOrCatechist(): boolean {
+    const role = this.userRole();
+    return role != null && [UserRole.Admin, UserRole.Catechist].includes(role);
+  }
+
   getRefreshToken(): string | null {
     return localStorage.getItem(REFRESH_TOKEN_KEY);
   }
