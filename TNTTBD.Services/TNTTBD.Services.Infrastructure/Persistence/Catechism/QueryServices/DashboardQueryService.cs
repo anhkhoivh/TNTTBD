@@ -92,7 +92,7 @@ public class DashboardQueryService : IDashboardQueryService
             })
             .ToListAsync(cancellationToken);
 
-        if (user.Role == UserRole.Admin)
+        if (user.Role == UserRole.Admin || user.Role == UserRole.Catechist)
         {
             int youthCount = await _context.CatechismClassEucharisticYouths
                 .AsNoTracking()

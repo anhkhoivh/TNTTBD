@@ -27,8 +27,8 @@
                 <input matInput formControlName="givenName" required />
               </mat-form-field>
               <mat-form-field appearance="outline">
-                <mat-label>{{ 'youth.dateOfBirth' | t }} *</mat-label>
-                <input matInput [matDatepicker]="dob" formControlName="dateOfBirth" required />
+                <mat-label>{{ 'youth.dateOfBirth' | t }}</mat-label>
+                <input matInput [matDatepicker]="dob" formControlName="dateOfBirth" />
                 <mat-datepicker-toggle matIconSuffix [for]="dob"></mat-datepicker-toggle>
                 <mat-datepicker #dob></mat-datepicker>
               </mat-form-field>
@@ -56,7 +56,7 @@
             </div>
             <div class="step-actions">
               <button mat-button routerLink="/" type="button">{{ 'common.back' | t }}</button>
-              <button mat-button matStepperNext type="button">{{ 'common.next' | t }}</button>
+              <button mat-button matStepperNext [disabled]="youthForm.invalid" type="button">{{ 'common.next' | t }}</button>
             </div>
           </form>
         </mat-step>
@@ -64,7 +64,7 @@
         <mat-step [stepControl]="contactsForm" [label]="'register.step.contacts' | t">
           <form [formGroup]="contactsForm" class="step-form">
             <div formArrayName="contacts">
-              @for (c of contacts.controls; track $index; let i = $index) {
+              @for (c of contacts.controls; track c.value.id; let i = $index) {
                 <div [formGroupName]="i" class="contact-row">
                   <mat-form-field appearance="outline">
                     <mat-label>{{ 'fullName.christ' | t }}</mat-label>
@@ -103,7 +103,6 @@
                     type="button"
                     color="warn"
                     (click)="removeContact(i)"
-                    [disabled]="contacts.length === 0"
                   >
                     <mat-icon>clear</mat-icon>
                   </button>
@@ -120,7 +119,7 @@
                 color="primary"
                 type="button"
                 (click)="submit()"
-                [disabled]="loading()"
+                [disabled]="youthForm.invalid || contactsForm.invalid || loading()"
               >
                 {{ 'common.submit' | t }}
               </button>

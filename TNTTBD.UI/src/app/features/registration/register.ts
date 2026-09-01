@@ -1,4 +1,4 @@
-import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject, signal, computed,ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
@@ -69,7 +69,7 @@ export class RegisterPage {
     middleName: [''],
     familyName: [''],
     christName: [''],
-    dateOfBirth: [null as Date | null, Validators.required],
+    dateOfBirth: [null as Date | null],
     isMale: [true, Validators.required],
     address: [''],
     baptismDate: [null as Date | null],
@@ -90,7 +90,7 @@ export class RegisterPage {
   }
 
   protected removeContact(i: number): void {
-    if (this.contacts.length > 1) this.contacts.removeAt(i);
+    this.contacts.removeAt(i);
   }
 
   protected submit(): void {
@@ -120,8 +120,9 @@ export class RegisterPage {
         this.notify.success(this.translate.t('register.submitted'));
         this.router.navigate(['/']);
       },
-      error: () => {
+      error: (e) => {
         this.loading.set(false);
+        console.log("errors", e);
         this.notify.error(this.translate.t('register.failed'));
       },
     });
@@ -130,6 +131,7 @@ export class RegisterPage {
   private makeContact(contactType: ContactRelationType) {
     return this.fb.group(
       {
+        id: [crypto.randomUUID()],
         givenName: ['', Validators.required],
         familyName: [''],
         christName: [''],
