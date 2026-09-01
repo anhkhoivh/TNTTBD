@@ -167,12 +167,17 @@ public abstract class Member : AggregateRoot<Guid>
     /// <summary>
     /// Update basic info
     /// </summary>
-    public void UpdateInfo(FullName fullName, DateOnly dateOfBirth, string? address, bool isMale)
+    public void UpdateInfo(FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, IReadOnlyCollection<PatronSaint>? patronSaints)
     {
         FullName = fullName;
         DateOfBirth = dateOfBirth;
         Address = string.IsNullOrWhiteSpace(address) ? string.Empty : address;
         IsMale = isMale;
+        if (patronSaints != null)
+        {
+            _patronSaints.Clear();
+            _patronSaints.AddRange(patronSaints);
+        }
     }
 
     #endregion

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -101,7 +102,8 @@ public class CatechismClassEucharisticYouthQueryService : ICatechismClassEuchari
         }
 
         var items = await query
-            .OrderBy(e => e.EucharisticYouth.FullName.GivenName)
+            .OrderByDescending(e => e.Status == EnrollmentStatus.Active)
+            .ThenBy(e => e.EucharisticYouth.FullName.GivenName)
             .ThenBy(e => e.EucharisticYouth.FullName.FamilyName)
             .Select(entity => new CatechismClassEucharisticYouthDto
             {

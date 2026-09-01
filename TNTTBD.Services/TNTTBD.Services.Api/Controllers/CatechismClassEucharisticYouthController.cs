@@ -1,12 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Commands;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Queries;
 using TNTTBD.Services.Application.Common.DTOs;
-using TNTTBD.Services.Domain.Catechism.JoinModels;
 
 namespace TNTTBD.Services.Api.Controllers;
 

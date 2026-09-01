@@ -148,13 +148,14 @@ public static class EucharisticYouthMapper
                 Url = storage.GetFileUrl(p.StorageKey)
             }).ToList(),
 
-            Milestones = entity.SpiritualMilestones.Select(m => new SpiritualMilestoneDto
-            {
-                Type = m.Type.ToString(),
-                Date = m.Date,
-                Place = m.Place,
-                Note = m.Note
-            }).ToList(),
+            Milestones = entity.SpiritualMilestones.Select(m => new SpiritualMilestoneDto(
+                m.Id,
+                m.Type,
+                m.Date,
+                m.Place,
+                m.DocumentCode,
+                m.Note
+            )).ToList(),
 
             PatronSaints = entity.PatronSaints.Select(p => new PatronSaintDto
             {

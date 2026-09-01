@@ -94,7 +94,7 @@
         @for (m of milestones.controls; track $index; let i = $index) {
           <div [formGroupName]="i" class="milestone-row">
             <mat-form-field appearance="outline">
-              <mat-label>{{ 'milestone.date' | t }}</mat-label>
+              <mat-label>{{ 'youth.milestones' | t }}</mat-label>
               <mat-select formControlName="type" required>
                 @for (t of milestoneTypes; track t.v) {
                   <mat-option [value]="t.v">{{ t.k | t }}</mat-option>
@@ -106,12 +106,9 @@
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>{{ 'milestone.date' | t }}</mat-label>
-              <input matInput [matDatepicker]="dp" formControlName="date" required />
+              <input matInput [matDatepicker]="dp" formControlName="date" />
               <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
               <mat-datepicker #dp></mat-datepicker>
-              @if (m.get('date')?.hasError('required')) {
-                <mat-error>{{ 'validation.required' | t }}</mat-error>
-              }
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>{{ 'milestone.place' | t }}</mat-label>

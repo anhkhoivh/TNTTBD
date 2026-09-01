@@ -3,6 +3,7 @@ using TNTTBD.Services.Application.CatechismSessions.DTOs;
 using TNTTBD.Services.Application.CatechismSessions.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Domain.Enums;
+using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.QueryServices;
 
@@ -120,13 +121,15 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
     /// <inheritdoc />
     public async Task<List<CatechismSessionAttendanceDto>> GetAttendanceSheetAsync(Guid sessionId, CancellationToken cancellationToken)
     {
-        var session = await _context.CatechismSessions
+        CatechismSessionEntity? session = await _context.CatechismSessions
             .AsNoTracking()
             .Where(s => s.Id == sessionId)
-            .Select(s => new { s.CatechismClassId })
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (session == null) return [];
+        if (session == null)
+        {
+            return [];
+        }
 
         var existingAttendances = await _context.CatechismSessionAttendances
             .AsNoTracking()
@@ -139,6 +142,7 @@ public class CatechismSessionQueryService : ICatechismSessionQueryService
         var enrollments = await _context.CatechismClassEucharisticYouths
             .AsNoTracking()
             .Where(cy => cy.CatechismClassId == session.CatechismClassId && cy.Status == EnrollmentStatus.Active)
+            .OrderBy(cy => cy.EucharisticYouth.FullName.GivenName).ThenBy(cy => cy.EucharisticYouth.FullName.FamilyName)
             .Select(cy => new { cy.Id, cy.EucharisticYouth.Code, cy.EucharisticYouth.FullName })
             .ToListAsync(cancellationToken);
 

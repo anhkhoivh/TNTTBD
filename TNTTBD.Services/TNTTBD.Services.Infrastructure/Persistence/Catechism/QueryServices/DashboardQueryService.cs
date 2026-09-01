@@ -38,7 +38,7 @@ public class DashboardQueryService : IDashboardQueryService
         // Classes relevant to the caller, resolved by role
         var myClassIds = new List<Guid>();
 
-        if (user.Role == UserRole.Catechist && user.CatechistId.HasValue)
+        if ((user.Role == UserRole.Catechist || user.Role == UserRole.Admin) && user.CatechistId.HasValue)
         {
             myClassIds = await _context.CatechismClassCatechists
                 .AsNoTracking()
@@ -74,11 +74,8 @@ public class DashboardQueryService : IDashboardQueryService
             .AsNoTracking()
             .Where(s => s.DateTime >= now && s.CatechismClass.CatechismYearId == latestYear.Id);
 
-        if (user.Role != UserRole.Admin)
-        {
-            sessionQuery = sessionQuery.Where(s => myClassIds.Contains(s.CatechismClassId));
-        }
 
+        sessionQuery = sessionQuery.Where(s => myClassIds.Contains(s.CatechismClassId));
         result.UpcomingSessions = await sessionQuery
             .OrderBy(s => s.DateTime)
             .Take(5)

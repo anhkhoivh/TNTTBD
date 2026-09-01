@@ -41,6 +41,8 @@
   "common.time": "Time",
   "common.status": "Status",
   "common.index": "Index",
+  "common.saved": "Saved",
+  "common.saveFailed": "Failed to save",
 
   "photo.upload": "Upload photo",
   "photo.uploaded": "Photo uploaded.",

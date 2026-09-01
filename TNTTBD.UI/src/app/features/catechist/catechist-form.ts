@@ -17,6 +17,7 @@ import { Catechist, PatronSaint } from '../../shared/models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../shared/components/patron-saint-input';
 import { PhotoUpload } from '../../shared/components/photo-upload';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-catechist-form',
@@ -37,36 +38,7 @@ import { PhotoUpload } from '../../shared/components/photo-upload';
     PhotoUpload,
   ],
   templateUrl: './catechist-form.html',
-  styles: [
-    `
-      .grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-      .span-2 {
-        grid-column: span 2;
-      }
-      .field-gender {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
-      .actions {
-        display: flex;
-        gap: 1rem;
-        justify-content: flex-end;
-      }
-      @media (max-width: 600px) {
-        .grid-2 {
-          grid-template-columns: 1fr;
-        }
-        .span-2 {
-          grid-column: span 1;
-        }
-      }
-    `,
-  ],
+  styleUrl: './catechist-form.scss',
 
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -77,6 +49,7 @@ export class CatechistForm {
   private api = inject(ApiService);
   private notify = inject(NotificationService);
   private auth = inject(AuthService);
+  private translate = inject(TranslationService);
 
   protected loading = signal(false);
   protected isEdit = signal(false);
@@ -151,10 +124,16 @@ export class CatechistForm {
       : this.api.post('/catechists', payload);
 
     req$.subscribe({
-      next: () => {
+      next: (res: any) => {
         this.loading.set(false);
-        this.notify.success('Saved');
-        this.router.navigate(['/app/catechists']);
+        this.notify.success(this.translate.t('common.saved'));
+        if (this.editId != null) {
+          this.router.navigate(['/app/catechists/detail'], {queryParams: { id: this.editId}});
+        }
+        else {
+          const newId = res;
+          this.router.navigate(['/app/catechists/detail', newId]);
+        }
       },
       error: () => {
         this.loading.set(false);

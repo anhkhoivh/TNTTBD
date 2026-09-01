@@ -1,5 +1,4 @@
 using MediatR;
-using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Catechism.Repositories;
@@ -32,7 +31,9 @@ public class UpdateEucharisticYouthHandler : IRequestHandler<UpdateEucharisticYo
     public async Task Handle(UpdateEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
         FullName fullName = new FullName(command.GivenName, command.ChristName, command.FamilyName, command.MiddleName);
-        await _repository.Update(command.EucharisticYouthId, fullName, command.DateOfBirth, command.Address, command.IsMale, cancellationToken);
+        List<PatronSaint>? patronSaints = command.PatronSaints != null ? command.PatronSaints.Select(p => p.ToDomain()).ToList() : null;
+        List<SpiritualMilestone>? milestones = command.Milestones != null ? command.Milestones.Select(p => p.ToDomain()).ToList() : null;
+        await _repository.Update(command.EucharisticYouthId, fullName, command.DateOfBirth, command.Address, command.IsMale, patronSaints, milestones, cancellationToken);
     }
 
     #endregion

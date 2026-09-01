@@ -245,10 +245,16 @@ export class YouthForm {
       : this.api.post('/youths', payload);
 
     req$.subscribe({
-      next: () => {
+      next: (res: any) => {
         this.loading.set(false);
         this.notify.success('Saved');
-        this.navigateBack();
+        if (this.editId != null) {
+          this.router.navigate(['/app/youth/detail'], {queryParams: { id: this.editId}});
+        }
+        else {
+          const newId = res;
+          this.router.navigate(['/app/youth/detail'], {queryParams: { id: newId}});
+        }
       },
       error: () => {
         this.loading.set(false);
@@ -296,7 +302,7 @@ export class YouthForm {
   ) {
     return this.fb.group({
       type: [type, Validators.required],
-      date: [date, Validators.required],
+      date: [date],
       place: [place],
       documentCode: [documentCode],
       note: [note],

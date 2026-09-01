@@ -35,7 +35,7 @@ public class CatechistRepository : ICatechistRepository
     }
 
     /// <inheritdoc />
-    public async Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken)
+    public async Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, IReadOnlyCollection<PatronSaint>? patronSaints, CancellationToken cancellationToken)
     {
         CatechistEntity? catechistEntity = await _context.Catechists.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (catechistEntity == null)
@@ -44,7 +44,7 @@ public class CatechistRepository : ICatechistRepository
         }
 
         Catechist domain = catechistEntity.ToDomain();
-        domain.UpdateInfo(fullName, dateOfBirth, address, isMale);
+        domain.UpdateInfo(fullName, dateOfBirth, address, isMale, patronSaints);
         domain.UpdateEntity(catechistEntity);
     }
 

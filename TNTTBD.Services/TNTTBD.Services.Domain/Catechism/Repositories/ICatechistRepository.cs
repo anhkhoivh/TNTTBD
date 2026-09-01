@@ -20,7 +20,7 @@ public interface ICatechistRepository
     /// <param name="isMale"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken);
+    Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, IReadOnlyCollection<PatronSaint>? patronSaints, CancellationToken cancellationToken);
 
     /// <summary>
     /// Remove

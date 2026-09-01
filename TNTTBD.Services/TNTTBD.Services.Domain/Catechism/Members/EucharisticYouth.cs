@@ -61,6 +61,27 @@ public class EucharisticYouth : Member
     #region Methods
 
     /// <summary>
+    /// Update
+    /// </summary>
+    public void UpdateMilestoneList(IReadOnlyCollection<SpiritualMilestone> milestones)
+    {
+        if (milestones.Any(m => m.Type == MilestoneType.Baptism) == false)
+        {
+            throw new DomainException(DomainErrors.NotBaptised);
+        }
+        var duplicates = milestones
+            .GroupBy(m => m.Type)
+            .Where(g => g.Count() > 1)
+            .Select(g => new { Value = g.Key, Count = g.Count() });
+        if (duplicates.Any())
+        {
+            throw new DomainException(DomainErrors.MilestoneAlreadyExists);
+        }
+        _milestones.Clear();
+        _milestones.AddRange(milestones);
+    }
+
+    /// <summary>
     /// Add milestone
     /// </summary>
     public void AddMilestone(SpiritualMilestone milestone)
@@ -80,7 +101,7 @@ public class EucharisticYouth : Member
     /// <summary>
     /// Update
     /// </summary>
-    public void UpdateMilestone(Guid milestoneId, DateOnly date, string? documentCode, string? place, string? note)
+    public void UpdateMilestone(Guid milestoneId, DateOnly? date, string? documentCode, string? place, string? note)
     {
         SpiritualMilestone milestone = _milestones
             .FirstOrDefault(x => x.Id == milestoneId)

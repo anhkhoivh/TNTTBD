@@ -95,7 +95,7 @@ export class SessionFormDialog {
 
   private initTime(): string {
     const dt = this.data.session?.dateTime;
-    if (!dt) return '08:00';
+    if (!dt) return '08:45';
     const d = new Date(dt);
     return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
   }
