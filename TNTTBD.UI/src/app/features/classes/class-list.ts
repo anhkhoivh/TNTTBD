@@ -64,7 +64,6 @@ export class ClassList {
   protected searchQuery = signal<string>('');
 
   protected filtered = computed(() => {
-    console.log(this.years());
     const yid = this.selectedYear()?.id;
     const query = this.searchQuery().toLowerCase().trim();
     let list = this.classes();

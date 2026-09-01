@@ -122,7 +122,6 @@ export class RegisterPage {
       },
       error: (e) => {
         this.loading.set(false);
-        console.log("errors", e);
         this.notify.error(this.translate.t('register.failed'));
       },
     });
