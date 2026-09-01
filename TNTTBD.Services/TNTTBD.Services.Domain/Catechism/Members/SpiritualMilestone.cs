@@ -13,7 +13,7 @@ public class SpiritualMilestone : DomainEntity<Guid>
     public SpiritualMilestone(
         Guid id, 
         MilestoneType type, 
-        DateOnly date, 
+        DateOnly? date, 
         string? documentCode,
         string? place = null, 
         string? note = null) : base(id)
@@ -37,7 +37,7 @@ public class SpiritualMilestone : DomainEntity<Guid>
     /// <summary>
     /// Date
     /// </summary>
-    public DateOnly Date { get; private set; }
+    public DateOnly? Date { get; private set; }
 
     /// <summary>
     /// Id
@@ -61,7 +61,7 @@ public class SpiritualMilestone : DomainEntity<Guid>
     /// <summary>
     /// Update
     /// </summary>
-    public void Update(DateOnly date, string? documentCode, string? place, string? note)
+    public void Update(DateOnly? date, string? documentCode, string? place, string? note)
     {
         Date = date;
         DocumentCode = documentCode;

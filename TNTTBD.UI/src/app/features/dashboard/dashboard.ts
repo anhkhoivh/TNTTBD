@@ -38,6 +38,7 @@ export class Dashboard {
 
   protected readonly UserRole = UserRole;
   protected role = computed(() => this.auth.currentUser()?.userRole);
+  protected isAdminOrCatechist = computed(() => this.auth.isAdminOrCatechist());
 
   protected data = toSignal(
     this.api.get<DashboardSummary>('/dashboard/summary').pipe(catchError(() => of(null))),

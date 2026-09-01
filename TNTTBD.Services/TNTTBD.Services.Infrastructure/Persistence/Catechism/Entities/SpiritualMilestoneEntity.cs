@@ -34,7 +34,7 @@ public class SpiritualMilestoneEntity
     /// <summary>
     /// Date
     /// </summary>
-    public DateOnly Date { get; set; }
+    public DateOnly? Date { get; set; }
 
     /// <summary>
     /// Id

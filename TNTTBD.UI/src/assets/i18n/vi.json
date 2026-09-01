@@ -41,6 +41,8 @@
   "common.time": "Giờ",
   "common.status": "Tình trạng",
   "common.index": "STT",
+  "common.saved": "Đã lưu",
+  "common.saveFailed": "Đã gặp lỗi khi lưu",
 
   "photo.upload": "Tải ảnh lên",
   "photo.uploaded": "Đã tải ảnh lên.",
@@ -70,7 +72,7 @@
   "youth.gender": "Giới tính",
   "youth.address": "Địa chỉ",
   "youth.photos": "Ảnh",
-  "youth.milestones": "Bí tích",
+  "youth.milestones": "Cột mốc",
   "youth.contacts": "Liên hệ",
   "youth.classHistory": "Lịch sử lớp",
   "youth.list": "Danh sách thiếu nhi",

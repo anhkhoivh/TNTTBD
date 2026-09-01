@@ -10,7 +10,7 @@ public record RegisterEucharisticYouthCommand(
 
 public record YouthData(
     FullNameData FullName,
-    DateOnly DateOfBirth,
+    DateOnly? DateOfBirth,
     bool IsMale,
     string? Address,
     BaptismData? Baptism

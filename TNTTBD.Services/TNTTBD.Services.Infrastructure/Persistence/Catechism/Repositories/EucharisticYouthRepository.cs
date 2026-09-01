@@ -27,7 +27,7 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
     }
 
     /// <inheritdoc />
-    public async Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, CancellationToken cancellationToken)
+    public async Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, IReadOnlyCollection<PatronSaint>? patronSaints, IReadOnlyCollection<SpiritualMilestone>? milestones, CancellationToken cancellationToken)
     {
         EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
@@ -36,7 +36,11 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         }
 
         EucharisticYouth domain = youthEntity.ToDomain();
-        domain.UpdateInfo(fullName, dateOfBirth, address, isMale);
+        domain.UpdateInfo(fullName, dateOfBirth, address, isMale, patronSaints);
+        if (milestones != null)
+        {
+            domain.UpdateMilestoneList(milestones);
+        }
         domain.UpdateEntity(youthEntity);
     }
 
