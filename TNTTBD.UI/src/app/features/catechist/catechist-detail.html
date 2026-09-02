@@ -1,8 +1,8 @@
 @if (data(); as d) {
-  <mat-tab-group (selectedTabChange)="onTabChange($event.index)">
-    <mat-tab [label]="'common.profile' | t">
-  <ng-template matTabContent>
-    @defer {
+<mat-tab-group (selectedTabChange)="onTabChange($event.index)">
+  <mat-tab [label]="'common.profile' | t">
+    <ng-template matTabContent>
+      @defer {
       <mat-list class="mt-16">
         <mat-list-item>
           <mat-icon matListItemIcon>person</mat-icon>
@@ -17,94 +17,94 @@
           <span matListItemTitle>{{ (d.isMale ? 'common.male' : 'common.female') | t }}</span>
         </mat-list-item>
         @if (d.address) {
-          <mat-list-item>
-            <mat-icon matListItemIcon>home</mat-icon>
-            <span matListItemTitle>{{ d.address }}</span>
-          </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>home</mat-icon>
+          <span matListItemTitle>{{ d.address }}</span>
+        </mat-list-item>
         }
       </mat-list>
       @if (d.patronSaints.length) {
-        <mat-chip-set class="mt-16">
-          @for (ps of d.patronSaints; track ps.saintName) {
-            <mat-chip><mat-icon>church</mat-icon> {{ ps.saintName }} ({{ ps.day }}/{{ ps.month }})</mat-chip>
-          }
-        </mat-chip-set>
+      <mat-chip-set class="mt-16">
+        @for (ps of d.patronSaints; track ps.saintName) {
+        <mat-chip><mat-icon>church</mat-icon> {{ ps.saintName }} ({{ ps.day }}/{{ ps.month }})</mat-chip>
+        }
+      </mat-chip-set>
       }
       @if (canEdit) {
-        <div class="mt-16">
-          <a mat-stroked-button [routerLink]="['/app/catechists/edit']" [queryParams]="{ id: d.id }">
-            <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
-          </a>
-        </div>
+      <div class="mt-16">
+        <a mat-stroked-button [routerLink]="['/app/catechists/edit']" [queryParams]="{ id: d.id }">
+          <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
+        </a>
+      </div>
       }
 
-    } @placeholder {
+      } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
       </div>
-    }
-  </ng-template>
-</mat-tab>
+      }
+    </ng-template>
+  </mat-tab>
 
-    <mat-tab [label]="('youth.photos' | t) + ' (' + d.photos.length + ')'">
-  <ng-template matTabContent>
-    @defer {
+  <mat-tab [label]="('youth.photos' | t) + ' (' + d.photos.length + ')'">
+    <ng-template matTabContent>
+      @defer {
       <div class="photo-grid mt-16">
         @for (p of d.photos; track p.id) {
-          <img [ngSrc]="photoService.url(p.storageKey)" [alt]="p.id" class="photo" fill style="object-fit: cover;">
+        <img [ngSrc]="photoService.url(p.storageKey)" [alt]="p.id" class="photo" fill style="object-fit: cover;">
         } @empty {
-          <p>{{ 'common.noData' | t }}</p>
+        <p>{{ 'common.noData' | t }}</p>
         }
       </div>
 
-    } @placeholder {
+      } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
       </div>
-    }
-  </ng-template>
-</mat-tab>
+      }
+    </ng-template>
+  </mat-tab>
 
-    <mat-tab [label]="'catechist.classHistory' | t">
-  <ng-template matTabContent>
-    @defer {
+  <mat-tab [label]="'catechist.classHistory' | t">
+    <ng-template matTabContent>
+      @defer {
       @if (assignmentsData(); as ad) {
-        <mat-list class="mt-16">
-          @for (a of ad.items; track a.id) {
-            <mat-list-item>
-              <mat-icon matListItemIcon>class</mat-icon>
-              <span matListItemTitle>
-                <a [routerLink]="['/app/classes/detail']" [queryParams]="{ id: a.catechismClassId }">{{ a.className }}</a>
-                · {{ roleKey(a.role) | t }}
-              </span>
-              <span matListItemLine>
-                {{ enrollmentStatusKey(a.status) | t }} ·
-                {{ a.enrolledAt | dateLocale: 'datetime' }}
-                @if (a.leftAt) { → {{ a.leftAt | dateLocale: 'datetime' }} }
-              </span>
-            </mat-list-item>
-          } @empty {
-            <p>{{ 'common.noData' | t }}</p>
-          }
-        </mat-list>
+      <mat-list class="mt-16">
+        @for (a of ad.items; track a.id) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>class</mat-icon>
+          <span matListItemTitle>
+            <a [routerLink]="['/app/classes/detail']" [queryParams]="{ id: a.catechismClassId }">{{ a.className }}</a>
+            · {{ roleKey(a.role) | t }}
+          </span>
+          <span matListItemLine>
+            {{ enrollmentStatusKey(a.status) | t }} ·
+            {{ a.enrolledAt | dateLocale: 'datetime' }}
+            @if (a.leftAt) { → {{ a.leftAt | dateLocale: 'datetime' }} }
+          </span>
+        </mat-list-item>
+        } @empty {
+        <p>{{ 'common.noData' | t }}</p>
+        }
+      </mat-list>
       } @else {
-        <p class="mt-16">{{ 'common.loading' | t }}</p>
+      <p class="mt-16">{{ 'common.loading' | t }}</p>
       }
 
-    } @placeholder {
+      } @placeholder {
       <div class="p-4">
         <p>{{ 'common.loading' | t }}</p>
       </div>
-    }
-  </ng-template>
-</mat-tab>
-  </mat-tab-group>
+      }
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
 
-  <div class="mt-16">
-    <a mat-button routerLink="/app/catechists">
-      <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
-    </a>
-  </div>
+<div class="mt-16">
+  <a mat-button routerLink="/app/catechists">
+    <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
+  </a>
+</div>
 } @else {
-  <p>{{ 'common.loading' | t }}</p>
+<p>{{ 'common.loading' | t }}</p>
 }
