@@ -17,9 +17,13 @@
             <mat-button-toggle-group
               [value]="row.status"
               (change)="setStatus(i, $event.value)"
+              [hideSingleSelectionIndicator]="true"
             >
               @for (s of statuses; track s.v) {
-                <mat-button-toggle [value]="s.v">
+                <mat-button-toggle 
+                  [value]="s.v"
+                  [ngStyle]="{'background-color': row.status === s.v ? statusColors[s.v] : ''}"
+                >
                   <mat-icon>{{ s.icon }}</mat-icon>
                 </mat-button-toggle>
               }

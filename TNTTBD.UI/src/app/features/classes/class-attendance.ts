@@ -55,6 +55,13 @@ export class ClassAttendance {
     { v: AttendanceStatus.Excused, icon: 'event_busy' },
   ];
 
+  protected readonly statusColors: Record<AttendanceStatus, string> = {
+    [AttendanceStatus.Present]: '#C8E6C9',
+    [AttendanceStatus.Absent]: '#E57373',
+    [AttendanceStatus.Excused]: 'orange',
+    [AttendanceStatus.None]: ''
+  };
+
   protected loading = signal(true);
   protected saving = signal(false);
   protected rows = signal<Row[]>([]);
