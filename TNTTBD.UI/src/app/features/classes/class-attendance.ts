@@ -58,6 +58,7 @@ export class ClassAttendance {
   protected loading = signal(true);
   protected saving = signal(false);
   protected rows = signal<Row[]>([]);
+  protected absentCount = signal(0);
 
   private classId: string | null = null;
   private sessionId: string | null = null;
