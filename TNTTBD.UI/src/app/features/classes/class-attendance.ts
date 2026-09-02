@@ -1,4 +1,4 @@
-import { Component, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -58,7 +58,9 @@ export class ClassAttendance {
   protected loading = signal(true);
   protected saving = signal(false);
   protected rows = signal<Row[]>([]);
-  protected absentCount = signal(0);
+  protected presentCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Present).length);
+  protected absentCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Absent).length);
+  protected excusedCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Excused).length);
 
   private classId: string | null = null;
   private sessionId: string | null = null;

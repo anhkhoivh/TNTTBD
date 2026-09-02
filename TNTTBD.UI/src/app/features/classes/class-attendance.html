@@ -1,6 +1,9 @@
 <mat-card>
   <mat-card-header>
     <mat-card-title>{{ 'attendance.title' | t }}</mat-card-title>
+    <mat-card-subtitle>{{ presentCount() }} {{ 'attendance.present' | t }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ absentCount() }} {{ 'attendance.absent' | t }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ excusedCount() }} {{ 'attendance.excused' | t }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     @if (loading()) {
