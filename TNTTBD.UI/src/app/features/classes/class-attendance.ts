@@ -56,8 +56,8 @@ export class ClassAttendance {
   ];
 
   protected readonly statusColors: Record<AttendanceStatus, string> = {
-    [AttendanceStatus.Present]: '#C8E6C9',
-    [AttendanceStatus.Absent]: '#E57373',
+    [AttendanceStatus.Present]: '#81C784',
+    [AttendanceStatus.Absent]: '#f66271',
     [AttendanceStatus.Excused]: 'orange',
     [AttendanceStatus.None]: ''
   };
