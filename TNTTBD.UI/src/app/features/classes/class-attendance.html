@@ -1,9 +1,9 @@
 <mat-card>
   <mat-card-header>
     <mat-card-title>{{ 'attendance.title' | t }}</mat-card-title>
-    <mat-card-subtitle>{{ presentCount() }} {{ 'attendance.present' | t }}</mat-card-subtitle>
-    <mat-card-subtitle>{{ absentCount() }} {{ 'attendance.absent' | t }}</mat-card-subtitle>
-    <mat-card-subtitle>{{ excusedCount() }} {{ 'attendance.excused' | t }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ 'attendance.present' | t }}: {{ presentCount() }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ 'attendance.absent' | t }}: {{ absentCount() }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ 'attendance.excused' | t }}: {{ excusedCount() }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     @if (loading()) {
@@ -20,9 +20,13 @@
             <mat-button-toggle-group
               [value]="row.status"
               (change)="setStatus(i, $event.value)"
+              [hideSingleSelectionIndicator]="true"
             >
               @for (s of statuses; track s.v) {
-                <mat-button-toggle [value]="s.v">
+                <mat-button-toggle 
+                  [value]="s.v"
+                  [ngStyle]="{'background-color': row.status === s.v ? statusColors[s.v] : ''}"
+                >
                   <mat-icon>{{ s.icon }}</mat-icon>
                 </mat-button-toggle>
               }

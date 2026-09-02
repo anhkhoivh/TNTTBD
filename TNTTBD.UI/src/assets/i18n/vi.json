@@ -143,9 +143,9 @@
 
   "attendance.title": "Điểm danh",
   "attendance.markFor": "Điểm danh cho",
-  "attendance.present": "Có mặt",
-  "attendance.absent": "Vắng",
-  "attendance.excused": "Có phép",
+  "attendance.present": "Hiện diện",
+  "attendance.absent": "Vắng không phép",
+  "attendance.excused": "Vắng có phép",
   "attendance.saveAll": "Lưu tất cả",
 
   "exam.title": "Tiêu đề bài kiểm tra",
