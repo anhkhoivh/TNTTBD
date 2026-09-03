@@ -37,6 +37,7 @@ public class ExamQueryService : IExamQueryService
             .Where(cy => cy.CatechismClassId == examHeader.CatechismClassId && cy.Status == EnrollmentStatus.Active)
             .AsNoTracking()
             .Select(cy => new { cy.Id, cy.EucharisticYouth.Code, cy.EucharisticYouth.FullName })
+            .OrderBy(cy => cy.FullName.GivenName).ThenBy(cy => cy.FullName.FamilyName)
             .ToListAsync(cancellationToken);
 
         var flatResults = enrollments.Select(e =>
