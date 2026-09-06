@@ -1,7 +1,6 @@
-import { Component, inject, signal , ChangeDetectionStrategy, effect} from '@angular/core';
+import { Component, inject, signal , ChangeDetectionStrategy, effect, computed} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { of, switchMap, catchError } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,13 +9,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ApiService } from '../../core/services/api.service';
-import { AuthService } from '../../core/auth/auth.service';
 import {
-  CatechistCurrentClass,
   EucharisticYouth,
   PaginatedResult,
 } from '../../shared/models';
-import { UserRole } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
@@ -54,7 +50,6 @@ function emptyPage<T>(): PaginatedResult<T> {
 })
 export class YouthList {
   private api = inject(ApiService);
-  private auth = inject(AuthService);
 
   protected data = signal<PaginatedResult<EucharisticYouth>>({
     items: [],
@@ -63,22 +58,22 @@ export class YouthList {
     pageSize: 50,
   });
 
-  protected displayedColumns = ['code', 'fullName', 'dateOfBirth', 'gender', 'actions'];
+  protected displayedColumns = ['code', 'fullName', 'dateOfBirth', 'gender'];
   protected searchQuery = signal<string>('');
+  protected params = computed(() => ({
+    search: this.searchQuery(),
+    page: this.data().page,
+    pageSize: this.data().pageSize
+  }));
 
   constructor() {
-    effect(() => {
-      this.loadData();
-    });
+    this.loadData();
   }
 
   private loadData() {
+    const p = this.params();
     this.api
-      .list<EucharisticYouth>('/youths', {
-        search: this.searchQuery(),
-        page: this.data().page,
-        pageSize: this.data().pageSize
-      })
+      .list<EucharisticYouth>('/youths', p)
       .subscribe(result => this.data.set(result));
   }
   
@@ -88,6 +83,15 @@ export class YouthList {
       page: event.pageIndex + 1,
       pageSize: event.pageSize
     }));
+    this.loadData();
   }
   
+  onSearch(query: string) {
+    this.searchQuery.set(query);
+    this.data.update(d => ({
+      ...d,
+      page: 1,
+    }));
+    this.loadData();
+  }
 }

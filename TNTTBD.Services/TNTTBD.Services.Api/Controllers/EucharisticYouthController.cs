@@ -198,11 +198,6 @@ public class EucharisticYouthController : Controller
     [HttpGet("enrollments")]
     public async Task<IActionResult> GetEnrollments([FromQuery] Guid youthId, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessYouthAsync(youthId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         List<CatechismClassEucharisticYouthDto> result = await _mediator.Send(
             new GetCatechismClassEucharisticYouthsByYouthQuery(youthId), cancellationToken);
         return Ok(result);
@@ -211,11 +206,6 @@ public class EucharisticYouthController : Controller
     [HttpGet("contacts")]
     public async Task<IActionResult> GetContacts([FromQuery] Guid youthId, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessYouthAsync(youthId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         List<EucharisticYouthContactDto> result = await _mediator.Send(
             new GetEucharisticYouthContactsQuery(youthId), cancellationToken);
         return Ok(result);
