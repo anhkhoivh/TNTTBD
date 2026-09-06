@@ -1,4 +1,5 @@
 using TNTTBD.Services.Domain.Enums;
+using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Application.Auth.DTOs;
 
@@ -12,4 +13,5 @@ public class UserDto
     public Guid? CatechistId { get; set; }
     public Guid? EucharisticYouthId { get; set; }
     public Guid? ContactId { get; set; }
+    public FullName? FullName { get; set; }
 }

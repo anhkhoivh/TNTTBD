@@ -1,4 +1,5 @@
 import { UserRole } from '../enums';
+import { FullName } from './common.model';
 
 export interface UserExternalLogin {
   id: string;
@@ -17,4 +18,5 @@ export interface User {
   eucharisticYouthId?: string | null;
   contactId?: string | null;
   externalLogins?: UserExternalLogin[];
+  fullName?: FullName | null;
 }

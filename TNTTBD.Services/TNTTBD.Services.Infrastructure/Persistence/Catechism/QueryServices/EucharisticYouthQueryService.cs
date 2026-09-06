@@ -24,6 +24,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
             .Select(entity => new EucharisticYouthDto
             {
                 Id = entity.Id,
+                Code = entity.Code,
                 FullName = entity.FullName,
                 DateOfBirth = entity.DateOfBirth,
                 IsMale = entity.IsMale,
@@ -110,6 +111,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
             .Select(entity => new EucharisticYouthDto
             {
                 Id = entity.Id,
+                Code = entity.Code,
                 FullName = entity.FullName,
                 DateOfBirth = entity.DateOfBirth,
                 IsMale = entity.IsMale,

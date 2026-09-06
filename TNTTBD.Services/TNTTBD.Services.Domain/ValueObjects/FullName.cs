@@ -78,7 +78,7 @@ public class FullName : ValueObject
             .Where(x => x != null));
     }
 
-    private static string Normalize(string value)
+    private string Normalize(string value)
     {
         return value.Trim();
     }
