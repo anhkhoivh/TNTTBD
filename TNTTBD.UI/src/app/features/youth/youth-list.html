@@ -2,7 +2,7 @@
   <mat-form-field appearance="outline">
     <mat-icon matPrefix>search</mat-icon>
     <mat-label>{{ 'common.search' | t }}</mat-label>
-    <input matInput [(ngModel)]="searchQuery" placeholder="...">
+    <input matInput [(ngModel)]="searchQuery" (ngModelChange)="onSearch($event)" placeholder="...">
   </mat-form-field>
 </div>
 
