@@ -7,6 +7,10 @@ import {
   ReactiveFormsModule,
   NG_VALUE_ACCESSOR,
   Validators,
+  Validator,
+  AbstractControl,
+  ValidationErrors,
+  NG_VALIDATORS,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -33,6 +37,11 @@ import { PatronSaint } from '../models';
       useExisting: forwardRef(() => PatronSaintInput),
       multi: true,
     },
+    {
+    provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => PatronSaintInput),
+      multi: true,
+    },
   ],
   template: `
     <div class="patron-list">
@@ -41,7 +50,7 @@ import { PatronSaint } from '../models';
         <div class="patron-row" [formGroup]="asGroup(ctrl)">
           <mat-form-field appearance="outline">
             <mat-label>{{ 'patron.name' | t }}</mat-label>
-            <input matInput formControlName="saintName" />
+            <input matInput formControlName="saintName" required />
           </mat-form-field>
           <mat-form-field appearance="outline" class="narrow">
             <mat-label>{{ 'patron.day' | t }}</mat-label>
@@ -85,7 +94,7 @@ import { PatronSaint } from '../models';
 
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PatronSaintInput implements ControlValueAccessor {
+export class PatronSaintInput implements ControlValueAccessor, Validator {
   private fb = inject(FormBuilder);
 
   saints = new FormArray<ReturnType<typeof this.makeGroup>>([]);
@@ -144,5 +153,17 @@ export class PatronSaintInput implements ControlValueAccessor {
 
   setDisabledState(disabled: boolean): void {
     disabled ? this.saints.disable() : this.saints.enable();
+  }
+  validate(control: AbstractControl): ValidationErrors | null {
+    if (this.saints.length === 0) {
+      return null;
+    }
+
+    const invalid = this.saints.controls.some(group => group.invalid);
+    if (invalid) {
+      return { invalidSaint: true };
+    }
+
+    return null;
   }
 }

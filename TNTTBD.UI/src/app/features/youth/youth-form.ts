@@ -31,6 +31,7 @@ import { ContactRelationType, MilestoneType, UserRole } from '../../shared/enums
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../shared/components/patron-saint-input';
 import { PhotoUpload } from '../../shared/components/photo-upload';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-youth-form',
@@ -65,6 +66,7 @@ export class YouthForm {
   private api = inject(ApiService);
   private notify = inject(NotificationService);
   private auth = inject(AuthService);
+  private translate = inject(TranslationService);
 
   protected readonly UserRole = UserRole;
 
@@ -247,7 +249,7 @@ export class YouthForm {
     req$.subscribe({
       next: (res: any) => {
         this.loading.set(false);
-        this.notify.success('Saved');
+        this.notify.success(this.translate.t('common.saved'));
         if (this.editId != null) {
           this.router.navigate(['/app/youth/detail'], {queryParams: { id: this.editId}});
         }
@@ -258,7 +260,7 @@ export class YouthForm {
       },
       error: () => {
         this.loading.set(false);
-        this.notify.error('Save failed');
+        this.notify.error(this.translate.t('common.saveFailed'));
       },
     });
   }

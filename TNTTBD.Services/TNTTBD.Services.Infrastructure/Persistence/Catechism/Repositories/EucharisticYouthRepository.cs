@@ -29,7 +29,10 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
     /// <inheritdoc />
     public async Task Update(Guid id, FullName fullName, DateOnly dateOfBirth, string? address, bool isMale, IReadOnlyCollection<PatronSaint>? patronSaints, IReadOnlyCollection<SpiritualMilestone>? milestones, CancellationToken cancellationToken)
     {
-        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths.FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
+        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
+            .Include(y => y.SpiritualMilestones)
+            .Include(y => y.Photos)
+            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (youthEntity == null)
         {
             throw new DomainException(DomainErrors.ValidationNotFound);

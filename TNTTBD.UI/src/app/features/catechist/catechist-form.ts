@@ -137,7 +137,7 @@ export class CatechistForm {
       },
       error: () => {
         this.loading.set(false);
-        this.notify.error('Save failed');
+        this.notify.error(this.translate.t('common.saveFailed'));
       },
     });
   }

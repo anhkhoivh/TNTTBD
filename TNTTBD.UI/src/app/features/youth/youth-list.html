@@ -1,3 +1,11 @@
+<div class="toolbar">  
+  <mat-form-field appearance="outline">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>{{ 'common.search' | t }}</mat-label>
+    <input matInput [(ngModel)]="searchQuery" placeholder="...">
+  </mat-form-field>
+</div>
+
 <mat-card>
   <mat-card-header>
     <mat-card-title>{{ 'youth.list' | t }}</mat-card-title>
@@ -55,7 +63,8 @@
         [pageSize]="data().pageSize"
         [pageIndex]="data().page - 1"
         [pageSizeOptions]="[10, 25, 50, 100]"
-        aria-label="Select page">
+        aria-label="Select page"
+        (page)="onPageChange($event)">
       </mat-paginator>
     }
 

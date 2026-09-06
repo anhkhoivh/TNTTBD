@@ -25,7 +25,7 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users
             .AsNoTracking()
-            .Where(u => u.Email == email)
+            .Where(u => u.Email.ToLower() == email.ToLower())
             .Select(u => new UserDto
             {
                 Id = u.Id,
@@ -35,7 +35,12 @@ public class UserRepository : IUserRepository
                 UserRole = u.Role,
                 CatechistId = u.CatechistId,
                 EucharisticYouthId = u.EucharisticYouthId,
-                ContactId = u.ContactId
+                ContactId = u.ContactId,
+                FullName = u.CatechistId != null ? u.Catechist.FullName
+                    : u.EucharisticYouthId != null ? u.EucharisticYouth.FullName
+                    : u.ContactId != null ? u.Contact.FullName
+                    : null
+
             })
             .FirstOrDefaultAsync(cancellationToken);
     }

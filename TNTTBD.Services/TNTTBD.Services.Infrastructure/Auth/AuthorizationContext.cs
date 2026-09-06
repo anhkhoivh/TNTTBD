@@ -115,8 +115,7 @@ public class AuthorizationContext : IAuthorizationContext
 
             return await _dbContext.CatechismClassEucharisticYouths
                 .AnyAsync(cy => cy.EucharisticYouthId == youthId
-                    && catechistClassIds.Contains(cy.CatechismClassId)
-                    && cy.Status == EnrollmentStatus.Active,
+                    && catechistClassIds.Contains(cy.CatechismClassId),
                     cancellationToken);
         }
 

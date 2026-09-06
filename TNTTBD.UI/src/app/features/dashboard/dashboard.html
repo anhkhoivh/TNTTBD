@@ -1,5 +1,5 @@
 <div class="dashboard">
-  <h1>{{ 'dashboard.welcome' | t }}, {{ auth.currentUser()?.userName }}</h1>
+  <h1>{{ 'dashboard.welcome' | t }}, {{ auth.currentUser()?.fullName?.givenName }}</h1>
 
   @if (isAdminOrCatechist() && adminTotals(); as t) {
   <div class="card-grid">

@@ -1,4 +1,4 @@
-import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject, signal , ChangeDetectionStrategy, effect} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { of, switchMap, catchError } from 'rxjs';
@@ -22,6 +22,7 @@ import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
 
 import { EmptyState } from '../../shared/components/empty-state';
+import { FormsModule } from '@angular/forms';
 
 function emptyPage<T>(): PaginatedResult<T> {
   return { items: [], total: 0, page: 1, pageSize: 50 };
@@ -44,6 +45,7 @@ function emptyPage<T>(): PaginatedResult<T> {
     FullNamePipe,
     DateLocalePipe,
     EmptyState,
+    FormsModule
   ],
   templateUrl: './youth-list.html',
   styleUrl: './youth-list.scss',
@@ -62,32 +64,30 @@ export class YouthList {
   });
 
   protected displayedColumns = ['code', 'fullName', 'dateOfBirth', 'gender', 'actions'];
-
-  /** Catechist's current class ID (needed by youth-form for "add to my class") */
-  protected myCurrentClassId = signal<string | null>(null);
+  protected searchQuery = signal<string>('');
 
   constructor() {
-    const user = this.auth.currentUser();
-    if (user?.userRole === UserRole.Catechist && user.catechistId) {
-      // Catechist: load only youth in their current-year class
-      this.api
-        .get<CatechistCurrentClass | null>('/catechists/current-class')
-        .pipe(
-          switchMap((current) => {
-            if (!current) {
-              return of(emptyPage<EucharisticYouth>());
-            }
-            this.myCurrentClassId.set(current.classId);
-            return this.api.list<EucharisticYouth>('/youths', { classId: current.classId });
-          }),
-          catchError(() => of(emptyPage<EucharisticYouth>())),
-        )
-        .subscribe((result) => this.data.set(result));
-    } else {
-      // Admin: load all youth
-      this.api
-        .list<EucharisticYouth>('/youths')
-        .subscribe((result) => this.data.set(result));
-    }
+    effect(() => {
+      this.loadData();
+    });
   }
+
+  private loadData() {
+    this.api
+      .list<EucharisticYouth>('/youths', {
+        search: this.searchQuery(),
+        page: this.data().page,
+        pageSize: this.data().pageSize
+      })
+      .subscribe(result => this.data.set(result));
+  }
+  
+  onPageChange(event: PageEvent) {
+    this.data.update(d => ({
+      ...d,
+      page: event.pageIndex + 1,
+      pageSize: event.pageSize
+    }));
+  }
+  
 }
