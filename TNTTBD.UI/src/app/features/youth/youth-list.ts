@@ -58,7 +58,7 @@ export class YouthList {
     pageSize: 50,
   });
 
-  protected displayedColumns = ['code', 'fullName', 'dateOfBirth', 'gender', 'actions'];
+  protected displayedColumns = ['code', 'fullName', 'dateOfBirth', 'gender'];
   protected searchQuery = signal<string>('');
   protected params = computed(() => ({
     search: this.searchQuery(),
