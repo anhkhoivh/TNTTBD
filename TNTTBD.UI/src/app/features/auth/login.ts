@@ -38,7 +38,7 @@ export class Login {
 
   private fb = inject(FormBuilder);
   protected form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    identifier: ['', [Validators.required]],
     password: ['', [Validators.required]],
   });
   protected loading = signal(false);
@@ -51,8 +51,8 @@ export class Login {
     }
     this.loading.set(true);
     this.error.set(null);
-    const { email, password } = this.form.getRawValue();
-    this.auth.login(email, password).subscribe({
+    const { identifier, password } = this.form.getRawValue();
+    this.auth.login(identifier, password).subscribe({
       next: () => {
         this.loading.set(false);
         this.router.navigate(['/app/dashboard']);

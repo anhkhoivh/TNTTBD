@@ -44,7 +44,7 @@ public class SsoCallbackHandler : IRequestHandler<SsoCallbackCommand, LoginRespo
         else
         {
             // Try to find user by email and auto-link
-            user = await _userRepository.GetByEmailAsync(userInfo.Email, cancellationToken);
+            user = await _userRepository.GetByIdentifierAsync(userInfo.Email, cancellationToken);
 
             if (user == null)
             {

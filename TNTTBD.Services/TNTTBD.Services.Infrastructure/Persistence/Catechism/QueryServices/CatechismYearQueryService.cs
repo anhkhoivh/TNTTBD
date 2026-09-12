@@ -33,7 +33,7 @@ public class CatechismYearQueryService : ICatechismYearQueryService
             .Select(entity => new CatechismYearDto
             {
                 Id = entity.Id,
-                Title = $"{entity.StartDate.Year}-{entity.EndDate.Year}",
+                Title = $"{entity.StartDate.Year} - {entity.EndDate.Year}",
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 Theme = entity.Theme,
@@ -43,7 +43,7 @@ public class CatechismYearQueryService : ICatechismYearQueryService
                     ClassName = e.ClassName,
                     ClassCode = e.ClassCode,
                     CatechismYearId = e.CatechismYearId,
-                    CatechismYearTitle = $"{e.CatechismYear.StartDate.Year}-{e.CatechismYear.EndDate.Year}"
+                    CatechismYearTitle = $"{e.CatechismYear.StartDate.Year} - {e.CatechismYear.EndDate.Year}"
                 }).ToList()
             })
             .AsNoTracking()
@@ -68,7 +68,7 @@ public class CatechismYearQueryService : ICatechismYearQueryService
             .Select(entity => new CatechismYearDto
             {
                 Id = entity.Id,
-                Title = $"{entity.StartDate.Year}-{entity.EndDate.Year}",
+                Title = $"{entity.StartDate.Year} - {entity.EndDate.Year}",
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
                 Theme = entity.Theme,
@@ -78,7 +78,7 @@ public class CatechismYearQueryService : ICatechismYearQueryService
                     ClassName = e.ClassName,
                     ClassCode = e.ClassCode,
                     CatechismYearId = e.CatechismYearId,
-                    CatechismYearTitle = $"{e.CatechismYear.StartDate.Year}-{e.CatechismYear.EndDate.Year}"
+                    CatechismYearTitle = $"{e.CatechismYear.StartDate.Year} - {e.CatechismYear.EndDate.Year}"
                 }).ToList()
             })
             .ToListAsync(cancellationToken);

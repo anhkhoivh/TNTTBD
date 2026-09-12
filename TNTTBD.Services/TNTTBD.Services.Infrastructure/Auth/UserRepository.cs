@@ -21,11 +21,13 @@ public class UserRepository : IUserRepository
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<UserDto?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<UserDto?> GetByIdentifierAsync(string identifier, CancellationToken cancellationToken)
     {
         return await _context.Users
             .AsNoTracking()
-            .Where(u => u.Email.ToLower() == email.ToLower())
+            .Where(u =>
+                u.Email.ToLower() == identifier.ToLower() ||
+                u.UserName == identifier)
             .Select(u => new UserDto
             {
                 Id = u.Id,
@@ -64,11 +66,14 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<bool> ValidatePasswordAsync(string email, string password, CancellationToken cancellationToken)
+    public async Task<bool> ValidatePasswordAsync(string identifier, string password, CancellationToken cancellationToken)
     {
         var user = await _context.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower(), cancellationToken);
+            .FirstOrDefaultAsync(u =>
+                u.Email.ToLower() == identifier.ToLower() ||
+                u.UserName == identifier,
+                cancellationToken);
 
         if (user?.PasswordHash == null)
             return false;

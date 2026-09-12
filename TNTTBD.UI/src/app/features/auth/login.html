@@ -8,12 +8,13 @@
 
       <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>{{ 'auth.email' | t }}</mat-label>
+          <mat-label>{{ 'auth.identifier' | t }}</mat-label>
           <input
             matInput
-            type="email"
-            formControlName="email"
+            type="text"
+            formControlName="identifier"
             required
+            placeholder="Không cần @mail.com"
           />
         </mat-form-field>
 
