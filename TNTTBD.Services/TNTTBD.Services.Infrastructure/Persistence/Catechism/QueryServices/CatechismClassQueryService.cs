@@ -26,7 +26,7 @@ public class CatechismClassQueryService : ICatechismClassQueryService
                 ClassName = entity.ClassName,
                 ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
-                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}",
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year} - {entity.CatechismYear.EndDate.Year}",
                 ActiveTotal = entity.CatechismClassEucharisticYouths.Count(cy => cy.Status == EnrollmentStatus.Active)
             })
             .AsNoTracking()
@@ -44,7 +44,7 @@ public class CatechismClassQueryService : ICatechismClassQueryService
                 ClassName = entity.ClassName,
                 ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
-                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}",
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year} - {entity.CatechismYear.EndDate.Year}",
                 ActiveTotal = entity.CatechismClassEucharisticYouths.Count(cy => cy.Status == EnrollmentStatus.Active)
             })
             .AsNoTracking()
@@ -74,7 +74,7 @@ public class CatechismClassQueryService : ICatechismClassQueryService
                 ClassName = entity.ClassName,
                 ClassCode = entity.ClassCode,
                 CatechismYearId = entity.CatechismYearId,
-                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year}-{entity.CatechismYear.EndDate.Year}",
+                CatechismYearTitle = $"{entity.CatechismYear.StartDate.Year} - {entity.CatechismYear.EndDate.Year}",
                 ActiveTotal = entity.CatechismClassEucharisticYouths.Count(cy => cy.Status == EnrollmentStatus.Active)
             })
             .ToListAsync(cancellationToken);

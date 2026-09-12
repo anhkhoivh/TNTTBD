@@ -18,11 +18,11 @@ public class LoginHandler : IRequestHandler<LoginCommand, LoginResponse>
 
     public async Task<LoginResponse> Handle(LoginCommand command, CancellationToken cancellationToken)
     {
-        bool valid = await _userRepository.ValidatePasswordAsync(command.Email, command.Password, cancellationToken);
+        bool valid = await _userRepository.ValidatePasswordAsync(command.Identifier, command.Password, cancellationToken);
         if (!valid)
             throw new UnauthorizedAccessException("Invalid email or password.");
 
-        var user = await _userRepository.GetByEmailAsync(command.Email, cancellationToken)
+        var user = await _userRepository.GetByIdentifierAsync(command.Identifier, cancellationToken)
             ?? throw new UnauthorizedAccessException("User not found.");
 
         if (!user.IsActive)

@@ -56,7 +56,7 @@
   "landing.signIn": "Sign in",
   "landing.registerYouth": "Register a new youth",
 
-  "auth.email": "Email",
+  "auth.identifier": "Email or Username",
   "auth.password": "Password",
   "auth.signIn": "Sign in",
   "auth.signInWithGoogle": "Sign in with Google",

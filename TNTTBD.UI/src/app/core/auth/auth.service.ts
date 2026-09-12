@@ -55,9 +55,9 @@ export class AuthService {
       .pipe(tap((res) => this.applyLogin(res)));
   }
 
-  login(email: string, password: string): Observable<LoginResponse> {
+  login(identifier: string, password: string): Observable<LoginResponse> {
     return this.http
-      .post<LoginResponse>(`${environment.apiBaseUrl}/auth/login`, { email, password })
+      .post<LoginResponse>(`${environment.apiBaseUrl}/auth/login`, { identifier, password })
       .pipe(tap((res) => this.applyLogin(res)));
   }
 

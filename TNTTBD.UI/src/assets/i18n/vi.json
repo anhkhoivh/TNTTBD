@@ -56,7 +56,7 @@
   "landing.signIn": "Đăng nhập",
   "landing.registerYouth": "Ghi danh thiếu nhi mới",
 
-  "auth.email": "Email",
+  "auth.identifier": "Email hoặc Tên đăng nhập",
   "auth.password": "Mật khẩu",
   "auth.signIn": "Đăng nhập",
   "auth.signInWithGoogle": "Đăng nhập bằng Google",
@@ -134,7 +134,7 @@
   "class.noActiveYouth": "Không có thiếu nhi đang học trong lớp này.",
   "class.addExistingYouth": "Thêm thiếu nhi hiện có",
   "class.addNewYouth": "Thiếu nhi mới",
-  "class.searchYouth": "Tìm thiếu nhi theo tên hoặc mã",
+  "class.searchYouth": "Tìm thiếu nhi theo tên hoặc mã số",
   "class.youthEnrolled": "Đã ghi danh thiếu nhi vào lớp.",
   "class.total": "Sĩ số",
 
@@ -167,7 +167,7 @@
   "catechistRole.Assistance": "Phụ tá",
   "catechist.classHistory": "Lịch sử lớp",
   "catechist.create": "Tạo Giáo Lý Viên",
-  "catechist.edit": "Sửa Giáo Lý Viên",
+  "catechist.edit": "Sửa thông tin",
   "catechist.assign": "Phân công GLV",
   "catechist.selectCatechist": "Tìm Giáo Lý Viên",
   "catechist.role": "Vai trò",
