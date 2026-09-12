@@ -66,7 +66,7 @@
   "auth.signingIn": "Đang đăng nhập...",
   "auth.backToLogin": "Quay lại đăng nhập",
 
-  "youth.code": "Mã thiếu nhi",
+  "youth.code": "Mã số thiếu nhi",
   "youth.fullName": "Họ và tên",
   "youth.dateOfBirth": "Ngày sinh",
   "youth.gender": "Giới tính",
@@ -118,7 +118,7 @@
   "class.theme": "Chủ đề",
   "class.startDate": "Ngày bắt đầu",
   "class.endDate": "Ngày kết thúc",
-  "class.enrolled": "Thiếu nhi đã ghi danh",
+  "class.enrolled": "Thiếu nhi",
   "class.catechists": "Giáo Lý Viên",
   "class.sessions": "Buổi học",
   "class.exams": "Bài kiểm tra",
