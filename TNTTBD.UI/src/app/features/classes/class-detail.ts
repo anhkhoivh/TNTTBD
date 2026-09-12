@@ -20,8 +20,6 @@ import {
   CatechismClassCatechist,
   CatechismClassEucharisticYouth,
   CatechismSession,
-  Catechist,
-  EucharisticYouth,
   Exam,
   PaginatedResult,
 } from '../../shared/models';

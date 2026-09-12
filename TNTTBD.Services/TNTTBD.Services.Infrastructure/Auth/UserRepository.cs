@@ -36,9 +36,9 @@ public class UserRepository : IUserRepository
                 CatechistId = u.CatechistId,
                 EucharisticYouthId = u.EucharisticYouthId,
                 ContactId = u.ContactId,
-                FullName = u.CatechistId != null ? u.Catechist.FullName
-                    : u.EucharisticYouthId != null ? u.EucharisticYouth.FullName
-                    : u.ContactId != null ? u.Contact.FullName
+                FullName = u.CatechistId != null ? u.Catechist!.FullName
+                    : u.EucharisticYouthId != null ? u.EucharisticYouth!.FullName
+                    : u.ContactId != null ? u.Contact!.FullName
                     : null
 
             })
@@ -68,7 +68,7 @@ public class UserRepository : IUserRepository
     {
         var user = await _context.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower(), cancellationToken);
 
         if (user?.PasswordHash == null)
             return false;
