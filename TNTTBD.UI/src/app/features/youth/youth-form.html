@@ -147,7 +147,7 @@
       </mat-card-header>
       <mat-card-content>
         <div formArrayName="contacts">
-          @for (c of contacts.controls; track $index; let i = $index) {
+          @for (c of contacts.controls; track c.value.id; let i = $index) {
             <div [formGroupName]="i" class="contact-card">
               <div class="contact-header">
                 <mat-form-field appearance="outline" class="relation-field">
@@ -216,7 +216,7 @@
   }
 
   <div class="actions mt-16">
-    <a mat-button routerLink="/app/youth">{{ 'common.cancel' | t }}</a>
+    <a mat-button (click)="navigateBack()">{{ 'common.cancel' | t }}</a>
     <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading()">
       {{ 'common.save' | t }}
     </button>

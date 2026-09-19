@@ -57,6 +57,7 @@
   "landing.registerYouth": "Ghi danh thiếu nhi mới",
 
   "auth.identifier": "Email hoặc Tên đăng nhập",
+  "auth.email": "Email",
   "auth.password": "Mật khẩu",
   "auth.signIn": "Đăng nhập",
   "auth.signInWithGoogle": "Đăng nhập bằng Google",
@@ -222,7 +223,7 @@
   "password.reset": "Đặt lại mật khẩu",
   "password.resetSuccess": "Đã đặt lại mật khẩu.",
 
-  "error.generic": "Đã xảy ra lỗi. Vui lòng thử lại.",
+  "error.generic": "Đã xảy ra lỗi.",
   "error.network": "Không thể kết nối máy chủ.",
   "error.unauthorized": "Bạn chưa đăng nhập.",
   "error.forbidden": "Bạn không có quyền truy cập.",
