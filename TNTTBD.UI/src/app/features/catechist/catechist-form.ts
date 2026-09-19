@@ -1,5 +1,5 @@
-import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { switchMap, of } from 'rxjs';
@@ -24,7 +24,6 @@ import { TranslationService } from '../../core/i18n/translation.service';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
@@ -50,6 +49,7 @@ export class CatechistForm {
   private notify = inject(NotificationService);
   private auth = inject(AuthService);
   private translate = inject(TranslationService);
+  #location = inject(Location);
 
   protected loading = signal(false);
   protected isEdit = signal(false);
@@ -127,17 +127,10 @@ export class CatechistForm {
       next: (res: any) => {
         this.loading.set(false);
         this.notify.success(this.translate.t('common.saved'));
-        if (this.editId != null) {
-          this.router.navigate(['/app/catechists/detail'], {queryParams: { id: this.editId}});
-        }
-        else {
-          const newId = res;
-          this.router.navigate(['/app/catechists/detail', newId]);
-        }
+        this.navigateBack();
       },
       error: () => {
         this.loading.set(false);
-        this.notify.error(this.translate.t('common.saveFailed'));
       },
     });
   }
@@ -152,5 +145,9 @@ export class CatechistForm {
 
   protected onPhotoUploaded(): void {
     this.notify.success('photo.uploaded');
+  }
+
+  navigateBack(): void {
+    this.#location.back();
   }
 }

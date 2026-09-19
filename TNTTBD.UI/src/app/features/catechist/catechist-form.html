@@ -65,7 +65,7 @@
   }
 
   <div class="actions mt-16">
-    <a mat-button routerLink="/app/catechists">{{ 'common.cancel' | t }}</a>
+    <a mat-button (click)="navigateBack()">{{ 'common.cancel' | t }}</a>
     <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading()">
       {{ 'common.save' | t }}
     </button>

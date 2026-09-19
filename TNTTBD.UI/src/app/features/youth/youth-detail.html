@@ -154,7 +154,7 @@
 </mat-tab-group>
 
 <div class="mt-16">
-  <a mat-button routerLink="/app/youth"><mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}</a>
+  <a mat-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}</a>
   <a mat-stroked-button [routerLink]="['/app/youth/edit']" [queryParams]="{ id: d.id }">
     <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
   </a>

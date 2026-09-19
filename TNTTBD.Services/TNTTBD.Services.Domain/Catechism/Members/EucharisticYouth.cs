@@ -65,7 +65,7 @@ public class EucharisticYouth : Member
     /// </summary>
     public void UpdateMilestoneList(IReadOnlyCollection<SpiritualMilestone> milestones)
     {
-        if (milestones.Any(m => m.Type == MilestoneType.Baptism) == false)
+        if (milestones.Count > 0 && milestones.Any(m => m.Type == MilestoneType.Baptism) == false)
         {
             throw new DomainException(DomainErrors.NotBaptised);
         }

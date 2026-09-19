@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   FormBuilder,
@@ -103,6 +103,7 @@ export class YouthForm {
   protected isCatechist = signal(false);
   // Set when navigating from class-detail with ?classId=
   protected enrollInClassId = signal<string | null>(null);
+  #location = inject(Location);
 
   protected form = this.fb.group({
     givenName: ['', Validators.required],
@@ -250,29 +251,18 @@ export class YouthForm {
       next: (res: any) => {
         this.loading.set(false);
         this.notify.success(this.translate.t('common.saved'));
-        if (this.editId != null) {
-          this.router.navigate(['/app/youth/detail'], {queryParams: { id: this.editId}});
-        }
-        else {
-          const newId = res;
-          this.router.navigate(['/app/youth/detail'], {queryParams: { id: newId}});
-        }
+        this.navigateBack();
       },
       error: () => {
         this.loading.set(false);
-        this.notify.error(this.translate.t('common.saveFailed'));
+        this.navigateBack();
       },
     });
   }
 
 
-  private navigateBack(): void {
-    const classId = this.enrollInClassId();
-    if (classId) {
-      this.router.navigate(['/app/classes/detail'], { queryParams: { id: classId } });
-    } else {
-      this.router.navigate(['/app/youth']);
-    }
+  navigateBack(): void {
+    this.#location.back();
   }
 
   private makeContact(
@@ -285,6 +275,7 @@ export class YouthForm {
     email = '',
   ) {
     return this.fb.group({
+      id: [crypto.randomUUID()],
       relationType: [relationType, Validators.required],
       christName: [christName],
       familyName: [familyName],

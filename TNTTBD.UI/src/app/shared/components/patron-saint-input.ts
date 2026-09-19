@@ -1,16 +1,16 @@
-import { Component, forwardRef, inject , ChangeDetectionStrategy} from '@angular/core';
+import { Component, forwardRef, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ControlValueAccessor,
-  FormBuilder,
-  FormArray,
-  ReactiveFormsModule,
   NG_VALUE_ACCESSOR,
-  Validators,
+  NG_VALIDATORS,
   Validator,
   AbstractControl,
   ValidationErrors,
-  NG_VALIDATORS,
+  Validators,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -38,7 +38,7 @@ import { PatronSaint } from '../models';
       multi: true,
     },
     {
-    provide: NG_VALIDATORS,
+      provide: NG_VALIDATORS,
       useExisting: forwardRef(() => PatronSaintInput),
       multi: true,
     },
@@ -46,8 +46,8 @@ import { PatronSaint } from '../models';
   template: `
     <div class="patron-list">
       <label class="section-label">{{ 'patron.title' | t }}</label>
-      @for (ctrl of saints.controls; track $index; let i = $index) {
-        <div class="patron-row" [formGroup]="asGroup(ctrl)">
+      @for (ctrl of saints(); track $index; let i = $index) {
+        <div class="patron-row" [formGroup]="ctrl">
           <mat-form-field appearance="outline">
             <mat-label>{{ 'patron.name' | t }}</mat-label>
             <input matInput formControlName="saintName" required />
@@ -91,56 +91,47 @@ import { PatronSaint } from '../models';
       }
     `,
   ],
-
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PatronSaintInput implements ControlValueAccessor, Validator {
   private fb = inject(FormBuilder);
 
-  saints = new FormArray<ReturnType<typeof this.makeGroup>>([]);
+  saints = signal<FormGroup[]>([]);
 
-  private onChange: (val: PatronSaint[]) => void = () => {};
-  private onTouched: () => void = () => {};
-
-  constructor() {
-    this.saints.valueChanges.subscribe(() => {
-      this.onChange(this.getValue());
-    });
-  }
-
-  protected asGroup(ctrl: unknown) {
-    return ctrl as ReturnType<typeof this.makeGroup>;
-  }
+  private onChange: (val: PatronSaint[]) => void = () => { };
+  private onTouched: () => void = () => { };
 
   private makeGroup(s?: PatronSaint) {
-    return this.fb.nonNullable.group({
+    return this.fb.group({
       saintName: [s?.saintName ?? '', Validators.required],
       day: [s?.day ?? 1, [Validators.required, Validators.min(1), Validators.max(31)]],
       month: [s?.month ?? 1, [Validators.required, Validators.min(1), Validators.max(12)]],
     });
   }
 
-  private getValue(): PatronSaint[] {
-    return this.saints.controls.map((c) => c.getRawValue());
-  }
-
   add(): void {
-    this.saints.push(this.makeGroup());
+    this.saints.update(list => [...list, this.makeGroup()]);
+    this.emitValue();
     this.onTouched();
   }
 
   remove(i: number): void {
-    this.saints.removeAt(i);
+    this.saints.update(list => list.filter((_, idx) => idx !== i));
+    this.emitValue();
     this.onTouched();
   }
 
+  private emitValue() {
+    const val = this.saints().map(c => c.getRawValue() as PatronSaint);
+    this.onChange(val);
+  }
+
+  // ControlValueAccessor
   writeValue(val: PatronSaint[] | null): void {
-    this.saints.clear({ emitEvent: false });
-    if (val) {
-      for (const s of val) {
-        this.saints.push(this.makeGroup(s), { emitEvent: false });
-      }
-    }
+    if (val && val.length > 0) {
+      this.saints.set(val.map(s => this.makeGroup(s)));
+    } 
+    this.emitValue();
   }
 
   registerOnChange(fn: (val: PatronSaint[]) => void): void {
@@ -152,18 +143,12 @@ export class PatronSaintInput implements ControlValueAccessor, Validator {
   }
 
   setDisabledState(disabled: boolean): void {
-    disabled ? this.saints.disable() : this.saints.enable();
+    this.saints().forEach(c => disabled ? c.disable() : c.enable());
   }
+
+  // Validator
   validate(control: AbstractControl): ValidationErrors | null {
-    if (this.saints.length === 0) {
-      return null;
-    }
-
-    const invalid = this.saints.controls.some(group => group.invalid);
-    if (invalid) {
-      return { invalidSaint: true };
-    }
-
-    return null;
+    const invalid = this.saints().some(group => group.invalid);
+    return invalid ? { invalidSaint: true } : null;
   }
 }

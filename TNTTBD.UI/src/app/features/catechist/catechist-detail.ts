@@ -1,5 +1,5 @@
 import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, of, catchError, map } from 'rxjs';
@@ -73,6 +73,7 @@ export class CatechistDetail {
   private api = inject(ApiService);
   protected photoService = inject(PhotoService);
   private auth = inject(AuthService);
+  #location = inject(Location);
 
   protected readonly EnrollmentStatus = EnrollmentStatus;
 
@@ -128,5 +129,9 @@ export class CatechistDetail {
 
   protected enrollmentStatusKey(s: EnrollmentStatus): string {
     return `enrollment.status.${s}`;
+  }
+
+  navigateBack(): void {
+    this.#location.back();
   }
 }

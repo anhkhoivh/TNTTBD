@@ -15,6 +15,7 @@ import { CatechismSessionAttendance } from '../../shared/models';
 import { AttendanceStatus } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 interface Row {
   enrollmentId: string;
@@ -68,6 +69,7 @@ export class ClassAttendance {
   protected presentCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Present).length);
   protected absentCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Absent).length);
   protected excusedCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Excused).length);
+  #translate = inject(TranslationService);
 
   private classId: string | null = null;
   private sessionId: string | null = null;
@@ -121,11 +123,10 @@ export class ClassAttendance {
     this.api.post('/sessions/attendances', payload).subscribe({
       next: () => {
         this.saving.set(false);
-        this.notify.success('Saved');
+        this.notify.success(this.#translate.t('common.save'));
       },
       error: () => {
         this.saving.set(false);
-        this.notify.error('Save failed');
       },
     });
   }

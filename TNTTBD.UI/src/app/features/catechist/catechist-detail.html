@@ -30,13 +30,6 @@
         }
       </mat-chip-set>
       }
-      @if (canEdit) {
-      <div class="mt-16">
-        <a mat-stroked-button [routerLink]="['/app/catechists/edit']" [queryParams]="{ id: d.id }">
-          <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
-        </a>
-      </div>
-      }
 
       } @placeholder {
       <div class="p-4">
@@ -101,9 +94,14 @@
 </mat-tab-group>
 
 <div class="mt-16">
-  <a mat-button routerLink="/app/catechists">
+  <a mat-button (click)="navigateBack()">
     <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
   </a>
+  @if (canEdit) {
+    <a mat-stroked-button [routerLink]="['/app/catechists/edit']" [queryParams]="{ id: d.id }">
+      <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
+    </a>
+  }
 </div>
 } @else {
 <p>{{ 'common.loading' | t }}</p>
