@@ -1,4 +1,4 @@
-import { Component, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
@@ -9,12 +9,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { Exam } from '../../shared/models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { FormErrorsDisplayComponent } from '../../shared/components/form-errors-display.component';
+import { ClassExamResultsService } from './class-exam-results.service';
 
 @Component({
   selector: 'app-class-exam-results',
@@ -37,17 +36,17 @@ import { FormErrorsDisplayComponent } from '../../shared/components/form-errors-
   templateUrl: './class-exam-results.html',
   styleUrl: './class-exam-results.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ClassExamResultsService],
 })
 export class ClassExamResults {
   private route = inject(ActivatedRoute);
-  private api = inject(ApiService);
+  private examResultsService = inject(ClassExamResultsService);
   private notify = inject(NotificationService);
-  private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
 
-  protected loading = signal(true);
+  protected loading = computed(() => this.examResultsService.examRes.isLoading());
   protected saving = signal(false);
-  protected examTitle = signal('');
+  protected examTitle = computed(() => this.examResultsService.exam()?.title ?? '');
 
   protected displayedColumns = ['name', 'score', 'remark'];
 
@@ -63,46 +62,30 @@ export class ClassExamResults {
   private examId: string | null = null;
 
   constructor() {
-    this.route.queryParamMap.subscribe((qp) => {
-      this.classId = qp.get('classId');
-      this.examId = qp.get('examId');
-      if (!this.examId) {
-        this.loading.set(false);
-        return;
-      }
-      this.loadExam();
-    });
-  }
+    this.classId = this.route.snapshot.queryParamMap.get('classId');
+    this.examId = this.route.snapshot.queryParamMap.get('examId');
+    this.examResultsService.examId.set(this.examId);
 
-  private loadExam(): void {
-    this.api.get<Exam>('/exams/detail', { id: this.examId! }).subscribe((exam) => {
-      if (!exam) {
-        this.loading.set(false);
-        return;
-      }
-      this.examTitle.set(exam.title);
+    // Rebuild the results FormArray whenever a new exam loads (forms are imperative)
+    effect(() => {
+      const exam = this.examResultsService.exam();
+      if (!exam) return;
       const resultsFA = this.fb.array<FormGroup>([]);
-
       exam.examResults.forEach((r) => {
         resultsFA.push(
           this.fb.group({
             enrollmentId: this.fb.control(r.catechismClassEucharisticYouthId, { nonNullable: true }),
             fullName: this.fb.control(r.youthFullName),
-            score: this.fb.control(r.score, [
-              Validators.min(0),
-              Validators.max(10),
-            ]),
+            score: this.fb.control(r.score, [Validators.min(0), Validators.max(10)]),
             remark: this.fb.control(r.remark ?? '', [Validators.maxLength(500)]),
           }),
         );
       });
       this.resultsForm.setControl('results', resultsFA);
-      this.loading.set(false);
-      this.cdr.markForCheck();
     });
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     if (this.resultsForm.invalid) {
       this.resultsForm.markAllAsTouched();
       return;
@@ -116,16 +99,14 @@ export class ClassExamResults {
         remark: r.remark || null,
       })),
     };
-    this.api.post('/exams/results', payload).subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.notify.success('Saved');
-      },
-      error: () => {
-        this.saving.set(false);
-        this.notify.error('Save failed');
-      },
-    });
+    try {
+      await this.examResultsService.save(payload);
+      this.notify.success('Saved');
+    } catch {
+      this.notify.error('Save failed');
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   protected backParams() {

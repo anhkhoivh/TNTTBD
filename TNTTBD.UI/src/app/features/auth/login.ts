@@ -11,6 +11,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { AuthService } from '../../core/auth/auth.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -44,7 +45,7 @@ export class Login {
   protected loading = signal(false);
   protected error = signal<string | null>(null);
 
-  protected submit(): void {
+  protected async submit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -52,16 +53,14 @@ export class Login {
     this.loading.set(true);
     this.error.set(null);
     const { identifier, password } = this.form.getRawValue();
-    this.auth.login(identifier, password).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.router.navigate(['/app/dashboard']);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.error.set('auth.invalidCredentials');
-      },
-    });
+    try {
+      await firstValueFrom(this.auth.login(identifier, password));
+      this.router.navigate(['/app/dashboard']);
+    } catch {
+      this.error.set('auth.invalidCredentials');
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   protected loginSSO(provider: 'google' | 'microsoft'): void {

@@ -7,7 +7,7 @@
     <mat-card-content>
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>{{ 'class.selectYear' | t }}</mat-label>
-        <mat-select [ngModel]="srcYearId()" (ngModelChange)="srcYearId.set($event); srcClassId.set(null); srcYouth.set([])">
+        <mat-select [ngModel]="srcYearId()" (ngModelChange)="srcYearId.set($event); srcClassId.set(null); onSrcClassChange()">
           @for (y of years(); track y.id) {
             <mat-option [value]="y.id">{{ y.title || y.theme || y.startDate }}</mat-option>
           }
@@ -76,7 +76,7 @@
     <mat-card-content>
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>{{ 'class.selectYear' | t }}</mat-label>
-        <mat-select [ngModel]="dstYearId()" (ngModelChange)="dstYearId.set($event); dstClassId.set(null); dstYouth.set([])">
+        <mat-select [ngModel]="dstYearId()" (ngModelChange)="dstYearId.set($event); dstClassId.set(null); onDstClassChange()">
           @for (y of years(); track y.id) {
             <mat-option [value]="y.id">{{ y.title || y.theme || y.startDate }}</mat-option>
           }

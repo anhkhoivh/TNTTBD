@@ -1,4 +1,4 @@
-import { Component, inject, signal , ChangeDetectionStrategy, effect, computed} from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
@@ -8,21 +8,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { ApiService } from '../../core/services/api.service';
-import {
-  EucharisticYouth,
-  PaginatedResult,
-} from '../../shared/models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
 
 import { EmptyState } from '../../shared/components/empty-state';
 import { FormsModule } from '@angular/forms';
-
-function emptyPage<T>(): PaginatedResult<T> {
-  return { items: [], total: 0, page: 1, pageSize: 50 };
-}
+import { YouthService } from './youth.service';
 
 @Component({
   selector: 'app-youth-list',
@@ -46,52 +38,27 @@ function emptyPage<T>(): PaginatedResult<T> {
   templateUrl: './youth-list.html',
   styleUrl: './youth-list.scss',
 
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [YouthService],
 })
 export class YouthList {
-  private api = inject(ApiService);
+  private youthService = inject(YouthService);
 
-  protected data = signal<PaginatedResult<EucharisticYouth>>({
-    items: [],
-    total: 0,
-    page: 1,
-    pageSize: 50,
-  });
+  protected data = this.youthService.list;
 
   protected displayedColumns = ['code', 'fullName', 'dateOfBirth', 'gender'];
-  protected searchQuery = signal<string>('');
-  protected params = computed(() => ({
-    search: this.searchQuery(),
-    page: this.data().page,
-    pageSize: this.data().pageSize
-  }));
+  protected searchQuery = signal('');
 
-  constructor() {
-    this.loadData();
-  }
-
-  private loadData() {
-    const p = this.params();
-    this.api
-      .list<EucharisticYouth>('/youths', p)
-      .subscribe(result => this.data.set(result));
-  }
-  
   onPageChange(event: PageEvent) {
-    this.data.update(d => ({
-      ...d,
+    this.youthService.listParams.update((p) => ({
+      ...p,
       page: event.pageIndex + 1,
-      pageSize: event.pageSize
+      pageSize: event.pageSize,
     }));
-    this.loadData();
   }
-  
+
   onSearch(query: string) {
     this.searchQuery.set(query);
-    this.data.update(d => ({
-      ...d,
-      page: 1,
-    }));
-    this.loadData();
+    this.youthService.listParams.update((p) => ({ ...p, search: query, page: 1 }));
   }
 }

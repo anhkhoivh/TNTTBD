@@ -1,31 +1,20 @@
-import { Component, inject, signal , ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of, catchError, map } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
-import { ApiService } from '../../core/services/api.service';
 import { PhotoService } from '../../core/services/photo.service';
-import {
-  CatechismClass,
-  CatechismClassEucharisticYouth,
-  EucharisticYouth,
-  EucharisticYouthContact,
-  PaginatedResult,
-} from '../../shared/models';
+import { CatechismClass } from '../../shared/models';
 import { ContactRelationType, EnrollmentStatus, MilestoneType } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
-
-function emptyPage<T>(): PaginatedResult<T> {
-  return { items: [], total: 0, page: 1, pageSize: 50 };
-}
+import { YouthService } from './youth.service';
 
 @Component({
   selector: 'app-youth-detail',
@@ -47,67 +36,32 @@ function emptyPage<T>(): PaginatedResult<T> {
   templateUrl: './youth-detail.html',
   styleUrl: './youth-detail.scss',
 
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [YouthService],
 })
 export class YouthDetail {
   private route = inject(ActivatedRoute);
-  private api = inject(ApiService);
+  private youthService = inject(YouthService);
   protected photoService = inject(PhotoService);
   #location = inject(Location);
 
-  /** Initial load: youth profile only (milestones + photos embedded) */
-  protected data = toSignal(
-    this.route.queryParamMap.pipe(
-      switchMap((qp) => {
-        const id = qp.get('id');
-        if (!id) return of(null);
-        return this.api.get<EucharisticYouth>('/youths/detail', { id }).pipe(catchError(() => of(null)));
-      }),
-    ),
-    { initialValue: null },
-  );
+  constructor() {
+    const queryParamMap = toSignal(this.route.queryParamMap, { initialValue: this.route.snapshot.queryParamMap });
+    effect(() => this.youthService.detailId.set(queryParamMap().get('id')));
+  }
+
+  /** Youth profile for the active route id (milestones + photos embedded) */
+  protected data = this.youthService.detail;
 
   /** Lazy-loaded contacts tab */
-  protected contactsData = signal<PaginatedResult<EucharisticYouthContact> | null>(null);
-  private contactsLoaded = false;
+  protected contactsData = this.youthService.contacts;
 
   /** Lazy-loaded class history tab */
-  protected historyData = signal<PaginatedResult<CatechismClassEucharisticYouth> | null>(null);
-  private historyLoaded = false;
+  protected historyData = this.youthService.history;
 
   protected onTabChange(index: number): void {
-    if (index === 3 && !this.contactsLoaded) {
-      this.contactsLoaded = true;
-      this.loadContacts();
-    }
-    if (index === 4 && !this.historyLoaded) {
-      this.historyLoaded = true;
-      this.loadHistory();
-    }
-  }
-
-  private loadContacts(): void {
-    const id = this.route.snapshot.queryParamMap.get('id');
-    if (!id) return;
-    this.api
-      .get<EucharisticYouthContact[]>('/youths/contacts', { youthId: id })
-      .pipe(
-        map((items) => ({ items, total: items.length, page: 1, pageSize: items.length })),
-        catchError(() => of(emptyPage<EucharisticYouthContact>())),
-      )
-      .subscribe((data) => this.contactsData.set(data));
-  }
-
-  private loadHistory(): void {
-    const id = this.route.snapshot.queryParamMap.get('id');
-    if (!id) return;
-    this.api
-      .get<CatechismClassEucharisticYouth[]>('/youths/enrollments', { youthId: id })
-      .pipe(
-        map((items) => ({ items, total: items.length, page: 1, pageSize: items.length })),
-        catchError(() => of(emptyPage<CatechismClassEucharisticYouth>())),
-      )
-      .subscribe((data) => this.historyData.set(data));
+    if (index === 3) this.youthService.contactsActive.set(true);
+    if (index === 4) this.youthService.historyActive.set(true);
   }
 
   protected classOf(id: string, list: CatechismClass[]): CatechismClass | undefined {
