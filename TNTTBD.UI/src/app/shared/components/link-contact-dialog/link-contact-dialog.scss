@@ -1,0 +1,16 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 400px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .form {
+    min-width: 0;
+  }
+}

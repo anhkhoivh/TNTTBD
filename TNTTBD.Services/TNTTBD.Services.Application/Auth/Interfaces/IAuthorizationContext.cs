@@ -10,6 +10,9 @@ public interface IAuthorizationContext
     Task<bool> CanAccessClassAsync(Guid classId, CancellationToken cancellationToken);
     Task<bool> CanAccessYouthAsync(Guid youthId, CancellationToken cancellationToken);
     Task<bool> CanAccessCatechistAsync(Guid catechistId, CancellationToken cancellationToken);
+    Task<Guid?> GetCurrentContactIdAsync(CancellationToken cancellationToken);
+    Task<bool> CanAccessContactAsync(Guid contactId, CancellationToken cancellationToken);
+    Task<bool> CanReadYouthContactsAsync(Guid youthId, CancellationToken cancellationToken);
     Task<bool> CanWriteYearsAsync(CancellationToken cancellationToken);
     Task<bool> CanWriteClassCatechistAsync(CancellationToken cancellationToken);
 }

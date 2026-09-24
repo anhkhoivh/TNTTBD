@@ -14,12 +14,9 @@
       @if (enrollmentsRes.value(); as ed) {
       @if (canManage()) {
       <div class="tab-toolbar mt-16">
-        <button mat-flat-button color="primary" (click)="addExistingYouth(d.id)">
-          <mat-icon>person_search</mat-icon> {{ 'class.addExistingYouth' | t }}
+        <button mat-flat-button color="primary" type="button" (click)="addYouth(d.id)">
+          <mat-icon>add</mat-icon> {{ 'class.addYouth' | t }}
         </button>
-        <a mat-stroked-button [routerLink]="['/app/youth/edit']" [queryParams]="{ classId: d.id }">
-          <mat-icon>person_add</mat-icon> {{ 'class.addNewYouth' | t }}
-        </a>
       </div>
       }
       <table mat-table [dataSource]="ed.items" class="full-width mt-16">

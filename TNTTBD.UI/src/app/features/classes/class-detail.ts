@@ -1,6 +1,6 @@
 import { Component, inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -22,6 +22,11 @@ import { SessionFormDialog } from '../../shared/components/session-form-dialog';
 import { ExamFormDialog } from '../../shared/components/exam-form-dialog';
 import { CatechistAssignDialog, CatechistAssignData } from '../../shared/components/catechist-assign-dialog';
 import { EnrollYouthDialog, EnrollYouthData } from '../../shared/components/enroll-youth-dialog';
+import {
+  AddChoice,
+  AddChoiceBottomSheet,
+  AddChoiceData,
+} from '../../shared/components/add-choice-bottom-sheet/add-choice-bottom-sheet';
 import { ClassDetailService } from './class-detail.service';
 
 @Component({
@@ -50,6 +55,7 @@ import { ClassDetailService } from './class-detail.service';
 })
 export class ClassDetail {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private classDetailService = inject(ClassDetailService);
   private dialogs = inject(DialogService);
   private notify = inject(NotificationService);
@@ -114,7 +120,27 @@ export class ClassDetail {
     EnrollmentStatus.Completed,
   ];
 
-  protected async addExistingYouth(classId: string): Promise<void> {
+  protected async addYouth(classId: string): Promise<void> {
+    const choice = await this.dialogs.openBottomSheet<AddChoiceBottomSheet, AddChoiceData, AddChoice>(
+      AddChoiceBottomSheet,
+      {
+        data: {
+          titleKey: 'class.addYouth',
+          addNewLabelKey: 'class.addNewYouth',
+          addNewIcon: 'person_add',
+          linkExistingLabelKey: 'class.addExistingYouth',
+          linkExistingIcon: 'person_search',
+        },
+      },
+    );
+    if (choice === 'new') {
+      this.router.navigate(['/app/youth/edit'], { queryParams: { classId } });
+    } else if (choice === 'existing') {
+      await this.addExistingYouth(classId);
+    }
+  }
+
+  private async addExistingYouth(classId: string): Promise<void> {
     const enrolledIds = new Set(
       (this.enrollmentsRes.value()?.items ?? []).map((e) => e.eucharisticYouthId),
     );

@@ -16,7 +16,7 @@ public record CreateEucharisticYouthCommand(
     List<SpiritualMilestoneDto>? Milestones = null,
     List<YouthContactData>? Contacts = null,
     Guid? CatechismClassId = null
-) : IRequest<Guid>;
+) : IRequest<Guid?>;
 
 public record YouthContactData(
     ContactRelationType RelationType,

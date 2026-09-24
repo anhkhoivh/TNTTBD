@@ -7,4 +7,4 @@ public record AddCatechistPatronSaintCommand(
     string SaintName,
     int Day,
     int Month
-) : IRequest;
+) : IRequest<bool>;

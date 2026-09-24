@@ -1,4 +1,5 @@
 using MediatR;
+using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
 using TNTTBD.Services.Domain.Catechism.JoinModels;
 using TNTTBD.Services.Domain.Catechism.Members;
@@ -11,10 +12,11 @@ namespace TNTTBD.Services.Application.EucharisticYouths.Handlers;
 /// <summary>
 /// Create Eucharistic Youth handler
 /// </summary>
-public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYouthCommand, Guid>
+public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYouthCommand, Guid?>
 {
     #region Fields
 
+    private readonly IAuthorizationContext _authContext;
     private readonly IEucharisticYouthRepository _repository;
     private readonly IEucharisticYouthRunningNumberRepository _runningNumberRepository;
     private readonly IContactRepository _contactRepository;
@@ -26,12 +28,14 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
     #region Constructors
 
     public CreateEucharisticYouthHandler(
+        IAuthorizationContext authContext,
         IEucharisticYouthRepository repository,
         IEucharisticYouthRunningNumberRepository runningNumberRepository,
         IContactRepository contactRepository,
         IEucharisticYouthContactRepository youthContactRepository,
         ICatechismClassEucharisticYouthRepository catechismClassEucharisticYouthRepository)
     {
+        _authContext = authContext;
         _repository = repository;
         _runningNumberRepository = runningNumberRepository;
         _contactRepository = contactRepository;
@@ -43,8 +47,14 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
 
     #region Methods
 
-    public async Task<Guid> Handle(CreateEucharisticYouthCommand command, CancellationToken cancellationToken)
+    public async Task<Guid?> Handle(CreateEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
+        if (command.CatechismClassId != null &&
+            !await _authContext.CanAccessClassAsync(command.CatechismClassId.Value, cancellationToken))
+        {
+            return null;
+        }
+
         FullName fullName = new FullName(command.GivenName, command.ChristName, command.FamilyName, command.MiddleName);
         int year = DateTimeOffset.Now.Year;
         int currentNumber = await _runningNumberRepository.IncreaseRunningNumber(year, cancellationToken);

@@ -7,4 +7,4 @@ public record RemoveEucharisticYouthPatronSaintCommand(
     string SaintName,
     int Day, 
     int Month
-) : IRequest;
+) : IRequest<bool>;

@@ -12,4 +12,4 @@ public record CreateCatechistCommand(
     string? Address,
     bool IsMale,
     List<PatronSaintDto>? PatronSaints = null
-) : IRequest<Guid>;
+) : IRequest<Guid?>;

@@ -9,4 +9,6 @@ public static class DomainErrors
     public const string ValidationRequired = "validation.required";
     public const string ValidationNotFound = "validation.not_found";
     public const string ValidationAlreadyExists = "validation.already_exists";
+    public const string ContactAlreadyLinked = "contact.already_linked";
+    public const string ContactHasUserAccount = "contact.has_user_account";
 }

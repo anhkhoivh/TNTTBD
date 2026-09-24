@@ -11,4 +11,4 @@ public record RequestEucharisticYouthPhotoUploadCommand(
     PhotoPurpose Purpose,
     Guid UploadedBy,
     PhotoVisibility Visibility
-) : IRequest<PhotoReferenceDto>;
+) : IRequest<PhotoReferenceDto?>;

@@ -89,12 +89,21 @@
     <ng-template matTabContent>
       @defer {
       @if (contactsData(); as cd) {
+      @if (canAddContact()) {
+      <div class="contacts-toolbar mt-16">
+        <button mat-stroked-button type="button" (click)="addContact(d.id)">
+          <mat-icon>add</mat-icon> {{ 'contact.add' | t }}
+        </button>
+      </div>
+      }
       <mat-list class="mt-16">
         @for (yc of cd.items; track yc.id) {
         <mat-list-item>
           <mat-icon matListItemIcon>person</mat-icon>
           <span matListItemTitle>
-            @if (yc.contact) { {{ yc.contact.fullName | fullName }} }
+            @if (yc.contact) {
+            <a [routerLink]="['/app/contacts/detail']" [queryParams]="{ id: yc.contactId }">{{ yc.contact.fullName | fullName }}</a>
+            }
             @else { {{ relationKey(yc.contactRelationType) | t }} }
           </span>
           <span matListItemLine>
@@ -102,6 +111,17 @@
             @if (yc.contact?.phoneNumber) { · {{ yc.contact!.phoneNumber }} }
             @if (yc.contact?.email) { · {{ yc.contact!.email }} }
           </span>
+          @if (canManageContact(yc)) {
+          <span matListItemMeta class="contact-actions">
+            <a mat-icon-button [routerLink]="['/app/contacts/edit']" [queryParams]="{ id: yc.contactId }"
+              [attr.aria-label]="'common.edit' | t">
+              <mat-icon>edit</mat-icon>
+            </a>
+            <button mat-icon-button type="button" (click)="unlinkContact(yc)" [attr.aria-label]="'common.delete' | t">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </span>
+          }
         </mat-list-item>
         } @empty {
         <p>{{ 'common.noData' | t }}</p>

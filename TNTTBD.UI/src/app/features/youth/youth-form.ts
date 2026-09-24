@@ -21,6 +21,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { PatronSaint } from '../../shared/models';
 import { ContactRelationType, MilestoneType, UserRole } from '../../shared/enums';
+import { CONTACT_RELATION_TYPES } from '../../shared/constants/contact-relation-types';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../shared/components/patron-saint-input';
 import { PhotoUpload } from '../../shared/components/photo-upload';
@@ -74,16 +75,7 @@ export class YouthForm {
     { v: MilestoneType.Graduation, k: 'milestone.graduation' },
   ];
 
-  protected readonly relationTypes = [
-    { v: ContactRelationType.Father, k: 'contact.relation.Father' },
-    { v: ContactRelationType.Mother, k: 'contact.relation.Mother' },
-    { v: ContactRelationType.Guardian, k: 'contact.relation.Guardian' },
-    { v: ContactRelationType.Grandfather, k: 'contact.relation.Grandfather' },
-    { v: ContactRelationType.Grandmother, k: 'contact.relation.Grandmother' },
-    { v: ContactRelationType.Babysitter, k: 'contact.relation.Babysitter' },
-    { v: ContactRelationType.Sibling, k: 'contact.relation.Sibling' },
-    { v: ContactRelationType.Undefined, k: 'contact.relation.Undefined' },
-  ];
+  protected readonly relationTypes = CONTACT_RELATION_TYPES;
 
   protected readonly ContactRelationType = ContactRelationType;
 

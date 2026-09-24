@@ -8,26 +8,25 @@ using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
-public class RequestEucharisticYouthPhotoUploadHandler : IRequestHandler<RequestEucharisticYouthPhotoUploadCommand, PhotoReferenceDto>
+public class RequestEucharisticYouthPhotoUploadHandler : IRequestHandler<RequestEucharisticYouthPhotoUploadCommand, PhotoReferenceDto?>
 {
     private readonly IEucharisticYouthRepository _repository;
     private readonly IFileStorage _storage;
-    private readonly IUserRepository _userRepository;
+    private readonly IAuthorizationContext _authContext;
 
-    public RequestEucharisticYouthPhotoUploadHandler(IEucharisticYouthRepository repository, IFileStorage fileStorage, IUserRepository userRepository)
+    public RequestEucharisticYouthPhotoUploadHandler(IEucharisticYouthRepository repository, IFileStorage fileStorage, IAuthorizationContext authContext)
     {
         _repository = repository;
         _storage = fileStorage;
-        _userRepository = userRepository;
+        _authContext = authContext;
     }
 
-    public async Task<PhotoReferenceDto> Handle(RequestEucharisticYouthPhotoUploadCommand command, CancellationToken cancellationToken)
+    public async Task<PhotoReferenceDto?> Handle(RequestEucharisticYouthPhotoUploadCommand command, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdAsync(command.UploadedBy, cancellationToken)
-            ?? throw new UnauthorizedAccessException("User not found.");
-
-        if (user.UserRole != UserRole.Admin && user.EucharisticYouthId != command.EucharisticYouthId)
-            throw new UnauthorizedAccessException("You do not have permission to upload photos for this youth.");
+        if (!await _authContext.CanAccessYouthAsync(command.EucharisticYouthId, cancellationToken))
+        {
+            return null;
+        }
 
         Guid photoId = Guid.NewGuid();
 

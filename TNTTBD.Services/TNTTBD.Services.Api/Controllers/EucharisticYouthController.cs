@@ -1,10 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Queries;
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Application.Contacts.Commands;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Queries;
@@ -19,16 +19,14 @@ public class EucharisticYouthController : Controller
     #region Fields
 
     private readonly IMediator _mediator;
-    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public EucharisticYouthController(IMediator mediator, IAuthorizationContext authContext)
+    public EucharisticYouthController(IMediator mediator)
     {
         _mediator = mediator;
-        _authContext = authContext;
     }
 
     #endregion
@@ -44,15 +42,13 @@ public class EucharisticYouthController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
-        if (command.CatechismClassId != null && 
-            !await _authContext.CanAccessClassAsync(command.CatechismClassId.Value, cancellationToken))
+        Guid? id = await _mediator.Send(command, cancellationToken);
+
+        return id switch
         {
-            return Forbid();
-        }
-
-        Guid id = await _mediator.Send(command, cancellationToken);
-
-        return CreatedAtAction(nameof(GetById), new { id }, id);
+            null => Forbid(),
+            _ => CreatedAtAction(nameof(GetById), new { id }, id)
+        };
     }
 
     /// <summary>
@@ -87,25 +83,13 @@ public class EucharisticYouthController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update(UpdateEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessYouthAsync(command.EucharisticYouthId, cancellationToken))
-        {
-            return Forbid();
-        }
-
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
-        {
-            return Forbid();
-        }
-
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     /// <summary>
@@ -114,8 +98,7 @@ public class EucharisticYouthController : Controller
     [HttpPost("milestones")]
     public async Task<IActionResult> AddMilestone(AddEucharisticYouthMilestoneCommand command, CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     /// <summary>
@@ -124,15 +107,13 @@ public class EucharisticYouthController : Controller
     [HttpPut("milestones")]
     public async Task<IActionResult> UpdateMilestone(UpdateEucharisticYouthMilestoneCommand command, CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     [HttpDelete("milestones")]
     public async Task<IActionResult> RemoveMilestone(RemoveEucharisticYouthMilestoneCommand command, CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     /// <summary>
@@ -141,8 +122,7 @@ public class EucharisticYouthController : Controller
     [HttpPost("patronSaints")]
     public async Task<IActionResult> AddPatronSaint(AddEucharisticYouthPatronSaintCommand command, CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     /// <summary>
@@ -151,8 +131,7 @@ public class EucharisticYouthController : Controller
     [HttpDelete("patronSaints")]
     public async Task<IActionResult> RemovePatronSaint(RemoveEucharisticYouthPatronSaintCommand command, CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     /// <summary>
@@ -164,9 +143,9 @@ public class EucharisticYouthController : Controller
     [HttpPost("photos/upload-url")]
     public async Task<IActionResult> RequestUploadUrl(RequestEucharisticYouthPhotoUploadCommand command, CancellationToken cancellationToken)
     {
-        PhotoReferenceDto result = await _mediator.Send(command, cancellationToken);
+        PhotoReferenceDto? result = await _mediator.Send(command, cancellationToken);
 
-        return Ok(result);
+        return result == null ? Forbid() : Ok(result);
     }
 
     /// <summary>
@@ -191,8 +170,7 @@ public class EucharisticYouthController : Controller
     [HttpDelete("photos")]
     public async Task<IActionResult> RemovePhoto(RemoveEucharisticYouthPhotoCommand command, CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     [HttpGet("enrollments")]
@@ -209,6 +187,26 @@ public class EucharisticYouthController : Controller
         List<EucharisticYouthContactDto> result = await _mediator.Send(
             new GetEucharisticYouthContactsQuery(youthId), cancellationToken);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Link an existing contact to a youth
+    /// </summary>
+    [HttpPost("contacts")]
+    public async Task<IActionResult> LinkContact(LinkContactToYouthCommand command, CancellationToken cancellationToken)
+    {
+        Guid? id = await _mediator.Send(command, cancellationToken);
+
+        return id == null ? Forbid() : Ok(id);
+    }
+
+    /// <summary>
+    /// Unlink a contact from a youth (contact itself is kept)
+    /// </summary>
+    [HttpDelete("contacts")]
+    public async Task<IActionResult> UnlinkContact(UnlinkContactFromYouthCommand command, CancellationToken cancellationToken)
+    {
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     #endregion

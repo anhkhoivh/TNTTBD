@@ -81,4 +81,14 @@ export class YouthService {
     this.listRes.reload();
     if (this.detailId()) this.detailRes.reload();
   }
+
+  async linkContact(payload: { eucharisticYouthId: string; contactId: string; relationType: string }): Promise<void> {
+    await this.api.postAsync('/youths/contacts', payload);
+    this.contactsRes.reload();
+  }
+
+  async unlinkContact(id: string): Promise<void> {
+    await this.api.deleteAsync('/youths/contacts', { id });
+    this.contactsRes.reload();
+  }
 }

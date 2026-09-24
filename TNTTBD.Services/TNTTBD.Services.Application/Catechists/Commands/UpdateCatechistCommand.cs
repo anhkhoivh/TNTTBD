@@ -13,4 +13,4 @@ public record UpdateCatechistCommand(
     string? Address,
     bool IsMale,
     IReadOnlyCollection<PatronSaintDto>? PatronSaints = null
-) : IRequest;
+) : IRequest<bool>;
