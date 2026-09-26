@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { switchMap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
@@ -85,7 +85,7 @@ export class PhotoUpload {
 
   protected uploading = signal(false);
 
-  protected onFile(ev: Event): void {
+  protected async onFile(ev: Event): Promise<void> {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
     input.value = '';
@@ -108,30 +108,21 @@ export class PhotoUpload {
     };
 
     this.uploading.set(true);
-    this.api
-      .post<UploadUrlResponse>(`/${this.entityType()}/photos/upload-url`, requestBody)
-      .pipe(
-        switchMap((ref) => {
-          const form = new FormData();
-          form.append('file', file);
-          return this.http.post(ref.url, form).pipe(
-            switchMap(() => {
-              this.uploaded.emit({ photoId: ref.photoId, url: ref.url, contentType: ref.contentType });
-              return [];
-            }),
-          );
-        }),
-      )
-      .subscribe({
-        next: () => {},
-        complete: () => {
-          this.uploading.set(false);
-          this.notify.success('photo.uploaded');
-        },
-        error: () => {
-          this.uploading.set(false);
-          this.notify.error('photo.uploadFailed');
-        },
-      });
+    try {
+      const ref = await this.api.postAsync<UploadUrlResponse>(
+        `/${this.entityType()}/photos/upload-url`,
+        requestBody,
+      );
+      const form = new FormData();
+      form.append('file', file);
+      // Direct-to-storage upload: bypasses ApiService since the URL is external.
+      await firstValueFrom(this.http.post(ref.url, form));
+      this.uploaded.emit({ photoId: ref.photoId, url: ref.url, contentType: ref.contentType });
+      this.notify.success('photo.uploaded');
+    } catch {
+      this.notify.error('photo.uploadFailed');
+    } finally {
+      this.uploading.set(false);
+    }
   }
 }

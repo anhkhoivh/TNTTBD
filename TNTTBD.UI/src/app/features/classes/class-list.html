@@ -68,7 +68,10 @@
       </mat-paginator>
     }
 
-    @if (filtered().length === 0) {
+    @if (isLoading()) {
+      <mat-spinner></mat-spinner>
+    }
+    @else if (filtered().length === 0) {
       <app-empty-state 
         icon="search_off" 
         titleKey="class.noClasses" 

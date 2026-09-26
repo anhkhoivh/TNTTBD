@@ -13,11 +13,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ContactRelationType } from '../../shared/enums';
 import { TranslationService } from '../../core/i18n/translation.service';
+import { RegistrationService } from './registration.service';
 
 @Component({
   selector: 'app-register',
@@ -42,11 +42,12 @@ import { TranslationService } from '../../core/i18n/translation.service';
   templateUrl: './register.html',
   styleUrl: './register.scss',
 
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [RegistrationService],
 })
 export class RegisterPage {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private registrationService = inject(RegistrationService);
   private notify = inject(NotificationService);
   private router = inject(Router);
   private translate = inject(TranslationService);
@@ -93,7 +94,7 @@ export class RegisterPage {
     this.contacts.removeAt(i);
   }
 
-  protected submit(): void {
+  protected async submit(): Promise<void> {
     if (this.youthForm.invalid || this.contactsForm.invalid) return;
     const y = this.youthForm.getRawValue();
     const payload = {
@@ -114,17 +115,15 @@ export class RegisterPage {
       contacts: this.contacts.getRawValue(),
     };
     this.loading.set(true);
-    this.api.post('/registration/youth', payload).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.notify.success(this.translate.t('register.submitted'));
-        this.router.navigate(['/']);
-      },
-      error: (e) => {
-        this.loading.set(false);
-        this.notify.error(this.translate.t('register.failed'));
-      },
-    });
+    try {
+      await this.registrationService.submit(payload);
+      this.notify.success(this.translate.t('register.submitted'));
+      this.router.navigate(['/']);
+    } catch {
+      this.notify.error(this.translate.t('register.failed'));
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   private makeContact(contactType: ContactRelationType) {

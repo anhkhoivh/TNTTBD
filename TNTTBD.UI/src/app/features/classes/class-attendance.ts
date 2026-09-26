@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -8,14 +8,13 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { CatechismSessionAttendance } from '../../shared/models';
 import { AttendanceStatus } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { TranslationService } from '../../core/i18n/translation.service';
+import { ClassAttendanceService } from './class-attendance.service';
 
 interface Row {
   enrollmentId: string;
@@ -42,13 +41,13 @@ interface Row {
   templateUrl: './class-attendance.html',
   styleUrl: './class-attendance.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ClassAttendanceService],
 })
 export class ClassAttendance {
   private route = inject(ActivatedRoute);
-  private api = inject(ApiService);
+  private attendanceService = inject(ClassAttendanceService);
   private auth = inject(AuthService);
   private notify = inject(NotificationService);
-  private cdr = inject(ChangeDetectorRef);
 
   protected readonly statuses = [
     { v: AttendanceStatus.Present, icon: 'check_circle' },
@@ -63,7 +62,7 @@ export class ClassAttendance {
     [AttendanceStatus.None]: ''
   };
 
-  protected loading = signal(true);
+  protected loading = computed(() => this.attendanceService.sheetRes.isLoading());
   protected saving = signal(false);
   protected rows = signal<Row[]>([]);
   protected presentCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Present).length);
@@ -75,31 +74,21 @@ export class ClassAttendance {
   private sessionId: string | null = null;
 
   constructor() {
-    this.route.queryParamMap.subscribe((qp) => {
-      this.classId = qp.get('classId');
-      this.sessionId = qp.get('sessionId');
-      if (!this.sessionId) {
-        this.loading.set(false);
-        return;
-      }
-      this.loadSheet();
-    });
-  }
+    this.classId = this.route.snapshot.queryParamMap.get('classId');
+    this.sessionId = this.route.snapshot.queryParamMap.get('sessionId');
+    this.attendanceService.sessionId.set(this.sessionId);
 
-  private loadSheet(): void {
-    this.api
-      .get<CatechismSessionAttendance[]>('/sessions/attendance-sheet', { sessionId: this.sessionId! })
-      .subscribe((items) => {
-        this.rows.set(
-          (items ?? []).map((a) => ({
-            enrollmentId: a.catechismClassEucharisticYouthId,
-            youthFullName: a.youthFullName,
-            status: a.attendanceStatus ?? AttendanceStatus.None,
-          })),
-        );
-        this.loading.set(false);
-        this.cdr.markForCheck();
-      });
+    // Reset local editable rows whenever the loaded attendance sheet changes
+    effect(() => {
+      const items = this.attendanceService.sheet();
+      this.rows.set(
+        items.map((a) => ({
+          enrollmentId: a.catechismClassEucharisticYouthId,
+          youthFullName: a.youthFullName,
+          status: a.attendanceStatus ?? AttendanceStatus.None,
+        })),
+      );
+    });
   }
 
   protected setStatus(index: number, status: AttendanceStatus): void {
@@ -108,7 +97,7 @@ export class ClassAttendance {
     this.rows.set(updated);
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     this.saving.set(true);
     const payload = {
       sessionId: this.sessionId,
@@ -120,18 +109,16 @@ export class ClassAttendance {
           attendanceStatus: r.status,
         })),
     };
-    this.api.post('/sessions/attendances', payload).subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.notify.success(this.#translate.t('common.save'));
-      },
-      error: () => {
-        this.saving.set(false);
-      },
-    });
+    try {
+      await this.attendanceService.save(payload);
+      this.notify.success(this.#translate.t('common.save'));
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   protected backParams() {
     return this.classId ? { id: this.classId } : {};
   }
 }
+

@@ -1,22 +1,19 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, switchMap } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { DialogService } from '../../core/services/dialog.service';
 import { User } from '../../shared/models';
 import { UserRole } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ConfirmDialog, ConfirmData } from '../../shared/components/confirm-dialog';
 import { UserFormDialog, UserFormData, UserFormResult } from './user-form-dialog';
 import { ResetPasswordDialog, ResetPasswordData } from './reset-password-dialog';
+import { AdminService } from './admin.service';
 
 @Component({
   selector: 'app-admin',
@@ -29,27 +26,23 @@ import { ResetPasswordDialog, ResetPasswordData } from './reset-password-dialog'
     MatIconModule,
     MatButtonModule,
     MatSlideToggleModule,
-    MatDialogModule,
     TranslatePipe,
   ],
   templateUrl: './admin.html',
   styleUrl: './admin.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [AdminService],
 })
 export class AdminPage {
-  private api = inject(ApiService);
-  private dialog = inject(MatDialog);
+  private adminService = inject(AdminService);
+  private dialogs = inject(DialogService);
   private notify = inject(NotificationService);
 
   protected readonly UserRole = UserRole;
 
-  private reload$ = new BehaviorSubject<void>(undefined);
   protected showInactive = signal(false);
 
-  protected data = toSignal(
-    this.reload$.pipe(switchMap(() => this.api.list<User>('/users', { page: 1, pageSize: 100 }))),
-    { initialValue: { items: [], total: 0, page: 1, pageSize: 100 } },
-  );
+  protected data = this.adminService.users;
 
   protected cols = ['userName', 'email', 'role', 'link', 'active', 'actions'];
 
@@ -69,78 +62,69 @@ export class AdminPage {
     return '';
   }
 
-  protected create(): void {
-    const ref = this.dialog.open<UserFormDialog, UserFormData, UserFormResult>(UserFormDialog, {
-      data: { mode: 'create' },
-    });
-    ref.afterClosed().subscribe((result) => {
-      if (!result?.create) return;
-      this.api.post('/users', result.create).subscribe({
-        next: () => {
-          this.notify.info('user.created');
-          this.reload$.next();
-        },
-        error: () => this.notify.error('error.generic'),
-      });
-    });
+  protected async create(): Promise<void> {
+    const result = await this.dialogs.open<UserFormDialog, UserFormData, UserFormResult>(
+      UserFormDialog,
+      { data: { mode: 'create' } },
+    );
+    if (!result?.create) return;
+    try {
+      await this.adminService.createUser(result.create);
+      this.notify.info('user.created');
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 
-  protected edit(user: User): void {
-    const ref = this.dialog.open<UserFormDialog, UserFormData, UserFormResult>(UserFormDialog, {
-      data: { mode: 'edit', user },
-    });
-    ref.afterClosed().subscribe((result) => {
-      if (!result?.update) return;
-      this.api.patch('/users', result.update).subscribe({
-        next: () => {
-          this.notify.info('user.updated');
-          this.reload$.next();
-        },
-        error: () => this.notify.error('error.generic'),
-      });
-    });
+  protected async edit(user: User): Promise<void> {
+    const result = await this.dialogs.open<UserFormDialog, UserFormData, UserFormResult>(
+      UserFormDialog,
+      { data: { mode: 'edit', user } },
+    );
+    if (!result?.update) return;
+    try {
+      await this.adminService.updateUser(result.update);
+      this.notify.info('user.updated');
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 
-  protected toggleActive(user: User): void {
-    this.api
-      .patch('/users', { id: user.id, isActive: !user.isActive })
-      .subscribe({
-        next: () => this.reload$.next(),
-        error: () => this.notify.error('error.generic'),
-      });
+  protected async toggleActive(user: User): Promise<void> {
+    try {
+      await this.adminService.toggleActive(user.id, !user.isActive);
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 
-  protected remove(user: User): void {
-    const ref = this.dialog.open<ConfirmDialog, ConfirmData, boolean>(ConfirmDialog, {
-      data: {
-        message: `${user.userName} (${user.email})`,
-        confirmKey: 'user.deactivate',
-        destructive: true,
-      },
+  protected async remove(user: User): Promise<void> {
+    const ok = await this.dialogs.confirm({
+      message: `${user.userName} (${user.email})`,
+      confirmKey: 'user.deactivate',
+      destructive: true,
     });
-    ref.afterClosed().subscribe((ok) => {
-      if (!ok) return;
-      this.api.delete('/users', { id: user.id }).subscribe({
-        next: () => {
-          this.notify.info('user.deactivated');
-          this.reload$.next();
-        },
-        error: () => this.notify.error('error.generic'),
-      });
-    });
+    if (!ok) return;
+    try {
+      await this.adminService.deleteUser(user.id);
+      this.notify.info('user.deactivated');
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 
-  protected resetPassword(user: User): void {
-    const ref = this.dialog.open<ResetPasswordDialog, ResetPasswordData>(ResetPasswordDialog, {
-      data: { userId: user.id, userName: user.userName },
-    });
-    ref.afterClosed().subscribe((result) => {
-      if (!result) return;
-      this.api.post('/users/reset-password', result).subscribe({
-        next: () => this.notify.success('password.resetSuccess'),
-        error: () => this.notify.error('error.generic'),
-      });
-    });
+  protected async resetPassword(user: User): Promise<void> {
+    const result = await this.dialogs.open<ResetPasswordDialog, ResetPasswordData>(
+      ResetPasswordDialog,
+      { data: { userId: user.id, userName: user.userName } },
+    );
+    if (!result) return;
+    try {
+      await this.adminService.resetPassword(result);
+      this.notify.success('password.resetSuccess');
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 }
 

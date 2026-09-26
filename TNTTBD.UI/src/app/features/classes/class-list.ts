@@ -1,5 +1,4 @@
-import { Component, inject, signal, computed, ChangeDetectionStrategy, effect } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { Component, inject, signal, computed, linkedSignal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -9,20 +8,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { CatechismClass, CatechismClassCatechist, CatechismYear } from '../../shared/models';
+import { DialogService } from '../../core/services/dialog.service';
+import { CatechismClass, CatechismYear } from '../../shared/models';
 import { UserRole } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { YearFormDialog } from '../../shared/components/year-form-dialog';
 import { ClassFormDialog } from '../../shared/components/class-form-dialog';
-import { ConfirmDialog } from '../../shared/components/confirm-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { EmptyState } from '../../shared/components/empty-state';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { AuthService } from '../../core/auth/auth.service';
+import { ClassesService } from './classes.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-class-list',
@@ -39,43 +38,59 @@ import { MatListModule } from '@angular/material/list';
     MatInputModule,
     MatPaginatorModule,
     MatSelectModule,
-    MatDialogModule,
     TranslatePipe,
     EmptyState,
     MatListModule,
+    MatProgressSpinner
   ],
   templateUrl: './class-list.html',
   styleUrl: './class-list.scss',
 
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ClassesService],
 })
 export class ClassList {
-  private api = inject(ApiService);
-  private dialog = inject(MatDialog);
+  private classesService = inject(ClassesService);
+  private dialogs = inject(DialogService);
   private notify = inject(NotificationService);
   protected auth = inject(AuthService);
 
   protected readonly UserRole = UserRole;
 
-  protected years = signal<CatechismYear[]>([]);
-  protected classes = signal<CatechismClass[]>([]);
-  protected selectedYear = signal<CatechismYear | null>(null);
-  protected myClassIds = signal<Set<string>>(new Set());
+  protected years = this.classesService.years;
+  protected isLoading = this.classesService.isListLoading;
+  // Defaults to the latest year once loaded, but stays writable for manual selection
+  protected selectedYear = linkedSignal<CatechismYear | null>(() => {
+    const years = this.classesService.years();
+    if (years.length === 0) return null;
+    return [...years].sort((a, b) => b.startDate.localeCompare(a.startDate))[0];
+  });
   protected searchQuery = signal<string>('');
+
+  protected myClassIds = computed(() => {
+    const user = this.auth.currentUser();
+    if (!user?.catechistId) return new Set<string>();
+    return new Set(
+      this.classesService
+        .classCatechists()
+        .filter((c) => c.catechistId === user.catechistId)
+        .map((c) => c.catechismClassId),
+    );
+  });
 
   protected filtered = computed(() => {
     const yid = this.selectedYear()?.id;
     const query = this.searchQuery().toLowerCase().trim();
-    let list = this.classes();
-    
+    let list = this.classesService.classes();
+
     if (yid) {
       list = list.filter((c) => c.catechismYearId === yid);
     }
-    
+
     if (query) {
       list = list.filter((c) => c.className.toLowerCase().includes(query));
     }
-    
+
     const mine = this.myClassIds();
     if (mine.size === 0) return list;
     return [...list].sort((a, b) => {
@@ -87,7 +102,7 @@ export class ClassList {
 
   protected pageIndex = signal(0);
   protected pageSize = signal(50);
-  
+
   protected paginatedFiltered = computed(() => {
     const list = this.filtered();
     const start = this.pageIndex() * this.pageSize();
@@ -95,10 +110,6 @@ export class ClassList {
   });
 
   protected cols = ['name', 'actions'];
-
-  constructor() {
-    this.reload();
-  }
 
   protected onPageChange(event: PageEvent): void {
     this.pageIndex.set(event.pageIndex);
@@ -113,84 +124,35 @@ export class ClassList {
     return this.myClassIds().has(id);
   }
 
-  private reload(): void {
-    this.api.list<CatechismYear>('/catechism-years').subscribe((r) => {
-      this.years.set(r.items);
-      if (!this.selectedYear() && r.items.length > 0) {
-        const latest = [...r.items].sort((a, b) => b.startDate.localeCompare(a.startDate))[0];
-        this.selectedYear.set(latest);
-      }
+  protected async newYear(): Promise<void> {
+    const v = await this.dialogs.open(YearFormDialog, { data: {} });
+    if (!v) return;
+    await this.classesService.createYear(v);
+    this.notify.success('Saved');
+  }
+
+  protected async newClass(): Promise<void> {
+    const v = await this.dialogs.open(ClassFormDialog, {
+      data: { catechismYearId: this.selectedYear()?.id ?? null },
     });
-    this.api.list<CatechismClass>('/classes').subscribe((r) => this.classes.set(r.items));
-
-    const user = this.auth.currentUser();
-    if (user?.catechistId) {
-      this.api.list<CatechismClassCatechist>('/class-catechist').subscribe((r) => {
-        const ids = new Set(
-          r.items.filter((c) => c.catechistId === user.catechistId).map((c) => c.catechismClassId),
-        );
-        this.myClassIds.set(ids);
-      });
-    }
+    if (!v) return;
+    await this.classesService.createClass(v);
+    this.notify.success('Saved');
   }
 
-  protected newYear(): void {
-    this.dialog
-      .open(YearFormDialog, { data: {} })
-      .afterClosed()
-      .subscribe((v) => {
-        if (!v) return;
-        this.api.post('/catechism-years', v).subscribe(() => {
-          this.notify.success('Saved');
-          this.reload();
-        });
-      });
+  protected async editClass(catechismClass: CatechismClass): Promise<void> {
+    const v = await this.dialogs.open(ClassFormDialog, {
+      data: { catechismClass, years: this.years() },
+    });
+    if (!v) return;
+    await this.classesService.updateClass(v);
+    this.notify.success('Saved');
   }
 
-  protected newClass(): void {
-    this.dialog
-      .open(ClassFormDialog, {
-        data: { catechismYearId: this.selectedYear()?.id ?? null },
-      })
-      .afterClosed()
-      .subscribe((v) => {
-        if (!v) return;
-        this.api.post('/classes', v).subscribe(() => {
-          this.notify.success('Saved');
-          this.reload();
-        });
-      });
-  }
-
-  protected editClass(catechismClass: CatechismClass): void {
-    this.dialog
-      .open(ClassFormDialog, { data: { catechismClass, years: this.years() } })
-      .afterClosed()
-      .subscribe((v) => {
-        if (!v) return;
-        this.api.patch('/classes', v).subscribe(() => {
-          this.notify.success('Saved');
-          this.reload();
-        });
-      });
-  }
-
-  protected deleteClass(catechismClass: CatechismClass): void {
-    this.dialog
-      .open(ConfirmDialog, {
-        data: {
-          message: `Delete class "${catechismClass.className}"?`,
-          destructive: true,
-          confirmKey: 'common.delete',
-        },
-      })
-      .afterClosed()
-      .subscribe((ok) => {
-        if (!ok) return;
-        this.api.delete('/classes', { catechismClassId: catechismClass.id }).subscribe(() => {
-          this.notify.success('Deleted');
-          this.reload();
-        });
-      });
+  protected async deleteClass(catechismClass: CatechismClass): Promise<void> {
+    const ok = await this.dialogs.confirmDelete(`Delete class "${catechismClass.className}"?`);
+    if (!ok) return;
+    await this.classesService.deleteClass(catechismClass.id);
+    this.notify.success('Deleted');
   }
 }

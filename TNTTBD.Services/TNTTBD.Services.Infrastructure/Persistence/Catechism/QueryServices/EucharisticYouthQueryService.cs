@@ -100,14 +100,16 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
 
         int total = await query.CountAsync(cancellationToken);
 
+        query = query
+            .OrderBy(y => y.FullName.FamilyName)
+            .ThenBy(y => y.FullName.GivenName);
+
         if (pageSize.HasValue)
         {
             query = query.Skip((page - 1) * pageSize.Value).Take(pageSize.Value);
         }
 
         var items = await query
-            .OrderBy(y => y.FullName.FamilyName)
-            .ThenBy(y => y.FullName.GivenName)
             .Select(entity => new EucharisticYouthDto
             {
                 Id = entity.Id,

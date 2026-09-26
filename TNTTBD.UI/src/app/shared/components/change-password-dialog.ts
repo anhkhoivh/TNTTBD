@@ -5,8 +5,8 @@ import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { AuthService } from '../../core/auth/auth.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { TranslationService } from '../../core/i18n/translation.service';
 
@@ -29,7 +29,7 @@ import { TranslationService } from '../../core/i18n/translation.service';
 export class ChangePasswordDialog {
   protected ref = inject(MatDialogRef<ChangePasswordDialog>);
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
+  private auth = inject(AuthService);
   private notify = inject(NotificationService);
   private translate = inject(TranslationService);
 
@@ -42,7 +42,7 @@ export class ChangePasswordDialog {
     confirmPassword: ['', [Validators.required]],
   });
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     const v = this.form.getRawValue();
     if (v.newPassword !== v.confirmPassword) {
       this.mismatch.set(true);
@@ -54,21 +54,14 @@ export class ChangePasswordDialog {
       return;
     }
     this.saving.set(true);
-    this.api
-      .post('/auth/change-password', {
-        currentPassword: v.currentPassword,
-        newPassword: v.newPassword,
-      })
-      .subscribe({
-        next: () => {
-          this.saving.set(false);
-          this.notify.success(this.translate.t('password.changed'));
-          this.ref.close(true);
-        },
-        error: () => {
-          this.saving.set(false);
-          this.notify.error(this.translate.t('password.currentIncorrect'));
-        },
-      });
+    try {
+      await this.auth.changePassword(v.currentPassword, v.newPassword);
+      this.notify.success(this.translate.t('password.changed'));
+      this.ref.close(true);
+    } catch {
+      this.notify.error(this.translate.t('password.currentIncorrect'));
+    } finally {
+      this.saving.set(false);
+    }
   }
 }

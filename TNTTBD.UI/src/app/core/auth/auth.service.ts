@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, firstValueFrom, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { User } from '../../shared/models';
 import { UserRole } from '../../shared/enums';
@@ -61,28 +61,26 @@ export class AuthService {
       .pipe(tap((res) => this.applyLogin(res)));
   }
 
-  loginWithSSO(provider: 'google' | 'microsoft'): void {
+  async loginWithSSO(provider: 'google' | 'microsoft'): Promise<void> {
     const state = crypto.randomUUID();
     sessionStorage.setItem(SSO_STATE_KEY, state);
     sessionStorage.setItem(SSO_PROVIDER_KEY, provider);
 
-    this.http
-      .get<{ url: string }>(`${environment.apiBaseUrl}/auth/sso/url`, {
-        params: {
-          provider,
-          redirectUri: environment.ssoRedirectUri,
-          state,
-        },
-      })
-      .subscribe({
-        next: (res) => {
-          window.location.href = res.url;
-        },
-        error: () => {
-          sessionStorage.removeItem(SSO_STATE_KEY);
-          sessionStorage.removeItem(SSO_PROVIDER_KEY);
-        },
-      });
+    try {
+      const res = await firstValueFrom(
+        this.http.get<{ url: string }>(`${environment.apiBaseUrl}/auth/sso/url`, {
+          params: {
+            provider,
+            redirectUri: environment.ssoRedirectUri,
+            state,
+          },
+        }),
+      );
+      window.location.href = res.url;
+    } catch {
+      sessionStorage.removeItem(SSO_STATE_KEY);
+      sessionStorage.removeItem(SSO_PROVIDER_KEY);
+    }
   }
 
   exchangeSsoCode(provider: string, code: string, redirectUri: string): Observable<LoginResponse> {
@@ -107,9 +105,9 @@ export class AuthService {
     sessionStorage.removeItem(SSO_PROVIDER_KEY);
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
     // Fire-and-forget: revoke refresh tokens on server
-    this.http.post(`${environment.apiBaseUrl}/auth/logout`, {}).subscribe();
+    firstValueFrom(this.http.post(`${environment.apiBaseUrl}/auth/logout`, {})).catch(() => undefined);
 
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
@@ -121,6 +119,12 @@ export class AuthService {
   hasRole(roles: UserRole[]): boolean {
     const role = this.userRole();
     return role !== null && roles.includes(role);
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await firstValueFrom(
+      this.http.post(`${environment.apiBaseUrl}/auth/change-password`, { currentPassword, newPassword }),
+    );
   }
 
   private applyLogin(res: LoginResponse): void {

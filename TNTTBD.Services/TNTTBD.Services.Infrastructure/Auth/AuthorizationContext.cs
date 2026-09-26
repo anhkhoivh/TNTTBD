@@ -50,7 +50,7 @@ public class AuthorizationContext : IAuthorizationContext
     public async Task<bool> IsAdminOrCatechistAsync(CancellationToken cancellationToken)
     {
         var user = await GetCurrentUserAsync(cancellationToken);
-        return user?.Role == UserRole.Catechist || user?.Role == UserRole.Catechist;
+        return user?.Role == UserRole.Admin || user?.Role == UserRole.Catechist;
     }
 
     public async Task<bool> CanAccessClassAsync(Guid classId, CancellationToken cancellationToken)
@@ -152,6 +152,63 @@ public class AuthorizationContext : IAuthorizationContext
                 .AnyAsync(cc => cc.CatechistId == catechistId
                     && myClassIds.Contains(cc.CatechismClassId)
                     && cc.Status == EnrollmentStatus.Active,
+                    cancellationToken);
+        }
+
+        return false;
+    }
+
+    public async Task<Guid?> GetCurrentContactIdAsync(CancellationToken cancellationToken)
+    {
+        var user = await GetCurrentUserAsync(cancellationToken);
+        return user?.Role == UserRole.EucharisticYouthContact ? user.ContactId : null;
+    }
+
+    public async Task<bool> CanAccessContactAsync(Guid contactId, CancellationToken cancellationToken)
+    {
+        var user = await GetCurrentUserAsync(cancellationToken);
+        if (user == null)
+        {
+            return false;
+        }
+
+        if (user.Role == UserRole.Admin || user.Role == UserRole.Catechist)
+        {
+            return true;
+        }
+
+        // Contact can access self
+        if (user.Role == UserRole.EucharisticYouthContact && user.ContactId == contactId)
+        {
+            return true;
+        }
+
+        // Youth can access their own contacts
+        if (user.Role == UserRole.EucharisticYouth && user.EucharisticYouthId.HasValue)
+        {
+            return await _dbContext.EucharisticYouthContacts
+                .AnyAsync(yc => yc.ContactId == contactId
+                    && yc.EucharisticYouthId == user.EucharisticYouthId.Value,
+                    cancellationToken);
+        }
+
+        return false;
+    }
+
+    public async Task<bool> CanReadYouthContactsAsync(Guid youthId, CancellationToken cancellationToken)
+    {
+        if (await CanAccessYouthAsync(youthId, cancellationToken))
+        {
+            return true;
+        }
+
+        // Contact linked to the youth
+        var contactId = await GetCurrentContactIdAsync(cancellationToken);
+        if (contactId.HasValue)
+        {
+            return await _dbContext.EucharisticYouthContacts
+                .AnyAsync(yc => yc.ContactId == contactId.Value
+                    && yc.EucharisticYouthId == youthId,
                     cancellationToken);
         }
 

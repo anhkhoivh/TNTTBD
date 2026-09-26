@@ -1,4 +1,4 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -9,8 +9,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { debounceTime, of, switchMap } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, map, of } from 'rxjs';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../core/services/api.service';
 import { User, Catechist, EucharisticYouth, PaginatedResult } from '../../shared/models';
 import { UserRole } from '../../shared/enums';
@@ -111,31 +111,30 @@ export class UserFormDialog {
   protected selectedLinkedId = signal<string | null>(this.initialLinkedId);
   protected selectedLinkedLabel = signal<string>('');
 
+  private linkQueryTerm = toSignal(this.form.controls.linkQuery.valueChanges.pipe(debounceTime(200)), {
+    initialValue: '',
+  });
+
   // Reactively query the correct endpoint whenever the search text or link kind changes
-  protected suggestions = toSignal(
-    this.form.controls.linkQuery.valueChanges.pipe(
-      debounceTime(200),
-      switchMap((search) => {
-        const kind = this.form.controls.linkKind.value;
-        if (kind === 'None') return of([]);
-        const s = (search ?? '').trim();
-        if (kind === 'Catechist') {
-          return this.api
-            .list<Catechist>('/catechists')
-            .pipe(switchMap((r: PaginatedResult<Catechist>) => of(this.filterCatechists(r.items, s))));
-        }
-        if (kind === 'Youth') {
-          return this.api
-            .list<EucharisticYouth>('/youths', { search: s || undefined })
-            .pipe(switchMap((r: PaginatedResult<EucharisticYouth>) => of(this.mapYouths(r.items))));
-        }
+  protected suggestionsRes = rxResource<{ id: string; label: string }[], { kind: LinkKind; query: string }>({
+    params: () => ({ kind: this.form.controls.linkKind.value, query: (this.linkQueryTerm() ?? '').trim() }),
+    stream: ({ params }) => {
+      const { kind, query } = params;
+      if (kind === 'None') return of([]);
+      if (kind === 'Catechist') {
+        return this.api.list<Catechist>('/catechists').pipe(map((r: PaginatedResult<Catechist>) => this.filterCatechists(r.items, query)));
+      }
+      if (kind === 'Youth') {
         return this.api
-          .list<ContactLookup>('/contacts', { search: s || undefined })
-          .pipe(switchMap((r: PaginatedResult<ContactLookup>) => of(this.mapContacts(r.items))));
-      }),
-    ),
-    { initialValue: [] as { id: string; label: string }[] },
-  );
+          .list<EucharisticYouth>('/youths', { search: query || undefined })
+          .pipe(map((r: PaginatedResult<EucharisticYouth>) => this.mapYouths(r.items)));
+      }
+      return this.api
+        .list<ContactLookup>('/contacts', { search: query || undefined })
+        .pipe(map((r: PaginatedResult<ContactLookup>) => this.mapContacts(r.items)));
+    },
+  });
+  protected suggestions = computed(() => this.suggestionsRes.value() ?? []);
 
   constructor() {
     if (this.isEdit) {

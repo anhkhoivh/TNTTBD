@@ -1,4 +1,4 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -6,8 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { debounceTime, of, switchMap } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, map, of } from 'rxjs';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../core/services/api.service';
 import { EucharisticYouth, PaginatedResult } from '../models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -69,30 +69,22 @@ export class EnrollYouthDialog {
   protected searchCtrl = this.fb.control('');
   protected selected = signal<{ id: string; label: string } | null>(null);
 
-  protected suggestions = toSignal(
-    this.searchCtrl.valueChanges.pipe(
-      debounceTime(200),
-      switchMap((search) => {
-        const s = (search ?? '').trim();
-        if (s.length < 1) return of([]);
-        return this.api
-          .list<EucharisticYouth>('/youths', { search: s })
-          .pipe(
-            switchMap((r: PaginatedResult<EucharisticYouth>) =>
-              of(
-                r.items
-                  .filter((y) => !this.data.enrolledYouthIds.has(y.id))
-                  .map((y) => ({
-                    id: y.id,
-                    label: `${y.code} — ${this.fullNamePipe.transform(y.fullName)}`,
-                  })),
-              ),
-            ),
-          );
-      }),
-    ),
-    { initialValue: [] as { id: string; label: string }[] },
-  );
+  private searchTerm = toSignal(this.searchCtrl.valueChanges.pipe(debounceTime(200)), { initialValue: '' });
+
+  protected suggestionsRes = rxResource<{ id: string; label: string }[], string>({
+    params: () => (this.searchTerm() ?? '').trim(),
+    stream: ({ params }) => {
+      if (params.length < 1) return of([]);
+      return this.api.list<EucharisticYouth>('/youths', { search: params }).pipe(
+        map((r: PaginatedResult<EucharisticYouth>) =>
+          r.items
+            .filter((y) => !this.data.enrolledYouthIds.has(y.id))
+            .map((y) => ({ id: y.id, label: `${y.code} — ${this.fullNamePipe.transform(y.fullName)}` })),
+        ),
+      );
+    },
+  });
+  protected suggestions = computed(() => this.suggestionsRes.value() ?? []);
 
   protected pick(item: { id: string; label: string }): void {
     this.selected.set(item);

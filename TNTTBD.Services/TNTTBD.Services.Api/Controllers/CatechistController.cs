@@ -58,14 +58,13 @@ public class CatechistController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCatechistCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
+        Guid? id = await _mediator.Send(command, cancellationToken);
+
+        return id switch
         {
-            return Forbid();
-        }
-
-        Guid id = await _mediator.Send(command, cancellationToken);
-
-        return CreatedAtAction(nameof(GetById), new { id }, id);
+            null => Forbid(),
+            _ => CreatedAtAction(nameof(GetById), new { id }, id)
+        };
     }
 
     /// <summary>
@@ -100,25 +99,13 @@ public class CatechistController : Controller
     [HttpPatch]
     public async Task<IActionResult> Update(UpdateCatechistCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessCatechistAsync(command.CatechistId, cancellationToken))
-        {
-            return Forbid();
-        }
-
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     [HttpDelete]
     public async Task<IActionResult> Remove(RemoveCatechistCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminAsync(cancellationToken))
-        {
-            return Forbid();
-        }
-
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     /// <summary>
@@ -127,8 +114,7 @@ public class CatechistController : Controller
     [HttpPost("patronSaints")]
     public async Task<IActionResult> AddPatronSaint(AddCatechistPatronSaintCommand command, CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     /// <summary>
@@ -137,16 +123,15 @@ public class CatechistController : Controller
     [HttpDelete("patronSaints")]
     public async Task<IActionResult> RemovePatronSaint(RemoveCatechistPatronSaintCommand command, CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     [HttpPost("photos/upload-url")]
     public async Task<IActionResult> RequestUploadUrl(RequestCatechistPhotoUploadCommand command, CancellationToken cancellationToken)
     {
-        PhotoReferenceDto result = await _mediator.Send(command, cancellationToken);
+        PhotoReferenceDto? result = await _mediator.Send(command, cancellationToken);
 
-        return Ok(result);
+        return result == null ? Forbid() : Ok(result);
     }
 
     [HttpGet("photos")]
@@ -159,8 +144,7 @@ public class CatechistController : Controller
     [HttpDelete("photos")]
     public async Task<IActionResult> RemovePhoto(RemoveCatechistPhotoCommand command, CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
     }
 
     #endregion

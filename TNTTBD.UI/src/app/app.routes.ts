@@ -81,6 +81,41 @@ export const routes: Routes = [
           import('./features/catechist/catechist-form').then((m) => m.CatechistForm),
       },
       {
+        path: 'contacts',
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.Admin, UserRole.Catechist] },
+        loadComponent: () =>
+          import('./features/contacts/contact-list/contact-list').then((m) => m.ContactList),
+      },
+      {
+        path: 'contacts/edit',
+        canActivate: [roleGuard],
+        data: {
+          roles: [
+            UserRole.Admin,
+            UserRole.Catechist,
+            UserRole.EucharisticYouthContact,
+            UserRole.EucharisticYouth,
+          ],
+        },
+        loadComponent: () =>
+          import('./features/contacts/contact-form/contact-form').then((m) => m.ContactForm),
+      },
+      {
+        path: 'contacts/detail',
+        canActivate: [roleGuard],
+        data: {
+          roles: [
+            UserRole.Admin,
+            UserRole.Catechist,
+            UserRole.EucharisticYouthContact,
+            UserRole.EucharisticYouth,
+          ],
+        },
+        loadComponent: () =>
+          import('./features/contacts/contact-detail/contact-detail').then((m) => m.ContactDetail),
+      },
+      {
         path: 'classes',
         loadComponent: () =>
           import('./features/classes/class-list').then((m) => m.ClassList),

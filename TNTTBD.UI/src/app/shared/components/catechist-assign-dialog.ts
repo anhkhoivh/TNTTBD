@@ -1,4 +1,4 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -7,8 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { debounceTime, of, switchMap } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, map, of } from 'rxjs';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../core/services/api.service';
 import { Catechist, CatechismClassCatechist, PaginatedResult } from '../models';
 import { CatechismClassCatechistRole } from '../enums';
@@ -64,35 +64,26 @@ export class CatechistAssignDialog {
 
   protected selectedCatechist = signal<{ id: string; label: string } | null>(null);
 
-  protected suggestions = toSignal(
-    this.form.controls.catechistSearch.valueChanges.pipe(
-      debounceTime(200),
-      switchMap((search) => {
-        const s = (search ?? '').trim();
-        if (s.length < 1) return of([]);
-        return this.api
-          .list<Catechist>('/catechists')
-          .pipe(
-            switchMap((r: PaginatedResult<Catechist>) => {
-              const alreadyAssigned = new Set(this.data.existingAssignments.map((a) => a.catechistId));
-              return of(
-                r.items
-                  .filter((c) => !alreadyAssigned.has(c.id))
-                  .filter((c) => {
-                    const name = this.fullNamePipe.transform(c.fullName).toLowerCase();
-                    return name.includes(s.toLowerCase());
-                  })
-                  .map((c) => ({
-                    id: c.id,
-                    label: this.fullNamePipe.transform(c.fullName),
-                  })),
-              );
-            }),
-          );
-      }),
-    ),
-    { initialValue: [] as { id: string; label: string }[] },
-  );
+  private searchTerm = toSignal(this.form.controls.catechistSearch.valueChanges.pipe(debounceTime(200)), {
+    initialValue: '',
+  });
+
+  protected suggestionsRes = rxResource<{ id: string; label: string }[], string>({
+    params: () => (this.searchTerm() ?? '').trim(),
+    stream: ({ params }) => {
+      if (params.length < 1) return of([]);
+      return this.api.list<Catechist>('/catechists').pipe(
+        map((r: PaginatedResult<Catechist>) => {
+          const alreadyAssigned = new Set(this.data.existingAssignments.map((a) => a.catechistId));
+          return r.items
+            .filter((c) => !alreadyAssigned.has(c.id))
+            .filter((c) => this.fullNamePipe.transform(c.fullName).toLowerCase().includes(params.toLowerCase()))
+            .map((c) => ({ id: c.id, label: this.fullNamePipe.transform(c.fullName) }));
+        }),
+      );
+    },
+  });
+  protected suggestions = computed(() => this.suggestionsRes.value() ?? []);
 
   protected pickSuggestion(item: { id: string; label: string }): void {
     this.selectedCatechist.set(item);

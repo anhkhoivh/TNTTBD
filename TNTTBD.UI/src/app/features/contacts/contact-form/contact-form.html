@@ -1,0 +1,63 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{ (isEdit() ? 'contact.edit' : 'contact.create') | t }}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="grid-2">
+        @if (linkYouthId()) {
+          <mat-form-field appearance="outline" class="span-2">
+            <mat-label>{{ 'contact.relation' | t }}</mat-label>
+            <mat-select formControlName="relationType" required>
+              @for (r of relationTypes; track r.v) {
+                <mat-option [value]="r.v">{{ r.k | t }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.christ' | t }}</mat-label>
+          <input matInput formControlName="christName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.family' | t }}</mat-label>
+          <input matInput formControlName="familyName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.middle' | t }}</mat-label>
+          <input matInput formControlName="middleName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'fullName.given' | t }}</mat-label>
+          <input matInput formControlName="givenName" required />
+          @if (form.controls.givenName.hasError('required')) {
+            <mat-error>{{ 'validation.required' | t }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'contact.phone' | t }}</mat-label>
+          <input matInput formControlName="phoneNumber" type="tel" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'contact.email' | t }}</mat-label>
+          <input matInput formControlName="email" type="email" />
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="actions mt-16">
+    <a mat-button (click)="navigateBack()">{{ 'common.cancel' | t }}</a>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading()">
+      {{ 'common.save' | t }}
+    </button>
+  </div>
+</form>

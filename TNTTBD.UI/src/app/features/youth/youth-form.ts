@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
@@ -7,8 +7,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -19,26 +17,22 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { AuthService } from '../../core/auth/auth.service';
-import {
-  CatechistCurrentClass,
-  EucharisticYouth,
-  PatronSaint,
-} from '../../shared/models';
+import { PatronSaint } from '../../shared/models';
 import { ContactRelationType, MilestoneType, UserRole } from '../../shared/enums';
+import { CONTACT_RELATION_TYPES } from '../../shared/constants/contact-relation-types';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../shared/components/patron-saint-input';
 import { PhotoUpload } from '../../shared/components/photo-upload';
 import { TranslationService } from '../../core/i18n/translation.service';
+import { YouthService } from './youth.service';
 
 @Component({
   selector: 'app-youth-form',
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
@@ -57,13 +51,14 @@ import { TranslationService } from '../../core/i18n/translation.service';
   templateUrl: './youth-form.html',
   styleUrl: './youth-form.scss',
 
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [YouthService],
 })
 export class YouthForm {
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private api = inject(ApiService);
+  private youthService = inject(YouthService);
   private notify = inject(NotificationService);
   private auth = inject(AuthService);
   private translate = inject(TranslationService);
@@ -79,16 +74,7 @@ export class YouthForm {
     { v: MilestoneType.Graduation, k: 'milestone.graduation' },
   ];
 
-  protected readonly relationTypes = [
-    { v: ContactRelationType.Father, k: 'contact.relation.Father' },
-    { v: ContactRelationType.Mother, k: 'contact.relation.Mother' },
-    { v: ContactRelationType.Guardian, k: 'contact.relation.Guardian' },
-    { v: ContactRelationType.Grandfather, k: 'contact.relation.Grandfather' },
-    { v: ContactRelationType.Grandmother, k: 'contact.relation.Grandmother' },
-    { v: ContactRelationType.Babysitter, k: 'contact.relation.Babysitter' },
-    { v: ContactRelationType.Sibling, k: 'contact.relation.Sibling' },
-    { v: ContactRelationType.Undefined, k: 'contact.relation.Undefined' },
-  ];
+  protected readonly relationTypes = CONTACT_RELATION_TYPES;
 
   protected readonly ContactRelationType = ContactRelationType;
 
@@ -136,52 +122,49 @@ export class YouthForm {
     const user = this.auth.currentUser();
     if (user?.userRole === UserRole.Catechist && user.catechistId) {
       this.isCatechist.set(true);
-      this.api
-        .get<CatechistCurrentClass | null>('/catechists/current-class')
-        .subscribe((current) => {
-          if (!current) return;
-          this.myCurrentClassId.set(current.classId);
-          this.myClassName.set(current.className);
-        });
+      this.youthService.loadCurrentClass().then((current) => {
+        if (!current) return;
+        this.myCurrentClassId.set(current.classId);
+        this.myClassName.set(current.className);
+      });
     }
 
-    this.route.queryParamMap
-      .pipe(
-        switchMap((qp) => {
-          const id = qp.get('id');
-          if (!id) return of(null);
-          this.isEdit.set(true);
-          this.editId = id;
-          return this.api.get<EucharisticYouth>('/youths/detail', { id });
-        }),
-      )
-      .subscribe((y) => {
-        if (!y) return;
-        this.form.patchValue({
-          givenName: y.fullName.givenName,
-          middleName: y.fullName.middleName ?? '',
-          familyName: y.fullName.familyName ?? '',
-          christName: y.fullName.christName ?? '',
-          dateOfBirth: y.dateOfBirth ? new Date(y.dateOfBirth + 'T00:00:00') : null,
-          isMale: y.isMale,
-          address: y.address ?? '',
-          patronSaints: y.patronSaints ?? [],
-        });
-        this.milestones.clear();
-        for (const m of y.milestones) {
-          this.milestones.push(
-            this.makeMilestone(
-              m.type,
-              m.date ? new Date(m.date + 'T00:00:00') : null,
-              m.place ?? '',
-              m.documentCode ?? '',
-              m.note ?? '',
-            ),
-          );
-        }
-        // In edit mode contacts are managed via the detail page — clear defaults
-        this.contacts.clear();
+    const id = this.route.snapshot.queryParamMap.get('id');
+    if (id) {
+      this.isEdit.set(true);
+      this.editId = id;
+      this.youthService.detailId.set(id);
+    }
+
+    // Reactive forms are imperative; patching from the loaded resource is the accepted effect() exception.
+    effect(() => {
+      const y = this.youthService.detail();
+      if (!y) return;
+      this.form.patchValue({
+        givenName: y.fullName.givenName,
+        middleName: y.fullName.middleName ?? '',
+        familyName: y.fullName.familyName ?? '',
+        christName: y.fullName.christName ?? '',
+        dateOfBirth: y.dateOfBirth ? new Date(y.dateOfBirth + 'T00:00:00') : null,
+        isMale: y.isMale,
+        address: y.address ?? '',
+        patronSaints: y.patronSaints ?? [],
       });
+      this.milestones.clear();
+      for (const m of y.milestones) {
+        this.milestones.push(
+          this.makeMilestone(
+            m.type,
+            m.date ? new Date(m.date + 'T00:00:00') : null,
+            m.place ?? '',
+            m.documentCode ?? '',
+            m.note ?? '',
+          ),
+        );
+      }
+      // In edit mode contacts are managed via the detail page — clear defaults
+      this.contacts.clear();
+    });
   }
 
   protected addMilestone(): void {
@@ -204,7 +187,7 @@ export class YouthForm {
     this.notify.success('photo.uploaded');
   }
 
-  protected submit(): void {
+  protected async submit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -243,21 +226,15 @@ export class YouthForm {
     };
 
     this.loading.set(true);
-    const req$ = this.isEdit()
-      ? this.api.patch('/youths', payload)
-      : this.api.post('/youths', payload);
-
-    req$.subscribe({
-      next: (res: any) => {
-        this.loading.set(false);
-        this.notify.success(this.translate.t('common.saved'));
-        this.navigateBack();
-      },
-      error: () => {
-        this.loading.set(false);
-        this.navigateBack();
-      },
-    });
+    try {
+      await this.youthService.save(payload, this.isEdit());
+      this.notify.success(this.translate.t('common.saved'));
+      this.navigateBack();
+    } catch {
+      // swallow: error toast already shown by global http error handling
+    } finally {
+      this.loading.set(false);
+    }
   }
 
 

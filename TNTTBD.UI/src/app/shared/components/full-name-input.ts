@@ -1,4 +1,4 @@
-import { Component, forwardRef , ChangeDetectionStrategy, inject} from '@angular/core';
+import { Component, forwardRef , ChangeDetectionStrategy, inject, effect} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ControlValueAccessor,
@@ -7,6 +7,7 @@ import {
   NG_VALUE_ACCESSOR,
   Validators,
 } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -74,8 +75,12 @@ export class FullNameInput implements ControlValueAccessor {
   private onChange: (val: FullName) => void = () => {};
   private onTouched: () => void = () => {};
 
+  private formValue = toSignal(this.form.valueChanges, { initialValue: this.form.getRawValue() });
+
   constructor() {
-    this.form.valueChanges.subscribe(() => {
+    // Bridges the CVA's imperative onChange callback to form value changes (not state to derive)
+    effect(() => {
+      this.formValue();
       const v = this.form.getRawValue();
       this.onChange({
         givenName: v.givenName,

@@ -1,0 +1,71 @@
+<div class="toolbar">
+  <mat-form-field appearance="outline">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>{{ 'common.search' | t }}</mat-label>
+    <input matInput [(ngModel)]="searchQuery" (ngModelChange)="onSearch($event)" placeholder="...">
+  </mat-form-field>
+</div>
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ 'contact.list' | t }}</mat-card-title>
+    <span class="spacer"></span>
+    <a mat-flat-button color="primary" routerLink="/app/contacts/edit">
+      <mat-icon>add</mat-icon>
+      {{ 'contact.create' | t }}
+    </a>
+  </mat-card-header>
+  <mat-card-content class="p-0">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="data().items" class="full-width">
+        <ng-container matColumnDef="fullName">
+          <th mat-header-cell *matHeaderCellDef>{{ 'contact.fullName' | t }}</th>
+          <td mat-cell *matCellDef="let row">
+            <a [routerLink]="['/app/contacts/detail']" [queryParams]="{ id: row.id }" class="item-link">
+              {{ row.fullName | fullName }}
+            </a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="phoneNumber">
+          <th mat-header-cell *matHeaderCellDef>{{ 'contact.phone' | t }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.phoneNumber }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>{{ 'contact.email' | t }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    @if (data().items.length > 0) {
+      <mat-paginator
+        [length]="data().total"
+        [pageSize]="data().pageSize"
+        [pageIndex]="data().page - 1"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        aria-label="Select page"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    }
+
+    @if (isLoading()) {
+      <mat-spinner></mat-spinner>
+    }
+    @else if (data().items.length === 0) {
+      <app-empty-state
+        icon="contacts"
+        titleKey="contact.noContact"
+        descKey="contact.noContactDesc">
+        <a mat-flat-button color="primary" routerLink="/app/contacts/edit">
+          <mat-icon>add</mat-icon>
+          {{ 'contact.create' | t }}
+        </a>
+      </app-empty-state>
+    }
+  </mat-card-content>
+</mat-card>

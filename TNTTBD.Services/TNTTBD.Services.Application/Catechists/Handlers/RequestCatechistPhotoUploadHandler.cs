@@ -8,26 +8,25 @@ using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.Catechists.Commands;
 
-public class RequestCatechistPhotoUploadHandler : IRequestHandler<RequestCatechistPhotoUploadCommand, PhotoReferenceDto>
+public class RequestCatechistPhotoUploadHandler : IRequestHandler<RequestCatechistPhotoUploadCommand, PhotoReferenceDto?>
 {
     private readonly ICatechistRepository _repository;
     private readonly IFileStorage _storage;
-    private readonly IUserRepository _userRepository;
+    private readonly IAuthorizationContext _authContext;
 
-    public RequestCatechistPhotoUploadHandler(ICatechistRepository repository, IFileStorage fileStorage, IUserRepository userRepository)
+    public RequestCatechistPhotoUploadHandler(ICatechistRepository repository, IFileStorage fileStorage, IAuthorizationContext authContext)
     {
         _repository = repository;
         _storage = fileStorage;
-        _userRepository = userRepository;
+        _authContext = authContext;
     }
 
-    public async Task<PhotoReferenceDto> Handle(RequestCatechistPhotoUploadCommand command, CancellationToken cancellationToken)
+    public async Task<PhotoReferenceDto?> Handle(RequestCatechistPhotoUploadCommand command, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdAsync(command.UploadedBy, cancellationToken)
-            ?? throw new UnauthorizedAccessException("User not found.");
-
-        if (user.UserRole != UserRole.Admin && user.CatechistId != command.CatechistId)
-            throw new UnauthorizedAccessException("You do not have permission to upload photos for this catechist.");
+        if (!await _authContext.CanAccessCatechistAsync(command.CatechistId, cancellationToken))
+        {
+            return null;
+        }
 
         Guid photoId = Guid.NewGuid();
 

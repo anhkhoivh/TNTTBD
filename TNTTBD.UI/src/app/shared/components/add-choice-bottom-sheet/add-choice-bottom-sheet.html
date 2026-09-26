@@ -1,0 +1,11 @@
+<h3 class="title">{{ data.titleKey | t }}</h3>
+<mat-nav-list>
+  <button mat-list-item type="button" (click)="choose('new')">
+    <mat-icon matListItemIcon>{{ data.addNewIcon }}</mat-icon>
+    <span matListItemTitle>{{ data.addNewLabelKey | t }}</span>
+  </button>
+  <button mat-list-item type="button" (click)="choose('existing')">
+    <mat-icon matListItemIcon>{{ data.linkExistingIcon }}</mat-icon>
+    <span matListItemTitle>{{ data.linkExistingLabelKey | t }}</span>
+  </button>
+</mat-nav-list>

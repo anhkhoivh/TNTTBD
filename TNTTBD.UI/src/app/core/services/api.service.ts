@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PaginatedResult } from '../../shared/models';
 
@@ -27,6 +27,22 @@ export class ApiService {
 
   delete<T>(path: string, body: unknown): Observable<T> {
     return this.http.delete<T>(`${this.base}${path}`, { body });
+  }
+
+  getAsync<T>(path: string, params?: Record<string, string | number | undefined>): Promise<T> {
+    return firstValueFrom(this.get<T>(path, params));
+  }
+
+  postAsync<T>(path: string, body: unknown): Promise<T> {
+    return firstValueFrom(this.post<T>(path, body));
+  }
+
+  patchAsync<T>(path: string, body: unknown): Promise<T> {
+    return firstValueFrom(this.patch<T>(path, body));
+  }
+
+  deleteAsync<T>(path: string, body: unknown): Promise<T> {
+    return firstValueFrom(this.delete<T>(path, body));
   }
 
   private toParams(params?: Record<string, string | number | undefined>): HttpParams {

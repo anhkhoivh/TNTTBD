@@ -10,4 +10,4 @@ public record AddEucharisticYouthMilestoneCommand(
     string? DocumentCode,
     string? Place,
     string? Note
-) : IRequest;
+) : IRequest<bool>;

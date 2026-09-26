@@ -10,17 +10,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
-import {
-  CatechismYear,
-  CatechismClass,
-  CatechismClassEucharisticYouth,
-} from '../../shared/models';
-import { EnrollmentStatus } from '../../shared/enums';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { TranslationService } from '../../core/i18n/translation.service';
+import { ClassesService } from './classes.service';
 
 @Component({
   selector: 'app-class-migration',
@@ -43,22 +37,23 @@ import { TranslationService } from '../../core/i18n/translation.service';
   templateUrl: './class-migration.html',
   styleUrl: './class-migration.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ClassesService],
 })
 export class ClassMigration {
-  private api = inject(ApiService);
+  private classesService = inject(ClassesService);
   private notify = inject(NotificationService);
   private translate = inject(TranslationService);
 
-  protected years = signal<CatechismYear[]>([]);
-  protected allClasses = signal<CatechismClass[]>([]);
+  protected years = this.classesService.years;
+  protected allClasses = this.classesService.classes;
 
   protected srcYearId = signal<string | null>(null);
   protected srcClassId = signal<string | null>(null);
   protected dstYearId = signal<string | null>(null);
   protected dstClassId = signal<string | null>(null);
 
-  protected srcYouth = signal<CatechismClassEucharisticYouth[]>([]);
-  protected dstYouth = signal<CatechismClassEucharisticYouth[]>([]);
+  protected srcYouth = this.classesService.srcYouth;
+  protected dstYouth = this.classesService.dstYouth;
   protected selected = signal<Set<string>>(new Set());
   protected migrating = signal(false);
 
@@ -80,36 +75,13 @@ export class ClassMigration {
 
   protected someSelected = computed(() => this.selected().size > 0);
 
-  constructor() {
-    this.api.list<CatechismYear>('/catechism-years').subscribe((r) => this.years.set(r.items));
-    this.api.list<CatechismClass>('/classes').subscribe((r) => this.allClasses.set(r.items));
-  }
-
   protected onSrcClassChange(): void {
-    const classId = this.srcClassId();
-    if (!classId) {
-      this.srcYouth.set([]);
-      return;
-    }
     this.selected.set(new Set());
-    this.api
-      .list<CatechismClassEucharisticYouth>('/class-youth', { classId })
-      .subscribe((r) => {
-        this.srcYouth.set(r.items.filter((e) => e.status === EnrollmentStatus.Active));
-      });
+    this.classesService.srcClassId.set(this.srcClassId());
   }
 
   protected onDstClassChange(): void {
-    const classId = this.dstClassId();
-    if (!classId) {
-      this.dstYouth.set([]);
-      return;
-    }
-    this.api
-      .list<CatechismClassEucharisticYouth>('/class-youth', { classId })
-      .subscribe((r) => {
-        this.dstYouth.set(r.items.filter((e) => e.status === EnrollmentStatus.Active));
-      });
+    this.classesService.dstClassId.set(this.dstClassId());
   }
 
   protected toggleAll(checked: boolean): void {
@@ -131,31 +103,25 @@ export class ClassMigration {
     return this.selected().has(youthId);
   }
 
-  protected migrate(): void {
+  protected async migrate(): Promise<void> {
     const src = this.srcClassId();
     const dst = this.dstClassId();
     const ids = [...this.selected()];
     if (!src || !dst || ids.length === 0) return;
 
     this.migrating.set(true);
-    this.api
-      .post<{ migrated: number }>('/class-youth/migrate', {
+    try {
+      await this.classesService.migrateYouth({
         sourceClassId: src,
         destinationClassId: dst,
         eucharisticYouthIds: ids,
-      })
-      .subscribe({
-        next: (res) => {
-          this.notify.success(this.translate.t(`class.migrateSuccess`));
-          this.migrating.set(false);
-          this.selected.set(new Set());
-          this.onSrcClassChange();
-          this.onDstClassChange();
-        },
-        error: () => {
-          this.notify.error('error.generic');
-          this.migrating.set(false);
-        },
       });
+      this.notify.success(this.translate.t(`class.migrateSuccess`));
+      this.selected.set(new Set());
+    } catch {
+      this.notify.error('error.generic');
+    } finally {
+      this.migrating.set(false);
+    }
   }
 }

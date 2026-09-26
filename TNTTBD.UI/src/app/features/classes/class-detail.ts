@@ -1,8 +1,7 @@
-import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { rxResource, toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, of, catchError } from 'rxjs';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
@@ -11,31 +10,24 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { DialogService } from '../../core/services/dialog.service';
 import { AuthService } from '../../core/auth/auth.service';
-import {
-  CatechismClass,
-  CatechismClassCatechist,
-  CatechismClassEucharisticYouth,
-  CatechismSession,
-  Exam,
-  PaginatedResult,
-} from '../../shared/models';
+import { CatechismClassEucharisticYouth, Exam, CatechismSession } from '../../shared/models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
 import { EnrollmentStatus, CatechismClassCatechistRole, UserRole } from '../../shared/enums';
 import { SessionFormDialog } from '../../shared/components/session-form-dialog';
 import { ExamFormDialog } from '../../shared/components/exam-form-dialog';
-import { ConfirmDialog } from '../../shared/components/confirm-dialog';
 import { CatechistAssignDialog, CatechistAssignData } from '../../shared/components/catechist-assign-dialog';
 import { EnrollYouthDialog, EnrollYouthData } from '../../shared/components/enroll-youth-dialog';
-
-function emptyPage<T>(): PaginatedResult<T> {
-  return { items: [], total: 0, page: 1, pageSize: 50 };
-}
+import {
+  AddChoice,
+  AddChoiceBottomSheet,
+  AddChoiceData,
+} from '../../shared/components/add-choice-bottom-sheet/add-choice-bottom-sheet';
+import { ClassDetailService } from './class-detail.service';
 
 @Component({
   selector: 'app-class-detail',
@@ -51,7 +43,6 @@ function emptyPage<T>(): PaginatedResult<T> {
     MatListModule,
     MatChipsModule,
     MatSelectModule,
-    MatDialogModule,
     TranslatePipe,
     FullNamePipe,
     DateLocalePipe,
@@ -59,12 +50,14 @@ function emptyPage<T>(): PaginatedResult<T> {
   templateUrl: './class-detail.html',
   styleUrl: './class-detail.scss',
 
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ClassDetailService],
 })
 export class ClassDetail {
   private route = inject(ActivatedRoute);
-  private api = inject(ApiService);
-  private dialog = inject(MatDialog);
+  private router = inject(Router);
+  private classDetailService = inject(ClassDetailService);
+  private dialogs = inject(DialogService);
   private notify = inject(NotificationService);
   protected auth = inject(AuthService);
 
@@ -84,61 +77,22 @@ export class ClassDetail {
     return this.auth.currentUser()?.userRole === UserRole.EucharisticYouthContact;
   }
 
-  /** Initial load: class info only */
-  protected data = toSignal(
-    this.route.queryParamMap.pipe(
-      switchMap((qp) => {
-        const id = qp.get('id');
-        if (!id) return of(null);
-        return this.api.get<CatechismClass>('/classes/detail', { id }).pipe(
-          catchError(() => of(null)),
-        );
-      }),
-    ),
-    { initialValue: null },
-  );
+  constructor() {
+    const queryParamMap = toSignal(this.route.queryParamMap, { initialValue: this.route.snapshot.queryParamMap });
+    effect(() => this.classDetailService.classId.set(queryParamMap().get('id')));
+  }
 
-  /** Lazy-loaded tab data signals */
-  protected activeTabs = signal(new Set<number>([0]));
-  protected classId = computed(() => this.data()?.id ?? this.route.snapshot.queryParamMap.get('id'));
+  /** Class info for the active route id */
+  protected data = this.classDetailService.classDetail;
 
-  protected enrollmentsRes = rxResource<PaginatedResult<CatechismClassEucharisticYouth>, string>({
-    params: () => this.classId() && this.activeTabs().has(0) ? this.classId()! : '',
-    stream: (loaderParams) =>
-      this.api.list<CatechismClassEucharisticYouth>('/class-youth', { classId: loaderParams.params }).pipe(
-        catchError(() => of(emptyPage<CatechismClassEucharisticYouth>())),
-      )
-  });
-
-
-  protected catechistsRes = rxResource<PaginatedResult<CatechismClassCatechist>, string>({
-    params: () => this.classId() && this.activeTabs().has(1) ? this.classId()! : '',
-    stream: (loaderParams) =>
-      this.api.list<CatechismClassCatechist>('/class-catechist', { classId: loaderParams.params }).pipe(
-        catchError(() => of(emptyPage<CatechismClassCatechist>())),
-      )
-  });
-
-  protected sessionsRes = rxResource<PaginatedResult<CatechismSession>, string>({
-    params: () => this.classId() && this.activeTabs().has(2) ? this.classId()! : '',
-    stream: (loaderParams) => this.api.list<CatechismSession>('/sessions', { classId: loaderParams.params }).pipe(
-      catchError(() => of(emptyPage<CatechismSession>())),
-    )
-  });
-
-  protected examsRes = rxResource<PaginatedResult<Exam>, string>({
-    params: () => this.classId() && this.activeTabs().has(3) ? this.classId()! : '',
-    stream: (loaderParams) => this.api.list<Exam>('/exams', { classId: loaderParams.params }).pipe(
-      catchError(() => of(emptyPage<Exam>())),
-    )
-  });
+  /** Lazy-loaded tab data */
+  protected enrollmentsRes = this.classDetailService.enrollmentsRes;
+  protected catechistsRes = this.classDetailService.catechistsRes;
+  protected sessionsRes = this.classDetailService.sessionsRes;
+  protected examsRes = this.classDetailService.examsRes;
 
   protected onTabChange(index: number): void {
-    this.activeTabs.update(s => {
-      const ns = new Set(s);
-      ns.add(index);
-      return ns;
-    });
+    this.classDetailService.onTabChange(index);
   }
 
   /** Auto-load first tab on init */
@@ -166,173 +120,131 @@ export class ClassDetail {
     EnrollmentStatus.Completed,
   ];
 
-  protected addExistingYouth(classId: string): void {
+  protected async addYouth(classId: string): Promise<void> {
+    const choice = await this.dialogs.openBottomSheet<AddChoiceBottomSheet, AddChoiceData, AddChoice>(
+      AddChoiceBottomSheet,
+      {
+        data: {
+          titleKey: 'class.addYouth',
+          addNewLabelKey: 'class.addNewYouth',
+          addNewIcon: 'person_add',
+          linkExistingLabelKey: 'class.addExistingYouth',
+          linkExistingIcon: 'person_search',
+        },
+      },
+    );
+    if (choice === 'new') {
+      this.router.navigate(['/app/youth/edit'], { queryParams: { classId } });
+    } else if (choice === 'existing') {
+      await this.addExistingYouth(classId);
+    }
+  }
+
+  private async addExistingYouth(classId: string): Promise<void> {
     const enrolledIds = new Set(
       (this.enrollmentsRes.value()?.items ?? []).map((e) => e.eucharisticYouthId),
     );
-    this.dialog
-      .open<EnrollYouthDialog, EnrollYouthData>(EnrollYouthDialog, {
-        data: { classId, enrolledYouthIds: enrolledIds },
-      })
-      .afterClosed()
-      .subscribe((result) => {
-        if (!result) return;
-        this.api.post('/class-youth', result).subscribe({
-          next: () => {
-            this.notify.success('class.youthEnrolled');
-            this.enrollmentsRes.reload();
-          },
-          error: () => this.notify.error('error.generic'),
-        });
-      });
+    const result = await this.dialogs.open<EnrollYouthDialog, EnrollYouthData>(EnrollYouthDialog, {
+      data: { classId, enrolledYouthIds: enrolledIds },
+    });
+    if (!result) return;
+    try {
+      await this.classDetailService.enrollYouth(result);
+      this.notify.success('class.youthEnrolled');
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 
-  protected changeEnrollmentStatus(enrollmentId: string, status: EnrollmentStatus): void {
-    this.api
-      .patch('/class-youth', { id: enrollmentId, status, note: '' })
-      .subscribe({
-        next: () => {
-          this.notify.success('Saved');
-          this.enrollmentsRes.reload();
-        },
-        error: () => this.notify.error('error.generic'),
-      });
+  protected async changeEnrollmentStatus(enrollmentId: string, status: EnrollmentStatus): Promise<void> {
+    try {
+      await this.classDetailService.changeEnrollmentStatus({ id: enrollmentId, status, note: '' });
+      this.notify.success('Saved');
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 
-  protected removeYouthFromClass(enrollmentId: string): void {
-    this.dialog
-      .open(ConfirmDialog, {
-        data: { destructive: true, confirmKey: 'common.delete', message: 'Remove this youth from class?' },
-      })
-      .afterClosed()
-      .subscribe((ok) => {
-        if (!ok) return;
-        this.api.delete('/class-youth', { id: enrollmentId }).subscribe({
-          next: () => {
-            this.notify.success('Saved');
-            this.enrollmentsRes.reload();
-          },
-          error: () => this.notify.error('error.generic'),
-        });
-      });
+  protected async removeYouthFromClass(enrollmentId: string): Promise<void> {
+    const ok = await this.dialogs.confirmDelete('Remove this youth from class?');
+    if (!ok) return;
+    try {
+      await this.classDetailService.removeEnrollment(enrollmentId);
+      this.notify.success('Saved');
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 
   protected roleKey(role: CatechismClassCatechistRole): string {
     return `catechistRole.${role}`;
   }
 
-  protected assignCatechist(classId: string): void {
+  protected async assignCatechist(classId: string): Promise<void> {
     const existing = this.catechistsRes.value()?.items ?? [];
-    this.dialog
-      .open<CatechistAssignDialog, CatechistAssignData>(CatechistAssignDialog, {
-        data: { classId, existingAssignments: existing },
-      })
-      .afterClosed()
-      .subscribe((result) => {
-        if (!result) return;
-        this.api.post('/class-catechist', result).subscribe({
-          next: () => {
-            this.notify.success('catechist.assigned');
-            this.catechistsRes.reload();
-          },
-          error: () => this.notify.error('error.generic'),
-        });
-      });
+    const result = await this.dialogs.open<CatechistAssignDialog, CatechistAssignData>(
+      CatechistAssignDialog,
+      { data: { classId, existingAssignments: existing } },
+    );
+    if (!result) return;
+    try {
+      await this.classDetailService.assignCatechist(result);
+      this.notify.success('catechist.assigned');
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 
-  protected removeCatechist(id: string): void {
-    this.dialog
-      .open(ConfirmDialog, {
-        data: { destructive: true, confirmKey: 'common.delete', message: 'Remove this catechist from class?' },
-      })
-      .afterClosed()
-      .subscribe((ok) => {
-        if (!ok) return;
-        this.api.delete('/class-catechist', { id }).subscribe({
-          next: () => {
-            this.notify.success('catechist.removed');
-            this.catechistsRes.reload();
-          },
-          error: () => this.notify.error('error.generic'),
-        });
-      });
+  protected async removeCatechist(id: string): Promise<void> {
+    const ok = await this.dialogs.confirmDelete('Remove this catechist from class?');
+    if (!ok) return;
+    try {
+      await this.classDetailService.removeCatechist(id);
+      this.notify.success('catechist.removed');
+    } catch {
+      this.notify.error('error.generic');
+    }
   }
 
-  protected newSession(classId: string): void {
-    this.dialog
-      .open(SessionFormDialog, { data: { classId } })
-      .afterClosed()
-      .subscribe((v) => {
-        if (!v) return;
-        this.api.post('/sessions', v).subscribe(() => {
-          this.notify.success('Saved');
-          this.sessionsRes.reload();
-        });
-      });
+  protected async newSession(classId: string): Promise<void> {
+    const v = await this.dialogs.open(SessionFormDialog, { data: { classId } });
+    if (!v) return;
+    await this.classDetailService.createSession(v);
+    this.notify.success('Saved');
   }
 
-  protected editSession(classId: string, session: CatechismSession): void {
-    this.dialog
-      .open(SessionFormDialog, { data: { classId, session } })
-      .afterClosed()
-      .subscribe((v) => {
-        if (!v) return;
-        this.api.patch('/sessions', v).subscribe(() => {
-          this.notify.success('Saved');
-          this.sessionsRes.reload();
-        });
-      });
+  protected async editSession(classId: string, session: CatechismSession): Promise<void> {
+    const v = await this.dialogs.open(SessionFormDialog, { data: { classId, session } });
+    if (!v) return;
+    await this.classDetailService.updateSession(v);
+    this.notify.success('Saved');
   }
 
-  protected deleteSession(id: string): void {
-    this.dialog
-      .open(ConfirmDialog, { data: { destructive: true, confirmKey: 'common.delete', message: 'Delete this session?' } })
-      .afterClosed()
-      .subscribe((ok) => {
-        if (!ok) return;
-        this.api.delete('/sessions', { catechismSessionId: id }).subscribe(() => {
-          this.notify.success('Deleted');
-          this.sessionsRes.reload();
-        });
-      });
+  protected async deleteSession(id: string): Promise<void> {
+    const ok = await this.dialogs.confirmDelete('Delete this session?');
+    if (!ok) return;
+    await this.classDetailService.deleteSession(id);
+    this.notify.success('Deleted');
   }
 
-  protected newExam(classId: string): void {
-    this.dialog
-      .open(ExamFormDialog, { data: { classId } })
-      .afterClosed()
-      .subscribe((v) => {
-        if (!v) return;
-        this.api.post('/exams', v).subscribe(() => {
-          this.notify.success('Saved');
-          this.examsRes.reload();
-        });
-      });
+  protected async newExam(classId: string): Promise<void> {
+    const v = await this.dialogs.open(ExamFormDialog, { data: { classId } });
+    if (!v) return;
+    await this.classDetailService.createExam(v);
+    this.notify.success('Saved');
   }
 
-  protected editExam(classId: string, exam: Exam): void {
-    this.dialog
-      .open(ExamFormDialog, { data: { classId, exam } })
-      .afterClosed()
-      .subscribe((v) => {
-        if (!v) return;
-        this.api.patch('/exams', v).subscribe(() => {
-          this.notify.success('Saved');
-          this.examsRes.reload();
-        });
-      });
+  protected async editExam(classId: string, exam: Exam): Promise<void> {
+    const v = await this.dialogs.open(ExamFormDialog, { data: { classId, exam } });
+    if (!v) return;
+    await this.classDetailService.updateExam(v);
+    this.notify.success('Saved');
   }
 
-  protected deleteExam(id: string): void {
-    this.dialog
-      .open(ConfirmDialog, { data: { destructive: true, confirmKey: 'common.delete', message: 'Delete this exam?' } })
-      .afterClosed()
-      .subscribe((ok) => {
-        if (!ok) return;
-        this.api.delete('/exams', { id }).subscribe(() => {
-          this.notify.success('Deleted');
-          this.examsRes.reload();
-        });
-      });
+  protected async deleteExam(id: string): Promise<void> {
+    const ok = await this.dialogs.confirmDelete('Delete this exam?');
+    if (!ok) return;
+    await this.classDetailService.deleteExam(id);
+    this.notify.success('Deleted');
   }
 }

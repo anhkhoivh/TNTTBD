@@ -1,0 +1,64 @@
+@if (data(); as d) {
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ d.fullName | fullName }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <mat-icon matListItemIcon>person</mat-icon>
+        <span matListItemTitle>{{ d.fullName | fullName }}</span>
+      </mat-list-item>
+      @if (d.phoneNumber) {
+      <mat-list-item>
+        <mat-icon matListItemIcon>phone</mat-icon>
+        <span matListItemTitle><a [href]="'tel:' + d.phoneNumber">{{ d.phoneNumber }}</a></span>
+      </mat-list-item>
+      }
+      @if (d.email) {
+      <mat-list-item>
+        <mat-icon matListItemIcon>email</mat-icon>
+        <span matListItemTitle><a [href]="'mailto:' + d.email">{{ d.email }}</a></span>
+      </mat-list-item>
+      }
+    </mat-list>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="mt-16">
+  <mat-card-header>
+    <mat-card-title>{{ 'contact.linkedYouths' | t }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list>
+      @for (y of d.youths; track y.id) {
+      <mat-list-item>
+        <mat-icon matListItemIcon>face</mat-icon>
+        <span matListItemTitle>
+          <a [routerLink]="['/app/youth/detail']" [queryParams]="{ id: y.eucharisticYouthId }" class="item-link">
+            {{ y.fullName | fullName }}
+          </a>
+        </span>
+        <span matListItemLine>{{ relationKey(y.contactRelationType) | t }}</span>
+      </mat-list-item>
+      } @empty {
+      <p>{{ 'common.noData' | t }}</p>
+      }
+    </mat-list>
+  </mat-card-content>
+</mat-card>
+
+<div class="actions mt-16">
+  <a mat-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}</a>
+  <a mat-stroked-button [routerLink]="['/app/contacts/edit']" [queryParams]="{ id: d.id }">
+    <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
+  </a>
+  @if (canDelete()) {
+  <button mat-stroked-button color="warn" type="button" (click)="remove(d.id)">
+    <mat-icon>delete</mat-icon> {{ 'common.delete' | t }}
+  </button>
+  }
+</div>
+} @else {
+<div class="skeleton mt-16" style="width: 100%; height: 300px; border-radius: 8px;"></div>
+}

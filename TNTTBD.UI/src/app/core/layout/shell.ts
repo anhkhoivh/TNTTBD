@@ -79,6 +79,12 @@ export class Shell {
       roles: [UserRole.Admin, UserRole.Catechist],
     },
     {
+      labelKey: 'nav.contacts',
+      route: '/app/contacts',
+      icon: 'contacts',
+      roles: [UserRole.Admin, UserRole.Catechist],
+    },
+    {
       labelKey: 'nav.classes',
       route: '/app/classes',
       icon: 'class',
@@ -126,7 +132,10 @@ export class Shell {
       this.router.navigate(['/app/catechists/detail'], { queryParams: { id:  this.auth.currentUser()?.catechistId} });
     }
     else if (this.auth.currentUser() && this.auth.currentUser()?.eucharisticYouthId) {
-      this.router.navigate(['/app/youths/detail'], { queryParams: { id:  this.auth.currentUser()?.eucharisticYouthId} });
+      this.router.navigate(['/app/youth/detail'], { queryParams: { id:  this.auth.currentUser()?.eucharisticYouthId} });
+    }
+    else if (this.auth.currentUser()?.contactId) {
+      this.router.navigate(['/app/contacts/detail'], { queryParams: { id: this.auth.currentUser()?.contactId } });
     }
   }
 }

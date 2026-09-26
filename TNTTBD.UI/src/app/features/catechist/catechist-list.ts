@@ -1,18 +1,17 @@
 import { Component, inject , ChangeDetectionStrategy, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ApiService } from '../../core/services/api.service';
-import { Catechist } from '../../shared/models';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
 import { AuthService } from '../../core/auth/auth.service';
 import { MatListModule } from '@angular/material/list';
+import { CatechistService } from './catechist.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-catechist-list',
@@ -28,17 +27,18 @@ import { MatListModule } from '@angular/material/list';
     FullNamePipe,
     DateLocalePipe,
     MatListModule,
-  ],
+    MatProgressSpinner
+],
   templateUrl: './catechist-list.html',
   styleUrl: './catechist-list.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [CatechistService],
 })
 export class CatechistList {
-  private api = inject(ApiService);
+  private catechistService = inject(CatechistService);
+  protected isLoading = this.catechistService.isListLoading;
   private auth = inject(AuthService);
-  protected data = toSignal(this.api.list<Catechist>('/catechists'), {
-    initialValue: { items: [], total: 0, page: 1, pageSize: 50 },
-  });
+  protected data = this.catechistService.catechists;
   protected cols = ['index', 'name', 'dob', 'gender'];
   private user = signal(this.auth.currentUser());
   protected myCatechistId = signal<string | null>(null);

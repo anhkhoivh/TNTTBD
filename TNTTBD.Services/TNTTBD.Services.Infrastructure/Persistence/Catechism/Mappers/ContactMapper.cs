@@ -34,6 +34,7 @@ public static class ContactMapper
             Id = domain.Id,
             FullName = domain.FullName,
             PhoneNumber = domain.PhoneNumber,
+            Email = domain.Email,
         };
 
         return entity;

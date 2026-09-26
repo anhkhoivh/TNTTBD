@@ -15,3 +15,16 @@ export interface EucharisticYouthContact {
   contactRelationType: ContactRelationType;
   contact?: Contact;
 }
+
+export interface ContactYouth {
+  /** Link id (EucharisticYouthContact) */
+  id: string;
+  eucharisticYouthId: string;
+  code: string;
+  fullName: FullName;
+  contactRelationType: ContactRelationType;
+}
+
+export interface ContactDetail extends Contact {
+  youths: ContactYouth[];
+}

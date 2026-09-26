@@ -60,7 +60,11 @@
       </mat-paginator>
     }
 
-    @if (data().items.length === 0) {
+    @if (isLoading()) {
+      <mat-spinner></mat-spinner>
+    }
+
+    @else if (data().items.length === 0) {
       <app-empty-state 
         icon="face" 
         titleKey="youth.noYouth" 

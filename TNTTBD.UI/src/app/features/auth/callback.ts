@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../core/auth/auth.service';
 import { environment } from '../../../environments/environment';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-auth-callback',
@@ -66,6 +67,10 @@ export class AuthCallback implements OnInit {
   protected error = signal<string | null>(null);
 
   ngOnInit(): void {
+    void this.handleCallback();
+  }
+
+  private async handleCallback(): Promise<void> {
     const params = this.route.snapshot.queryParams;
     const code = params['code'];
     const state = params['state'];
@@ -97,17 +102,15 @@ export class AuthCallback implements OnInit {
     this.auth.clearSsoState();
 
     // Exchange code for tokens
-    this.auth.exchangeSsoCode(provider, code, environment.ssoRedirectUri).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.router.navigate(['/app/dashboard']);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        const message = err?.error?.message || err?.error?.detail || 'Authentication failed. Contact your administrator.';
-        this.error.set(message);
-      },
-    });
+    try {
+      await firstValueFrom(this.auth.exchangeSsoCode(provider, code, environment.ssoRedirectUri));
+      this.loading.set(false);
+      this.router.navigate(['/app/dashboard']);
+    } catch (err: any) {
+      this.loading.set(false);
+      const message = err?.error?.message || err?.error?.detail || 'Authentication failed. Contact your administrator.';
+      this.error.set(message);
+    }
   }
 
   protected goToLogin(): void {

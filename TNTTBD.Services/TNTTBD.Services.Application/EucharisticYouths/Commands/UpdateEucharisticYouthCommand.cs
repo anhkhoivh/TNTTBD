@@ -15,4 +15,4 @@ public record UpdateEucharisticYouthCommand(
     bool IsMale,
     List<PatronSaintDto>? PatronSaints = null,
     List<SpiritualMilestoneDto>? Milestones = null
-) : IRequest;
+) : IRequest<bool>;

@@ -50,4 +50,18 @@ public class Contact : AggregateRoot<Guid>
     public string Email { get; protected set; }
 
     #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Update contact details
+    /// </summary>
+    public void UpdateDetails(FullName fullName, string? phoneNumber, string? email)
+    {
+        FullName = fullName;
+        PhoneNumber = phoneNumber ?? string.Empty;
+        Email = email ?? string.Empty;
+    }
+
+    #endregion
 }
