@@ -17,6 +17,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { UserRole } from '../../shared/enums';
 import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
 import { Catechist } from '../../shared/models';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-catechist-list',
@@ -41,6 +42,7 @@ import { Catechist } from '../../shared/models';
 })
 export class CatechistList {
   private catechistService = inject(CatechistService);
+  #translate = inject(TranslationService);
   protected isLoading = this.catechistService.isListLoading;
   private auth = inject(AuthService);
   private router = inject(Router);
@@ -82,7 +84,7 @@ export class CatechistList {
         const ok = await this.dialogs.confirmDelete(`Delete catechist "${row.fullName.givenName}"?`);
         if (!ok) return;
         await this.catechistService.remove(row.id);
-        this.notify.success('Deleted');
+        this.notify.success(this.#translate.t('common.deleted'));
         break;
       }
     }

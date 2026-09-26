@@ -22,6 +22,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { UserRole } from '../../shared/enums';
 import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
 import { EucharisticYouth } from '../../shared/models';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-youth-list',
@@ -55,6 +56,7 @@ export class YouthList {
   private router = inject(Router);
   private dialogs = inject(DialogService);
   private notify = inject(NotificationService);
+  #translate = inject(TranslationService);
 
   protected data = this.youthService.list;
   protected isLoading = this.youthService.isListLoading;
@@ -96,7 +98,7 @@ export class YouthList {
         const ok = await this.dialogs.confirmDelete(`Delete youth "${row.fullName.givenName}"?`);
         if (!ok) return;
         await this.youthService.remove(row.id);
-        this.notify.success('Deleted');
+        this.notify.success(this.#translate.t('common.deleted'));
         break;
       }
     }

@@ -23,6 +23,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { ClassesService } from './classes.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-class-list',
@@ -56,6 +57,7 @@ export class ClassList {
   private notify = inject(NotificationService);
   private router = inject(Router);
   protected auth = inject(AuthService);
+  #translate = inject(TranslationService);
 
   protected readonly UserRole = UserRole;
 
@@ -155,7 +157,7 @@ export class ClassList {
     const ok = await this.dialogs.confirmDelete(`Delete class "${catechismClass.className}"?`);
     if (!ok) return;
     await this.classesService.deleteClass(catechismClass.id);
-    this.notify.success('Deleted');
+    this.notify.success(this.#translate.t('common.deleted'));
   }
 
   protected async openActions(row: CatechismClass): Promise<void> {

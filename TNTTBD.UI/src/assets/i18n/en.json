@@ -44,6 +44,7 @@
   "common.index": "Index",
   "common.saved": "Saved",
   "common.saveFailed": "Failed to save",
+  "common.deleted": "Deleted",
 
   "photo.upload": "Upload photo",
   "photo.uploaded": "Photo uploaded.",
@@ -174,6 +175,7 @@
   "exam.score": "Score",
   "exam.done": "Completed",
   "exam.remark": "Remark",
+  "exam.deleteConfirm": "Remove this exam?",
 
   "enrollment.status.Pending": "Pending",
   "enrollment.status.Active": "Active",

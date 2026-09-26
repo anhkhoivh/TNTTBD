@@ -19,6 +19,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { UserRole } from '../../../shared/enums';
 import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
 import { Contact } from '../../../shared/models';
+import { TranslationService } from '../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-contact-list',
@@ -49,6 +50,7 @@ export class ContactList {
   private router = inject(Router);
   private dialogs = inject(DialogService);
   private notify = inject(NotificationService);
+  #translate = inject(TranslationService);
 
   protected data = this.contactService.list;
   protected isLoading = this.contactService.isListLoading;
@@ -90,7 +92,7 @@ export class ContactList {
         const ok = await this.dialogs.confirmDelete(`Delete contact "${row.fullName.givenName}"?`);
         if (!ok) return;
         await this.contactService.remove(row.id);
-        this.notify.success('Deleted');
+        this.notify.success(this.#translate.t('common.deleted'));
         break;
       }
     }

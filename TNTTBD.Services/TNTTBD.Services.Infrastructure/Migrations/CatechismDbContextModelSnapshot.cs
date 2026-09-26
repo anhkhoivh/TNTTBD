@@ -941,17 +941,17 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.CatechistEntity", "Catechist")
                         .WithOne("User")
                         .HasForeignKey("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", "CatechistId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ContactEntity", "Contact")
                         .WithOne("User")
                         .HasForeignKey("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", "ContactId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.EucharisticYouthEntity", "EucharisticYouth")
                         .WithOne("User")
                         .HasForeignKey("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", "EucharisticYouthId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Catechist");
 
