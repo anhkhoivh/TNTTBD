@@ -8,5 +8,5 @@
   "validation.required": "Trường {0} là bắt buộc.",
   "validation.not_found": "Không tìm thấy trường {0}.",
   "contact.already_linked": "Liên hệ này đã được liên kết với thiếu nhi.",
-  "contact.has_user_account": "Liên hệ này có tài khoản người dùng nên không thể xóa."
+  "user.email_already_exists": "Email này đã được sử dụng."
 }

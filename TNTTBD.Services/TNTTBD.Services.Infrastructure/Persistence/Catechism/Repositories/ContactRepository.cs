@@ -46,13 +46,6 @@ public class ContactRepository : IContactRepository
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken)
             ?? throw new DomainException(DomainErrors.ValidationNotFound);
 
-        bool hasUser = entity.UserId != null
-            || await _context.Users.AnyAsync(u => u.ContactId == id, cancellationToken);
-        if (hasUser)
-        {
-            throw new DomainException(DomainErrors.ContactHasUserAccount);
-        }
-
         _context.Contacts.Remove(entity);
     }
 }

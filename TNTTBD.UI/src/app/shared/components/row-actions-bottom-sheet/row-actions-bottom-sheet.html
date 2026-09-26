@@ -1,0 +1,20 @@
+<mat-nav-list>
+  @if (data.canView) {
+    <button mat-list-item type="button" (click)="choose('view')">
+      <mat-icon matListItemIcon>visibility</mat-icon>
+      <span matListItemTitle>{{ 'common.view' | t }}</span>
+    </button>
+  }
+  @if (data.canEdit) {
+    <button mat-list-item type="button" (click)="choose('edit')">
+      <mat-icon matListItemIcon>edit</mat-icon>
+      <span matListItemTitle>{{ 'common.edit' | t }}</span>
+    </button>
+  }
+  @if (data.canDelete) {
+    <button mat-list-item type="button" (click)="choose('delete')">
+      <mat-icon matListItemIcon color="warn">delete</mat-icon>
+      <span matListItemTitle>{{ 'common.delete' | t }}</span>
+    </button>
+  }
+</mat-nav-list>

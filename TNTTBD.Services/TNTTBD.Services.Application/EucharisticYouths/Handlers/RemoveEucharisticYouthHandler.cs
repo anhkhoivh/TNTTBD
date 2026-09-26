@@ -22,6 +22,7 @@ public class RemoveEucharisticYouthHandler : IRequestHandler<RemoveEucharisticYo
             return false;
         }
 
+        // Linked User (if any) is hard-deleted by the DB via cascade FK (UserEntityConfiguration.EucharisticYouthId).
         await _repository.Remove(command.EucharisticYouthId, cancellationToken);
         return true;
     }

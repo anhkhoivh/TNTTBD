@@ -6,6 +6,7 @@ namespace TNTTBD.Services.Application.Users.Commands;
 public record UpdateUserCommand(
     Guid Id,
     string? UserName,
+    string? Email,
     bool? IsActive,
     UserRole? Role,
     UserEntityLink? Link = null

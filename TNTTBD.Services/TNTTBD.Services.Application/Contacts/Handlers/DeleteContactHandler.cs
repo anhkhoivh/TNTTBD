@@ -18,11 +18,12 @@ public class DeleteContactHandler : IRequestHandler<DeleteContactCommand, bool>
 
     public async Task<bool> Handle(DeleteContactCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminOrCatechistAsync(cancellationToken))
+        if (!await _authContext.IsAdminAsync(cancellationToken))
         {
             return false;
         }
 
+        // Linked User (if any) is hard-deleted by the DB via cascade FK (UserEntityConfiguration.ContactId).
         await _contactRepository.RemoveAsync(command.Id, cancellationToken);
 
         return true;

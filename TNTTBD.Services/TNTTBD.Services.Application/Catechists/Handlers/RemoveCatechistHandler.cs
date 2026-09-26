@@ -23,6 +23,7 @@ public class RemoveCatechistHandler : IRequestHandler<RemoveCatechistCommand, bo
             return false;
         }
 
+        // Linked User (if any) is hard-deleted by the DB via cascade FK (UserEntityConfiguration.CatechistId).
         await _repository.Remove(command.CatechistId, cancellationToken);
         return true;
     }

@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed, linkedSignal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -22,6 +22,7 @@ import { MatListModule } from '@angular/material/list';
 import { AuthService } from '../../core/auth/auth.service';
 import { ClassesService } from './classes.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
 
 @Component({
   selector: 'app-class-list',
@@ -53,6 +54,7 @@ export class ClassList {
   private classesService = inject(ClassesService);
   private dialogs = inject(DialogService);
   private notify = inject(NotificationService);
+  private router = inject(Router);
   protected auth = inject(AuthService);
 
   protected readonly UserRole = UserRole;
@@ -154,5 +156,25 @@ export class ClassList {
     if (!ok) return;
     await this.classesService.deleteClass(catechismClass.id);
     this.notify.success('Deleted');
+  }
+
+  protected async openActions(row: CatechismClass): Promise<void> {
+    const canManage = this.canManage();
+    const data: RowActionsData = { canView: true, canEdit: canManage, canDelete: canManage };
+    const action = await this.dialogs.openBottomSheet<RowActionsBottomSheet, RowActionsData, RowAction>(
+      RowActionsBottomSheet,
+      { data },
+    );
+    switch (action) {
+      case 'view':
+        await this.router.navigate(['/app/classes/detail'], { queryParams: { id: row.id } });
+        break;
+      case 'edit':
+        await this.editClass(row);
+        break;
+      case 'delete':
+        await this.deleteClass(row);
+        break;
+    }
   }
 }
