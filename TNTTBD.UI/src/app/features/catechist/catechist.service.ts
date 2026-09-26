@@ -58,4 +58,9 @@ export class CatechistService {
     this.listRes.reload();
     if (this.detailId()) this.detailRes.reload();
   }
+
+  async remove(catechistId: string): Promise<void> {
+    await this.api.deleteAsync('/catechists', { catechistId });
+    this.listRes.reload();
+  }
 }

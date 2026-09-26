@@ -33,17 +33,17 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.HasOne(u => u.Catechist)
             .WithOne(c => c.User)
             .HasForeignKey<UserEntity>(u => u.CatechistId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(u => u.Contact)
             .WithOne(c => c.User)
             .HasForeignKey<UserEntity>(u => u.ContactId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(u => u.EucharisticYouth)
             .WithOne(y => y.User)
             .HasForeignKey<UserEntity>(u => u.EucharisticYouthId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
     }
 

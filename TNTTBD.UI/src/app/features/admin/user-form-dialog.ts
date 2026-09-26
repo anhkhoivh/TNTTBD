@@ -45,6 +45,7 @@ export interface UserFormResult {
   update?: {
     id: string;
     userName?: string;
+    email?: string;
     isActive?: boolean;
     role?: UserRole;
     link?: { kind: LinkKind; id?: string };
@@ -99,7 +100,7 @@ export class UserFormDialog {
       ?? null;
 
   protected form = this.fb.nonNullable.group({
-    email: [{ value: this.data.user?.email ?? '', disabled: this.isEdit }, [Validators.required, Validators.email]],
+    email: [this.data.user?.email ?? '', [Validators.required, Validators.email]],
     userName: [this.data.user?.userName ?? '', Validators.required],
     password: [''],
     role: [this.data.user?.userRole ?? UserRole.EucharisticYouthContact, Validators.required],
@@ -171,6 +172,7 @@ export class UserFormDialog {
         update: {
           id: this.data.user.id,
           userName: v.userName,
+          email: v.email,
           isActive: v.isActive,
           role: v.role,
           link: {

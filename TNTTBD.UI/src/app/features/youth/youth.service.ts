@@ -47,6 +47,11 @@ export class YouthService {
   });
   readonly detail = computed(() => this.detailRes.value() ?? null);
 
+  async remove(eucharisticYouthId: string): Promise<void> {
+    await this.api.deleteAsync('/youths', { eucharisticYouthId });
+    this.listRes.reload();
+  }
+
   readonly contactsActive = signal(false);
   readonly contactsRes = rxResource<PaginatedResult<EucharisticYouthContact>, string>({
     params: () => (this.contactsActive() && this.detailId() ? this.detailId()! : ''),

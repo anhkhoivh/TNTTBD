@@ -12,7 +12,7 @@ public interface IUserRepository
     Task<bool> ValidatePasswordAsync(string identifier, string password, CancellationToken cancellationToken);
     Task<bool> HasPasswordAsync(Guid userId, CancellationToken cancellationToken);
     Task<Guid> CreateAsync(string email, string userName, string password, UserRole role, Guid? catechistId, Guid? eucharisticYouthId, Guid? contactId, CancellationToken cancellationToken);
-    Task UpdateAsync(Guid id, string? userName, bool? isActive, UserRole? role, UserEntityLink? link, CancellationToken cancellationToken);
+    Task UpdateAsync(Guid id, string? userName, string? email, bool? isActive, UserRole? role, UserEntityLink? link, CancellationToken cancellationToken);
     Task DeactivateAsync(Guid id, CancellationToken cancellationToken);
     Task ChangePasswordAsync(Guid userId, string newPassword, CancellationToken cancellationToken);
     Task<PaginatedResult<UserDto>> GetAllAsync(int page, int? pageSize, CancellationToken cancellationToken);

@@ -28,6 +28,7 @@ import {
   AddChoiceData,
 } from '../../shared/components/add-choice-bottom-sheet/add-choice-bottom-sheet';
 import { ClassDetailService } from './class-detail.service';
+import { TranslationService } from '../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-class-detail',
@@ -60,6 +61,7 @@ export class ClassDetail {
   private dialogs = inject(DialogService);
   private notify = inject(NotificationService);
   protected auth = inject(AuthService);
+  #translate = inject(TranslationService);
 
   protected readonly EnrollmentStatus = EnrollmentStatus;
   protected readonly CatechismClassCatechistRole = CatechismClassCatechistRole;
@@ -150,7 +152,7 @@ export class ClassDetail {
     if (!result) return;
     try {
       await this.classDetailService.enrollYouth(result);
-      this.notify.success('class.youthEnrolled');
+      this.notify.success(this.#translate.t('class.youthEnrolled'));
     } catch {
       this.notify.error('error.generic');
     }
@@ -159,7 +161,7 @@ export class ClassDetail {
   protected async changeEnrollmentStatus(enrollmentId: string, status: EnrollmentStatus): Promise<void> {
     try {
       await this.classDetailService.changeEnrollmentStatus({ id: enrollmentId, status, note: '' });
-      this.notify.success('Saved');
+      this.notify.success(this.#translate.t('common.saved'));
     } catch {
       this.notify.error('error.generic');
     }
@@ -170,7 +172,7 @@ export class ClassDetail {
     if (!ok) return;
     try {
       await this.classDetailService.removeEnrollment(enrollmentId);
-      this.notify.success('Saved');
+      this.notify.success(this.#translate.t('common.saved'));
     } catch {
       this.notify.error('error.generic');
     }
@@ -189,7 +191,7 @@ export class ClassDetail {
     if (!result) return;
     try {
       await this.classDetailService.assignCatechist(result);
-      this.notify.success('catechist.assigned');
+      this.notify.success(this.#translate.t('catechist.assigned'));
     } catch {
       this.notify.error('error.generic');
     }
@@ -200,7 +202,7 @@ export class ClassDetail {
     if (!ok) return;
     try {
       await this.classDetailService.removeCatechist(id);
-      this.notify.success('catechist.removed');
+      this.notify.success(this.#translate.t('catechist.removed'));
     } catch {
       this.notify.error('error.generic');
     }
@@ -210,21 +212,21 @@ export class ClassDetail {
     const v = await this.dialogs.open(SessionFormDialog, { data: { classId } });
     if (!v) return;
     await this.classDetailService.createSession(v);
-    this.notify.success('Saved');
+    this.notify.success(this.#translate.t('common.saved'));
   }
 
   protected async editSession(classId: string, session: CatechismSession): Promise<void> {
     const v = await this.dialogs.open(SessionFormDialog, { data: { classId, session } });
     if (!v) return;
     await this.classDetailService.updateSession(v);
-    this.notify.success('Saved');
+    this.notify.success(this.#translate.t('common.saved'));
   }
 
   protected async deleteSession(id: string): Promise<void> {
     const ok = await this.dialogs.confirmDelete('Delete this session?');
     if (!ok) return;
     await this.classDetailService.deleteSession(id);
-    this.notify.success('Deleted');
+    this.notify.success(this.#translate.t('common.deleted'));
   }
 
   protected async newExam(classId: string): Promise<void> {
@@ -242,9 +244,9 @@ export class ClassDetail {
   }
 
   protected async deleteExam(id: string): Promise<void> {
-    const ok = await this.dialogs.confirmDelete('Delete this exam?');
+    const ok = await this.dialogs.confirmDelete(this.#translate.t('exam.deleteConfirm'));
     if (!ok) return;
     await this.classDetailService.deleteExam(id);
-    this.notify.success('Deleted');
+    this.notify.success(this.#translate.t('common.deleted'));
   }
 }

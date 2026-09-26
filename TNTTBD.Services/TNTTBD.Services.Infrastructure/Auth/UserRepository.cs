@@ -4,6 +4,7 @@ using TNTTBD.Services.Application.Auth.DTOs;
 using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.Users.Commands;
+using TNTTBD.Services.Domain.Common;
 using TNTTBD.Services.Domain.Enums;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
@@ -110,7 +111,7 @@ public class UserRepository : IUserRepository
         return entity.Id;
     }
 
-    public async Task UpdateAsync(Guid id, string? userName, bool? isActive, UserRole? role, UserEntityLink? link, CancellationToken cancellationToken)
+    public async Task UpdateAsync(Guid id, string? userName, string? email, bool? isActive, UserRole? role, UserEntityLink? link, CancellationToken cancellationToken)
     {
         var entity = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken)
             ?? throw new KeyNotFoundException($"User {id} not found.");
@@ -118,6 +119,17 @@ public class UserRepository : IUserRepository
         if (userName != null) entity.UserName = userName;
         if (isActive.HasValue) entity.IsActive = isActive.Value;
         if (role.HasValue) entity.Role = role.Value;
+
+        if (email != null && !string.Equals(email, entity.Email, StringComparison.OrdinalIgnoreCase))
+        {
+            bool emailTaken = await _context.Users
+                .AnyAsync(u => u.Id != id && u.Email.ToLower() == email.ToLower(), cancellationToken);
+            if (emailTaken)
+            {
+                throw new DomainException(DomainErrors.EmailAlreadyExists);
+            }
+            entity.Email = email;
+        }
 
         if (link != null)
         {

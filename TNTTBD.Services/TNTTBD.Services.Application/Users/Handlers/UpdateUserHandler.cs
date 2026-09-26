@@ -15,6 +15,6 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand>
 
     public async Task Handle(UpdateUserCommand command, CancellationToken cancellationToken)
     {
-        await _userRepository.UpdateAsync(command.Id, command.UserName, command.IsActive, command.Role, command.Link, cancellationToken);
+        await _userRepository.UpdateAsync(command.Id, command.UserName, command.Email, command.IsActive, command.Role, command.Link, cancellationToken);
     }
 }

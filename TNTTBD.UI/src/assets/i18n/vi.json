@@ -44,6 +44,7 @@
   "common.index": "STT",
   "common.saved": "Đã lưu",
   "common.saveFailed": "Đã gặp lỗi khi lưu",
+  "common.deleted": "Đã xóa",
 
   "photo.upload": "Tải ảnh lên",
   "photo.uploaded": "Đã tải ảnh lên.",
@@ -173,6 +174,7 @@
   "exam.score": "Điểm",
   "exam.done": "Hoàn thành",
   "exam.remark": "Nhận xét",
+  "exam.deleteConfirm": "Xóa bài kiểm tra này?",
 
   "enrollment.status.Pending": "Chờ duyệt",
   "enrollment.status.Active": "Đang học",

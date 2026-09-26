@@ -8,5 +8,5 @@
   "validation.required": "The field {0} is required.",
   "validation.not_found": "The field {0} is not found.",
   "contact.already_linked": "This contact is already linked to the youth.",
-  "contact.has_user_account": "This contact has a user account and cannot be deleted."
+  "user.email_already_exists": "This email is already in use by another user."
 }
