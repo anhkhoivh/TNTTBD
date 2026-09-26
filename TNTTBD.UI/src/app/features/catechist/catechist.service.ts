@@ -28,6 +28,7 @@ export class CatechistService {
     stream: () => this.api.list<Catechist>('/catechists'),
   });
   readonly catechists = computed(() => this.listRes.value() ?? emptyPage<Catechist>());
+  readonly isListLoading = computed(() => this.listRes.isLoading());
 
   /** Signal drives which catechist detail/edit-form record is loaded; null = no active record */
   readonly detailId = signal<string | null>(null);

@@ -37,6 +37,7 @@ export class YouthService {
       this.api.list<EucharisticYouth>('/youths', params).pipe(catchError(() => of(emptyPage<EucharisticYouth>()))),
   });
   readonly list = computed(() => this.listRes.value() ?? emptyPage<EucharisticYouth>());
+  readonly isListLoading = computed(() => this.listRes.isLoading());
 
   readonly detailId = signal<string | null>(null);
   readonly detailRes = rxResource<EucharisticYouth | null, string>({

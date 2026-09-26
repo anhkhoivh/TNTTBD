@@ -22,6 +22,7 @@ export class ClassesService {
   readonly classesRes = rxResource<CatechismClass[], void>({
     stream: () => this.api.list<CatechismClass>('/classes').pipe(map((r) => r.items)),
   });
+  readonly isListLoading = computed(() => this.classesRes.isLoading());
   readonly classes = computed(() => this.classesRes.value() ?? []);
 
   readonly classCatechistsRes = rxResource<CatechismClassCatechist[], void>({

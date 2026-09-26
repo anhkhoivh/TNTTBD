@@ -30,6 +30,7 @@ export class ContactService {
     stream: ({ params }) =>
       this.api.list<Contact>('/contacts', params).pipe(catchError(() => of(emptyPage<Contact>()))),
   });
+  readonly isListLoading = computed(() => this.listRes.isLoading());
   readonly list = computed(() => this.listRes.value() ?? emptyPage<Contact>());
 
   readonly detailId = signal<string | null>(null);

@@ -102,7 +102,7 @@
           <mat-icon matListItemIcon>person</mat-icon>
           <span matListItemTitle>
             @if (yc.contact) {
-            <a [routerLink]="['/app/contacts/detail']" [queryParams]="{ id: yc.contactId }">{{ yc.contact.fullName | fullName }}</a>
+            <a [routerLink]="['/app/contacts/detail']" [queryParams]="{ id: yc.contactId }" class="item-link">{{ yc.contact.fullName | fullName }}</a>
             }
             @else { {{ relationKey(yc.contactRelationType) | t }} }
           </span>

@@ -12,6 +12,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
 import { EmptyState } from '../../../shared/components/empty-state';
 import { ContactService } from '../contact.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-contact-list',
@@ -29,7 +30,8 @@ import { ContactService } from '../contact.service';
     TranslatePipe,
     FullNamePipe,
     EmptyState,
-  ],
+    MatProgressSpinner
+],
   templateUrl: './contact-list.html',
   styleUrl: './contact-list.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +41,7 @@ export class ContactList {
   private contactService = inject(ContactService);
 
   protected data = this.contactService.list;
+  protected isLoading = this.contactService.isListLoading;
 
   protected displayedColumns = ['fullName', 'phoneNumber', 'email'];
   protected searchQuery = signal('');

@@ -11,6 +11,7 @@ import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
 import { AuthService } from '../../core/auth/auth.service';
 import { MatListModule } from '@angular/material/list';
 import { CatechistService } from './catechist.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-catechist-list',
@@ -26,7 +27,8 @@ import { CatechistService } from './catechist.service';
     FullNamePipe,
     DateLocalePipe,
     MatListModule,
-  ],
+    MatProgressSpinner
+],
   templateUrl: './catechist-list.html',
   styleUrl: './catechist-list.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +36,7 @@ import { CatechistService } from './catechist.service';
 })
 export class CatechistList {
   private catechistService = inject(CatechistService);
+  protected isLoading = this.catechistService.isListLoading;
   private auth = inject(AuthService);
   protected data = this.catechistService.catechists;
   protected cols = ['index', 'name', 'dob', 'gender'];

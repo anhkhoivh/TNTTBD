@@ -33,7 +33,6 @@ import { YouthService } from './youth.service';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,
@@ -230,11 +229,11 @@ export class YouthForm {
     try {
       await this.youthService.save(payload, this.isEdit());
       this.notify.success(this.translate.t('common.saved'));
+      this.navigateBack();
     } catch {
       // swallow: error toast already shown by global http error handling
     } finally {
       this.loading.set(false);
-      this.navigateBack();
     }
   }
 

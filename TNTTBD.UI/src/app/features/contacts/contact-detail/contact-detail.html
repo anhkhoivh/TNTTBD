@@ -35,8 +35,8 @@
       <mat-list-item>
         <mat-icon matListItemIcon>face</mat-icon>
         <span matListItemTitle>
-          <a [routerLink]="['/app/youth/detail']" [queryParams]="{ id: y.eucharisticYouthId }">
-            {{ y.code }} — {{ y.fullName | fullName }}
+          <a [routerLink]="['/app/youth/detail']" [queryParams]="{ id: y.eucharisticYouthId }" class="item-link">
+            {{ y.fullName | fullName }}
           </a>
         </span>
         <span matListItemLine>{{ relationKey(y.contactRelationType) | t }}</span>

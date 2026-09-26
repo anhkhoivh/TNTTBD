@@ -21,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { AuthService } from '../../core/auth/auth.service';
 import { ClassesService } from './classes.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-class-list',
@@ -40,6 +41,7 @@ import { ClassesService } from './classes.service';
     TranslatePipe,
     EmptyState,
     MatListModule,
+    MatProgressSpinner
   ],
   templateUrl: './class-list.html',
   styleUrl: './class-list.scss',
@@ -56,6 +58,7 @@ export class ClassList {
   protected readonly UserRole = UserRole;
 
   protected years = this.classesService.years;
+  protected isLoading = this.classesService.isListLoading;
   // Defaults to the latest year once loaded, but stays writable for manual selection
   protected selectedYear = linkedSignal<CatechismYear | null>(() => {
     const years = this.classesService.years();

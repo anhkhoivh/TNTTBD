@@ -15,6 +15,7 @@ import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
 import { EmptyState } from '../../shared/components/empty-state';
 import { FormsModule } from '@angular/forms';
 import { YouthService } from './youth.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-youth-list',
@@ -33,8 +34,9 @@ import { YouthService } from './youth.service';
     FullNamePipe,
     DateLocalePipe,
     EmptyState,
-    FormsModule
-  ],
+    FormsModule,
+    MatProgressSpinner
+],
   templateUrl: './youth-list.html',
   styleUrl: './youth-list.scss',
 
@@ -45,6 +47,7 @@ export class YouthList {
   private youthService = inject(YouthService);
 
   protected data = this.youthService.list;
+  protected isLoading = this.youthService.isListLoading;
 
   protected displayedColumns = ['code', 'fullName', 'dateOfBirth', 'gender'];
   protected searchQuery = signal('');
