@@ -45,6 +45,7 @@
   "common.saved": "Saved",
   "common.saveFailed": "Failed to save",
   "common.deleted": "Deleted",
+  "common.current": "Current year",
 
   "photo.upload": "Upload photo",
   "photo.uploaded": "Photo uploaded.",
@@ -78,6 +79,10 @@
   "youth.milestones": "Spiritual milestones",
   "youth.contacts": "Contacts",
   "youth.classHistory": "Class history",
+  "youth.report": "Report",
+  "youth.reportSummary": "Summary",
+  "youth.attendanceHistory": "Attendance history",
+  "youth.examHistory": "Exam history",
   "youth.list": "Youth list",
   "youth.create": "Create youth",
   "youth.edit": "Edit youth",
@@ -159,6 +164,10 @@
   "class.searchYouth": "Search youth by name or code",
   "class.youthEnrolled": "Youth enrolled in class.",
   "class.total": "Total",
+  "class.report": "Report",
+  "class.attendanceReport": "Attendance report",
+  "class.attendanceCounts": "Present / total · absent · excused",
+  "class.examReport": "Exam report",
 
   "session.title": "Session title",
   "session.dateTime": "Date & time",
@@ -168,6 +177,7 @@
   "attendance.present": "Present",
   "attendance.absent": "Absent",
   "attendance.excused": "Excused",
+  "attendance.none": "Not marked",
   "attendance.saveAll": "Save all",
 
   "exam.title": "Exam title",

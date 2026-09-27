@@ -9,6 +9,7 @@ import {
   CatechismSession,
   Exam,
   PaginatedResult,
+  ClassReport,
 } from '../../shared/models';
 
 function emptyPage<T>(): PaginatedResult<T> {
@@ -68,6 +69,13 @@ export class ClassDetailService {
       params ? this.api.list<Exam>('/exams', { classId: params }).pipe(catchError(() => of(emptyPage<Exam>()))) : of(emptyPage<Exam>()),
   });
   readonly exams = computed(() => this.examsRes.value() ?? emptyPage<Exam>());
+
+  readonly reportRes = rxResource<ClassReport | null, string>({
+    params: () => (this.classId() && this.activeTabs().has(4) ? this.classId()! : ''),
+    stream: ({ params }) =>
+      params ? this.api.get<ClassReport>(`/reports/classes/${params}`).pipe(catchError(() => of(null))) : of(null),
+  });
+  readonly report = computed(() => this.reportRes.value() ?? null);
 
   onTabChange(index: number): void {
     this.activeTabs.update((s) => {

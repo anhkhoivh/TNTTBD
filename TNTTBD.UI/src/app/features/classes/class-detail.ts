@@ -92,6 +92,7 @@ export class ClassDetail {
   protected catechistsRes = this.classDetailService.catechistsRes;
   protected sessionsRes = this.classDetailService.sessionsRes;
   protected examsRes = this.classDetailService.examsRes;
+  protected report = this.classDetailService.report;
 
   protected onTabChange(index: number): void {
     this.classDetailService.onTabChange(index);

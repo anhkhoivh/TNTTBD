@@ -40,6 +40,11 @@
           </a>
         </span>
         <span matListItemLine>{{ relationKey(y.contactRelationType) | t }}</span>
+        <a mat-icon-button [routerLink]="['/app/youth/detail']"
+          [queryParams]="{ id: y.eucharisticYouthId, view: 'report' }"
+          [attr.aria-label]="'youth.report' | t">
+          <mat-icon>assessment</mat-icon>
+        </a>
       </mat-list-item>
       } @empty {
       <p>{{ 'common.noData' | t }}</p>

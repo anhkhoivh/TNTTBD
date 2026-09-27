@@ -20,6 +20,7 @@ using TNTTBD.Services.Application.Contacts.Interfaces;
 using TNTTBD.Services.Application.Dashboard.Interfaces;
 using TNTTBD.Services.Application.EucharisticYouths.Interfaces;
 using TNTTBD.Services.Application.Exams.Interfaces;
+using TNTTBD.Services.Application.Reports.Interfaces;
 using TNTTBD.Services.Domain.Catechism.Repositories;
 using TNTTBD.Services.Infrastructure.Auth;
 using TNTTBD.Services.Infrastructure.Persistence;
@@ -123,6 +124,7 @@ builder.Services.AddScoped<ICatechismClassCatechistQueryService, CatechismClassC
 builder.Services.AddScoped<IEucharisticYouthContactQueryService, EucharisticYouthContactQueryService>();
 builder.Services.AddScoped<IExamQueryService, ExamQueryService>();
 builder.Services.AddScoped<IContactQueryService, ContactQueryService>();
+builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
