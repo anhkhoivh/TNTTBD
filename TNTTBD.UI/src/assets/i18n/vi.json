@@ -178,6 +178,10 @@
   "attendance.excused": "Vắng có phép",
   "attendance.none": "Chưa điểm danh",
   "attendance.saveAll": "Lưu tất cả",
+  "attendance.saving": "Đang lưu",
+  "attendance.saveFailed": "Không thể lưu điểm danh.",
+  "attendance.loadFailed": "Không thể tải danh sách điểm danh.",
+  "attendance.retry": "Thử lại",
 
   "exam.title": "Tiêu đề bài kiểm tra",
   "exam.date": "Ngày kiểm tra",

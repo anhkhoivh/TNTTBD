@@ -8,6 +8,13 @@
   <mat-card-content>
     @if (loading()) {
       <div class="center"><mat-spinner diameter="40"></mat-spinner></div>
+    } @else if (loadError()) {
+      <div class="center load-error">
+        <span>{{ 'attendance.loadFailed' | t }}</span>
+        <button mat-button type="button" (click)="retryLoad()">
+          <mat-icon>refresh</mat-icon> {{ 'attendance.retry' | t }}
+        </button>
+      </div>
     } @else {
       <table mat-table [dataSource]="rows()" class="full-width">
         <ng-container matColumnDef="name">
@@ -23,7 +30,7 @@
               [hideSingleSelectionIndicator]="true"
             >
               @for (s of statuses; track s.v) {
-                <mat-button-toggle 
+                <mat-button-toggle
                   [value]="s.v"
                   [ngStyle]="{'background-color': row.status === s.v ? statusColors[s.v] : ''}"
                 >
@@ -31,6 +38,18 @@
                 </mat-button-toggle>
               }
             </mat-button-toggle-group>
+            @if (saveState(row.enrollmentId) === 'saving') {
+              <span class="row-save-state">
+                <mat-spinner diameter="16"></mat-spinner>{{ 'attendance.saving' | t }}
+              </span>
+            } @else if (saveState(row.enrollmentId) === 'error') {
+              <span class="row-save-state row-save-error">
+                <mat-icon>error_outline</mat-icon>{{ 'attendance.saveFailed' | t }}
+                <button mat-button type="button" (click)="retry(row.enrollmentId)">
+                  <mat-icon>refresh</mat-icon> {{ 'attendance.retry' | t }}
+                </button>
+              </span>
+            }
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="['name', 'status']"></tr>
@@ -44,7 +63,4 @@
   <a mat-button [routerLink]="['/app/classes/detail']" [queryParams]="backParams()">
     <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
   </a>
-  <button mat-flat-button color="primary" (click)="save()" [disabled]="saving() || loading()">
-    {{ 'common.save' | t }}
-  </button>
 </div>

@@ -179,6 +179,10 @@
   "attendance.excused": "Excused",
   "attendance.none": "Not marked",
   "attendance.saveAll": "Save all",
+  "attendance.saving": "Saving",
+  "attendance.saveFailed": "Attendance could not be saved.",
+  "attendance.loadFailed": "Attendance could not be loaded.",
+  "attendance.retry": "Retry",
 
   "exam.title": "Exam title",
   "exam.date": "Exam date",

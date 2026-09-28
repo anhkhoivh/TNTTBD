@@ -1,13 +1,17 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
+import { of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { CatechismSessionAttendance } from '../../shared/models';
+import { AttendanceStatus } from '../../shared/enums';
 
 export interface AttendancePayload {
   sessionId: string | null;
   markedByCatechistId: string | null | undefined;
-  attendanceItems: { catechismClassEucharisticYouthId: string; attendanceStatus: unknown }[];
+  attendanceItem: {
+    catechismClassEucharisticYouthId: string;
+    attendanceStatus: AttendanceStatus;
+  };
 }
 
 @Injectable()
@@ -19,14 +23,12 @@ export class ClassAttendanceService {
     params: () => this.sessionId() ?? '',
     stream: ({ params }) =>
       params
-        ? this.api
-            .get<CatechismSessionAttendance[]>('/sessions/attendance-sheet', { sessionId: params })
-            .pipe(catchError(() => of([] as CatechismSessionAttendance[])))
+        ? this.api.get<CatechismSessionAttendance[]>('/sessions/attendance-sheet', { sessionId: params })
         : of([] as CatechismSessionAttendance[]),
   });
   readonly sheet = computed(() => this.sheetRes.value() ?? []);
 
-  async save(payload: AttendancePayload): Promise<void> {
-    await this.api.postAsync('/sessions/attendances', payload);
+  async saveOne(payload: AttendancePayload): Promise<void> {
+    await this.api.postAsync('/sessions/attendance', payload);
   }
 }

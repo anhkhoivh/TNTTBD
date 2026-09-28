@@ -22,6 +22,8 @@ interface Row {
   status: AttendanceStatus;
 }
 
+type SaveState = 'saving' | 'error';
+
 @Component({
   selector: 'app-class-attendance',
   standalone: true,
@@ -63,8 +65,9 @@ export class ClassAttendance {
   };
 
   protected loading = computed(() => this.attendanceService.sheetRes.isLoading());
-  protected saving = signal(false);
+  protected loadError = computed(() => this.attendanceService.sheetRes.error());
   protected rows = signal<Row[]>([]);
+  protected writeStates = signal<Record<string, SaveState>>({});
   protected presentCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Present).length);
   protected absentCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Absent).length);
   protected excusedCount = computed(() => this.rows().filter((r) => r.status === AttendanceStatus.Excused).length);
@@ -72,6 +75,8 @@ export class ClassAttendance {
 
   private classId: string | null = null;
   private sessionId: string | null = null;
+  private pendingStatuses = new Map<string, AttendanceStatus>();
+  private activeWrites = new Set<string>();
 
   constructor() {
     this.classId = this.route.snapshot.queryParamMap.get('classId');
@@ -91,30 +96,79 @@ export class ClassAttendance {
     });
   }
 
-  protected setStatus(index: number, status: AttendanceStatus): void {
+  protected setStatus(index: number, status: AttendanceStatus | null | undefined): void {
+    if (status == null || status === AttendanceStatus.None || this.loadError()) return;
+
     const updated = [...this.rows()];
+    const row = updated[index];
+    if (!row || row.status === status) return;
     updated[index] = { ...updated[index], status };
     this.rows.set(updated);
+    this.pendingStatuses.set(row.enrollmentId, status);
+    this.setWriteState(row.enrollmentId, 'saving');
+    void this.flushEnrollment(row.enrollmentId);
   }
 
-  protected async save(): Promise<void> {
-    this.saving.set(true);
-    const payload = {
-      sessionId: this.sessionId,
-      markedByCatechistId: this.auth.currentUser()?.catechistId,
-      attendanceItems: this.rows()
-        .filter((r) => r.status !== AttendanceStatus.None)
-        .map((r) => ({
-          catechismClassEucharisticYouthId: r.enrollmentId,
-          attendanceStatus: r.status,
-        })),
-    };
+  protected saveState(enrollmentId: string): SaveState | undefined {
+    return this.writeStates()[enrollmentId];
+  }
+
+  protected retry(enrollmentId: string): void {
+    const row = this.rows().find((item) => item.enrollmentId === enrollmentId);
+    if (!row || row.status === AttendanceStatus.None || this.activeWrites.has(enrollmentId)) return;
+
+    this.pendingStatuses.set(enrollmentId, row.status);
+    this.setWriteState(enrollmentId, 'saving');
+    void this.flushEnrollment(enrollmentId);
+  }
+
+  protected retryLoad(): void {
+    this.attendanceService.sheetRes.reload();
+  }
+
+  private async flushEnrollment(enrollmentId: string): Promise<void> {
+    if (this.activeWrites.has(enrollmentId)) return;
+    this.activeWrites.add(enrollmentId);
+
     try {
-      await this.attendanceService.save(payload);
-      this.notify.success(this.#translate.t('common.save'));
+      while (this.pendingStatuses.has(enrollmentId)) {
+        const status = this.pendingStatuses.get(enrollmentId)!;
+        this.pendingStatuses.delete(enrollmentId);
+
+        try {
+          await this.attendanceService.saveOne({
+            sessionId: this.sessionId,
+            markedByCatechistId: this.auth.currentUser()?.catechistId,
+            attendanceItem: {
+              catechismClassEucharisticYouthId: enrollmentId,
+              attendanceStatus: status,
+            },
+          });
+        } catch {
+          if (this.pendingStatuses.has(enrollmentId)) continue;
+
+          this.setWriteState(enrollmentId, 'error');
+          this.notify.error(this.#translate.t('attendance.saveFailed'));
+          return;
+        }
+      }
+
+      this.clearWriteState(enrollmentId);
     } finally {
-      this.saving.set(false);
+      this.activeWrites.delete(enrollmentId);
     }
+  }
+
+  private setWriteState(enrollmentId: string, state: SaveState): void {
+    this.writeStates.update((states) => ({ ...states, [enrollmentId]: state }));
+  }
+
+  private clearWriteState(enrollmentId: string): void {
+    this.writeStates.update((states) => {
+      const next = { ...states };
+      delete next[enrollmentId];
+      return next;
+    });
   }
 
   protected backParams() {
