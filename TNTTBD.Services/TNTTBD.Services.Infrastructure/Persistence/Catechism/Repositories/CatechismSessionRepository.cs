@@ -121,7 +121,8 @@ public class CatechismSessionRepository : ICatechismSessionRepository
         }
         else
         {
-            entity.EucharisticYouthAttendances.Add(new CatechismSessionAttendanceEntity
+            // Add via DbSet: a pre-set Guid key added through the navigation is treated as Modified (UPDATE of 0 rows).
+            _context.CatechismSessionAttendances.Add(new CatechismSessionAttendanceEntity
             {
                 Id = Guid.NewGuid(),
                 CatechismSessionId = sessionId,
