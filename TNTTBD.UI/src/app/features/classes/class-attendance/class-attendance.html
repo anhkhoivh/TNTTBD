@@ -40,11 +40,11 @@
             </mat-button-toggle-group>
             @if (saveState(row.enrollmentId) === 'saved') {
               <span class="row-save-state row-save-success" role="status">
-                <mat-icon>check_circle</mat-icon>{{ 'common.saved' | t }}
+                <mat-icon inline>check_circle</mat-icon>{{ 'common.saved' | t }}
               </span>
             } @else if (saveState(row.enrollmentId) === 'error') {
               <span class="row-save-state row-save-error">
-                <mat-icon>error_outline</mat-icon>{{ 'attendance.saveFailed' | t }}
+                <mat-icon inline>error_outline</mat-icon>{{ 'attendance.saveFailed' | t }}
                 <button mat-button type="button" (click)="retry(row.enrollmentId)">
                   <mat-icon>refresh</mat-icon> {{ 'attendance.retry' | t }}
                 </button>
