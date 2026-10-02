@@ -22,7 +22,7 @@ interface Row {
   status: AttendanceStatus;
 }
 
-type SaveState = 'saving' | 'error';
+type SaveState = 'saved' | 'error';
 
 @Component({
   selector: 'app-class-attendance',
@@ -105,7 +105,7 @@ export class ClassAttendance {
     updated[index] = { ...updated[index], status };
     this.rows.set(updated);
     this.pendingStatuses.set(row.enrollmentId, status);
-    this.setWriteState(row.enrollmentId, 'saving');
+    this.clearWriteState(row.enrollmentId);
     void this.flushEnrollment(row.enrollmentId);
   }
 
@@ -118,7 +118,7 @@ export class ClassAttendance {
     if (!row || row.status === AttendanceStatus.None || this.activeWrites.has(enrollmentId)) return;
 
     this.pendingStatuses.set(enrollmentId, row.status);
-    this.setWriteState(enrollmentId, 'saving');
+    this.clearWriteState(enrollmentId);
     void this.flushEnrollment(enrollmentId);
   }
 
@@ -153,7 +153,7 @@ export class ClassAttendance {
         }
       }
 
-      this.clearWriteState(enrollmentId);
+      this.setWriteState(enrollmentId, 'saved');
     } finally {
       this.activeWrites.delete(enrollmentId);
     }

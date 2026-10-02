@@ -161,6 +161,8 @@
   "class.total": "Total",
 
   "report.open": "Report",
+  "report.exportExcel": "Export Excel",
+  "report.exportingExcel": "Preparing Excel...",
   "report.classTitle": "Class report",
   "report.youthTitle": "Youth report",
   "report.attendance": "Attendance",

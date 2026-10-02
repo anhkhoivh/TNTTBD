@@ -38,9 +38,9 @@
                 </mat-button-toggle>
               }
             </mat-button-toggle-group>
-            @if (saveState(row.enrollmentId) === 'saving') {
-              <span class="row-save-state">
-                <mat-spinner diameter="16"></mat-spinner>{{ 'attendance.saving' | t }}
+            @if (saveState(row.enrollmentId) === 'saved') {
+              <span class="row-save-state row-save-success" role="status">
+                <mat-icon>check_circle</mat-icon>{{ 'common.saved' | t }}
               </span>
             } @else if (saveState(row.enrollmentId) === 'error') {
               <span class="row-save-state row-save-error">

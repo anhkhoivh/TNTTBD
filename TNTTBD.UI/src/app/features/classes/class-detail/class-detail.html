@@ -14,7 +14,7 @@
   }
 </mat-card>
 
-<mat-tab-group class="mt-16" (selectedTabChange)="onTabChange($event.index)">
+<mat-tab-group class="mt-16" [selectedIndex]="selectedTabIndex()" (selectedTabChange)="onTabChange($event.index)">
   <mat-tab [label]="'class.enrolled' | t">
     <ng-template matTabContent>
       @defer {

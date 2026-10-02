@@ -1,6 +1,6 @@
-import { Component, inject, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, effect, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, Location, NgOptimizedImage } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -15,6 +15,7 @@ import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
 import { CatechismClassCatechistRole, EnrollmentStatus } from '../../../shared/enums';
 import { CatechistService } from '../catechist.service';
+import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-query-state';
 
 @Component({
   selector: 'app-catechist-detail',
@@ -61,12 +62,15 @@ import { CatechistService } from '../catechist.service';
 })
 export class CatechistDetail {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private catechistService = inject(CatechistService);
   protected photoService = inject(PhotoService);
   private auth = inject(AuthService);
   #location = inject(Location);
 
   protected readonly EnrollmentStatus = EnrollmentStatus;
+  protected selectedTabIndex = signal(0);
+  private readonly tabKeys = ['profile', 'photos', 'class-history'];
 
   protected get canEdit(): boolean {
     const user = this.auth.currentUser();
@@ -78,7 +82,13 @@ export class CatechistDetail {
 
   constructor() {
     const queryParamMap = toSignal(this.route.queryParamMap, { initialValue: this.route.snapshot.queryParamMap });
-    effect(() => this.catechistService.detailId.set(queryParamMap().get('id')));
+    effect(() => {
+      const params = queryParamMap();
+      this.catechistService.detailId.set(params.get('id'));
+      const index = tabIndexFromKey(this.tabKeys, params.get('tab'));
+      this.selectedTabIndex.set(index);
+      if (index === 2) this.catechistService.assignmentsActive.set(true);
+    });
   }
 
   /** Catechist profile for the active route id */
@@ -89,6 +99,14 @@ export class CatechistDetail {
 
   protected onTabChange(index: number): void {
     if (index === 2) this.catechistService.assignmentsActive.set(true);
+    const currentTab = this.route.snapshot.queryParamMap.get('tab');
+    const tab = tabKeyForSelection(this.tabKeys, index, currentTab);
+    if (!tab) return;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected roleKey(role: CatechismClassCatechistRole): string {

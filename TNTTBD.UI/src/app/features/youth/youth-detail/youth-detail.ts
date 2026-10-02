@@ -1,4 +1,4 @@
-import { Component, inject, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, effect, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -28,6 +28,7 @@ import {
 } from '../../../shared/components/link-contact-dialog/link-contact-dialog';
 import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
+import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-query-state';
 import { YouthService } from '../youth.service';
 
 @Component({
@@ -66,7 +67,14 @@ export class YouthDetail {
 
   constructor() {
     const queryParamMap = toSignal(this.route.queryParamMap, { initialValue: this.route.snapshot.queryParamMap });
-    effect(() => this.youthService.detailId.set(queryParamMap().get('id')));
+    effect(() => {
+      const params = queryParamMap();
+      this.youthService.detailId.set(params.get('id'));
+      const index = tabIndexFromKey(this.tabKeys, params.get('tab'));
+      this.selectedTabIndex.set(index);
+      if (index === 3) this.youthService.contactsActive.set(true);
+      if (index === 4) this.youthService.historyActive.set(true);
+    });
   }
 
   /** Youth profile for the active route id (milestones + photos embedded) */
@@ -77,10 +85,20 @@ export class YouthDetail {
 
   /** Lazy-loaded class history tab */
   protected historyData = this.youthService.history;
+  protected selectedTabIndex = signal(0);
+  private readonly tabKeys = ['profile', 'milestones', 'photos', 'contacts', 'class-history'];
 
   protected onTabChange(index: number): void {
     if (index === 3) this.youthService.contactsActive.set(true);
     if (index === 4) this.youthService.historyActive.set(true);
+    const currentTab = this.route.snapshot.queryParamMap.get('tab');
+    const tab = tabKeyForSelection(this.tabKeys, index, currentTab);
+    if (!tab) return;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected classOf(id: string, list: CatechismClass[]): CatechismClass | undefined {

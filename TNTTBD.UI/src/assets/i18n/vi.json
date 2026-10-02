@@ -160,6 +160,8 @@
   "class.total": "Sĩ số",
 
   "report.open": "Báo cáo",
+  "report.exportExcel": "Xuất Excel",
+  "report.exportingExcel": "Đang tạo Excel...",
   "report.classTitle": "Báo cáo lớp",
   "report.youthTitle": "Báo cáo thiếu nhi",
   "report.attendance": "Điểm danh",

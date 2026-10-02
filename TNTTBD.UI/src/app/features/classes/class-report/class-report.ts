@@ -19,6 +19,8 @@ import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
 import { AttendanceStatus, EnrollmentStatus } from '../../../shared/enums';
 import { ClassReportRow } from '../../../shared/models';
 import { ATTENDANCE_STATUS_DISPLAY } from '../../../shared/constants/attendance-status-display';
+import { NotificationService } from '../../../core/services/notification.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
 import { ClassReportService } from './class-report.service';
 
 type SortValue = string | number | null | undefined;
@@ -53,6 +55,8 @@ export class ClassReportPage {
   private route = inject(ActivatedRoute);
   private reportService = inject(ClassReportService);
   private fullName = new FullNamePipe();
+  private notify = inject(NotificationService);
+  private translation = inject(TranslationService);
 
   protected readonly statusDisplay = ATTENDANCE_STATUS_DISPLAY;
   protected display(status: AttendanceStatus) {
@@ -155,6 +159,7 @@ export class ClassReportPage {
   });
 
   protected examTotalAverage = computed(() => this.average(this.filteredRows().map((r) => r.averageScore)));
+  protected exporting = signal(false);
 
   constructor() {
     const queryParamMap = toSignal(this.route.queryParamMap, { initialValue: this.route.snapshot.queryParamMap });
@@ -163,6 +168,34 @@ export class ClassReportPage {
 
   protected onSearch(event: Event): void {
     this.search.set((event.target as HTMLInputElement).value);
+  }
+
+  protected async exportExcel(): Promise<void> {
+    const report = this.report();
+    if (!report || this.exporting()) return;
+
+    this.exporting.set(true);
+    try {
+      const blob = await this.reportService.exportExcel(
+        report.classId,
+        this.attendanceRows().map((row) => row.enrollmentId),
+        this.examRows().map((row) => row.enrollmentId),
+        this.translation.currentLang(),
+      );
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${[report.classCode, report.className]
+        .filter(Boolean)
+        .join('-')
+        .replace(/[<>:"/\\|?*]/g, '-')}.xlsx`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      this.notify.error(this.translation.t('error.generic'));
+    } finally {
+      this.exporting.set(false);
+    }
   }
 
   protected statusKey(status: EnrollmentStatus): string {

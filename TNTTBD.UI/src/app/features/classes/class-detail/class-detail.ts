@@ -1,4 +1,4 @@
-import { Component, inject, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, effect, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -29,6 +29,7 @@ import {
 } from '../../../shared/components/add-choice-bottom-sheet/add-choice-bottom-sheet';
 import { ClassDetailService } from './class-detail.service';
 import { TranslationService } from '../../../core/i18n/translation.service';
+import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-query-state';
 
 @Component({
   selector: 'app-class-detail',
@@ -66,6 +67,7 @@ export class ClassDetail {
   protected readonly EnrollmentStatus = EnrollmentStatus;
   protected readonly CatechismClassCatechistRole = CatechismClassCatechistRole;
   protected readonly UserRole = UserRole;
+  protected selectedTabIndex = signal(0);
 
   protected canManage(): boolean {
     return this.auth.hasRole([UserRole.Admin, UserRole.Catechist]);
@@ -81,7 +83,13 @@ export class ClassDetail {
 
   constructor() {
     const queryParamMap = toSignal(this.route.queryParamMap, { initialValue: this.route.snapshot.queryParamMap });
-    effect(() => this.classDetailService.classId.set(queryParamMap().get('id')));
+    effect(() => {
+      const params = queryParamMap();
+      this.classDetailService.classId.set(params.get('id'));
+      const index = tabIndexFromKey(this.tabKeys(), params.get('tab'));
+      this.selectedTabIndex.set(index);
+      this.classDetailService.onTabChange(index);
+    });
   }
 
   /** Class info for the active route id */
@@ -95,11 +103,18 @@ export class ClassDetail {
 
   protected onTabChange(index: number): void {
     this.classDetailService.onTabChange(index);
+    const currentTab = this.route.snapshot.queryParamMap.get('tab');
+    const tab = tabKeyForSelection(this.tabKeys(), index, currentTab);
+    if (!tab) return;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+    });
   }
 
-  /** Auto-load first tab on init */
-  ngOnInit(): void {
-    this.onTabChange(0);
+  private tabKeys(): string[] {
+    return this.isContact ? ['enrolled', 'catechists'] : ['enrolled', 'catechists', 'sessions', 'exams'];
   }
 
   protected youthOfEnrollment(enrollmentId: string): CatechismClassEucharisticYouth | undefined {

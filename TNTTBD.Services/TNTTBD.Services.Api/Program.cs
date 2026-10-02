@@ -125,6 +125,7 @@ builder.Services.AddScoped<IEucharisticYouthContactQueryService, EucharisticYout
 builder.Services.AddScoped<IExamQueryService, ExamQueryService>();
 builder.Services.AddScoped<IContactQueryService, ContactQueryService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
+builder.Services.AddScoped<IClassReportExcelGenerator, ClassReportExcelGenerator>();
 builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>

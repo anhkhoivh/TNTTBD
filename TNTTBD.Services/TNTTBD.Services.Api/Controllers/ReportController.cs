@@ -18,6 +18,25 @@ public class ReportController(IMediator mediator) : Controller
         return result == null ? NotFound() : Ok(result);
     }
 
+    [HttpPost("classes/{classId:guid}/excel")]
+    public async Task<IActionResult> ExportClassReportExcel(
+        Guid classId,
+        [FromBody] ClassReportExcelRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(
+            new ExportClassReportExcelQuery(
+                classId,
+                request.AttendanceEnrollmentIds,
+                request.ExamEnrollmentIds,
+                request.Language),
+            cancellationToken);
+
+        return result == null
+            ? NotFound()
+            : File(result.Content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", result.FileName);
+    }
+
     [HttpGet("youths/{youthId:guid}")]
     public async Task<IActionResult> GetYouthReport(
         Guid youthId,

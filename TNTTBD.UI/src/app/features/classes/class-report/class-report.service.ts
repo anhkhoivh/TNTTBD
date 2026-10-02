@@ -15,4 +15,17 @@ export class ClassReportService {
       params ? this.api.get<ClassReport>(`/reports/classes/${params}`).pipe(catchError(() => of(null))) : of(null),
   });
   readonly report = computed(() => this.reportRes.value() ?? null);
+
+  exportExcel(
+    classId: string,
+    attendanceEnrollmentIds: string[],
+    examEnrollmentIds: string[],
+    language: 'vi' | 'en',
+  ): Promise<Blob> {
+    return this.api.postBlobAsync(`/reports/classes/${classId}/excel`, {
+      attendanceEnrollmentIds,
+      examEnrollmentIds,
+      language,
+    });
+  }
 }

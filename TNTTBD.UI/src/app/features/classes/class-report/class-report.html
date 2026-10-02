@@ -21,6 +21,10 @@
       }
     </mat-select>
   </mat-form-field>
+  <button mat-stroked-button type="button" (click)="exportExcel()" [disabled]="exporting()">
+    <mat-icon>download</mat-icon>
+    {{ (exporting() ? 'report.exportingExcel' : 'report.exportExcel') | t }}
+  </button>
   <div class="legend">
     @for (s of legend; track s) {
     <span class="legend-item">
