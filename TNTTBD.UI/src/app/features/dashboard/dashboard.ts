@@ -1,7 +1,7 @@
 import { Component, inject, computed , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal, rxResource } from '@angular/core/rxjs-interop';
 import { of, catchError } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,9 +9,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
+import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
 import { AuthService } from '../../core/auth/auth.service';
 import { ApiService } from '../../core/services/api.service';
-import { DashboardSummary } from '../../shared/models';
+import { ContactDetail, DashboardSummary } from '../../shared/models';
 import { UserRole } from '../../shared/enums';
 
 @Component({
@@ -26,6 +27,7 @@ import { UserRole } from '../../shared/enums';
     MatListModule,
     TranslatePipe,
     DateLocalePipe,
+    FullNamePipe,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -52,4 +54,16 @@ export class Dashboard {
   protected myClasses = computed(() => this.data()?.myClasses ?? []);
 
   protected adminTotals = computed(() => this.data()?.totals ?? null);
+
+  protected myYouthId = computed(() =>
+    this.role() === UserRole.EucharisticYouth ? (this.auth.currentUser()?.eucharisticYouthId ?? null) : null,
+  );
+
+  private myContactRes = rxResource<ContactDetail | null, string>({
+    params: () =>
+      this.role() === UserRole.EucharisticYouthContact ? (this.auth.currentUser()?.contactId ?? '') : '',
+    stream: ({ params }) =>
+      params ? this.api.get<ContactDetail>('/contacts/detail', { id: params }).pipe(catchError(() => of(null))) : of(null),
+  });
+  protected myYouths = computed(() => this.myContactRes.value()?.youths ?? []);
 }

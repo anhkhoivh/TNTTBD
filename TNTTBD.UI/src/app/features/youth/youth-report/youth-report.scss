@@ -1,0 +1,88 @@
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.selectors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.enrollment-field {
+  min-width: 280px;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0;
+
+  dt {
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.summary-card {
+  padding: 1rem;
+}
+
+.summary-label {
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.summary-value {
+  font: var(--mat-sys-headline-medium);
+}
+
+.summary-sub {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.summary-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font: var(--mat-sys-title-medium);
+}
+
+.count,
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.status-field {
+  min-width: 200px;
+}
+
+.not-counted {
+  opacity: 0.45;
+}
+
+.secondary {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}

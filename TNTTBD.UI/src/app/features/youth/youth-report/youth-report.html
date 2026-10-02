@@ -1,0 +1,153 @@
+@if (report(); as r) {
+<mat-card>
+  <mat-card-header>
+    <mat-icon mat-card-avatar>assessment</mat-icon>
+    <mat-card-title>{{ 'report.youthTitle' | t }} · {{ r.youthFullName | fullName }}</mat-card-title>
+    <mat-card-subtitle>{{ 'youth.code' | t }}: {{ r.youthCode }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="selectors mt-16">
+      <mat-form-field appearance="outline" class="enrollment-field">
+        <mat-label>{{ 'report.enrollment' | t }}</mat-label>
+        <mat-select [value]="r.selectedEnrollmentId ?? ALL_CLASSES" (selectionChange)="selectEnrollment($event.value)">
+          <mat-option [value]="ALL_CLASSES">{{ 'report.allClasses' | t }}</mat-option>
+          @for (e of r.enrollments; track e.enrollmentId) {
+          <mat-option [value]="e.enrollmentId">
+            {{ e.className }} · {{ enrollmentStatusKey(e.enrollmentStatus) | t }}
+          </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if (isAll()) {
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'class.year' | t }}</mat-label>
+        <mat-select [value]="r.catechismYearId" (selectionChange)="selectYear($event.value)">
+          @for (y of years(); track y.id) {
+          <mat-option [value]="y.id">{{ y.title }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      }
+    </div>
+  </mat-card-content>
+</mat-card>
+
+@if (selectedEnrollment(); as e) {
+<mat-card class="mt-16">
+  <mat-card-header>
+    <mat-icon mat-card-avatar>class</mat-icon>
+    <mat-card-title>
+      <a [routerLink]="['/app/classes/detail']" [queryParams]="{ id: e.classId }">{{ e.className }}</a>
+    </mat-card-title>
+    <mat-card-subtitle>{{ 'class.year' | t }}: {{ e.catechismYearName }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <dl class="details">
+      <dt>{{ 'common.status' | t }}</dt>
+      <dd>{{ enrollmentStatusKey(e.enrollmentStatus) | t }}</dd>
+      <dt>{{ 'report.enrolledAt' | t }}</dt>
+      <dd>{{ e.enrolledAt | dateLocale }}</dd>
+      @if (e.leftAt) {
+      <dt>{{ 'report.leftAt' | t }}</dt>
+      <dd>{{ e.leftAt | dateLocale }}</dd>
+      }
+      @if (e.note) {
+      <dt>{{ 'common.note' | t }}</dt>
+      <dd>{{ e.note }}</dd>
+      }
+    </dl>
+  </mat-card-content>
+</mat-card>
+}
+
+@if (r.enrollments.length === 0) {
+<p class="mt-16">{{ 'report.noEnrollments' | t }}</p>
+} @else {
+<div class="summary mt-16">
+  <mat-card class="summary-card">
+    <div class="summary-label">{{ 'report.rate' | t }}</div>
+    <div class="summary-value">
+      @if (r.attendance.attendanceRate != null) { {{ r.attendance.attendanceRate | number: '1.0-1' }}% } @else { — }
+    </div>
+    <div class="summary-sub">
+      {{ 'attendance.present' | t }} {{ r.attendance.present }}/{{ r.attendance.sessionsHeld }}
+    </div>
+  </mat-card>
+  <mat-card class="summary-card">
+    <div class="summary-label">{{ 'report.attendance' | t }}</div>
+    <div class="summary-counts">
+      @for (s of attendanceStatuses; track s) {
+      <span class="count">
+        <mat-icon [style.color]="statusDisplay[s].color" [matTooltip]="statusDisplay[s].labelKey | t">{{
+          statusDisplay[s].icon }}</mat-icon>
+        {{ statusCounts()[s] }}
+      </span>
+      }
+    </div>
+  </mat-card>
+  <mat-card class="summary-card">
+    <div class="summary-label">{{ 'report.average' | t }}</div>
+    <div class="summary-value">
+      @if (r.exams.averageScore != null) { {{ r.exams.averageScore | number: '1.0-2' }} } @else { — }
+    </div>
+    <div class="summary-sub">{{ 'report.scored' | t }} {{ r.exams.scored }}/{{ r.exams.total }}</div>
+  </mat-card>
+</div>
+
+<mat-card class="mt-16">
+  <mat-card-header>
+    <mat-card-title>{{ 'report.attendance' | t }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-data-table [data]="attendanceRows()" [columns]="attendanceColumns()"
+      [searchKeys]="['sessionTitle', 'className']" [pageSize]="25">
+      <mat-form-field tableActions appearance="outline" class="status-field">
+        <mat-label>{{ 'common.status' | t }}</mat-label>
+        <mat-select multiple [value]="attendanceFilter()" (selectionChange)="attendanceFilter.set($event.value)">
+          @for (s of attendanceStatuses; track s) {
+          <mat-option [value]="s">{{ statusDisplay[s].labelKey | t }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <ng-template appColumnDef="sessionDateTime" let-row>{{ row.sessionDateTime | dateLocale: 'datetime' }}</ng-template>
+      <ng-template appColumnDef="statusRank" let-row>
+        @let d = display(row.status);
+        <span class="status" [class.not-counted]="!row.isCounted">
+          <mat-icon [style.color]="d.color">{{ d.icon }}</mat-icon>
+          {{ d.labelKey | t }}
+        </span>
+        @if (!row.isCounted) {
+        <span class="secondary"> · {{ 'report.notCounted' | t }}</span>
+        }
+      </ng-template>
+    </app-data-table>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="mt-16">
+  <mat-card-header>
+    <mat-card-title>{{ 'report.exams' | t }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <app-data-table [data]="examRows()" [columns]="examColumns()" [searchKeys]="['examTitle', 'className', 'remark']"
+      [pageSize]="25">
+      <ng-template appColumnDef="examDate" let-row>{{ row.examDate | dateLocale }}</ng-template>
+      <ng-template appColumnDef="score" let-row>
+        @if (row.score != null) { {{ row.score | number: '1.0-2' }} } @else { — }
+      </ng-template>
+    </app-data-table>
+  </mat-card-content>
+</mat-card>
+}
+
+<div class="mt-16 actions">
+  <a mat-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}</a>
+  <a mat-stroked-button [routerLink]="['/app/youth/detail']" [queryParams]="{ id: r.youthId }">
+    <mat-icon>person</mat-icon> {{ 'common.profile' | t }}
+  </a>
+</div>
+} @else if (loading()) {
+<div class="center"><mat-spinner diameter="40"></mat-spinner></div>
+} @else {
+<p>{{ 'common.noData' | t }}</p>
+}

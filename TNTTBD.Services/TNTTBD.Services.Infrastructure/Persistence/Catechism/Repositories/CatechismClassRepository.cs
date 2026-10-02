@@ -87,7 +87,7 @@ public class CatechismClassRepository : ICatechismClassRepository
             }
             else
             {
-                entity.EucharisticYouthAttendances.Add(new CatechismSessionAttendanceEntity
+                _context.CatechismSessionAttendances.Add(new CatechismSessionAttendanceEntity
                 {
                     Id = Guid.NewGuid(),
                     CatechismSessionId = sessionId,

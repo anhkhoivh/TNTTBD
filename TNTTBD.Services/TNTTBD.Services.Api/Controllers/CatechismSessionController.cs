@@ -107,6 +107,18 @@ public class CatechismSessionController : Controller
         return Ok();
     }
 
+    [HttpPost("attendance")]
+    public async Task<IActionResult> MarkAttendance([FromBody] MarkAttendanceCommand command, CancellationToken cancellationToken)
+    {
+        if (!await _authContext.CanAccessCatechistAsync(command.MarkedByCatechistId, cancellationToken))
+        {
+            return Forbid();
+        }
+
+        await _mediator.Send(command, cancellationToken);
+        return Ok();
+    }
+
     [HttpGet("attendances")]
     public async Task<IActionResult> GetAttendances([FromQuery] GetAttendancesBySessionQuery query, CancellationToken cancellationToken)
     {

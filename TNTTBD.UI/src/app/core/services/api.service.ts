@@ -21,6 +21,10 @@ export class ApiService {
     return this.http.post<T>(`${this.base}${path}`, body);
   }
 
+  postBlob(path: string, body: unknown): Observable<Blob> {
+    return this.http.post(`${this.base}${path}`, body, { responseType: 'blob' });
+  }
+
   patch<T>(path: string, body: unknown): Observable<T> {
     return this.http.patch<T>(`${this.base}${path}`, body);
   }
@@ -35,6 +39,10 @@ export class ApiService {
 
   postAsync<T>(path: string, body: unknown): Promise<T> {
     return firstValueFrom(this.post<T>(path, body));
+  }
+
+  postBlobAsync(path: string, body: unknown): Promise<Blob> {
+    return firstValueFrom(this.postBlob(path, body));
   }
 
   patchAsync<T>(path: string, body: unknown): Promise<T> {

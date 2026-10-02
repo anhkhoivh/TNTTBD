@@ -6,3 +6,4 @@ export * from './contact.model';
 export * from './catechism.model';
 export * from './exam.model';
 export * from './dashboard.model';
+export * from './report.model';

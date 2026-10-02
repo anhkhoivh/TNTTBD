@@ -172,7 +172,14 @@ export class DataTable<T = unknown> {
       items = [...items].sort((a, b) => {
         const aVal = (a as Record<string, unknown>)[s.active];
         const bVal = (b as Record<string, unknown>)[s.active];
-        const cmp = String(aVal ?? '').localeCompare(String(bVal ?? ''));
+        const aEmpty = aVal == null || aVal === '';
+        const bEmpty = bVal == null || bVal === '';
+        // Empty values stay last in both directions.
+        if (aEmpty || bEmpty) return aEmpty === bEmpty ? 0 : aEmpty ? 1 : -1;
+        const cmp =
+          typeof aVal === 'number' && typeof bVal === 'number'
+            ? aVal - bVal
+            : String(aVal).localeCompare(String(bVal));
         return s.direction === 'asc' ? cmp : -cmp;
       });
     }
