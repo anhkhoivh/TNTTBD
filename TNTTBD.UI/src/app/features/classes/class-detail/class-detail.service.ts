@@ -30,7 +30,8 @@ export class ClassDetailService {
   readonly activeTabs = signal(new Set<number>([0]));
 
   readonly enrollmentsRes = rxResource<PaginatedResult<CatechismClassEucharisticYouth>, string>({
-    params: () => (this.classId() && this.activeTabs().has(0) ? this.classId()! : ''),
+    // computed() so activeTabs changes don't restart (and abort) an identical request
+    params: computed(() => (this.classId() && this.activeTabs().has(0) ? this.classId()! : '')),
     stream: ({ params }) =>
       params
         ? this.api
@@ -41,7 +42,7 @@ export class ClassDetailService {
   readonly enrollments = computed(() => this.enrollmentsRes.value() ?? emptyPage<CatechismClassEucharisticYouth>());
 
   readonly catechistsRes = rxResource<PaginatedResult<CatechismClassCatechist>, string>({
-    params: () => (this.classId() && this.activeTabs().has(1) ? this.classId()! : ''),
+    params: computed(() => (this.classId() && this.activeTabs().has(1) ? this.classId()! : '')),
     stream: ({ params }) =>
       params
         ? this.api
@@ -52,7 +53,7 @@ export class ClassDetailService {
   readonly catechists = computed(() => this.catechistsRes.value() ?? emptyPage<CatechismClassCatechist>());
 
   readonly sessionsRes = rxResource<PaginatedResult<CatechismSession>, string>({
-    params: () => (this.classId() && this.activeTabs().has(2) ? this.classId()! : ''),
+    params: computed(() => (this.classId() && this.activeTabs().has(2) ? this.classId()! : '')),
     stream: ({ params }) =>
       params
         ? this.api
@@ -63,7 +64,7 @@ export class ClassDetailService {
   readonly sessions = computed(() => this.sessionsRes.value() ?? emptyPage<CatechismSession>());
 
   readonly examsRes = rxResource<PaginatedResult<Exam>, string>({
-    params: () => (this.classId() && this.activeTabs().has(3) ? this.classId()! : ''),
+    params: computed(() => (this.classId() && this.activeTabs().has(3) ? this.classId()! : '')),
     stream: ({ params }) =>
       params ? this.api.list<Exam>('/exams', { classId: params }).pipe(catchError(() => of(emptyPage<Exam>()))) : of(emptyPage<Exam>()),
   });
@@ -71,6 +72,7 @@ export class ClassDetailService {
 
   onTabChange(index: number): void {
     this.activeTabs.update((s) => {
+      if (s.has(index)) return s;
       const ns = new Set(s);
       ns.add(index);
       return ns;
