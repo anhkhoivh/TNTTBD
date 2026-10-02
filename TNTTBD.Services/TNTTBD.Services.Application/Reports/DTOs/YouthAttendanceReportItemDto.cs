@@ -10,4 +10,5 @@ public class YouthAttendanceReportItemDto
     public Guid ClassId { get; set; }
     public string? ClassName { get; set; }
     public AttendanceStatus Status { get; set; }
+    public bool IsCounted { get; set; }
 }

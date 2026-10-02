@@ -1,9 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
-import { ApiService } from '../../core/services/api.service';
-import { CatechismSessionAttendance } from '../../shared/models';
-import { AttendanceStatus } from '../../shared/enums';
+import { ApiService } from '../../../core/services/api.service';
+import { CatechismSessionAttendance } from '../../../shared/models';
+import { AttendanceStatus } from '../../../shared/enums';
 
 export interface AttendancePayload {
   sessionId: string | null;

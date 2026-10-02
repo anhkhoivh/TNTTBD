@@ -123,11 +123,28 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
     const youthId = path.split('/').pop() ?? '';
     const youth = mockYouth.find((y) => y.id === youthId);
     if (!youth) return notFound();
-    const enrollments = mockClassYouth.filter((e) => e.eucharisticYouthId === youthId);
-    const enrollmentIds = new Set(enrollments.map((e) => e.id));
+    const all = mockClassYouth.filter((e) => e.eucharisticYouthId === youthId);
+    const selectedId = qs.get('enrollmentId');
+    const scope = selectedId ? all.filter((e) => e.id === selectedId) : all;
+    const statuses = [AttendanceStatus.Present, AttendanceStatus.Absent, AttendanceStatus.Excused, AttendanceStatus.None];
+    const now = Date.now();
+    const attendanceDetails = scope.flatMap((e) =>
+      mockSessions
+        .filter((s) => s.catechismClassId === e.catechismClassId && Date.parse(s.dateTime) <= now)
+        .map((s, i) => ({
+          sessionId: s.id,
+          sessionTitle: s.title,
+          sessionDateTime: s.dateTime,
+          classId: e.catechismClassId,
+          className: e.className,
+          status: statuses[i % statuses.length],
+          isCounted: true,
+        })),
+    );
+    const scopeIds = new Set(scope.map((e) => e.id));
     const examDetails = mockExams.flatMap((exam) =>
       (exam.examResults ?? [])
-        .filter((result) => enrollmentIds.has(result.catechismClassEucharisticYouthId))
+        .filter((result) => scopeIds.has(result.catechismClassEucharisticYouthId))
         .map((result) => ({
           examId: exam.id,
           examTitle: exam.title,
@@ -138,37 +155,39 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
           remark: result.remark,
         })),
     );
-    const attendanceDetails = mockAttendances
-      .filter((attendance) => enrollmentIds.has(attendance.catechismClassEucharisticYouthId))
-      .map((attendance) => ({
-        sessionId: 'mock-session',
-        sessionTitle: 'Mock session',
-        sessionDateTime: '2025-11-09T08:00:00+07:00',
-        classId: enrollments[0]?.catechismClassId ?? '',
-        className: enrollments[0]?.className,
-        status: attendance.attendanceStatus,
-      }));
-    const present = attendanceDetails.filter((a) => a.status === AttendanceStatus.Present).length;
+    const count = (s: AttendanceStatus) => attendanceDetails.filter((a) => a.status === s).length;
+    const present = count(AttendanceStatus.Present);
     const scored = examDetails.filter((e) => e.score !== null && e.score !== undefined);
     return ok({
       youthId: youth.id,
       youthCode: youth.code,
       youthFullName: youth.fullName,
-      classes: enrollments,
+      catechismYearId: qs.get('catechismYearId') ?? mockYears[0]?.id ?? null,
+      selectedEnrollmentId: selectedId,
+      enrollments: all.map((e) => ({
+        enrollmentId: e.id,
+        classId: e.catechismClassId,
+        className: e.className,
+        catechismYearId: mockClasses.find((c) => c.id === e.catechismClassId)?.catechismYearId ?? '',
+        enrollmentStatus: e.status,
+        enrolledAt: e.enrolledAt,
+        leftAt: e.leftAt,
+      })),
       attendance: {
-        total: attendanceDetails.length,
+        sessionsHeld: attendanceDetails.length,
         present,
-        absent: attendanceDetails.filter((a) => a.status === AttendanceStatus.Absent).length,
-        excused: attendanceDetails.filter((a) => a.status === AttendanceStatus.Excused).length,
-        attendanceRate: attendanceDetails.length ? (present / attendanceDetails.length) * 100 : 0,
+        absent: count(AttendanceStatus.Absent),
+        excused: count(AttendanceStatus.Excused),
+        unmarked: count(AttendanceStatus.None),
+        attendanceRate: attendanceDetails.length ? Math.round((present / attendanceDetails.length) * 10000) / 100 : null,
       },
       exams: {
         total: examDetails.length,
         scored: scored.length,
         averageScore: scored.length ? scored.reduce((sum, e) => sum + (e.score ?? 0), 0) / scored.length : null,
       },
-      attendanceDetails: paginate(attendanceDetails),
-      examDetails: paginate(examDetails),
+      attendanceDetails,
+      examDetails,
     });
   }
 
@@ -216,33 +235,62 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
     const classId = path.split('/').pop() ?? '';
     const classItem = mockClasses.find((c) => c.id === classId);
     if (!classItem) return notFound();
+    const now = Date.now();
+    const sessions = mockSessions
+      .filter((session) => session.catechismClassId === classId)
+      .map((session) => ({
+        sessionId: session.id,
+        title: session.title,
+        dateTime: session.dateTime,
+        isHeld: Date.parse(session.dateTime) <= now,
+      }));
+    const exams = mockExams.filter((exam) => exam.catechismClassId === classId);
+    const statuses = [AttendanceStatus.Present, AttendanceStatus.Present, AttendanceStatus.Absent, AttendanceStatus.Excused];
+    const rows = mockClassYouth
+      .filter((e) => e.catechismClassId === classId)
+      .map((e, r) => {
+        const attendances = sessions.map((s, i) => ({
+          sessionId: s.sessionId,
+          status: s.isHeld ? statuses[(r + i) % statuses.length] : AttendanceStatus.None,
+          isCounted: s.isHeld,
+        }));
+        const counted = attendances.filter((a) => a.isCounted);
+        const count = (st: AttendanceStatus) => counted.filter((a) => a.status === st).length;
+        const scores = exams.map((exam) => {
+          const result = exam.examResults?.find((x) => x.catechismClassEucharisticYouthId === e.id);
+          return { examId: exam.id, score: result?.score ?? null, remark: result?.remark ?? null };
+        });
+        const values = scores.map((s) => s.score).filter((s): s is number => s !== null && s !== undefined);
+        return {
+          enrollmentId: e.id,
+          youthId: e.eucharisticYouthId,
+          youthCode: e.code,
+          youthFullName: e.fullName,
+          enrollmentStatus: e.status,
+          enrolledAt: e.enrolledAt,
+          leftAt: e.leftAt,
+          attendances,
+          scores,
+          counted: counted.length,
+          present: count(AttendanceStatus.Present),
+          absent: count(AttendanceStatus.Absent),
+          excused: count(AttendanceStatus.Excused),
+          unmarked: count(AttendanceStatus.None),
+          attendanceRate: counted.length ? Math.round((count(AttendanceStatus.Present) / counted.length) * 10000) / 100 : null,
+          scored: values.length,
+          averageScore: values.length ? values.reduce((a, b) => a + b, 0) / values.length : null,
+        };
+      });
     return ok({
       classId: classItem.id,
       classCode: classItem.classCode,
       className: classItem.className,
       catechismYearId: classItem.catechismYearId,
       catechismYearName: classItem.catechismYearTitle,
-      sessions: mockSessions
-        .filter((session) => session.catechismClassId === classId)
-        .map((session) => ({
-          sessionId: session.id,
-          title: session.title,
-          dateTime: session.dateTime,
-          totalAttendance: 0,
-          present: 0,
-          absent: 0,
-          excused: 0,
-        })),
-      exams: mockExams
-        .filter((exam) => exam.catechismClassId === classId)
-        .map((exam) => ({
-          examId: exam.id,
-          title: exam.title,
-          examDate: exam.examDate,
-          totalResults: exam.examResults?.length ?? 0,
-          scored: exam.examResults?.filter((result) => result.score !== null && result.score !== undefined).length ?? 0,
-          averageScore: null,
-        })),
+      sessionsHeld: sessions.filter((s) => s.isHeld).length,
+      sessions,
+      exams: exams.map((exam) => ({ examId: exam.id, title: exam.title, examDate: exam.examDate })),
+      rows,
     });
   }
 

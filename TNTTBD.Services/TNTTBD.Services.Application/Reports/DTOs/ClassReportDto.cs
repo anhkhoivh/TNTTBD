@@ -7,6 +7,8 @@ public class ClassReportDto
     public string? ClassName { get; set; }
     public Guid CatechismYearId { get; set; }
     public string? CatechismYearName { get; set; }
-    public List<ClassSessionReportItemDto> Sessions { get; set; } = [];
-    public List<ClassExamReportItemDto> Exams { get; set; } = [];
+    public int SessionsHeld { get; set; }
+    public List<ClassReportSessionDto> Sessions { get; set; } = [];
+    public List<ClassReportExamDto> Exams { get; set; } = [];
+    public List<ClassReportRowDto> Rows { get; set; } = [];
 }

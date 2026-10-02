@@ -10,11 +10,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NotificationService } from '../../core/services/notification.service';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
-import { TranslationService } from '../../core/i18n/translation.service';
-import { ClassesService } from './classes.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { TranslationService } from '../../../core/i18n/translation.service';
+import { ClassesService } from '../classes.service';
 
 @Component({
   selector: 'app-class-migration',

@@ -8,12 +8,12 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AuthService } from '../../core/auth/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { AttendanceStatus } from '../../shared/enums';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
-import { TranslationService } from '../../core/i18n/translation.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { AttendanceStatus } from '../../../shared/enums';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { TranslationService } from '../../../core/i18n/translation.service';
 import { ClassAttendanceService } from './class-attendance.service';
 
 interface Row {

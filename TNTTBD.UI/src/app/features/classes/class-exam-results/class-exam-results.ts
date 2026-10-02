@@ -9,10 +9,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NotificationService } from '../../core/services/notification.service';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
-import { FormErrorsDisplayComponent } from '../../shared/components/form-errors-display.component';
+import { NotificationService } from '../../../core/services/notification.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { FormErrorsDisplayComponent } from '../../../shared/components/form-errors-display.component';
 import { ClassExamResultsService } from './class-exam-results.service';
 
 @Component({

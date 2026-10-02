@@ -8,22 +8,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { NotificationService } from '../../core/services/notification.service';
-import { DialogService } from '../../core/services/dialog.service';
-import { CatechismClass, CatechismYear } from '../../shared/models';
-import { UserRole } from '../../shared/enums';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { YearFormDialog } from '../../shared/components/year-form-dialog';
-import { ClassFormDialog } from '../../shared/components/class-form-dialog';
+import { NotificationService } from '../../../core/services/notification.service';
+import { DialogService } from '../../../core/services/dialog.service';
+import { CatechismClass, CatechismYear } from '../../../shared/models';
+import { UserRole } from '../../../shared/enums';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { YearFormDialog } from '../../../shared/components/year-form-dialog';
+import { ClassFormDialog } from '../../../shared/components/class-form-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { EmptyState } from '../../shared/components/empty-state';
+import { EmptyState } from '../../../shared/components/empty-state';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { AuthService } from '../../core/auth/auth.service';
-import { ClassesService } from './classes.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { ClassesService } from '../classes.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
-import { TranslationService } from '../../core/i18n/translation.service';
+import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
+import { TranslationService } from '../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-class-list',

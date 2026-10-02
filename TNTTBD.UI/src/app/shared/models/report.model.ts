@@ -1,18 +1,21 @@
 import { AttendanceStatus, EnrollmentStatus } from '../enums';
-import { FullName, IsoDate, IsoDateTime, PaginatedResult } from './common.model';
+import { FullName, IsoDate, IsoDateTime } from './common.model';
 
 export interface YouthReport {
   youthId: string;
   youthCode?: string | null;
   youthFullName?: FullName | null;
+  catechismYearId?: string | null;
+  selectedEnrollmentId?: string | null;
+  enrollments: YouthClassReport[];
   attendance: YouthAttendanceSummary;
   exams: YouthExamSummary;
-  classes: YouthClassReport[];
-  attendanceDetails: PaginatedResult<YouthAttendanceReportItem>;
-  examDetails: PaginatedResult<YouthExamReportItem>;
+  attendanceDetails: YouthAttendanceReportItem[];
+  examDetails: YouthExamReportItem[];
 }
 
 export interface YouthClassReport {
+  enrollmentId: string;
   classId: string;
   classCode?: string | null;
   className?: string | null;
@@ -21,14 +24,16 @@ export interface YouthClassReport {
   enrollmentStatus: EnrollmentStatus;
   enrolledAt: IsoDateTime;
   leftAt?: IsoDateTime | null;
+  note?: string | null;
 }
 
 export interface YouthAttendanceSummary {
-  total: number;
+  sessionsHeld: number;
   present: number;
   absent: number;
   excused: number;
-  attendanceRate: number;
+  unmarked: number;
+  attendanceRate?: number | null;
 }
 
 export interface YouthExamSummary {
@@ -44,6 +49,7 @@ export interface YouthAttendanceReportItem {
   classId: string;
   className?: string | null;
   status: AttendanceStatus;
+  isCounted: boolean;
 }
 
 export interface YouthExamReportItem {
@@ -62,25 +68,53 @@ export interface ClassReport {
   className?: string | null;
   catechismYearId: string;
   catechismYearName?: string | null;
-  sessions: ClassSessionReportItem[];
-  exams: ClassExamReportItem[];
+  sessionsHeld: number;
+  sessions: ClassReportSession[];
+  exams: ClassReportExam[];
+  rows: ClassReportRow[];
 }
 
-export interface ClassSessionReportItem {
+export interface ClassReportSession {
   sessionId: string;
   title?: string | null;
   dateTime: IsoDateTime;
-  totalAttendance: number;
-  present: number;
-  absent: number;
-  excused: number;
+  isHeld: boolean;
 }
 
-export interface ClassExamReportItem {
+export interface ClassReportExam {
   examId: string;
   title?: string | null;
   examDate: IsoDate;
-  totalResults: number;
+}
+
+export interface ClassReportAttendanceCell {
+  sessionId: string;
+  status: AttendanceStatus;
+  isCounted: boolean;
+}
+
+export interface ClassReportScoreCell {
+  examId: string;
+  score?: number | null;
+  remark?: string | null;
+}
+
+export interface ClassReportRow {
+  enrollmentId: string;
+  youthId: string;
+  youthCode?: string | null;
+  youthFullName?: FullName | null;
+  enrollmentStatus: EnrollmentStatus;
+  enrolledAt: IsoDateTime;
+  leftAt?: IsoDateTime | null;
+  attendances: ClassReportAttendanceCell[];
+  scores: ClassReportScoreCell[];
+  counted: number;
+  present: number;
+  absent: number;
+  excused: number;
+  unmarked: number;
+  attendanceRate?: number | null;
   scored: number;
   averageScore?: number | null;
 }

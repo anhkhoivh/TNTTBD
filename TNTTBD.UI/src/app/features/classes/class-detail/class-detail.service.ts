@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
-import { ApiService } from '../../core/services/api.service';
+import { ApiService } from '../../../core/services/api.service';
 import {
   CatechismClass,
   CatechismClassCatechist,
@@ -9,8 +9,7 @@ import {
   CatechismSession,
   Exam,
   PaginatedResult,
-  ClassReport,
-} from '../../shared/models';
+} from '../../../shared/models';
 
 function emptyPage<T>(): PaginatedResult<T> {
   return { items: [], total: 0, page: 1, pageSize: 50 };
@@ -69,13 +68,6 @@ export class ClassDetailService {
       params ? this.api.list<Exam>('/exams', { classId: params }).pipe(catchError(() => of(emptyPage<Exam>()))) : of(emptyPage<Exam>()),
   });
   readonly exams = computed(() => this.examsRes.value() ?? emptyPage<Exam>());
-
-  readonly reportRes = rxResource<ClassReport | null, string>({
-    params: () => (this.classId() && this.activeTabs().has(4) ? this.classId()! : ''),
-    stream: ({ params }) =>
-      params ? this.api.get<ClassReport>(`/reports/classes/${params}`).pipe(catchError(() => of(null))) : of(null),
-  });
-  readonly report = computed(() => this.reportRes.value() ?? null);
 
   onTabChange(index: number): void {
     this.activeTabs.update((s) => {

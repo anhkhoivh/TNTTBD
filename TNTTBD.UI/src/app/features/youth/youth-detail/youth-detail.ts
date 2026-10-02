@@ -1,4 +1,4 @@
-import { Component, inject, effect, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -8,29 +8,27 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { PhotoService } from '../../core/services/photo.service';
-import { DialogService } from '../../core/services/dialog.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { CatechismClass, EucharisticYouthContact } from '../../shared/models';
-import { AttendanceStatus, ContactRelationType, EnrollmentStatus, MilestoneType, UserRole } from '../../shared/enums';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { TranslationService } from '../../core/i18n/translation.service';
+import { PhotoService } from '../../../core/services/photo.service';
+import { DialogService } from '../../../core/services/dialog.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { CatechismClass, EucharisticYouthContact } from '../../../shared/models';
+import { ContactRelationType, EnrollmentStatus, MilestoneType, UserRole } from '../../../shared/enums';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { TranslationService } from '../../../core/i18n/translation.service';
 import {
   AddChoice,
   AddChoiceBottomSheet,
   AddChoiceData,
-} from '../../shared/components/add-choice-bottom-sheet/add-choice-bottom-sheet';
+} from '../../../shared/components/add-choice-bottom-sheet/add-choice-bottom-sheet';
 import {
   LinkContactDialog,
   LinkContactData,
   LinkContactResult,
-} from '../../shared/components/link-contact-dialog/link-contact-dialog';
-import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
-import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
-import { YouthService } from './youth.service';
+} from '../../../shared/components/link-contact-dialog/link-contact-dialog';
+import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
+import { YouthService } from '../youth.service';
 
 @Component({
   selector: 'app-youth-detail',
@@ -45,8 +43,6 @@ import { YouthService } from './youth.service';
     MatChipsModule,
     MatButtonModule,
     MatListModule,
-    MatSelectModule,
-    MatFormFieldModule,
     TranslatePipe,
     FullNamePipe,
     DateLocalePipe,
@@ -70,10 +66,7 @@ export class YouthDetail {
 
   constructor() {
     const queryParamMap = toSignal(this.route.queryParamMap, { initialValue: this.route.snapshot.queryParamMap });
-    effect(() => {
-      this.youthService.detailId.set(queryParamMap().get('id'));
-      if (queryParamMap().get('view') === 'report') this.selectedTabIndex.set(5);
-    });
+    effect(() => this.youthService.detailId.set(queryParamMap().get('id')));
   }
 
   /** Youth profile for the active route id (milestones + photos embedded) */
@@ -85,21 +78,9 @@ export class YouthDetail {
   /** Lazy-loaded class history tab */
   protected historyData = this.youthService.history;
 
-  /** Lazy-loaded attendance and exam report */
-  protected reportData = this.youthService.report;
-  protected reportYears = this.youthService.reportYears;
-  protected reportYearId = this.youthService.reportYearId;
-  protected selectedTabIndex = signal(0);
-
   protected onTabChange(index: number): void {
-    this.selectedTabIndex.set(index);
     if (index === 3) this.youthService.contactsActive.set(true);
     if (index === 4) this.youthService.historyActive.set(true);
-    if (index === 5) this.youthService.reportActive.set(true);
-  }
-
-  protected selectReportYear(yearId: string | null): void {
-    this.reportYearId.set(yearId || null);
   }
 
   protected classOf(id: string, list: CatechismClass[]): CatechismClass | undefined {
@@ -124,10 +105,6 @@ export class YouthDetail {
 
   protected enrollmentStatusKey(s: EnrollmentStatus): string {
     return `enrollment.status.${s}`;
-  }
-
-  protected attendanceStatusKey(s: AttendanceStatus): string {
-    return `attendance.${AttendanceStatus[s].toLowerCase()}`;
   }
 
   protected canAddContact(): boolean {

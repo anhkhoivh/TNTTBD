@@ -8,13 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatListModule } from '@angular/material/list';
-import { PhotoService } from '../../core/services/photo.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
-import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
-import { CatechismClassCatechistRole, EnrollmentStatus } from '../../shared/enums';
-import { CatechistService } from './catechist.service';
+import { PhotoService } from '../../../core/services/photo.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
+import { CatechismClassCatechistRole, EnrollmentStatus } from '../../../shared/enums';
+import { CatechistService } from '../catechist.service';
 
 @Component({
   selector: 'app-catechist-detail',

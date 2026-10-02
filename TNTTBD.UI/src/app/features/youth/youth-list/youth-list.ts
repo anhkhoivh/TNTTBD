@@ -8,21 +8,21 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
-import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
 
-import { EmptyState } from '../../shared/components/empty-state';
+import { EmptyState } from '../../../shared/components/empty-state';
 import { FormsModule } from '@angular/forms';
-import { YouthService } from './youth.service';
+import { YouthService } from '../youth.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { DialogService } from '../../core/services/dialog.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { UserRole } from '../../shared/enums';
-import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
-import { EucharisticYouth } from '../../shared/models';
-import { TranslationService } from '../../core/i18n/translation.service';
+import { DialogService } from '../../../core/services/dialog.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { UserRole } from '../../../shared/enums';
+import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
+import { EucharisticYouth } from '../../../shared/models';
+import { TranslationService } from '../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-youth-list',

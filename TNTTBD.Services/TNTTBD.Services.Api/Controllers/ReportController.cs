@@ -22,12 +22,11 @@ public class ReportController(IMediator mediator) : Controller
     public async Task<IActionResult> GetYouthReport(
         Guid youthId,
         [FromQuery] Guid? catechismYearId,
-        [FromQuery] int page = 1,
-        [FromQuery] int? pageSize = null,
+        [FromQuery] Guid? enrollmentId,
         CancellationToken cancellationToken = default)
     {
         YouthReportDto? result = await mediator.Send(
-            new GetYouthReportQuery(youthId, catechismYearId, page, pageSize),
+            new GetYouthReportQuery(youthId, catechismYearId, enrollmentId),
             cancellationToken);
 
         return result == null ? NotFound() : Ok(result);

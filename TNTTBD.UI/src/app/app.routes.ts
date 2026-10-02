@@ -36,14 +36,14 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin, UserRole.Catechist] },
         loadComponent: () =>
-          import('./features/youth/youth-list').then((m) => m.YouthList),
+          import('./features/youth/youth-list/youth-list').then((m) => m.YouthList),
       },
       {
         path: 'youth/edit',
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin, UserRole.Catechist] },
         loadComponent: () =>
-          import('./features/youth/youth-form').then((m) => m.YouthForm),
+          import('./features/youth/youth-form/youth-form').then((m) => m.YouthForm),
       },
       {
         path: 'youth/detail',
@@ -57,28 +57,42 @@ export const routes: Routes = [
           ],
         },
         loadComponent: () =>
-          import('./features/youth/youth-detail').then((m) => m.YouthDetail),
+          import('./features/youth/youth-detail/youth-detail').then((m) => m.YouthDetail),
+      },
+      {
+        path: 'youth/report',
+        canActivate: [roleGuard],
+        data: {
+          roles: [
+            UserRole.Admin,
+            UserRole.Catechist,
+            UserRole.EucharisticYouthContact,
+            UserRole.EucharisticYouth,
+          ],
+        },
+        loadComponent: () =>
+          import('./features/youth/youth-report/youth-report').then((m) => m.YouthReportPage),
       },
       {
         path: 'catechists',
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin, UserRole.Catechist] },
         loadComponent: () =>
-          import('./features/catechist/catechist-list').then((m) => m.CatechistList),
+          import('./features/catechist/catechist-list/catechist-list').then((m) => m.CatechistList),
       },
       {
         path: 'catechists/detail',
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin, UserRole.Catechist] },
         loadComponent: () =>
-          import('./features/catechist/catechist-detail').then((m) => m.CatechistDetail),
+          import('./features/catechist/catechist-detail/catechist-detail').then((m) => m.CatechistDetail),
       },
       {
         path: 'catechists/edit',
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin, UserRole.Catechist] },
         loadComponent: () =>
-          import('./features/catechist/catechist-form').then((m) => m.CatechistForm),
+          import('./features/catechist/catechist-form/catechist-form').then((m) => m.CatechistForm),
       },
       {
         path: 'contacts',
@@ -118,33 +132,40 @@ export const routes: Routes = [
       {
         path: 'classes',
         loadComponent: () =>
-          import('./features/classes/class-list').then((m) => m.ClassList),
+          import('./features/classes/class-list/class-list').then((m) => m.ClassList),
       },
       {
         path: 'classes/detail',
         loadComponent: () =>
-          import('./features/classes/class-detail').then((m) => m.ClassDetail),
+          import('./features/classes/class-detail/class-detail').then((m) => m.ClassDetail),
       },
       {
         path: 'classes/migrate',
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin, UserRole.Catechist] },
         loadComponent: () =>
-          import('./features/classes/class-migration').then((m) => m.ClassMigration),
+          import('./features/classes/class-migration/class-migration').then((m) => m.ClassMigration),
       },
       {
         path: 'classes/attendance',
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin, UserRole.Catechist] },
         loadComponent: () =>
-          import('./features/classes/class-attendance').then((m) => m.ClassAttendance),
+          import('./features/classes/class-attendance/class-attendance').then((m) => m.ClassAttendance),
       },
       {
         path: 'classes/exam-results',
         canActivate: [roleGuard],
         data: { roles: [UserRole.Admin, UserRole.Catechist] },
         loadComponent: () =>
-          import('./features/classes/class-exam-results').then((m) => m.ClassExamResults),
+          import('./features/classes/class-exam-results/class-exam-results').then((m) => m.ClassExamResults),
+      },
+      {
+        path: 'classes/report',
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.Admin, UserRole.Catechist] },
+        loadComponent: () =>
+          import('./features/classes/class-report/class-report').then((m) => m.ClassReportPage),
       },
       {
         path: 'admin/users',

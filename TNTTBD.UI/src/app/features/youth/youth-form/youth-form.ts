@@ -17,16 +17,16 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { NotificationService } from '../../core/services/notification.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { PatronSaint } from '../../shared/models';
-import { ContactRelationType, MilestoneType, UserRole } from '../../shared/enums';
-import { CONTACT_RELATION_TYPES } from '../../shared/constants/contact-relation-types';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { PatronSaintInput } from '../../shared/components/patron-saint-input';
-import { PhotoUpload } from '../../shared/components/photo-upload';
-import { TranslationService } from '../../core/i18n/translation.service';
-import { YouthService } from './youth.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { PatronSaint } from '../../../shared/models';
+import { ContactRelationType, MilestoneType, UserRole } from '../../../shared/enums';
+import { CONTACT_RELATION_TYPES } from '../../../shared/constants/contact-relation-types';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { PatronSaintInput } from '../../../shared/components/patron-saint-input';
+import { PhotoUpload } from '../../../shared/components/photo-upload';
+import { TranslationService } from '../../../core/i18n/translation.service';
+import { YouthService } from '../youth.service';
 
 @Component({
   selector: 'app-youth-form',

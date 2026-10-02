@@ -10,25 +10,25 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSelectModule } from '@angular/material/select';
-import { NotificationService } from '../../core/services/notification.service';
-import { DialogService } from '../../core/services/dialog.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { CatechismClassEucharisticYouth, Exam, CatechismSession } from '../../shared/models';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
-import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
-import { EnrollmentStatus, CatechismClassCatechistRole, UserRole } from '../../shared/enums';
-import { SessionFormDialog } from '../../shared/components/session-form-dialog';
-import { ExamFormDialog } from '../../shared/components/exam-form-dialog';
-import { CatechistAssignDialog, CatechistAssignData } from '../../shared/components/catechist-assign-dialog';
-import { EnrollYouthDialog, EnrollYouthData } from '../../shared/components/enroll-youth-dialog';
+import { NotificationService } from '../../../core/services/notification.service';
+import { DialogService } from '../../../core/services/dialog.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { CatechismClassEucharisticYouth, Exam, CatechismSession } from '../../../shared/models';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
+import { EnrollmentStatus, CatechismClassCatechistRole, UserRole } from '../../../shared/enums';
+import { SessionFormDialog } from '../../../shared/components/session-form-dialog';
+import { ExamFormDialog } from '../../../shared/components/exam-form-dialog';
+import { CatechistAssignDialog, CatechistAssignData } from '../../../shared/components/catechist-assign-dialog';
+import { EnrollYouthDialog, EnrollYouthData } from '../../../shared/components/enroll-youth-dialog';
 import {
   AddChoice,
   AddChoiceBottomSheet,
   AddChoiceData,
-} from '../../shared/components/add-choice-bottom-sheet/add-choice-bottom-sheet';
+} from '../../../shared/components/add-choice-bottom-sheet/add-choice-bottom-sheet';
 import { ClassDetailService } from './class-detail.service';
-import { TranslationService } from '../../core/i18n/translation.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-class-detail',
@@ -92,7 +92,6 @@ export class ClassDetail {
   protected catechistsRes = this.classDetailService.catechistsRes;
   protected sessionsRes = this.classDetailService.sessionsRes;
   protected examsRes = this.classDetailService.examsRes;
-  protected report = this.classDetailService.report;
 
   protected onTabChange(index: number): void {
     this.classDetailService.onTabChange(index);

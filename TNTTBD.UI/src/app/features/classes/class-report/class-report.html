@@ -1,0 +1,215 @@
+@if (report(); as r) {
+<mat-card>
+  <mat-card-header>
+    <mat-icon mat-card-avatar>assessment</mat-icon>
+    <mat-card-title>{{ 'report.classTitle' | t }} · {{ r.className }}</mat-card-title>
+    <mat-card-subtitle>{{ 'class.year' | t }}: {{ r.catechismYearName }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ 'report.sessionsHeld' | t }}: {{ r.sessionsHeld }} / {{ r.sessions.length }}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
+<div class="toolbar mt-16">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [placeholder]="'class.searchYouth' | t" [value]="search()" (input)="onSearch($event)" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="status-field">
+    <mat-label>{{ 'report.enrollmentStatus' | t }}</mat-label>
+    <mat-select multiple [value]="statusFilter()" (selectionChange)="statusFilter.set($event.value)">
+      @for (s of enrollmentStatuses; track s) {
+      <mat-option [value]="s">{{ statusKey(s) | t }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <div class="legend">
+    @for (s of legend; track s) {
+    <span class="legend-item">
+      <mat-icon [style.color]="statusDisplay[s].color">{{ statusDisplay[s].icon }}</mat-icon>
+      {{ statusDisplay[s].labelKey | t }}
+    </span>
+    }
+    <span class="legend-item not-counted">
+      <mat-icon>{{ statusDisplay.None.icon }}</mat-icon>
+      {{ 'report.notCounted' | t }}
+    </span>
+  </div>
+</div>
+
+<mat-tab-group>
+  <mat-tab [label]="'report.attendance' | t">
+    <ng-template matTabContent>
+      @if (r.sessions.length === 0) {
+      <p class="mt-16">{{ 'report.noSessions' | t }}</p>
+      } @else {
+      <div class="matrix-container mt-16">
+        <table mat-table [dataSource]="attendanceRows()" matSort (matSortChange)="attendanceSort.set($event)"
+          class="matrix">
+          <ng-container matColumnDef="index" sticky>
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <ng-container matColumnDef="name" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'youth.fullName' | t }}</th>
+            <td mat-cell *matCellDef="let row" class="name-cell">
+              <a [routerLink]="['/app/youth/report']"
+                [queryParams]="{ youthId: row.youthId, enrollmentId: row.enrollmentId }">{{ row.youthFullName |
+                fullName }}</a>
+              <div class="secondary">
+                {{ row.youthCode }}
+                @if (row.enrollmentStatus !== EnrollmentStatus.Active) { · {{ statusKey(row.enrollmentStatus) | t }} }
+              </div>
+            </td>
+            <td mat-footer-cell *matFooterCellDef>{{ 'report.total' | t }}</td>
+          </ng-container>
+
+          @for (s of r.sessions; track s.sessionId; let i = $index) {
+          <ng-container [matColumnDef]="'s_' + s.sessionId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center" [class.future]="!s.isHeld"
+              [matTooltip]="(s.title ?? '') + ' · ' + (s.dateTime | dateLocale: 'datetime')">
+              {{ s.dateTime | date: 'dd/MM' }}
+            </th>
+            <td mat-cell *matCellDef="let row" class="cell-center">
+              @let cell = row.attendances[i];
+              @if (cell) {
+              @let d = display(cell.status);
+              <mat-icon class="status-icon" [class.not-counted]="!cell.isCounted"
+                [style.color]="d.color"
+                [matTooltip]="(d.labelKey | t) + (cell.isCounted ? '' : ' · ' + ('report.notCounted' | t))">
+                {{ d.icon }}
+              </mat-icon>
+              }
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="cell-center">
+              @if (s.isHeld) { {{ sessionFooters()[i]?.present }}/{{ sessionFooters()[i]?.counted }} }
+            </td>
+          </ng-container>
+          }
+
+          <ng-container matColumnDef="present">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center">{{ 'attendance.present' | t }}</th>
+            <td mat-cell *matCellDef="let row" class="cell-center">{{ row.present }}</td>
+            <td mat-footer-cell *matFooterCellDef class="cell-center">{{ attendanceTotals().present }}</td>
+          </ng-container>
+          <ng-container matColumnDef="excused">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center">{{ 'attendance.excused' | t }}</th>
+            <td mat-cell *matCellDef="let row" class="cell-center">{{ row.excused }}</td>
+            <td mat-footer-cell *matFooterCellDef class="cell-center">{{ attendanceTotals().excused }}</td>
+          </ng-container>
+          <ng-container matColumnDef="absent">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center">{{ 'attendance.absent' | t }}</th>
+            <td mat-cell *matCellDef="let row" class="cell-center">{{ row.absent }}</td>
+            <td mat-footer-cell *matFooterCellDef class="cell-center">{{ attendanceTotals().absent }}</td>
+          </ng-container>
+          <ng-container matColumnDef="unmarked">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center">{{ 'attendance.none' | t }}</th>
+            <td mat-cell *matCellDef="let row" class="cell-center">{{ row.unmarked }}</td>
+            <td mat-footer-cell *matFooterCellDef class="cell-center">{{ attendanceTotals().unmarked }}</td>
+          </ng-container>
+          <ng-container matColumnDef="rate" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center">{{ 'report.rate' | t }}</th>
+            <td mat-cell *matCellDef="let row" class="cell-center strong">
+              @if (row.attendanceRate != null) { {{ row.attendanceRate | number: '1.0-1' }}% } @else { — }
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="cell-center strong">
+              @if (attendanceTotals().rate != null) { {{ attendanceTotals().rate | number: '1.0-1' }}% } @else { — }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="attendanceColumns(); sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: attendanceColumns()"></tr>
+          <tr mat-footer-row *matFooterRowDef="attendanceColumns()"></tr>
+        </table>
+      </div>
+      @if (attendanceRows().length === 0) {
+      <p class="mt-16">{{ 'common.noData' | t }}</p>
+      }
+      }
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab [label]="'report.exams' | t">
+    <ng-template matTabContent>
+      @if (r.exams.length === 0) {
+      <p class="mt-16">{{ 'report.noExams' | t }}</p>
+      } @else {
+      <div class="matrix-container mt-16">
+        <table mat-table [dataSource]="examRows()" matSort (matSortChange)="examSort.set($event)" class="matrix">
+          <ng-container matColumnDef="index" sticky>
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <ng-container matColumnDef="name" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'youth.fullName' | t }}</th>
+            <td mat-cell *matCellDef="let row" class="name-cell">
+              <a [routerLink]="['/app/youth/report']"
+                [queryParams]="{ youthId: row.youthId, enrollmentId: row.enrollmentId }">{{ row.youthFullName |
+                fullName }}</a>
+              <div class="secondary">
+                {{ row.youthCode }}
+                @if (row.enrollmentStatus !== EnrollmentStatus.Active) { · {{ statusKey(row.enrollmentStatus) | t }} }
+              </div>
+            </td>
+            <td mat-footer-cell *matFooterCellDef>{{ 'report.average' | t }}</td>
+          </ng-container>
+
+          @for (e of r.exams; track e.examId; let i = $index) {
+          <ng-container [matColumnDef]="'e_' + e.examId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center exam-header"
+              [matTooltip]="(e.title ?? '') + ' · ' + (e.examDate | dateLocale)">
+              <div class="exam-title">{{ e.title }}</div>
+              <div class="secondary">{{ e.examDate | dateLocale }}</div>
+            </th>
+            <td mat-cell *matCellDef="let row" class="cell-center">
+              @let cell = row.scores[i];
+              @if (cell?.score != null) {
+              <span [matTooltip]="cell.remark ?? ''">{{ cell.score | number: '1.0-2' }}</span>
+              } @else {
+              <span class="muted">—</span>
+              }
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="cell-center">
+              @if (examFooters()[i] != null) { {{ examFooters()[i] | number: '1.0-2' }} } @else { — }
+            </td>
+          </ng-container>
+          }
+
+          <ng-container matColumnDef="scored">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center">{{ 'report.scored' | t }}</th>
+            <td mat-cell *matCellDef="let row" class="cell-center">{{ row.scored }}/{{ r.exams.length }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+          <ng-container matColumnDef="average" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center">{{ 'report.average' | t }}</th>
+            <td mat-cell *matCellDef="let row" class="cell-center strong">
+              @if (row.averageScore != null) { {{ row.averageScore | number: '1.0-2' }} } @else { — }
+            </td>
+            <td mat-footer-cell *matFooterCellDef class="cell-center strong">
+              @if (examTotalAverage() != null) { {{ examTotalAverage() | number: '1.0-2' }} } @else { — }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="examColumns(); sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: examColumns()"></tr>
+          <tr mat-footer-row *matFooterRowDef="examColumns()"></tr>
+        </table>
+      </div>
+      @if (examRows().length === 0) {
+      <p class="mt-16">{{ 'common.noData' | t }}</p>
+      }
+      }
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
+
+<div class="mt-16">
+  <a mat-button [routerLink]="['/app/classes/detail']" [queryParams]="{ id: r.classId }">
+    <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
+  </a>
+</div>
+} @else if (loading()) {
+<div class="center"><mat-spinner diameter="40"></mat-spinner></div>
+} @else {
+<p>{{ 'common.noData' | t }}</p>
+}

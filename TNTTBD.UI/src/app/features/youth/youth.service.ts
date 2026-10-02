@@ -8,8 +8,6 @@ import {
   EucharisticYouth,
   EucharisticYouthContact,
   PaginatedResult,
-  YouthReport,
-  CatechismYear,
 } from '../../shared/models';
 
 function emptyPage<T>(): PaginatedResult<T> {
@@ -79,24 +77,6 @@ export class YouthService {
         : of(emptyPage<CatechismClassEucharisticYouth>()),
   });
   readonly history = computed(() => this.historyRes.value() ?? emptyPage<CatechismClassEucharisticYouth>());
-
-  readonly reportActive = signal(false);
-  readonly reportYearId = signal<string | null>(null);
-  readonly yearsRes = rxResource<PaginatedResult<CatechismYear>, void>({
-    stream: () => this.api.list<CatechismYear>('/catechism-years').pipe(catchError(() => of(emptyPage<CatechismYear>())))
-  });
-  readonly reportYears = computed(() => this.yearsRes.value()?.items ?? []);
-  readonly reportRes = rxResource<YouthReport | null, string>({
-    params: () => (this.reportActive() && this.detailId() ? `${this.detailId()}|${this.reportYearId() ?? ''}` : ''),
-    stream: ({ params }) => {
-      if (!params) return of(null);
-      const [youthId, yearId] = params.split('|');
-      return this.api.get<YouthReport>(`/reports/youths/${youthId}`, {
-        catechismYearId: yearId || undefined,
-      }).pipe(catchError(() => of(null)));
-    }
-  });
-  readonly report = computed(() => this.reportRes.value() ?? null);
 
   loadCurrentClass(): Promise<CatechistCurrentClass | null> {
     return this.api.getAsync<CatechistCurrentClass | null>('/catechists/current-class');

@@ -78,7 +78,37 @@
         }
       </mat-list>
     </mat-card-content>
+    @if (myYouthId(); as youthId) {
+    <mat-card-actions>
+      <a mat-stroked-button [routerLink]="['/app/youth/report']" [queryParams]="{ youthId }">
+        <mat-icon>assessment</mat-icon> {{ 'dashboard.myReport' | t }}
+      </a>
+    </mat-card-actions>
+    }
   </mat-card>
+
+  @if (role() === UserRole.EucharisticYouthContact) {
+  <mat-card class="mt-16">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>family_restroom</mat-icon>
+      <mat-card-title>{{ 'dashboard.myYouths' | t }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        @for (y of myYouths(); track y.id) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>person</mat-icon>
+          <a matListItemTitle [routerLink]="['/app/youth/report']" [queryParams]="{ youthId: y.eucharisticYouthId }">
+            {{ y.fullName | fullName }}
+          </a>
+        </mat-list-item>
+        } @empty {
+        <p>{{ 'common.noData' | t }}</p>
+        }
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+  }
   }
 
   <mat-card class="mt-16">

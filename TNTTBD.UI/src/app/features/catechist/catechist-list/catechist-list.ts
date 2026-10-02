@@ -5,19 +5,19 @@ import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FullNamePipe } from '../../shared/pipes/full-name.pipe';
-import { DateLocalePipe } from '../../shared/pipes/date-locale.pipe';
-import { AuthService } from '../../core/auth/auth.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
+import { AuthService } from '../../../core/auth/auth.service';
 import { MatListModule } from '@angular/material/list';
-import { CatechistService } from './catechist.service';
+import { CatechistService } from '../catechist.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { DialogService } from '../../core/services/dialog.service';
-import { NotificationService } from '../../core/services/notification.service';
-import { UserRole } from '../../shared/enums';
-import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
-import { Catechist } from '../../shared/models';
-import { TranslationService } from '../../core/i18n/translation.service';
+import { DialogService } from '../../../core/services/dialog.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { UserRole } from '../../../shared/enums';
+import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
+import { Catechist } from '../../../shared/models';
+import { TranslationService } from '../../../core/i18n/translation.service';
 
 @Component({
   selector: 'app-catechist-list',

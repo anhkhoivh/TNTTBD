@@ -1,5 +1,5 @@
 @if (data(); as d) {
-<mat-tab-group [selectedIndex]="selectedTabIndex()" (selectedTabChange)="onTabChange($event.index)">
+<mat-tab-group (selectedTabChange)="onTabChange($event.index)">
   <mat-tab [label]="'common.profile' | t">
     <ng-template matTabContent>
       @defer {
@@ -155,6 +155,10 @@
             {{ e.enrolledAt | dateLocale: 'datetime' }}
             @if (e.leftAt) { → {{ e.leftAt | dateLocale: 'datetime' }} }
           </span>
+          <a mat-icon-button matListItemMeta [routerLink]="['/app/youth/report']"
+            [queryParams]="{ youthId: e.eucharisticYouthId, enrollmentId: e.id }" [attr.aria-label]="'report.open' | t">
+            <mat-icon>assessment</mat-icon>
+          </a>
         </mat-list-item>
         } @empty {
         <p>{{ 'common.noData' | t }}</p>
@@ -171,65 +175,13 @@
       }
     </ng-template>
   </mat-tab>
-
-  <mat-tab [label]="'youth.report' | t">
-    <ng-template matTabContent>
-      @defer {
-      @if (reportData(); as report) {
-      <div class="mt-16">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'class.year' | t }}</mat-label>
-          <mat-select [value]="reportYearId() ?? ''" (selectionChange)="selectReportYear($event.value)">
-            <mat-option value="">{{ 'common.current' | t }}</mat-option>
-            @for (year of reportYears(); track year.id) {
-            <mat-option [value]="year.id">{{ year.title }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <h3>{{ 'youth.reportSummary' | t }}</h3>
-        <p>
-          {{ 'attendance.title' | t }}: {{ report.attendance.present }}/{{ report.attendance.total }}
-          ({{ report.attendance.attendanceRate }}%) ·
-          {{ 'exam.title' | t }}: {{ report.exams.scored }}/{{ report.exams.total }}
-          @if (report.exams.averageScore !== null && report.exams.averageScore !== undefined) {
-          · {{ report.exams.averageScore }}
-          }
-        </p>
-
-        <h3>{{ 'youth.attendanceHistory' | t }}</h3>
-        <mat-list>
-          @for (item of report.attendanceDetails.items; track item.sessionId + item.sessionDateTime) {
-          <mat-list-item>
-            <mat-icon matListItemIcon>event_available</mat-icon>
-            <span matListItemTitle>{{ item.sessionTitle }}</span>
-            <span matListItemLine>{{ item.sessionDateTime | dateLocale: 'datetime' }} · {{ item.className }} · {{ attendanceStatusKey(item.status) | t }}</span>
-          </mat-list-item>
-          } @empty { <p>{{ 'common.noData' | t }}</p> }
-        </mat-list>
-
-        <h3>{{ 'youth.examHistory' | t }}</h3>
-        <mat-list>
-          @for (item of report.examDetails.items; track item.examId) {
-          <mat-list-item>
-            <mat-icon matListItemIcon>grading</mat-icon>
-            <span matListItemTitle>{{ item.examTitle }}</span>
-            <span matListItemLine>{{ item.examDate | dateLocale }} · {{ item.className }} · {{ item.score ?? '-' }}</span>
-          </mat-list-item>
-          } @empty { <p>{{ 'common.noData' | t }}</p> }
-        </mat-list>
-      </div>
-      } @else {
-      <p class="mt-16">{{ 'common.noData' | t }}</p>
-      }
-      } @placeholder {
-      <div class="p-4"><p>{{ 'common.loading' | t }}</p></div>
-      }
-    </ng-template>
-  </mat-tab>
 </mat-tab-group>
 
 <div class="mt-16">
   <a mat-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}</a>
+  <a mat-stroked-button [routerLink]="['/app/youth/report']" [queryParams]="{ youthId: d.id }">
+    <mat-icon>assessment</mat-icon> {{ 'report.open' | t }}
+  </a>
   <a mat-stroked-button [routerLink]="['/app/youth/edit']" [queryParams]="{ id: d.id }">
     <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
   </a>

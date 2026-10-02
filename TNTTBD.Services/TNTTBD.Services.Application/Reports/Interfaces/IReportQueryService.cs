@@ -9,7 +9,6 @@ public interface IReportQueryService
     Task<YouthReportDto?> GetYouthReportAsync(
         Guid youthId,
         Guid? catechismYearId,
-        int page,
-        int? pageSize,
+        Guid? enrollmentId,
         CancellationToken cancellationToken);
 }

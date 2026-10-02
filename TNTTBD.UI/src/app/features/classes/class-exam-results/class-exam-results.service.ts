@@ -1,8 +1,8 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
-import { ApiService } from '../../core/services/api.service';
-import { Exam } from '../../shared/models';
+import { ApiService } from '../../../core/services/api.service';
+import { Exam } from '../../../shared/models';
 
 export interface ExamResultsPayload {
   examId: string | null;

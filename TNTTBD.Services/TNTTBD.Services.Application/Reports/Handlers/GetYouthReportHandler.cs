@@ -19,23 +19,7 @@ public class GetYouthReportHandler(IReportQueryService queryService, IAuthorizat
         return await queryService.GetYouthReportAsync(
             query.YouthId,
             query.CatechismYearId,
-            query.Page,
-            query.PageSize,
+            query.EnrollmentId,
             cancellationToken);
-    }
-}
-
-public class GetClassReportHandler(IReportQueryService queryService, IAuthorizationContext authorizationContext)
-    : IRequestHandler<GetClassReportQuery, ClassReportDto?>
-{
-    public async Task<ClassReportDto?> Handle(GetClassReportQuery query, CancellationToken cancellationToken)
-    {
-        if (!await authorizationContext.IsAdminOrCatechistAsync(cancellationToken)
-            || !await authorizationContext.CanAccessClassAsync(query.ClassId, cancellationToken))
-        {
-            return null;
-        }
-
-        return await queryService.GetClassReportAsync(query.ClassId, cancellationToken);
     }
 }
