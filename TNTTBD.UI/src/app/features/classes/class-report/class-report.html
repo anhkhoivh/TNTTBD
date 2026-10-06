@@ -110,7 +110,7 @@
             <td mat-cell *matCellDef="let row" class="cell-center">{{ row.unmarked }}</td>
             <td mat-footer-cell *matFooterCellDef class="cell-center">{{ attendanceTotals().unmarked }}</td>
           </ng-container>
-          <ng-container matColumnDef="rate" stickyEnd>
+          <ng-container matColumnDef="rate">
             <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center">{{ 'report.rate' | t }}</th>
             <td mat-cell *matCellDef="let row" class="cell-center strong">
               @if (row.attendanceRate != null) { {{ row.attendanceRate | number: '1.0-1' }}% } @else { — }
@@ -184,7 +184,7 @@
             <td mat-cell *matCellDef="let row" class="cell-center">{{ row.scored }}/{{ r.exams.length }}</td>
             <td mat-footer-cell *matFooterCellDef></td>
           </ng-container>
-          <ng-container matColumnDef="average" stickyEnd>
+          <ng-container matColumnDef="average">
             <th mat-header-cell *matHeaderCellDef mat-sort-header class="cell-center">{{ 'report.average' | t }}</th>
             <td mat-cell *matCellDef="let row" class="cell-center strong">
               @if (row.averageScore != null) { {{ row.averageScore | number: '1.0-2' }} } @else { — }

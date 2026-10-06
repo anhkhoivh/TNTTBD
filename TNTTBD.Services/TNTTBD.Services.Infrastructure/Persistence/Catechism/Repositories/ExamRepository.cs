@@ -22,6 +22,14 @@ public class ExamRepository : IExamRepository
         await _context.Exams.AddAsync(entity, cancellationToken);
     }
 
+    public async Task<Guid?> GetClassIdAsync(Guid examId, CancellationToken cancellationToken)
+    {
+        return await _context.Exams
+            .Where(e => e.Id == examId)
+            .Select(e => (Guid?)e.CatechismClassId)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task Update(Guid id, string title, DateOnly examDate, CancellationToken cancellationToken)
     {
         ExamEntity? entity = await _context.Exams.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
@@ -50,6 +58,12 @@ public class ExamRepository : IExamRepository
             .Include(e => e.ExamResults)
             .FirstOrDefaultAsync(e => e.Id == examId, cancellationToken);
         if (exam == null)
+            throw new DomainException(DomainErrors.ValidationNotFound);
+
+        var enrollmentIds = results.Select(r => r.youthId).Distinct().ToList();
+        int enrolledInClass = await _context.CatechismClassEucharisticYouths
+            .CountAsync(e => enrollmentIds.Contains(e.Id) && e.CatechismClassId == exam.CatechismClassId, cancellationToken);
+        if (enrolledInClass != enrollmentIds.Count)
             throw new DomainException(DomainErrors.ValidationNotFound);
 
         foreach (var (youthId, score, remark, markedBy) in results)

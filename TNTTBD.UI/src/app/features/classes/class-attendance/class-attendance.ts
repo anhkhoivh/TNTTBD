@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -50,6 +50,7 @@ export class ClassAttendance {
   private attendanceService = inject(ClassAttendanceService);
   private auth = inject(AuthService);
   private notify = inject(NotificationService);
+  #location = inject(Location);
 
   protected readonly statuses = [
     { v: AttendanceStatus.Present, icon: 'check_circle' },
@@ -171,8 +172,8 @@ export class ClassAttendance {
     });
   }
 
-  protected backParams() {
-    return this.classId ? { id: this.classId } : {};
+  navigateBack(): void {
+    this.#location.back();
   }
 }
 

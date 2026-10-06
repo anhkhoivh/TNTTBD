@@ -8,5 +8,8 @@
   "validation.required": "Trường {0} là bắt buộc.",
   "validation.not_found": "Không tìm thấy trường {0}.",
   "contact.already_linked": "Liên hệ này đã được liên kết với thiếu nhi.",
-  "user.email_already_exists": "Email này đã được sử dụng."
+  "user.email_already_exists": "Email này đã được sử dụng.",
+  "class_catechist.main_already_active": "Lớp này đã có giáo lý viên chính đang hoạt động.",
+  "exam.score_out_of_range": "Điểm phải nằm trong khoảng từ 0 đến 10.",
+  "exam.remark_too_long": "Nhận xét tối đa 500 ký tự."
 }

@@ -60,7 +60,7 @@
 </mat-card>
 
 <div class="actions mt-16">
-  <a mat-button [routerLink]="['/app/classes/detail']" [queryParams]="backParams()">
+  <a mat-button (click)="navigateBack()">
     <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
   </a>
 </div>

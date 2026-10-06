@@ -212,6 +212,16 @@ export class ClassDetail {
     }
   }
 
+  protected async changeCatechistStatus(id: string, status: EnrollmentStatus): Promise<void> {
+    try {
+      await this.classDetailService.changeCatechistStatus(id, status);
+      this.notify.success(this.#translate.t('common.saved'));
+    } catch {
+      // Revert the select to the persisted value; the interceptor already showed the error.
+      this.catechistsRes.reload();
+    }
+  }
+
   protected async removeCatechist(id: string): Promise<void> {
     const ok = await this.dialogs.confirmDelete('Remove this catechist from class?');
     if (!ok) return;

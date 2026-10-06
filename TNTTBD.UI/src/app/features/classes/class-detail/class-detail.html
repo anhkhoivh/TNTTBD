@@ -116,11 +116,20 @@
             {{ roleKey(cc.role) | t }} ·
             {{ cc.enrolledAt | dateLocale: 'date' }}
             @if (cc.leftAt) { → {{ cc.leftAt | dateLocale: 'date' }} }
+            @if (!canAssignCatechists()) { · {{ statusKey(cc.status) | t }} }
           </span>
           @if (canAssignCatechists()) {
-          <button mat-icon-button color="warn" (click)="removeCatechist(cc.id)" [attr.aria-label]="'common.delete' | t">
-            <mat-icon>clear</mat-icon>
-          </button>
+          <div matListItemMeta class="catechist-actions">
+            <mat-select [value]="cc.status" (selectionChange)="changeCatechistStatus(cc.id, $event.value)"
+              class="status-select" [attr.aria-label]="'common.status' | t">
+              @for (s of enrollmentStatuses; track s) {
+              <mat-option [value]="s">{{ statusKey(s) | t }}</mat-option>
+              }
+            </mat-select>
+            <button mat-icon-button color="warn" (click)="removeCatechist(cc.id)" [attr.aria-label]="'common.delete' | t">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </div>
           }
         </mat-list-item>
         }

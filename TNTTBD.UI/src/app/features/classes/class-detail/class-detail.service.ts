@@ -10,6 +10,7 @@ import {
   Exam,
   PaginatedResult,
 } from '../../../shared/models';
+import { EnrollmentStatus } from '../../../shared/enums';
 
 function emptyPage<T>(): PaginatedResult<T> {
   return { items: [], total: 0, page: 1, pageSize: 50 };
@@ -96,6 +97,11 @@ export class ClassDetailService {
 
   async assignCatechist(payload: unknown): Promise<void> {
     await this.api.postAsync('/class-catechist', payload);
+    this.catechistsRes.reload();
+  }
+
+  async changeCatechistStatus(id: string, status: EnrollmentStatus): Promise<void> {
+    await this.api.patchAsync('/class-catechist/status', { id, status });
     this.catechistsRes.reload();
   }
 

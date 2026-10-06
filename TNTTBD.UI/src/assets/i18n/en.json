@@ -203,6 +203,8 @@
   "exam.done": "Completed",
   "exam.remark": "Remark",
   "exam.deleteConfirm": "Remove this exam?",
+  "exam.saveFailed": "Result could not be saved.",
+  "exam.retry": "Retry",
 
   "enrollment.status.Pending": "Pending",
   "enrollment.status.Active": "Active",
