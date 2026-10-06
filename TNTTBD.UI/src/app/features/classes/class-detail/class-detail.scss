@@ -10,6 +10,12 @@ table.full-width { width: 100%; }
   min-width: 120px;
 }
 
+.catechist-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .item-link {
   color: inherit;
   text-decoration: none;

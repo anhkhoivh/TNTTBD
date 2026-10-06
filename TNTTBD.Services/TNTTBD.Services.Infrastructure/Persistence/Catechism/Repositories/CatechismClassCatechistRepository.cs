@@ -17,6 +17,33 @@ public class CatechismClassCatechistRepository : ICatechismClassCatechistReposit
         _context = context;
     }
 
+    public async Task<CatechismClassCatechist?> GetAsync(Guid id, CancellationToken cancellationToken)
+    {
+        CatechismClassCatechistEntity? entity = await _context.CatechismClassCatechists
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+        return entity?.ToDomain();
+    }
+
+    public async Task UpdateStatus(Guid id, EnrollmentStatus status, CancellationToken cancellationToken)
+    {
+        var query = _context.CatechismClassCatechists.Where(e => e.Id == id);
+
+        if (status is EnrollmentStatus.Active or EnrollmentStatus.Pending)
+        {
+            await query.ExecuteUpdateAsync(e => e
+                .SetProperty(x => x.Status, status)
+                .SetProperty(x => x.LeftAt, (DateTimeOffset?)null), cancellationToken);
+            return;
+        }
+
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        await query.ExecuteUpdateAsync(e => e
+            .SetProperty(x => x.Status, status)
+            .SetProperty(x => x.LeftAt, x => x.LeftAt ?? now), cancellationToken);
+    }
+
     public async Task AddAsync(CatechismClassCatechist domain, CancellationToken cancellationToken)
     {
         CatechismClassCatechistEntity entity = domain.ToEntity();

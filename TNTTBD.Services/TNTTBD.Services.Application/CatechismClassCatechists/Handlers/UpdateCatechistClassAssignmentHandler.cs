@@ -9,7 +9,7 @@ public class UpdateCatechistClassAssignmentHandler(ICatechismClassCatechistRepos
 {
     public async Task<bool> Handle(UpdateCatechistClassAssignmentCommand command, CancellationToken cancellationToken)
     {
-        if (await authContext.IsAdminAsync(cancellationToken))
+        if (!await authContext.IsAdminAsync(cancellationToken))
         {
             return false;
         }

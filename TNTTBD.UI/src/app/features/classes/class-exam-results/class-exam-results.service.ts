@@ -4,9 +4,10 @@ import { catchError, of } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { Exam } from '../../../shared/models';
 
-export interface ExamResultsPayload {
-  examId: string | null;
-  results: { catechismClassEucharisticYouthId: string; score: number | null; remark: string | null }[];
+export interface ExamResultItem {
+  catechismClassEucharisticYouthId: string;
+  score: number | null;
+  remark: string | null;
 }
 
 @Injectable()
@@ -21,7 +22,7 @@ export class ClassExamResultsService {
   });
   readonly exam = computed(() => this.examRes.value() ?? null);
 
-  async save(payload: ExamResultsPayload): Promise<void> {
-    await this.api.postAsync('/exams/results', payload);
+  async saveOne(examId: string, item: ExamResultItem): Promise<void> {
+    await this.api.postAsync('/exams/results', { examId, results: [item] });
   }
 }

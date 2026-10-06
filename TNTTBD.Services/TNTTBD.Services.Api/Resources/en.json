@@ -8,5 +8,8 @@
   "validation.required": "The field {0} is required.",
   "validation.not_found": "The field {0} is not found.",
   "contact.already_linked": "This contact is already linked to the youth.",
-  "user.email_already_exists": "This email is already in use by another user."
+  "user.email_already_exists": "This email is already in use by another user.",
+  "class_catechist.main_already_active": "This class already has an active main catechist.",
+  "exam.score_out_of_range": "Score must be between 0 and 10.",
+  "exam.remark_too_long": "Remark must be at most 500 characters."
 }

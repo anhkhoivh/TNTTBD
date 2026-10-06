@@ -25,6 +25,7 @@
                   min="0"
                   max="10"
                   step="0.05"
+                  (blur)="onFieldBlur(row, $event)"
                 />
                 <app-form-errors-display [control]="row.get('score')" fieldName="Score"></app-form-errors-display>
               </mat-form-field>
@@ -38,9 +39,23 @@
                   matInput
                   formControlName="remark"
                   maxlength="500"
+                  (blur)="onFieldBlur(row, $event)"
                 />
                 <app-form-errors-display [control]="row.get('remark')" fieldName="Remark"></app-form-errors-display>
               </mat-form-field>
+              @let state = saveState(row.get('enrollmentId').value);
+              @if (state === 'saved') {
+                <span class="row-save-state row-save-success" role="status">
+                  <mat-icon inline>check_circle</mat-icon>{{ 'common.saved' | t }}
+                </span>
+              } @else if (state === 'error') {
+                <span class="row-save-state row-save-error" role="alert">
+                  <mat-icon inline>error_outline</mat-icon>{{ 'exam.saveFailed' | t }}
+                  <button mat-button type="button" (click)="retry(row)">
+                    <mat-icon>refresh</mat-icon> {{ 'exam.retry' | t }}
+                  </button>
+                </span>
+              }
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -55,7 +70,4 @@
   <a mat-button [routerLink]="['/app/classes/detail']" [queryParams]="backParams()">
     <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
   </a>
-  <button mat-flat-button color="primary" (click)="save()" [disabled]="saving() || loading()">
-    {{ 'common.save' | t }}
-  </button>
 </div>

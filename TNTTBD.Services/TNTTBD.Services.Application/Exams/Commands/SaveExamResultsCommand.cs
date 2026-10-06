@@ -5,7 +5,7 @@ namespace TNTTBD.Services.Application.Exams.Commands;
 public record SaveExamResultsCommand(
     Guid ExamId,
     List<ExamResultItem> Results
-) : IRequest;
+) : IRequest<bool>;
 
 public record ExamResultItem(
     Guid CatechismClassEucharisticYouthId,

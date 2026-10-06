@@ -69,10 +69,11 @@ public class ExamController : Controller
     [HttpPost("results")]
     public async Task<IActionResult> SaveResults([FromBody] SaveExamResultsCommand command, CancellationToken cancellationToken)
     {
-        // Permission to be added
-
-        await _mediator.Send(command, cancellationToken);
-        return Ok();
+        if (await _mediator.Send(command, cancellationToken))
+        {
+            return Ok();
+        }
+        return Forbid();
     }
 
     [HttpGet("my-results")]

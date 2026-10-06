@@ -202,6 +202,8 @@
   "exam.done": "Hoàn thành",
   "exam.remark": "Nhận xét",
   "exam.deleteConfirm": "Xóa bài kiểm tra này?",
+  "exam.saveFailed": "Không thể lưu kết quả.",
+  "exam.retry": "Thử lại",
 
   "enrollment.status.Pending": "Chờ duyệt",
   "enrollment.status.Active": "Đang học",

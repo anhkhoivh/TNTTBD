@@ -17,3 +17,18 @@
   gap: 1rem;
   align-items: center;
 }
+
+.row-save-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+}
+
+.row-save-error {
+  color: #b3261e;
+}
+
+.row-save-success {
+  color: #2e7d32;
+}

@@ -56,6 +56,16 @@ public class CatechismClassCatechistController : Controller
         return Forbid();
     }
 
+    [HttpPatch("status")]
+    public async Task<IActionResult> UpdateStatus([FromBody] UpdateCatechistClassStatusCommand command, CancellationToken cancellationToken)
+    {
+        if (await _mediator.Send(command, cancellationToken))
+        {
+            return Ok();
+        }
+        return Forbid();
+    }
+
     [HttpDelete]
     public async Task<IActionResult> Remove([FromBody] RemoveCatechistFromClassCommand command, CancellationToken cancellationToken)
     {

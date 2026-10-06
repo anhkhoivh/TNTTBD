@@ -11,4 +11,7 @@ public static class DomainErrors
     public const string ValidationAlreadyExists = "validation.already_exists";
     public const string ContactAlreadyLinked = "contact.already_linked";
     public const string EmailAlreadyExists = "user.email_already_exists";
+    public const string MainCatechistAlreadyActive = "class_catechist.main_already_active";
+    public const string ExamScoreOutOfRange = "exam.score_out_of_range";
+    public const string ExamRemarkTooLong = "exam.remark_too_long";
 }

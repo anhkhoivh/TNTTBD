@@ -13,7 +13,15 @@ import { NotificationService } from '../../../core/services/notification.service
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
 import { FormErrorsDisplayComponent } from '../../../shared/components/form-errors-display.component';
+import { TranslationService } from '../../../core/i18n/translation.service';
 import { ClassExamResultsService } from './class-exam-results.service';
+
+interface ResultValue {
+  score: number | null;
+  remark: string | null;
+}
+
+type SaveState = 'saved' | 'error';
 
 @Component({
   selector: 'app-class-exam-results',
@@ -44,9 +52,11 @@ export class ClassExamResults {
   private notify = inject(NotificationService);
   private fb = inject(FormBuilder);
 
+  #translate = inject(TranslationService);
+
   protected loading = computed(() => this.examResultsService.examRes.isLoading());
-  protected saving = signal(false);
   protected examTitle = computed(() => this.examResultsService.exam()?.title ?? '');
+  protected writeStates = signal<Record<string, SaveState>>({});
 
   protected displayedColumns = ['name', 'score', 'remark'];
 
@@ -60,6 +70,9 @@ export class ClassExamResults {
 
   private classId: string | null = null;
   private examId: string | null = null;
+  private lastSaved = new Map<string, ResultValue>();
+  private pendingValues = new Map<string, ResultValue>();
+  private activeWrites = new Set<string>();
 
   constructor() {
     this.classId = this.route.snapshot.queryParamMap.get('classId');
@@ -71,7 +84,9 @@ export class ClassExamResults {
       const exam = this.examResultsService.exam();
       if (!exam) return;
       const resultsFA = this.fb.array<FormGroup>([]);
+      this.lastSaved.clear();
       exam.examResults.forEach((r) => {
+        this.lastSaved.set(r.catechismClassEucharisticYouthId, { score: r.score ?? null, remark: r.remark || null });
         resultsFA.push(
           this.fb.group({
             enrollmentId: this.fb.control(r.catechismClassEucharisticYouthId, { nonNullable: true }),
@@ -82,31 +97,92 @@ export class ClassExamResults {
         );
       });
       this.resultsForm.setControl('results', resultsFA);
+      this.writeStates.set({});
     });
   }
 
-  protected async save(): Promise<void> {
-    if (this.resultsForm.invalid) {
-      this.resultsForm.markAllAsTouched();
+  protected onFieldBlur(row: FormGroup, event: FocusEvent): void {
+    // Number inputs report value null for unparseable text; don't let that clear a saved score.
+    if ((event.target as HTMLInputElement | null)?.validity?.badInput) {
+      row.get('score')?.setErrors({ badInput: true });
+      row.markAllAsTouched();
       return;
     }
-    this.saving.set(true);
-    const payload = {
-      examId: this.examId,
-      results: this.resultsArray.value.map((r: any) => ({
-        catechismClassEucharisticYouthId: r.enrollmentId,
-        score: r.score,
-        remark: r.remark || null,
-      })),
-    };
-    try {
-      await this.examResultsService.save(payload);
-      this.notify.success('Saved');
-    } catch {
-      this.notify.error('Save failed');
-    } finally {
-      this.saving.set(false);
+    if (row.invalid) {
+      row.markAllAsTouched();
+      return;
     }
+
+    const enrollmentId: string = row.get('enrollmentId')!.value;
+    const value: ResultValue = {
+      score: row.get('score')!.value ?? null,
+      remark: row.get('remark')!.value || null,
+    };
+    const queued = this.pendingValues.get(enrollmentId) ?? this.lastSaved.get(enrollmentId);
+    if (queued && queued.score === value.score && queued.remark === value.remark) return;
+
+    this.pendingValues.set(enrollmentId, value);
+    this.clearWriteState(enrollmentId);
+    void this.flushEnrollment(enrollmentId);
+  }
+
+  protected saveState(enrollmentId: string): SaveState | undefined {
+    return this.writeStates()[enrollmentId];
+  }
+
+  protected retry(row: FormGroup): void {
+    const enrollmentId: string = row.get('enrollmentId')!.value;
+    if (row.invalid || this.activeWrites.has(enrollmentId)) return;
+
+    this.pendingValues.set(enrollmentId, {
+      score: row.get('score')!.value ?? null,
+      remark: row.get('remark')!.value || null,
+    });
+    this.clearWriteState(enrollmentId);
+    void this.flushEnrollment(enrollmentId);
+  }
+
+  private async flushEnrollment(enrollmentId: string): Promise<void> {
+    if (!this.examId || this.activeWrites.has(enrollmentId)) return;
+    this.activeWrites.add(enrollmentId);
+
+    try {
+      while (this.pendingValues.has(enrollmentId)) {
+        const value = this.pendingValues.get(enrollmentId)!;
+        this.pendingValues.delete(enrollmentId);
+
+        try {
+          await this.examResultsService.saveOne(this.examId, {
+            catechismClassEucharisticYouthId: enrollmentId,
+            score: value.score,
+            remark: value.remark,
+          });
+          this.lastSaved.set(enrollmentId, value);
+        } catch {
+          if (this.pendingValues.has(enrollmentId)) continue;
+
+          this.setWriteState(enrollmentId, 'error');
+          this.notify.error(this.#translate.t('exam.saveFailed'));
+          return;
+        }
+      }
+
+      this.setWriteState(enrollmentId, 'saved');
+    } finally {
+      this.activeWrites.delete(enrollmentId);
+    }
+  }
+
+  private setWriteState(enrollmentId: string, state: SaveState): void {
+    this.writeStates.update((states) => ({ ...states, [enrollmentId]: state }));
+  }
+
+  private clearWriteState(enrollmentId: string): void {
+    this.writeStates.update((states) => {
+      const next = { ...states };
+      delete next[enrollmentId];
+      return next;
+    });
   }
 
   protected backParams() {
