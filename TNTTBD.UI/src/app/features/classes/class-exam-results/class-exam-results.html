@@ -29,20 +29,6 @@
                 />
                 <app-form-errors-display [control]="row.get('score')" fieldName="Score"></app-form-errors-display>
               </mat-form-field>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="remark">
-            <th mat-header-cell *matHeaderCellDef>{{ 'exam.remark' | t }}</th>
-            <td mat-cell *matCellDef="let row" [formGroup]="row">
-              <mat-form-field appearance="outline" class="remark-field">
-                <input
-                  matInput
-                  formControlName="remark"
-                  maxlength="500"
-                  (blur)="onFieldBlur(row, $event)"
-                />
-                <app-form-errors-display [control]="row.get('remark')" fieldName="Remark"></app-form-errors-display>
-              </mat-form-field>
               @let state = saveState(row.get('enrollmentId').value);
               @if (state === 'saved') {
                 <span class="row-save-state row-save-success" role="status">
@@ -58,6 +44,20 @@
               }
             </td>
           </ng-container>
+          <ng-container matColumnDef="remark">
+            <th mat-header-cell *matHeaderCellDef>{{ 'exam.remark' | t }}</th>
+            <td mat-cell *matCellDef="let row" [formGroup]="row">
+              <mat-form-field appearance="outline" class="remark-field">
+                <input
+                  matInput
+                  formControlName="remark"
+                  maxlength="500"
+                  (blur)="onFieldBlur(row, $event)"
+                />
+                <app-form-errors-display [control]="row.get('remark')" fieldName="Remark"></app-form-errors-display>
+              </mat-form-field>
+            </td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
@@ -67,7 +67,7 @@
 </mat-card>
 
 <div class="actions mt-16">
-  <a mat-button [routerLink]="['/app/classes/detail']" [queryParams]="backParams()">
+  <a mat-button (click)="navigateBack()">
     <mat-icon>arrow_back</mat-icon> {{ 'common.back' | t }}
   </a>
 </div>

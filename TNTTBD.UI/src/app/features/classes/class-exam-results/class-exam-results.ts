@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -51,6 +51,7 @@ export class ClassExamResults {
   private examResultsService = inject(ClassExamResultsService);
   private notify = inject(NotificationService);
   private fb = inject(FormBuilder);
+  #location = inject(Location);
 
   #translate = inject(TranslationService);
 
@@ -185,7 +186,7 @@ export class ClassExamResults {
     });
   }
 
-  protected backParams() {
-    return this.classId ? { id: this.classId } : {};
+  navigateBack(): void {
+    this.#location.back();
   }
 }
