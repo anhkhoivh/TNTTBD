@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>{{ 'photo.upload' | t }}</h2>
+<form [formGroup]="form" (ngSubmit)="upload()">
+  <mat-dialog-content>
+    <label for="photo-file">{{ 'photo.file' | t }}</label>
+    <input id="photo-file" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
+      [disabled]="uploading()" (change)="onFile($event)" />
+    <p>{{ 'photo.fileHint' | t }}</p>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'photo.purpose' | t }}</mat-label>
+      <mat-select formControlName="purpose">
+        @for (purpose of purposes; track purpose) {
+          <mat-option [value]="purpose">{{ ('photo.purpose.' + purpose) | t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'photo.visibility' | t }}</mat-label>
+      <mat-select formControlName="visibility">
+        @for (visibility of visibilities; track visibility) {
+          <mat-option [value]="visibility">{{ ('photo.visibility.' + visibility) | t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close [disabled]="uploading()">
+      {{ 'common.cancel' | t }}
+    </button>
+    <button mat-flat-button type="submit" [disabled]="!file() || form.invalid || uploading()">
+      @if (uploading()) { <mat-spinner diameter="18"></mat-spinner> }
+      {{ 'photo.upload' | t }}
+    </button>
+  </mat-dialog-actions>
+</form>

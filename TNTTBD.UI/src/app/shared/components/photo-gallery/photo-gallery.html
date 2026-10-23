@@ -1,0 +1,25 @@
+<div class="toolbar">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>{{ 'photo.purpose' | t }}</mat-label>
+    <mat-select [value]="purpose()" (selectionChange)="purpose.set($event.value)">
+      @for (item of purposes; track item) {
+        <mat-option [value]="item">{{ ('photo.purpose.' + item) | t }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  @if (canUpload()) {
+    <button mat-stroked-button type="button" (click)="upload()" [disabled]="opening()">
+      <mat-icon>add_a_photo</mat-icon>{{ 'photo.upload' | t }}
+    </button>
+  }
+</div>
+<div class="photo-grid">
+  @for (photo of visiblePhotos(); track photo.photoId) {
+    <button class="photo-button" type="button" (click)="view(photo)"
+      [attr.aria-label]="'photo.view' | t">
+      <app-photo-image [url]="photo.url" [alt]="memberName()" />
+    </button>
+  } @empty {
+    <p>{{ 'common.noData' | t }}</p>
+  }
+</div>

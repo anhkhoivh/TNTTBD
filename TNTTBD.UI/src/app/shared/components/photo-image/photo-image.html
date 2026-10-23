@@ -1,0 +1,7 @@
+@if (failed()) {
+  <p role="alert">{{ 'photo.loadFailed' | t }}</p>
+} @else if (src(); as url) {
+  <img [src]="url" [alt]="alt()" [class.full-size]="fullSize()" (error)="failed.set(true)" />
+} @else {
+  <p role="status">{{ 'common.loading' | t }}</p>
+}

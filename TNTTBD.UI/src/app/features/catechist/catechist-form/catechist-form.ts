@@ -14,7 +14,6 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { PatronSaint } from '../../../shared/models';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../../shared/components/patron-saint-input';
-import { PhotoUpload } from '../../../shared/components/photo-upload';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { CatechistService } from '../catechist.service';
 
@@ -33,7 +32,6 @@ import { CatechistService } from '../catechist.service';
     MatRadioModule,
     TranslatePipe,
     PatronSaintInput,
-    PhotoUpload,
   ],
   templateUrl: './catechist-form.html',
   styleUrl: './catechist-form.scss',
@@ -135,10 +133,6 @@ export class CatechistForm {
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const dd = String(d.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
-  }
-
-  protected onPhotoUploaded(): void {
-    this.notify.success('photo.uploaded');
   }
 
   navigateBack(): void {

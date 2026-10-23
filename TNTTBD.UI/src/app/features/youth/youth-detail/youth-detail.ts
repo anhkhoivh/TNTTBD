@@ -1,5 +1,5 @@
 import { Component, inject, effect, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule, Location, NgOptimizedImage } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
-import { PhotoService } from '../../../core/services/photo.service';
+import { PhotoGallery } from '../../../shared/components/photo-gallery/photo-gallery';
 import { DialogService } from '../../../core/services/dialog.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -35,7 +35,7 @@ import { YouthService } from '../youth.service';
   selector: 'app-youth-detail',
   standalone: true,
   imports: [
-    NgOptimizedImage,
+    PhotoGallery,
     CommonModule,
     RouterLink,
     MatCardModule,
@@ -57,7 +57,6 @@ import { YouthService } from '../youth.service';
 export class YouthDetail {
   private route = inject(ActivatedRoute);
   private youthService = inject(YouthService);
-  protected photoService = inject(PhotoService);
   private router = inject(Router);
   private auth = inject(AuthService);
   private dialogs = inject(DialogService);
@@ -79,6 +78,10 @@ export class YouthDetail {
 
   /** Youth profile for the active route id (milestones + photos embedded) */
   protected data = this.youthService.detail;
+
+  protected reloadPhotos(): void {
+    this.youthService.detailRes.reload();
+  }
 
   /** Lazy-loaded contacts tab */
   protected contactsData = this.youthService.contacts;

@@ -1,5 +1,5 @@
 import { Component, inject, effect, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule, Location, NgOptimizedImage } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatListModule } from '@angular/material/list';
-import { PhotoService } from '../../../core/services/photo.service';
+import { PhotoGallery } from '../../../shared/components/photo-gallery/photo-gallery';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
@@ -21,7 +21,7 @@ import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-q
   selector: 'app-catechist-detail',
   standalone: true,
   imports: [
-    NgOptimizedImage,
+    PhotoGallery,
     CommonModule,
     RouterLink,
     MatCardModule,
@@ -37,17 +37,6 @@ import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-q
   templateUrl: './catechist-detail.html',
   styles: [
     `
-      .photo-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 1rem;
-      }
-      .photo {
-        width: 100%;
-        aspect-ratio: 1;
-        object-fit: cover;
-        border-radius: 8px;
-      }
       .field {
         display: flex;
         align-items: center;
@@ -64,7 +53,6 @@ export class CatechistDetail {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private catechistService = inject(CatechistService);
-  protected photoService = inject(PhotoService);
   private auth = inject(AuthService);
   #location = inject(Location);
 
@@ -93,6 +81,10 @@ export class CatechistDetail {
 
   /** Catechist profile for the active route id */
   protected data = this.catechistService.detail;
+
+  protected reloadPhotos(): void {
+    this.catechistService.detailRes.reload();
+  }
 
   /** Lazy-loaded assignments tab data */
   protected assignmentsData = this.catechistService.assignments;

@@ -24,7 +24,6 @@ import { ContactRelationType, MilestoneType, UserRole } from '../../../shared/en
 import { CONTACT_RELATION_TYPES } from '../../../shared/constants/contact-relation-types';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../../shared/components/patron-saint-input';
-import { PhotoUpload } from '../../../shared/components/photo-upload';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { YouthService } from '../youth.service';
 
@@ -46,7 +45,6 @@ import { YouthService } from '../youth.service';
     MatCheckboxModule,
     TranslatePipe,
     PatronSaintInput,
-    PhotoUpload,
   ],
   templateUrl: './youth-form.html',
   styleUrl: './youth-form.scss',
@@ -181,10 +179,6 @@ export class YouthForm {
 
   protected removeContact(i: number): void {
     this.contacts.removeAt(i);
-  }
-
-  protected onPhotoUploaded(): void {
-    this.notify.success('photo.uploaded');
   }
 
   protected async submit(): Promise<void> {

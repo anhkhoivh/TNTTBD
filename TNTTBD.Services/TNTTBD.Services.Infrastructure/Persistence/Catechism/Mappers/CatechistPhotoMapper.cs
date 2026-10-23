@@ -69,6 +69,7 @@ public static class CatechistPhotoMapper
     {
         return new PhotoReferenceDto
             {
+                PhotoId = entity.Id,
                 Purpose = entity.Purpose.ToString(),
                 ContentType = entity.ContentType,
                 UploadedBy = entity.UploadedBy,

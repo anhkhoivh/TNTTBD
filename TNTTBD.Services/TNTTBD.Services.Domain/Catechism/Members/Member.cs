@@ -98,11 +98,6 @@ public abstract class Member : AggregateRoot<Guid>
     /// <param name="photo"></param>
     public void AddPhoto(PhotoReference photo)
     {
-        if (photo.Purpose == PhotoPurpose.Profile)
-        {
-            _photos.RemoveAll(p => p.Purpose == PhotoPurpose.Profile);
-        }
-
         _photos.Add(photo);
     }
 

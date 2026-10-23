@@ -1,14 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PhotoService {
-  url(storageKey: string | null | undefined): string {
-    if (!storageKey) return '';
-    if (storageKey.startsWith('http://') || storageKey.startsWith('https://')) return storageKey;
-    const prefix = environment.photoBaseUrl.endsWith('/')
-      ? environment.photoBaseUrl
-      : environment.photoBaseUrl + '/';
-    return prefix + storageKey.replace(/^\/+/, '');
+  private http = inject(HttpClient);
+
+  url(value: string): string {
+    const api = new URL(environment.apiBaseUrl, location.origin);
+    return new URL(value, api.origin).href;
+  }
+
+  isApiPhoto(url: string): boolean {
+    const api = new URL(environment.apiBaseUrl, location.origin);
+    const photo = new URL(url);
+    return photo.origin === api.origin && photo.pathname.startsWith(`${api.pathname}/files/`);
+  }
+
+  load(url: string) {
+    return this.http.get(url, { responseType: 'blob' });
   }
 }

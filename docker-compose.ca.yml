@@ -1,0 +1,9 @@
+services:
+  api:
+    build:
+      secrets:
+        - build_ca
+
+secrets:
+  build_ca:
+    file: ${DOCKER_BUILD_CA_CERT:?Set DOCKER_BUILD_CA_CERT to a trusted PEM root certificate}

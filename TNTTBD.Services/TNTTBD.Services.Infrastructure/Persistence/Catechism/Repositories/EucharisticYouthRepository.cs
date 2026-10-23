@@ -120,9 +120,8 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         {
             throw new DomainException(DomainErrors.ValidationNotFound);
         }
-        EucharisticYouth domain = youthEntity.ToDomain();
-        domain.AddPhoto(photoReference);
-        domain.UpdateEntity(youthEntity);
+        await _context.Set<EucharisticYouthPhotoEntity>()
+            .AddAsync(photoReference.ToEucharisticYouthPhotoEntity(id), cancellationToken);
     }
 
     /// <inheritdoc />

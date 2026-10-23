@@ -1,18 +1,32 @@
 services:
   api:
     image: anhkhoivh/tnttbd-api:latest
+    build:
+      context: ./TNTTBD.Services
     ports:
-      - "5000:8080"
+      - "127.0.0.1:5000:8080"
     environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - FileStorage__BasePath=/app/uploads
+      - FileStorage__BaseUrl=
+      - CorsOrigins__0=http://localhost:4200
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=tnttbd;Username=postgres;Password=tnttbd
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    volumes:
+      - /volume1/docker/tnttbd/uploads:/app/uploads
     restart: unless-stopped
 
   ui:
     image: anhkhoivh/tnttbd-ui:latest
+    build:
+      context: ./TNTTBD.UI
+      args:
+        BUILD_CONFIGURATION: production,docker
     ports:
-      - "4200:80"
+      - "127.0.0.1:4200:80"
     depends_on:
       - api
     restart: unless-stopped
@@ -25,12 +39,17 @@ services:
       POSTGRES_DB: tnttbd
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tnttbd"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
     restart: unless-stopped
 
   pgadmin:
     image: dpage/pgadmin4:latest
     ports:
-      - "5050:80"
+      - "127.0.0.1:5050:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -40,3 +59,4 @@ services:
 
 volumes:
   pgdata:
+  uploads:

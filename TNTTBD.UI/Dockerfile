@@ -1,10 +1,11 @@
 # Stage 1: Build Angular app
 FROM node:20 AS build
 WORKDIR /app
+ARG BUILD_CONFIGURATION=production
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build -- --configuration=production
+RUN npm run build -- --configuration=${BUILD_CONFIGURATION}
 
 # Stage 2: Serve with Nginx
 FROM nginx:stable-alpine

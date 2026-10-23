@@ -68,11 +68,10 @@ public class CatechistRepository : ICatechistRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (catechistEntity == null)
         {
-            return;
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
-        Catechist domain = catechistEntity.ToDomain();
-        domain.AddPhoto(photoReference);
-        domain.UpdateEntity(catechistEntity);
+        await _context.Set<CatechistPhotoEntity>()
+            .AddAsync(photoReference.ToCatechistPhotoEntity(id), cancellationToken);
     }
 
     /// <inheritdoc />
