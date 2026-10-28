@@ -1,11 +1,12 @@
 import { FullName, IsoDate, PatronSaint } from './common.model';
-import { MilestoneType, PhotoPurpose } from '../enums';
+import { MilestoneType, PhotoPurpose, PhotoVisibility } from '../enums';
 
 export interface PhotoReference {
   photoId: string;
   url: string;
   contentType: string;
   purpose: PhotoPurpose;
+  visibility: PhotoVisibility;
   uploadedBy: string;
 }
 

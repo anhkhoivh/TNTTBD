@@ -26,7 +26,7 @@
 | Role | Capabilities |
 |------|-------------|
 | **Admin** | Full CRUD on all entities; manage users & assign roles; enroll youth/catechists; view everything |
-| **Catechist** | CRUD sessions in own classes; mark attendance & exams; view/manage youth in own classes; enroll youth into own class |
+| **Catechist** | CRUD sessions in own classes; mark attendance & exams; view/update any youth's info, contacts and photos; enroll youth into own class |
 | **EucharisticYouthContact** | View/edit their linked youth info; view class basic info (catechists, schedule); submit youth registration |
 | **EucharisticYouth** | View own profile + attendance + grades; edit own basic info; view class info (classmates, schedule) |
 | **Guest (unauthenticated)** | Access public landing page; submit youth registration form |

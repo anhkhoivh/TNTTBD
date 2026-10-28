@@ -7,6 +7,7 @@ import {
   CatechismClassCatechistRole,
   ContactRelationType,
   PhotoPurpose,
+  PhotoVisibility,
 } from '../../shared/enums';
 import {
   EucharisticYouth,
@@ -27,6 +28,7 @@ const photo = (seed: string) => ({
   url: `https://picsum.photos/seed/${seed}/400/400`,
   contentType: 'image/jpeg',
   purpose: PhotoPurpose.Profile,
+  visibility: PhotoVisibility.Public,
   uploadedBy: 'u-admin',
 });
 

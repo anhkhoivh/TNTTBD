@@ -7,7 +7,7 @@
       }
     </mat-select>
   </mat-form-field>
-  @if (canUpload()) {
+  @if (canManage()) {
     <button mat-stroked-button type="button" (click)="upload()" [disabled]="opening()">
       <mat-icon>add_a_photo</mat-icon>{{ 'photo.upload' | t }}
     </button>

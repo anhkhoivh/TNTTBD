@@ -95,31 +95,14 @@ public class AuthorizationContext : IAuthorizationContext
             return false;
         }
 
-        if (user.Role == UserRole.Admin)
+        // Any catechist can manage any youth, regardless of class assignment.
+        if (user.Role is UserRole.Admin or UserRole.Catechist)
         {
             return true;
         }
 
         // Youth can access self
-        if (user.Role == UserRole.EucharisticYouth && user.EucharisticYouthId == youthId)
-        {
-            return true;
-        }
-
-        // Catechist can access youths in their classes
-        if (user.Role == UserRole.Catechist && user.CatechistId.HasValue)
-        {
-            var catechistClassIds = _dbContext.CatechismClassCatechists
-                .Where(cc => cc.CatechistId == user.CatechistId.Value && cc.Status == EnrollmentStatus.Active)
-                .Select(cc => cc.CatechismClassId);
-
-            return await _dbContext.CatechismClassEucharisticYouths
-                .AnyAsync(cy => cy.EucharisticYouthId == youthId
-                    && catechistClassIds.Contains(cy.CatechismClassId),
-                    cancellationToken);
-        }
-
-        return false;
+        return user.Role == UserRole.EucharisticYouth && user.EucharisticYouthId == youthId;
     }
 
     public async Task<bool> CanAccessCatechistAsync(Guid catechistId, CancellationToken cancellationToken)
@@ -208,6 +191,42 @@ public class AuthorizationContext : IAuthorizationContext
         {
             return await _dbContext.EucharisticYouthContacts
                 .AnyAsync(yc => yc.ContactId == contactId.Value
+                    && yc.EucharisticYouthId == youthId,
+                    cancellationToken);
+        }
+
+        return false;
+    }
+
+    public async Task<bool> CanManageCatechistPhotosAsync(Guid catechistId, CancellationToken cancellationToken)
+    {
+        var user = await GetCurrentUserAsync(cancellationToken);
+        return user != null && (user.Role == UserRole.Admin
+            || (user.Role == UserRole.Catechist && user.CatechistId == catechistId));
+    }
+
+    public async Task<bool> CanManageYouthPhotosAsync(Guid youthId, CancellationToken cancellationToken)
+    {
+        var user = await GetCurrentUserAsync(cancellationToken);
+        if (user == null)
+        {
+            return false;
+        }
+
+        if (user.Role is UserRole.Admin or UserRole.Catechist)
+        {
+            return true;
+        }
+
+        if (user.Role == UserRole.EucharisticYouth)
+        {
+            return user.EucharisticYouthId == youthId;
+        }
+
+        if (user.Role == UserRole.EucharisticYouthContact && user.ContactId.HasValue)
+        {
+            return await _dbContext.EucharisticYouthContacts
+                .AnyAsync(yc => yc.ContactId == user.ContactId.Value
                     && yc.EucharisticYouthId == youthId,
                     cancellationToken);
         }

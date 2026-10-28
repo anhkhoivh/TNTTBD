@@ -144,6 +144,7 @@ public static class EucharisticYouthMapper
             {
                 PhotoId = p.Id,
                 Purpose = p.Purpose.ToString(),
+                Visibility = p.Visibility.ToString(),
                 ContentType = p.ContentType,
                 UploadedBy = p.UploadedBy,
                 Url = storage.GetFileUrl(p.StorageKey)

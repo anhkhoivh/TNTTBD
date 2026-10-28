@@ -9,5 +9,6 @@ public class PhotoReferenceDto
     public required string ContentType { get; set; }
     public required string Url { get; set; }
     public required string Purpose { get; set; }
+    public string Visibility { get; set; } = string.Empty;
     public Guid UploadedBy { get; set; }
 }

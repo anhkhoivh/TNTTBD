@@ -23,7 +23,7 @@ public class RequestEucharisticYouthPhotoUploadHandler : IRequestHandler<Request
 
     public async Task<PhotoReferenceDto?> Handle(RequestEucharisticYouthPhotoUploadCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessYouthAsync(command.EucharisticYouthId, cancellationToken))
+        if (!await _authContext.CanManageYouthPhotosAsync(command.EucharisticYouthId, cancellationToken))
         {
             return null;
         }
@@ -43,6 +43,7 @@ public class RequestEucharisticYouthPhotoUploadHandler : IRequestHandler<Request
             Url = uploadUrl,
             ContentType = command.ContentType,
             Purpose = command.Purpose.ToString(),
+            Visibility = command.Visibility.ToString(),
             UploadedBy = command.UploadedBy
         };
     }

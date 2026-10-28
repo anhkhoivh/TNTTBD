@@ -70,7 +70,7 @@
     <ng-template matTabContent>
       @defer {
       <app-photo-gallery [photos]="d.photos" entityType="youths" [entityId]="d.id"
-        [memberName]="d.fullName | fullName" (uploaded)="reloadPhotos()" />
+        [memberName]="d.fullName | fullName" (changed)="reloadPhotos()" />
 
       } @placeholder {
       <div class="p-4">

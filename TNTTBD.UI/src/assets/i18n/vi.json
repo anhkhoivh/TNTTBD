@@ -66,6 +66,9 @@
   "photo.delete": "Xóa ảnh",
   "photo.deleted": "Đã xóa ảnh.",
   "photo.deleteConfirm": "Xóa ảnh này?",
+  "photo.deleteFailed": "Không thể xóa ảnh.",
+  "photo.updated": "Đã cập nhật thiết lập ảnh.",
+  "photo.updateFailed": "Không thể cập nhật thiết lập ảnh.",
 
   "landing.welcome": "Chào mừng đến với Đoàn Thiếu nhi Thánh Thể Giáo xứ Bình Đông",
   "landing.subtitle": "Quản lý thiếu nhi, lớp giáo lý, điểm danh và nhiều hơn nữa",

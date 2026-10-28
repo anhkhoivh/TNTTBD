@@ -71,6 +71,7 @@ public static class CatechistPhotoMapper
             {
                 PhotoId = entity.Id,
                 Purpose = entity.Purpose.ToString(),
+                Visibility = entity.Visibility.ToString(),
                 ContentType = entity.ContentType,
                 UploadedBy = entity.UploadedBy,
                 Url = storage.GetFileUrl(entity.StorageKey)

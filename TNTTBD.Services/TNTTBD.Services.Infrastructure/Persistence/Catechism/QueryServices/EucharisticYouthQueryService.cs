@@ -35,6 +35,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
                 {
                     PhotoId = p.Id,
                     Purpose = p.Purpose.ToString(),
+                    Visibility = p.Visibility.ToString(),
                     ContentType = p.ContentType,
                     UploadedBy = p.UploadedBy,
                     Url = storage.GetFileUrl(p.StorageKey)
@@ -69,6 +70,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
             {
                 PhotoId = entity.Id,
                 Purpose = entity.Purpose.ToString(),
+                Visibility = entity.Visibility.ToString(),
                 ContentType = entity.ContentType,
                 UploadedBy = entity.UploadedBy,
                 Url = storage.GetFileUrl(entity.StorageKey)
@@ -126,6 +128,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
                 {
                     PhotoId = p.Id,
                     Purpose = p.Purpose.ToString(),
+                    Visibility = p.Visibility.ToString(),
                     ContentType = p.ContentType,
                     UploadedBy = p.UploadedBy,
                     Url = storage.GetFileUrl(p.StorageKey)

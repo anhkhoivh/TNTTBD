@@ -23,7 +23,7 @@ public class RequestCatechistPhotoUploadHandler : IRequestHandler<RequestCatechi
 
     public async Task<PhotoReferenceDto?> Handle(RequestCatechistPhotoUploadCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessCatechistAsync(command.CatechistId, cancellationToken))
+        if (!await _authContext.CanManageCatechistPhotosAsync(command.CatechistId, cancellationToken))
         {
             return null;
         }
@@ -43,6 +43,7 @@ public class RequestCatechistPhotoUploadHandler : IRequestHandler<RequestCatechi
             Url = uploadUrl,
             ContentType = command.ContentType,
             Purpose = command.Purpose.ToString(),
+            Visibility = command.Visibility.ToString(),
             UploadedBy = command.UploadedBy
         };
     }

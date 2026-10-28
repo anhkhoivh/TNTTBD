@@ -87,10 +87,22 @@ their edit forms. The purpose dropdown (Profile, Gallery, Document) creates imag
 requests only for the selected category; photo metadata still comes from the
 member detail response. The upload dialog selects a file, purpose and visibility
 (Public, Restricted, Private), then refreshes the tab and selects the uploaded
-purpose. Upload is available to Admin and the linked owner, matching the file
-upload endpoint's current permission rules. Visibility is stored as metadata;
-this UI does not change the API's existing file-read access policy.
-Click a thumbnail to view the full image in a dialog.
+purpose. Click a thumbnail to view the full image in a dialog.
+
+Photo upload, settings changes and removal share one server-side permission rule:
+Admins can manage all photos; catechists can manage only their own catechist
+photos; any Catechist can manage any youth's photos; youths can manage their own
+photos; and contacts linked to a youth can manage that youth's photos. The
+Photos tab asks `GET /api/{catechists|youths}/photos/permissions` before showing
+upload and management controls, but the API remains the source of truth.
+
+Users who can manage a photo can change its purpose and visibility in the
+viewer dialog (`PATCH /api/{catechists|youths}/photos`). Remove asks for
+confirmation, permanently deletes the metadata (`DELETE` on the same path), and
+then deletes the stored file after the database transaction commits. If file
+deletion fails, the API logs the storage key so the orphaned file can be cleaned
+up manually. Visibility is stored as metadata only; the existing file-read
+endpoint does not enforce Public/Restricted/Private yet.
 
 ### Later deployment to Synology
 

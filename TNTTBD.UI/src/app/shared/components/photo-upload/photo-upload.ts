@@ -13,9 +13,9 @@ import { NotificationService } from '../../../core/services/notification.service
 import { PhotoPurpose, PhotoVisibility } from '../../enums';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { TranslationService } from '../../../core/i18n/translation.service';
-import { PhotoService } from '../../../core/services/photo.service';
+import { PhotoEntityType, PhotoService } from '../../../core/services/photo.service';
 
-export type PhotoEntityType = 'catechists' | 'youths';
+export type { PhotoEntityType };
 
 export interface PhotoUploaded {
   photoId: string;

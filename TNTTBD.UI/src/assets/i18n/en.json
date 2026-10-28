@@ -65,7 +65,10 @@
   "photo.loadFailed": "Photo could not be loaded.",
   "photo.delete": "Delete photo",
   "photo.deleted": "Photo deleted.",
-  "photo.deleteConfirm": "Delete this photo?",
+  "photo.deleteConfirm": "Delete this photo permanently? This cannot be undone.",
+  "photo.deleteFailed": "Photo could not be deleted.",
+  "photo.updated": "Photo settings updated.",
+  "photo.updateFailed": "Photo settings could not be updated.",
 
   "landing.welcome": "Welcome to the Parish Eucharistic Youth Movement",
   "landing.subtitle": "Manage youth members, classes, attendance, and more",
