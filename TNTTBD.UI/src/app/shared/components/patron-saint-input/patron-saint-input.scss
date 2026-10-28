@@ -1,0 +1,20 @@
+.patron-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.section-label {
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.patron-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.narrow {
+  max-width: 80px;
+}

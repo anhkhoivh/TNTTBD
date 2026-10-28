@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, effect, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,7 +13,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { AuthService } from '../../../core/auth/auth.service';
 import { PatronSaint } from '../../../shared/models';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import { PatronSaintInput } from '../../../shared/components/patron-saint-input';
+import { PatronSaintInput } from '../../../shared/components/patron-saint-input/patron-saint-input';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { CatechistService } from '../catechist.service';
 
@@ -81,10 +81,11 @@ export class CatechistForm {
     }
 
     // Reactive forms are imperative; patching from the loaded resource is the accepted effect() exception.
+    // untracked keeps signals read by child form controls from re-running this effect and discarding edits.
     effect(() => {
       const c = this.catechistService.detail();
       if (!c) return;
-      this.form.patchValue({
+      untracked(() => this.form.patchValue({
         givenName: c.fullName.givenName,
         middleName: c.fullName.middleName ?? '',
         familyName: c.fullName.familyName ?? '',
@@ -93,7 +94,7 @@ export class CatechistForm {
         isMale: c.isMale,
         address: c.address ?? '',
         patronSaints: c.patronSaints ?? [],
-      });
+      }));
     });
   }
 
