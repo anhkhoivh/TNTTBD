@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { PhotoPurpose, PhotoVisibility } from '../../shared/enums';
+import { PhotoPurpose } from '../../shared/enums';
 import { ApiService } from './api.service';
 
 export type PhotoEntityType = 'catechists' | 'youths';
@@ -41,9 +41,8 @@ export class PhotoService {
     entityId: string,
     photoId: string,
     purpose: PhotoPurpose,
-    visibility: PhotoVisibility,
   ): Promise<void> {
-    return this.api.patchAsync(`/${entityType}/photos`, { ...this.target(entityType, entityId, photoId), purpose, visibility });
+    return this.api.patchAsync(`/${entityType}/photos`, { ...this.target(entityType, entityId, photoId), purpose });
   }
 
   remove(entityType: PhotoEntityType, entityId: string, photoId: string): Promise<void> {

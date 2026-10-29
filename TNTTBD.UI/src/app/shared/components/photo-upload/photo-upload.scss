@@ -7,3 +7,32 @@ mat-dialog-content {
 input {
   max-width: 100%;
 }
+
+.photo-source-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.photo-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+
+  img {
+    width: 96px;
+    height: 96px;
+    flex: 0 0 auto;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  span {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

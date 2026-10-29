@@ -14,5 +14,4 @@ public class EucharisticYouthPhotoEntity
     public PhotoPurpose Purpose { get; set; }
     public DateTimeOffset UploadedAt { get; set; }
     public Guid UploadedBy { get; set; }
-    public PhotoVisibility Visibility { get; set; }
 }

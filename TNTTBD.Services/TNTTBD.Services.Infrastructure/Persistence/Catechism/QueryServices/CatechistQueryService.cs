@@ -45,7 +45,6 @@ public class CatechistQueryService : ICatechistQueryService
                 {
                     PhotoId = e.Id,
                     Purpose = e.Purpose.ToString(),
-                    Visibility = e.Visibility.ToString(),
                     ContentType = e.ContentType,
                     UploadedBy = e.UploadedBy,
                     Url = storage.GetFileUrl(e.StorageKey)
@@ -71,7 +70,6 @@ public class CatechistQueryService : ICatechistQueryService
             {
                 PhotoId = e.Id,
                 Purpose = e.Purpose.ToString(),
-                Visibility = e.Visibility.ToString(),
                 ContentType = e.ContentType,
                 UploadedBy = e.UploadedBy,
                 Url = storage.GetFileUrl(e.StorageKey)
@@ -108,7 +106,6 @@ public class CatechistQueryService : ICatechistQueryService
                 {
                     PhotoId = e.Id,
                     Purpose = e.Purpose.ToString(),
-                    Visibility = e.Visibility.ToString(),
                     ContentType = e.ContentType,
                     UploadedBy = e.UploadedBy,
                     Url = storage.GetFileUrl(e.StorageKey)

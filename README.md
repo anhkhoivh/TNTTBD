@@ -64,9 +64,10 @@ docker compose down
 
 For uploads, inspect both requests in browser DevTools: the photo-reference POST
 and the multipart POST to `/api/files/upload/...`. Both should use
-`http://localhost:4200`. Test initially with an Admin account and a small valid
-JPEG or PNG. The API currently limits the whole upload request to 5 MiB;
-Nginx permits 6 MiB so it does not impose a smaller limit.
+`http://localhost:4200`. Test with an Admin account and a valid JPEG or PNG.
+Photo files can be up to 20 MiB; the API enforces this per-file limit and allows
+22 MiB for the multipart request body. Nginx also permits 22 MiB to accommodate
+multipart overhead.
 
 Photo-reference creation explicitly inserts new photo entities rather than
 letting EF infer their state from preassigned GUIDs. Uploads append photos,
@@ -85,8 +86,13 @@ saved first; a missing image is shown as a localized loading error.
 Manage photos from the Photos tab on catechist and youth detail pages, not from
 their edit forms. The purpose dropdown (Profile, Gallery, Document) creates image
 requests only for the selected category; photo metadata still comes from the
-member detail response. The upload dialog selects a file, purpose and visibility
-(Public, Restricted, Private), then refreshes the tab and selects the uploaded
+member detail response. The upload dialog can choose an image from the device or
+take one with the camera, and selects its purpose. On phones and tablets, taking
+a photo opens the device camera; on desktops with a webcam, it opens an in-app
+camera preview. Camera permission is required, and the in-app camera requires
+HTTPS or localhost. Selected and captured JPEG, PNG, GIF or WebP images are
+limited to 20 MiB. The dialog previews a selection and lets users retake camera
+photos before uploading. It then refreshes the tab and selects the uploaded
 purpose. Click a thumbnail to view the full image in a dialog.
 
 Photo upload, settings changes and removal share one server-side permission rule:
@@ -96,13 +102,13 @@ photos; and contacts linked to a youth can manage that youth's photos. The
 Photos tab asks `GET /api/{catechists|youths}/photos/permissions` before showing
 upload and management controls, but the API remains the source of truth.
 
-Users who can manage a photo can change its purpose and visibility in the
-viewer dialog (`PATCH /api/{catechists|youths}/photos`). Remove asks for
+Users who can manage a photo can change its purpose in the viewer dialog
+(`PATCH /api/{catechists|youths}/photos`). Remove asks for
 confirmation, permanently deletes the metadata (`DELETE` on the same path), and
 then deletes the stored file after the database transaction commits. If file
 deletion fails, the API logs the storage key so the orphaned file can be cleaned
-up manually. Visibility is stored as metadata only; the existing file-read
-endpoint does not enforce Public/Restricted/Private yet.
+up manually. Photo reads remain available to authenticated users, and the
+existing photo-management authorization rules are unchanged.
 
 ### Later deployment to Synology
 

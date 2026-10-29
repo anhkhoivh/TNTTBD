@@ -6,6 +6,5 @@ namespace TNTTBD.Services.Application.Catechists.Commands;
 public record UpdateCatechistPhotoCommand(
     Guid CatechistId,
     Guid PhotoId,
-    PhotoPurpose Purpose,
-    PhotoVisibility Visibility
+    PhotoPurpose Purpose
 ) : IRequest<bool>;

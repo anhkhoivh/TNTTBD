@@ -245,9 +245,6 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.Property<Guid>("UploadedBy")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Visibility")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CatechistId");
@@ -357,9 +354,6 @@ namespace TNTTBD.Services.Infrastructure.Migrations
 
                     b.Property<Guid>("UploadedBy")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("Visibility")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

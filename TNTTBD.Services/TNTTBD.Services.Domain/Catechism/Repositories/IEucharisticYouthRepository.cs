@@ -59,9 +59,9 @@ public interface IEucharisticYouthRepository
     Task RemoveMilestone(Guid id, Guid milestoneId, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Update photo purpose and visibility
+    /// Update photo purpose
     /// </summary>
-    Task UpdatePhoto(Guid id, Guid photoId, PhotoPurpose purpose, PhotoVisibility visibility, CancellationToken cancellationToken);
+    Task UpdatePhoto(Guid id, Guid photoId, PhotoPurpose purpose, CancellationToken cancellationToken);
 
     /// <summary>
     /// Remove photo and return its storage key

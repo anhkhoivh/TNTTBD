@@ -12,7 +12,8 @@ public class FileUploadController : ControllerBase
 {
     private readonly string _basePath;
     private readonly IAuthorizationContext _authContext;
-    private const long MaxFileSize = 5 * 1024 * 1024; // 5MB
+    private const long MaxFileSize = 20 * 1024 * 1024;
+    private const long MaxRequestSize = 22 * 1024 * 1024;
 
     private static readonly Regex StorageKeyPattern = new(
         @"^(catechists|youths)/[a-f0-9\-]{36}/photos/[a-f0-9\-]{36}\.(jpg|jpeg|png|gif|webp)$",
@@ -34,7 +35,7 @@ public class FileUploadController : ControllerBase
     }
 
     [HttpPost("upload/{**storageKey}")]
-    [RequestSizeLimit(MaxFileSize)]
+    [RequestSizeLimit(MaxRequestSize)]
     public async Task<IActionResult> Upload(string storageKey, IFormFile file, CancellationToken cancellationToken)
     {
         if (file == null || file.Length == 0)
@@ -44,7 +45,7 @@ public class FileUploadController : ControllerBase
 
         if (file.Length > MaxFileSize)
         {
-            return BadRequest("File size exceeds 5MB limit.");
+            return BadRequest("File size exceeds 20MB limit.");
         }
 
         if (!file.ContentType.StartsWith("image/"))

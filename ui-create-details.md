@@ -79,7 +79,6 @@
 - **CatechismClassCatechistRole**: Main, Member, Assistance
 - **ContactRelationType**: Undefined, Father, Mother, Guardian, Grandfather, Grandmother, Babysitter, Sibling
 - **PhotoPurpose**: Profile, (others)
-- **PhotoVisibility**: (TBD from backend)
 
 ## Key Value Objects
 - **FullName**: givenName (required), christName, familyName, middleName

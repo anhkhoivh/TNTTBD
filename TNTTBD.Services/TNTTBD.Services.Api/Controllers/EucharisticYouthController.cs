@@ -179,7 +179,7 @@ public class EucharisticYouthController : Controller
     }
 
     /// <summary>
-    /// Update photo purpose and visibility
+    /// Update photo purpose
     /// </summary>
     [HttpPatch("photos")]
     public async Task<IActionResult> UpdatePhoto(UpdateEucharisticYouthPhotoCommand command, CancellationToken cancellationToken)

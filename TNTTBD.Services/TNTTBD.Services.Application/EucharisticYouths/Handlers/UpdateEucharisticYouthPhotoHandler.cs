@@ -22,7 +22,7 @@ public class UpdateEucharisticYouthPhotoHandler : IRequestHandler<UpdateEucharis
             return false;
         }
 
-        await _repository.UpdatePhoto(command.EucharisticYouthId, command.PhotoId, command.Purpose, command.Visibility, cancellationToken);
+        await _repository.UpdatePhoto(command.EucharisticYouthId, command.PhotoId, command.Purpose, cancellationToken);
         return true;
     }
 }

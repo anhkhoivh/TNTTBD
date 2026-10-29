@@ -3,9 +3,3 @@ export enum PhotoPurpose {
   Gallery = 'Gallery',
   Document = 'Document',
 }
-
-export enum PhotoVisibility {
-  Public = 'Public',
-  Restricted = 'Restricted',
-  Private = 'Private',
-}

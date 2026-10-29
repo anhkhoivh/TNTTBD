@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{ 'photo.cameraTitle' | t }}</h2>
+<mat-dialog-content class="camera-capture">
+  @if (error(); as message) {
+    <p class="capture-error" role="alert">
+      <mat-icon aria-hidden="true">videocam_off</mat-icon>
+      <span>{{ message | t }}</span>
+    </p>
+  } @else {
+    <div class="capture-stage">
+      <video #video class="capture-preview" autoplay playsinline muted></video>
+      @if (!ready()) {
+        <div class="capture-starting">
+          <mat-progress-spinner mode="indeterminate" diameter="36" />
+          <span>{{ 'photo.cameraStarting' | t }}</span>
+        </div>
+      }
+    </div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">{{ 'photo.cameraCancel' | t }}</button>
+  @if (!error()) {
+    <button mat-flat-button type="button" [disabled]="!ready()" (click)="capture()">
+      <mat-icon>photo_camera</mat-icon>
+      {{ 'photo.cameraCapture' | t }}
+    </button>
+  }
+</mat-dialog-actions>

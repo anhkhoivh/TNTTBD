@@ -11,14 +11,6 @@
         }
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-      <mat-label>{{ 'photo.visibility' | t }}</mat-label>
-      <mat-select formControlName="visibility">
-        @for (visibility of visibilities; track visibility) {
-          <mat-option [value]="visibility">{{ ('photo.visibility.' + visibility) | t }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
   </form>
 }
 <mat-dialog-actions>

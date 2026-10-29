@@ -33,7 +33,7 @@ public class RequestCatechistPhotoUploadHandler : IRequestHandler<RequestCatechi
         string extension = Path.GetExtension(command.FileName);
 
         string storageKey = $"catechists/{command.CatechistId}/photos/{photoId}{extension}";
-        PhotoReference photoReference = new(photoId, storageKey, command.ContentType, command.Purpose, command.UploadedBy, DateTimeOffset.Now, command.Visibility);
+        PhotoReference photoReference = new(photoId, storageKey, command.ContentType, command.Purpose, command.UploadedBy, DateTimeOffset.Now);
         await _repository.AddPhoto(command.CatechistId, photoReference, cancellationToken);
         string uploadUrl = await _storage.GenerateUploadUrl(storageKey, command.ContentType, TimeSpan.FromMinutes(5));
 
@@ -43,7 +43,6 @@ public class RequestCatechistPhotoUploadHandler : IRequestHandler<RequestCatechi
             Url = uploadUrl,
             ContentType = command.ContentType,
             Purpose = command.Purpose.ToString(),
-            Visibility = command.Visibility.ToString(),
             UploadedBy = command.UploadedBy
         };
     }

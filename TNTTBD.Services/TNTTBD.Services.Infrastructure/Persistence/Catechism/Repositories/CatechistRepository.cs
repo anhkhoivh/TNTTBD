@@ -76,11 +76,11 @@ public class CatechistRepository : ICatechistRepository
     }
 
     /// <inheritdoc />
-    public async Task UpdatePhoto(Guid id, Guid photoId, PhotoPurpose purpose, PhotoVisibility visibility, CancellationToken cancellationToken)
+    public async Task UpdatePhoto(Guid id, Guid photoId, PhotoPurpose purpose, CancellationToken cancellationToken)
     {
         CatechistPhotoEntity photoEntity = await GetPhotoEntity(id, photoId, cancellationToken);
         PhotoReference photoReference = photoEntity.ToDomain();
-        photoReference.UpdateSettings(purpose, visibility);
+        photoReference.UpdateSettings(purpose);
         photoReference.UpdateEntity(photoEntity);
     }
 

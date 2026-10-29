@@ -16,14 +16,12 @@ public class PhotoReference : DomainEntity<Guid>
         string contentType,
         PhotoPurpose purpose,
         Guid uploadedBy,
-        DateTimeOffset uploadedAt,
-        PhotoVisibility visibility) : base(id)
+        DateTimeOffset uploadedAt) : base(id)
     {
         StorageKey = storageKey;
         ContentType = contentType;
         Purpose = purpose;
         UploadedBy = uploadedBy;
-        Visibility = visibility;
         UploadedAt = uploadedAt;
     }
 
@@ -36,19 +34,16 @@ public class PhotoReference : DomainEntity<Guid>
     public PhotoPurpose Purpose { get; private set; }
     public DateTimeOffset UploadedAt { get; }
     public Guid UploadedBy { get; }
-    public PhotoVisibility Visibility { get; private set; }
-    
     #endregion
 
     #region Methods
 
     /// <summary>
-    /// Update purpose and visibility without changing the stored file.
+    /// Update purpose without changing the stored file.
     /// </summary>
-    public void UpdateSettings(PhotoPurpose purpose, PhotoVisibility visibility)
+    public void UpdateSettings(PhotoPurpose purpose)
     {
         Purpose = purpose;
-        Visibility = visibility;
     }
 
     #endregion

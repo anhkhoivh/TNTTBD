@@ -22,7 +22,7 @@ public class UpdateCatechistPhotoHandler : IRequestHandler<UpdateCatechistPhotoC
             return false;
         }
 
-        await _repository.UpdatePhoto(command.CatechistId, command.PhotoId, command.Purpose, command.Visibility, cancellationToken);
+        await _repository.UpdatePhoto(command.CatechistId, command.PhotoId, command.Purpose, cancellationToken);
         return true;
     }
 }

@@ -1,23 +1,38 @@
 <h2 mat-dialog-title>{{ 'photo.upload' | t }}</h2>
 <form [formGroup]="form" (ngSubmit)="upload()">
   <mat-dialog-content>
-    <label for="photo-file">{{ 'photo.file' | t }}</label>
-    <input id="photo-file" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
-      [disabled]="uploading()" (change)="onFile($event)" />
+    <span>{{ 'photo.file' | t }}</span>
+    <input #picker id="photo-file" type="file" accept="image/jpeg,image/png,image/gif,image/webp"
+      [disabled]="uploading()" (change)="onFile($event)" hidden />
+    <input #cameraPicker type="file" accept="image/jpeg,image/png,image/gif,image/webp"
+      capture="environment" [disabled]="uploading()" (change)="onCameraFile($event)" hidden />
     <p>{{ 'photo.fileHint' | t }}</p>
+    @if (previewUrl(); as url) {
+      <div class="photo-preview">
+        <img [src]="url" [alt]="file()?.name ?? ''" />
+        <span>{{ file()?.name }}</span>
+        @if (cameraSource()) {
+          <button mat-button type="button" [disabled]="uploading()" (click)="takePhoto(cameraPicker)">
+            <mat-icon>replay</mat-icon>{{ 'photo.retake' | t }}
+          </button>
+        }
+      </div>
+    }
+    <div class="photo-source-actions">
+      @if (showCamera()) {
+        <button mat-stroked-button type="button" [disabled]="uploading()" (click)="takePhoto(cameraPicker)">
+          <mat-icon>photo_camera</mat-icon>{{ 'photo.takePhoto' | t }}
+        </button>
+      }
+      <button mat-stroked-button type="button" [disabled]="uploading()" (click)="picker.click()">
+        <mat-icon>upload</mat-icon>{{ 'photo.chooseFile' | t }}
+      </button>
+    </div>
     <mat-form-field appearance="outline">
       <mat-label>{{ 'photo.purpose' | t }}</mat-label>
       <mat-select formControlName="purpose">
         @for (purpose of purposes; track purpose) {
           <mat-option [value]="purpose">{{ ('photo.purpose.' + purpose) | t }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>{{ 'photo.visibility' | t }}</mat-label>
-      <mat-select formControlName="visibility">
-        @for (visibility of visibilities; track visibility) {
-          <mat-option [value]="visibility">{{ ('photo.visibility.' + visibility) | t }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

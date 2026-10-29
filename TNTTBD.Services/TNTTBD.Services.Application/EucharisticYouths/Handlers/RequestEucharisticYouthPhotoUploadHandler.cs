@@ -33,7 +33,7 @@ public class RequestEucharisticYouthPhotoUploadHandler : IRequestHandler<Request
         string extension = Path.GetExtension(command.FileName);
 
         string storageKey = $"youths/{command.EucharisticYouthId}/photos/{photoId}{extension}";
-        PhotoReference photoReference = new(photoId, storageKey, command.ContentType, command.Purpose, command.UploadedBy, DateTimeOffset.Now.ToUniversalTime(), command.Visibility);
+        PhotoReference photoReference = new(photoId, storageKey, command.ContentType, command.Purpose, command.UploadedBy, DateTimeOffset.Now.ToUniversalTime());
         await _repository.AddPhoto(command.EucharisticYouthId, photoReference, cancellationToken);
         string uploadUrl = await _storage.GenerateUploadUrl(storageKey, command.ContentType, TimeSpan.FromMinutes(5));
 
@@ -43,7 +43,6 @@ public class RequestEucharisticYouthPhotoUploadHandler : IRequestHandler<Request
             Url = uploadUrl,
             ContentType = command.ContentType,
             Purpose = command.Purpose.ToString(),
-            Visibility = command.Visibility.ToString(),
             UploadedBy = command.UploadedBy
         };
     }

@@ -11,7 +11,7 @@ import { TranslationService } from '../../../core/i18n/translation.service';
 import { DialogService } from '../../../core/services/dialog.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PhotoEntityType, PhotoService } from '../../../core/services/photo.service';
-import { PhotoPurpose, PhotoVisibility } from '../../enums';
+import { PhotoPurpose } from '../../enums';
 import { PhotoReference } from '../../models/youth.model';
 import { PhotoImage } from '../photo-image/photo-image';
 
@@ -54,23 +54,21 @@ export class PhotoViewerDialog {
   private fb = inject(FormBuilder);
 
   protected readonly purposes = Object.values(PhotoPurpose);
-  protected readonly visibilities = Object.values(PhotoVisibility);
   protected form = this.fb.nonNullable.group({
     purpose: [this.data.photo.purpose, Validators.required],
-    visibility: [this.data.photo.visibility ?? PhotoVisibility.Public, Validators.required],
   });
   protected busy = signal(false);
   private value = toSignal(this.form.valueChanges, { initialValue: this.form.getRawValue() });
   protected changed = computed(() => {
     const value = this.value();
-    return value.purpose !== this.data.photo.purpose || value.visibility !== this.data.photo.visibility;
+    return value.purpose !== this.data.photo.purpose;
   });
 
   protected async save(): Promise<void> {
     if (!this.data.canManage || this.busy() || this.form.invalid || !this.changed()) return;
-    const { purpose, visibility } = this.form.getRawValue();
+    const { purpose } = this.form.getRawValue();
     await this.run(async () => {
-      await this.photos.updateSettings(this.data.entityType, this.data.entityId, this.data.photo.photoId, purpose, visibility);
+      await this.photos.updateSettings(this.data.entityType, this.data.entityId, this.data.photo.photoId, purpose);
       this.notify.success(this.translate.t('photo.updated'));
       this.ref.close({ action: 'updated', purpose });
     }, 'photo.updateFailed');

@@ -9,6 +9,5 @@ public record AddCatechistPhotoCommand(
     string ContentType,
     PhotoPurpose Purpose,
     DateTimeOffset UploadedAt,
-    Guid UploadBy,
-    PhotoVisibility Visibility
+    Guid UploadBy
 ) : IRequest;
