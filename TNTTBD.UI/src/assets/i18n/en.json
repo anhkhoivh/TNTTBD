@@ -152,10 +152,12 @@
   "contact.searchContact": "Search contact by name, phone or email",
   "contact.linked": "Contact linked.",
   "contact.unlinked": "Contact removed from youth.",
+  "contact.unlink": "Unlink contact",
   "contact.unlinkConfirm": "Remove this contact from the youth?",
   "contact.deleted": "Contact deleted.",
   "contact.deleteConfirm": "Delete this contact? It will be removed from all youths.",
   "class.addYouth": "Add youth",
+  "class.removeYouth": "Remove from class",
 
   "class.year": "Catechism year",
   "class.name": "Class name",
@@ -221,6 +223,7 @@
   "attendance.retry": "Retry",
 
   "exam.title": "Exam title",
+  "exam.results": "Exam results",
   "exam.date": "Exam date",
   "exam.score": "Score",
   "exam.done": "Completed",

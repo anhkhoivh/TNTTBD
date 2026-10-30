@@ -1,8 +1,8 @@
 <mat-nav-list>
   @if (data.canView) {
     <button mat-list-item type="button" (click)="choose('view')">
-      <mat-icon matListItemIcon>visibility</mat-icon>
-      <span matListItemTitle>{{ 'common.view' | t }}</span>
+      <mat-icon matListItemIcon>{{ data.viewIcon ?? 'visibility' }}</mat-icon>
+      <span matListItemTitle>{{ (data.viewLabelKey ?? 'common.view') | t }}</span>
     </button>
   }
   @if (data.canEdit) {
@@ -13,8 +13,8 @@
   }
   @if (data.canDelete) {
     <button mat-list-item type="button" (click)="choose('delete')">
-      <mat-icon matListItemIcon color="warn">delete</mat-icon>
-      <span matListItemTitle>{{ 'common.delete' | t }}</span>
+      <mat-icon matListItemIcon color="warn">{{ data.deleteIcon ?? 'delete' }}</mat-icon>
+      <span matListItemTitle>{{ (data.deleteLabelKey ?? 'common.delete') | t }}</span>
     </button>
   }
 </mat-nav-list>
