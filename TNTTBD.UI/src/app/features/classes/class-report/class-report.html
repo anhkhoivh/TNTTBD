@@ -48,12 +48,12 @@
       <div class="matrix-container mt-16">
         <table mat-table [dataSource]="attendanceRows()" matSort (matSortChange)="attendanceSort.set($event)"
           class="matrix">
-          <ng-container matColumnDef="index" sticky>
+          <ng-container matColumnDef="index">
             <th mat-header-cell *matHeaderCellDef>#</th>
             <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
             <td mat-footer-cell *matFooterCellDef></td>
           </ng-container>
-          <ng-container matColumnDef="name" sticky>
+          <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'youth.fullName' | t }}</th>
             <td mat-cell *matCellDef="let row" class="name-cell">
               <a [routerLink]="['/app/youth/report']"
@@ -120,7 +120,7 @@
             </td>
           </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="attendanceColumns(); sticky: true"></tr>
+          <tr mat-header-row *matHeaderRowDef="attendanceColumns()"></tr>
           <tr mat-row *matRowDef="let row; columns: attendanceColumns()"></tr>
           <tr mat-footer-row *matFooterRowDef="attendanceColumns()"></tr>
         </table>
@@ -139,12 +139,12 @@
       } @else {
       <div class="matrix-container mt-16">
         <table mat-table [dataSource]="examRows()" matSort (matSortChange)="examSort.set($event)" class="matrix">
-          <ng-container matColumnDef="index" sticky>
+          <ng-container matColumnDef="index">
             <th mat-header-cell *matHeaderCellDef>#</th>
             <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>
             <td mat-footer-cell *matFooterCellDef></td>
           </ng-container>
-          <ng-container matColumnDef="name" sticky>
+          <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'youth.fullName' | t }}</th>
             <td mat-cell *matCellDef="let row" class="name-cell">
               <a [routerLink]="['/app/youth/report']"
@@ -194,7 +194,7 @@
             </td>
           </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="examColumns(); sticky: true"></tr>
+          <tr mat-header-row *matHeaderRowDef="examColumns()"></tr>
           <tr mat-row *matRowDef="let row; columns: examColumns()"></tr>
           <tr mat-footer-row *matFooterRowDef="examColumns()"></tr>
         </table>
