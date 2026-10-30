@@ -10,6 +10,10 @@ export interface RowActionsData {
   canView: boolean;
   canEdit: boolean;
   canDelete: boolean;
+  viewLabelKey?: string;
+  viewIcon?: string;
+  deleteLabelKey?: string;
+  deleteIcon?: string;
 }
 
 @Component({

@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PhotoGallery } from '../../../shared/components/photo-gallery/photo-gallery';
 import { DialogService } from '../../../core/services/dialog.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -31,6 +32,11 @@ import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
 import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-query-state';
 import { YouthService } from '../youth.service';
 import { ScrollableTabsDirective } from '../../../shared/directives/scrollable-tabs.directive';
+import {
+  RowAction,
+  RowActionsBottomSheet,
+  RowActionsData,
+} from '../../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
 
 @Component({
   selector: 'app-youth-detail',
@@ -46,6 +52,7 @@ import { ScrollableTabsDirective } from '../../../shared/directives/scrollable-t
     MatChipsModule,
     MatButtonModule,
     MatListModule,
+    MatTooltipModule,
     TranslatePipe,
     FullNamePipe,
     DateLocalePipe,
@@ -142,6 +149,26 @@ export class YouthDetail {
     if (user.userRole === UserRole.EucharisticYouthContact) return user.contactId === yc.contactId;
     if (user.userRole === UserRole.EucharisticYouth) return user.eucharisticYouthId === yc.eucharisticYouthId;
     return false;
+  }
+
+  protected async openContactActions(contact: EucharisticYouthContact): Promise<void> {
+    if (!this.canManageContact(contact)) return;
+    const action = await this.dialogs.openBottomSheet<RowActionsBottomSheet, RowActionsData, RowAction>(
+      RowActionsBottomSheet,
+      { data: {
+        canView: false, canEdit: true, canDelete: true,
+        deleteLabelKey: 'contact.unlink', deleteIcon: 'link_off',
+      } },
+    );
+    if (!this.canManageContact(contact)) return;
+    switch (action) {
+      case 'edit':
+        await this.router.navigate(['/app/contacts/edit'], { queryParams: { id: contact.contactId } });
+        break;
+      case 'delete':
+        await this.unlinkContact(contact);
+        break;
+    }
   }
 
   protected async addContact(youthId: string): Promise<void> {

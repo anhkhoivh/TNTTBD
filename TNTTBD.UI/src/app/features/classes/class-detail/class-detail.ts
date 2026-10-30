@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DialogService } from '../../../core/services/dialog.service';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -31,6 +32,11 @@ import { ClassDetailService } from './class-detail.service';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-query-state';
 import { ScrollableTabsDirective } from '../../../shared/directives/scrollable-tabs.directive';
+import {
+  RowAction,
+  RowActionsBottomSheet,
+  RowActionsData,
+} from '../../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
 
 @Component({
   selector: 'app-class-detail',
@@ -47,6 +53,7 @@ import { ScrollableTabsDirective } from '../../../shared/directives/scrollable-t
     MatListModule,
     MatChipsModule,
     MatSelectModule,
+    MatTooltipModule,
     TranslatePipe,
     FullNamePipe,
     DateLocalePipe,
@@ -138,6 +145,77 @@ export class ClassDetail {
     EnrollmentStatus.Transferred,
     EnrollmentStatus.Completed,
   ];
+
+  protected async openEnrollmentActions(enrollment: CatechismClassEucharisticYouth): Promise<void> {
+    if (!this.canManage()) return;
+    const action = await this.dialogs.openBottomSheet<RowActionsBottomSheet, RowActionsData, RowAction>(
+      RowActionsBottomSheet,
+      { data: {
+        canView: true, canEdit: false, canDelete: true,
+        viewLabelKey: 'report.open', viewIcon: 'assessment',
+        deleteLabelKey: 'class.removeYouth', deleteIcon: 'link_off',
+      } },
+    );
+    if (!this.canManage()) return;
+    switch (action) {
+      case 'view':
+        await this.router.navigate(['/app/youth/report'], {
+          queryParams: { youthId: enrollment.eucharisticYouthId, enrollmentId: enrollment.id },
+        });
+        break;
+      case 'delete':
+        await this.removeYouthFromClass(enrollment.id);
+        break;
+    }
+  }
+
+  protected async openSessionActions(classId: string, session: CatechismSession): Promise<void> {
+    if (this.isContact) return;
+    const canManage = this.canManage();
+    const action = await this.dialogs.openBottomSheet<RowActionsBottomSheet, RowActionsData, RowAction>(
+      RowActionsBottomSheet,
+      { data: {
+        canView: true, canEdit: canManage, canDelete: canManage,
+        viewLabelKey: 'attendance.title', viewIcon: 'how_to_reg',
+      } },
+    );
+    if (this.isContact) return;
+    switch (action) {
+      case 'view':
+        await this.router.navigate(['/app/classes/attendance'], { queryParams: { classId, sessionId: session.id } });
+        break;
+      case 'edit':
+        if (this.canManage()) await this.editSession(classId, session);
+        break;
+      case 'delete':
+        if (this.canManage()) await this.deleteSession(session.id);
+        break;
+    }
+  }
+
+  protected async openExamActions(classId: string, exam: Exam): Promise<void> {
+    if (this.isContact) return;
+    const canManage = this.canManage();
+    const action = await this.dialogs.openBottomSheet<RowActionsBottomSheet, RowActionsData, RowAction>(
+      RowActionsBottomSheet,
+      { data: {
+        canView: true, canEdit: canManage, canDelete: canManage,
+        viewLabelKey: 'exam.results', viewIcon: 'edit_note',
+      } },
+    );
+    if (this.isContact) return;
+    switch (action) {
+      case 'view':
+        await this.router.navigate(['/app/classes/exam-results'], { queryParams: { classId, examId: exam.id } });
+        break;
+      case 'edit':
+        if (this.canManage()) await this.editExam(classId, exam);
+        break;
+      case 'delete':
+        if (this.canManage()) await this.deleteExam(exam.id);
+        break;
+    }
+  }
 
   protected async addYouth(classId: string): Promise<void> {
     const choice = await this.dialogs.openBottomSheet<AddChoiceBottomSheet, AddChoiceData, AddChoice>(

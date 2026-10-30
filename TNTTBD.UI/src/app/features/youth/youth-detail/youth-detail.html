@@ -108,12 +108,9 @@
           </span>
           @if (canManageContact(yc)) {
           <span matListItemMeta class="contact-actions">
-            <a mat-icon-button [routerLink]="['/app/contacts/edit']" [queryParams]="{ id: yc.contactId }"
-              [attr.aria-label]="'common.edit' | t">
-              <mat-icon>edit</mat-icon>
-            </a>
-            <button mat-icon-button type="button" (click)="unlinkContact(yc)" [attr.aria-label]="'common.delete' | t">
-              <mat-icon>delete</mat-icon>
+            <button mat-icon-button type="button" (click)="openContactActions(yc)"
+              [attr.aria-label]="'common.actions' | t" [matTooltip]="'common.actions' | t">
+              <mat-icon>more_vert</mat-icon>
             </button>
           </span>
           }
