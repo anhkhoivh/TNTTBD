@@ -12,6 +12,26 @@
     </mat-card>
     <mat-card>
       <mat-card-header>
+        <mat-icon mat-card-avatar>class</mat-icon>
+        <mat-card-title>{{ 'dashboard.myClasses' | t }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list>
+          @for (c of myClasses(); track c.id) {
+          <mat-list-item>
+            <mat-icon matListItemIcon>class</mat-icon>
+            <a matListItemTitle [routerLink]="['/app/classes/detail']" [queryParams]="{ id: c.id }">
+              {{ c.className }}
+            </a>
+          </mat-list-item>
+          } @empty {
+          <p>{{ 'common.noData' | t }}</p>
+          }
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-header>
         <mat-icon mat-card-avatar>groups</mat-icon>
         <mat-card-title>{{ 'nav.youth' | t }}</mat-card-title>
       </mat-card-header>
@@ -35,27 +55,6 @@
       <mat-card-actions><a mat-button routerLink="/app/classes">{{ 'common.view' | t }}</a></mat-card-actions>
     </mat-card>
   </div>
-
-  <mat-card class="mt-16">
-    <mat-card-header>
-      <mat-icon mat-card-avatar>class</mat-icon>
-      <mat-card-title>{{ 'dashboard.myClasses' | t }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-list>
-        @for (c of myClasses(); track c.id) {
-        <mat-list-item>
-          <mat-icon matListItemIcon>class</mat-icon>
-          <a matListItemTitle [routerLink]="['/app/classes/detail']" [queryParams]="{ id: c.id }">
-            {{ c.className }}
-          </a>
-        </mat-list-item>
-        } @empty {
-        <p>{{ 'common.noData' | t }}</p>
-        }
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
   }
 
   @if (role() === UserRole.EucharisticYouth || role() === UserRole.EucharisticYouthContact) {

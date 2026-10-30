@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Abstractions;
+using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Queries;
 using TNTTBD.Services.Application.Common.DTOs;
@@ -19,14 +21,20 @@ public class EucharisticYouthController : Controller
     #region Fields
 
     private readonly IMediator _mediator;
+    private readonly IAuthorizationContext _authContext;
+    private readonly IFileStorage _storage;
+    private readonly ILogger<EucharisticYouthController> _logger;
 
     #endregion
 
     #region Constructors
 
-    public EucharisticYouthController(IMediator mediator)
+    public EucharisticYouthController(IMediator mediator, IAuthorizationContext authContext, IFileStorage storage, ILogger<EucharisticYouthController> logger)
     {
         _mediator = mediator;
+        _authContext = authContext;
+        _storage = storage;
+        _logger = logger;
     }
 
     #endregion
@@ -162,6 +170,24 @@ public class EucharisticYouthController : Controller
     }
 
     /// <summary>
+    /// Get the current user's photo management permission
+    /// </summary>
+    [HttpGet("photos/permissions")]
+    public async Task<IActionResult> GetPhotoPermissions([FromQuery] Guid youthId, CancellationToken cancellationToken)
+    {
+        return Ok(new { canManage = await _authContext.CanManageYouthPhotosAsync(youthId, cancellationToken) });
+    }
+
+    /// <summary>
+    /// Update photo purpose
+    /// </summary>
+    [HttpPatch("photos")]
+    public async Task<IActionResult> UpdatePhoto(UpdateEucharisticYouthPhotoCommand command, CancellationToken cancellationToken)
+    {
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
+    }
+
+    /// <summary>
     /// Remove photo
     /// </summary>
     /// <param name="command"></param>
@@ -170,7 +196,22 @@ public class EucharisticYouthController : Controller
     [HttpDelete("photos")]
     public async Task<IActionResult> RemovePhoto(RemoveEucharisticYouthPhotoCommand command, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
+        string? storageKey = await _mediator.Send(command, cancellationToken);
+        if (storageKey == null)
+        {
+            return Forbid();
+        }
+
+        try
+        {
+            await _storage.DeleteAsync(storageKey);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Failed to delete file {StorageKey} for removed photo {PhotoId}", storageKey, command.PhotoId);
+        }
+
+        return Ok();
     }
 
     [HttpGet("enrollments")]

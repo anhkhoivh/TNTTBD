@@ -9,6 +9,5 @@ public record RequestCatechistPhotoUploadCommand(
     string FileName,
     string ContentType,
     PhotoPurpose Purpose,
-    Guid UploadedBy,
-    PhotoVisibility Visibility
+    Guid UploadedBy
 ) : IRequest<PhotoReferenceDto?>;

@@ -7,7 +7,6 @@ import {
   CatechismClassCatechistRole,
   ContactRelationType,
   PhotoPurpose,
-  PhotoVisibility,
 } from '../../shared/enums';
 import {
   EucharisticYouth,
@@ -24,13 +23,11 @@ import {
 } from '../../shared/models';
 
 const photo = (seed: string) => ({
-  id: `p-${seed}`,
-  storageKey: `https://picsum.photos/seed/${seed}/400/400`,
+  photoId: `p-${seed}`,
+  url: `https://picsum.photos/seed/${seed}/400/400`,
   contentType: 'image/jpeg',
   purpose: PhotoPurpose.Profile,
-  uploadedAt: '2025-09-01T08:00:00+07:00',
   uploadedBy: 'u-admin',
-  visibility: PhotoVisibility.Public,
 });
 
 export const mockUsers: User[] = [

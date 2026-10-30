@@ -23,7 +23,7 @@ public class RequestEucharisticYouthPhotoUploadHandler : IRequestHandler<Request
 
     public async Task<PhotoReferenceDto?> Handle(RequestEucharisticYouthPhotoUploadCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessYouthAsync(command.EucharisticYouthId, cancellationToken))
+        if (!await _authContext.CanManageYouthPhotosAsync(command.EucharisticYouthId, cancellationToken))
         {
             return null;
         }
@@ -33,7 +33,7 @@ public class RequestEucharisticYouthPhotoUploadHandler : IRequestHandler<Request
         string extension = Path.GetExtension(command.FileName);
 
         string storageKey = $"youths/{command.EucharisticYouthId}/photos/{photoId}{extension}";
-        PhotoReference photoReference = new(photoId, storageKey, command.ContentType, command.Purpose, command.UploadedBy, DateTimeOffset.Now.ToUniversalTime(), command.Visibility);
+        PhotoReference photoReference = new(photoId, storageKey, command.ContentType, command.Purpose, command.UploadedBy, DateTimeOffset.Now.ToUniversalTime());
         await _repository.AddPhoto(command.EucharisticYouthId, photoReference, cancellationToken);
         string uploadUrl = await _storage.GenerateUploadUrl(storageKey, command.ContentType, TimeSpan.FromMinutes(5));
 

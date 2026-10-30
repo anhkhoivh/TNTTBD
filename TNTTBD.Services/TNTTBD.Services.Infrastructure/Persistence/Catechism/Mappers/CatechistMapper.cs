@@ -110,6 +110,7 @@ public static class CatechistMapper
 
             Photos = entity.Photos.Select(e => new PhotoReferenceDto
             {
+                PhotoId = e.Id,
                 Purpose = e.Purpose.ToString(),
                 ContentType = e.ContentType,
                 UploadedBy = e.UploadedBy,

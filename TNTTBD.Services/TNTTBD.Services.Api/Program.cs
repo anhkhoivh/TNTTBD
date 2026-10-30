@@ -83,7 +83,8 @@ builder.Services.AddScoped<IExamRepository, ExamRepository>();
 
 // File Storage
 var fileStorageBasePath = builder.Configuration["FileStorage:BasePath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-builder.Services.AddSingleton<IFileStorage>(new LocalFileStorage(fileStorageBasePath, string.Empty));
+var fileStorageBaseUrl = builder.Configuration["FileStorage:BaseUrl"] ?? string.Empty;
+builder.Services.AddSingleton<IFileStorage>(new LocalFileStorage(fileStorageBasePath, fileStorageBaseUrl));
 
 // Auth & User services
 builder.Services.AddHttpContextAccessor();

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Catechism.Repositories;
 using TNTTBD.Services.Domain.Common;
+using TNTTBD.Services.Domain.Enums;
 using TNTTBD.Services.Domain.ValueObjects;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
@@ -120,25 +121,37 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         {
             throw new DomainException(DomainErrors.ValidationNotFound);
         }
-        EucharisticYouth domain = youthEntity.ToDomain();
-        domain.AddPhoto(photoReference);
-        domain.UpdateEntity(youthEntity);
+        await _context.Set<EucharisticYouthPhotoEntity>()
+            .AddAsync(photoReference.ToEucharisticYouthPhotoEntity(id), cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task UpdatePhoto(Guid id, Guid photoId, PhotoPurpose purpose, CancellationToken cancellationToken)
+    {
+        EucharisticYouthPhotoEntity photoEntity = await GetPhotoEntity(id, photoId, cancellationToken);
+        PhotoReference photoReference = photoEntity.ToDomain();
+        photoReference.UpdateSettings(purpose);
+        photoReference.UpdateEntity(photoEntity);
     }
 
     /// <inheritdoc />
     public async Task<string> RemovePhoto(Guid id, Guid photoId, CancellationToken cancellationToken)
     {
-        EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
-            .Include(y => y.Photos)
-            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
-        if (youthEntity == null)
+        EucharisticYouthPhotoEntity photoEntity = await GetPhotoEntity(id, photoId, cancellationToken);
+        _context.Set<EucharisticYouthPhotoEntity>().Remove(photoEntity);
+        return photoEntity.StorageKey;
+    }
+
+    private async Task<EucharisticYouthPhotoEntity> GetPhotoEntity(Guid id, Guid photoId, CancellationToken cancellationToken)
+    {
+        EucharisticYouthPhotoEntity? photoEntity = await _context.Set<EucharisticYouthPhotoEntity>()
+            .FirstOrDefaultAsync(p => p.Id == photoId && p.EucharisticYouthId == id, cancellationToken);
+        if (photoEntity == null)
         {
             throw new DomainException(DomainErrors.ValidationNotFound);
         }
-        EucharisticYouth domain = youthEntity.ToDomain();
-        PhotoReference photoReference = domain.RemovePhoto(photoId);
-        domain.UpdateEntity(youthEntity);
-        return photoReference.StorageKey;
+
+        return photoEntity;
     }
 
     /// <inheritdoc />

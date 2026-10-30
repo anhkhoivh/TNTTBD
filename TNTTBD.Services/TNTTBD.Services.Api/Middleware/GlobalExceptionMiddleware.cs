@@ -19,7 +19,8 @@ public class GlobalExceptionMiddleware
 
     public async Task Invoke(
         HttpContext context,
-        ILocalizationService localization)
+        ILocalizationService localization,
+        ILogger<GlobalExceptionMiddleware> logger)
     {
         try
         {
@@ -41,9 +42,11 @@ public class GlobalExceptionMiddleware
 
             await context.Response.WriteAsJsonAsync(response);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
+            logger.LogError(ex, "Unhandled exception for {Method} {Path}. TraceId: {TraceId}",
+                context.Request.Method, context.Request.Path, traceId);
 
             var response = new ErrorResponse
             {

@@ -1,5 +1,5 @@
 @if (data(); as d) {
-<mat-tab-group [selectedIndex]="selectedTabIndex()" (selectedTabChange)="onTabChange($event.index)">
+<mat-tab-group appScrollableTabs [selectedIndex]="selectedTabIndex()" (selectedTabChange)="onTabChange($event.index)">
   <mat-tab [label]="'common.profile' | t">
     <ng-template matTabContent>
       @defer {
@@ -42,13 +42,8 @@
   <mat-tab [label]="('youth.photos' | t) + ' (' + d.photos.length + ')'">
     <ng-template matTabContent>
       @defer {
-      <div class="photo-grid mt-16">
-        @for (p of d.photos; track p.id) {
-        <img [ngSrc]="photoService.url(p.storageKey)" [alt]="p.id" class="photo" fill style="object-fit: cover;">
-        } @empty {
-        <p>{{ 'common.noData' | t }}</p>
-        }
-      </div>
+      <app-photo-gallery [photos]="d.photos" entityType="catechists" [entityId]="d.id"
+        [memberName]="d.fullName | fullName" (changed)="reloadPhotos()" />
 
       } @placeholder {
       <div class="p-4">

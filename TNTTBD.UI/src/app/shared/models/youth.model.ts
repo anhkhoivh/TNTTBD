@@ -1,14 +1,12 @@
-import { FullName, IsoDate, IsoDateTime, PatronSaint } from './common.model';
-import { MilestoneType, PhotoPurpose, PhotoVisibility } from '../enums';
+import { FullName, IsoDate, PatronSaint } from './common.model';
+import { MilestoneType, PhotoPurpose } from '../enums';
 
 export interface PhotoReference {
-  id: string;
-  storageKey: string;
+  photoId: string;
+  url: string;
   contentType: string;
   purpose: PhotoPurpose;
-  uploadedAt: IsoDateTime;
   uploadedBy: string;
-  visibility: PhotoVisibility;
 }
 
 export interface SpiritualMilestone {

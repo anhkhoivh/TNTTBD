@@ -43,6 +43,7 @@ public class CatechistQueryService : ICatechistQueryService
 
                 Photos = entity.Photos.Select(e => new PhotoReferenceDto
                 {
+                    PhotoId = e.Id,
                     Purpose = e.Purpose.ToString(),
                     ContentType = e.ContentType,
                     UploadedBy = e.UploadedBy,
@@ -67,6 +68,7 @@ public class CatechistQueryService : ICatechistQueryService
             .Where(c => c.CatechistId == catechistId)
             .Select(e => new PhotoReferenceDto
             {
+                PhotoId = e.Id,
                 Purpose = e.Purpose.ToString(),
                 ContentType = e.ContentType,
                 UploadedBy = e.UploadedBy,
@@ -102,6 +104,7 @@ public class CatechistQueryService : ICatechistQueryService
 
                 Photos = entity.Photos.Select(e => new PhotoReferenceDto
                 {
+                    PhotoId = e.Id,
                     Purpose = e.Purpose.ToString(),
                     ContentType = e.ContentType,
                     UploadedBy = e.UploadedBy,

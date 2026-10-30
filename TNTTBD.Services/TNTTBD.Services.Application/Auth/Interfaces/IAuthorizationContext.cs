@@ -13,6 +13,8 @@ public interface IAuthorizationContext
     Task<Guid?> GetCurrentContactIdAsync(CancellationToken cancellationToken);
     Task<bool> CanAccessContactAsync(Guid contactId, CancellationToken cancellationToken);
     Task<bool> CanReadYouthContactsAsync(Guid youthId, CancellationToken cancellationToken);
+    Task<bool> CanManageCatechistPhotosAsync(Guid catechistId, CancellationToken cancellationToken);
+    Task<bool> CanManageYouthPhotosAsync(Guid youthId, CancellationToken cancellationToken);
     Task<bool> CanWriteYearsAsync(CancellationToken cancellationToken);
     Task<bool> CanWriteClassCatechistAsync(CancellationToken cancellationToken);
 }

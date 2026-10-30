@@ -1,0 +1,29 @@
+<mat-dialog-content>
+  <app-photo-image [url]="data.photo.url" [alt]="data.alt" [fullSize]="true" />
+</mat-dialog-content>
+@if (data.canManage) {
+  <form class="settings" [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'photo.purpose' | t }}</mat-label>
+      <mat-select formControlName="purpose">
+        @for (purpose of purposes; track purpose) {
+          <mat-option [value]="purpose">{{ ('photo.purpose.' + purpose) | t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </form>
+}
+<mat-dialog-actions>
+  @if (data.canManage) {
+    <button mat-button class="remove" type="button" (click)="remove()" [disabled]="busy()">
+      <mat-icon>delete</mat-icon>{{ 'photo.delete' | t }}
+    </button>
+  }
+  <span class="spacer"></span>
+  <button mat-button type="button" mat-dialog-close [disabled]="busy()">{{ 'photo.close' | t }}</button>
+  @if (data.canManage) {
+    <button mat-flat-button type="button" (click)="save()" [disabled]="busy() || form.invalid || !changed()">
+      {{ 'common.save' | t }}
+    </button>
+  }
+</mat-dialog-actions>

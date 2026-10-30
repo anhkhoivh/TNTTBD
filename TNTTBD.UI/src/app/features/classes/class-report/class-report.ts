@@ -22,6 +22,7 @@ import { ATTENDANCE_STATUS_DISPLAY } from '../../../shared/constants/attendance-
 import { NotificationService } from '../../../core/services/notification.service';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { ClassReportService } from './class-report.service';
+import { ScrollableTabsDirective } from '../../../shared/directives/scrollable-tabs.directive';
 
 type SortValue = string | number | null | undefined;
 
@@ -35,6 +36,7 @@ type SortValue = string | number | null | undefined;
     MatTableModule,
     MatSortModule,
     MatTabsModule,
+    ScrollableTabsDirective,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,

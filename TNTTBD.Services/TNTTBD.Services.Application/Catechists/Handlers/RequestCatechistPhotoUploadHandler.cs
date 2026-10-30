@@ -23,7 +23,7 @@ public class RequestCatechistPhotoUploadHandler : IRequestHandler<RequestCatechi
 
     public async Task<PhotoReferenceDto?> Handle(RequestCatechistPhotoUploadCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessCatechistAsync(command.CatechistId, cancellationToken))
+        if (!await _authContext.CanManageCatechistPhotosAsync(command.CatechistId, cancellationToken))
         {
             return null;
         }
@@ -33,7 +33,7 @@ public class RequestCatechistPhotoUploadHandler : IRequestHandler<RequestCatechi
         string extension = Path.GetExtension(command.FileName);
 
         string storageKey = $"catechists/{command.CatechistId}/photos/{photoId}{extension}";
-        PhotoReference photoReference = new(photoId, storageKey, command.ContentType, command.Purpose, command.UploadedBy, DateTimeOffset.Now, command.Visibility);
+        PhotoReference photoReference = new(photoId, storageKey, command.ContentType, command.Purpose, command.UploadedBy, DateTimeOffset.Now);
         await _repository.AddPhoto(command.CatechistId, photoReference, cancellationToken);
         string uploadUrl = await _storage.GenerateUploadUrl(storageKey, command.ContentType, TimeSpan.FromMinutes(5));
 

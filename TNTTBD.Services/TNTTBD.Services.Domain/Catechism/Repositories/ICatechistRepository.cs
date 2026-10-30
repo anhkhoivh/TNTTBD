@@ -1,4 +1,5 @@
 using TNTTBD.Services.Domain.Catechism.Members;
+using TNTTBD.Services.Domain.Enums;
 using TNTTBD.Services.Domain.ValueObjects;
 
 namespace TNTTBD.Services.Domain.Catechism.Repositories;
@@ -46,7 +47,12 @@ public interface ICatechistRepository
     Task RemovePatronSaint(Guid id, PatronSaint patronSaint, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Add Patron Saint
+    /// Update photo purpose
+    /// </summary>
+    Task UpdatePhoto(Guid id, Guid photoId, PhotoPurpose purpose, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Remove photo and return its storage key
     /// </summary>
     Task<string> RemovePhoto(Guid id, Guid photoId, CancellationToken cancellationToken);
 }

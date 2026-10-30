@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.Catechists.Commands;
 using TNTTBD.Services.Application.Catechists.DTOs;
@@ -18,15 +19,19 @@ public class CatechistController : Controller
 
     private readonly IMediator _mediator;
     private readonly IAuthorizationContext _authContext;
+    private readonly IFileStorage _storage;
+    private readonly ILogger<CatechistController> _logger;
 
     #endregion
 
     #region Constructors
 
-    public CatechistController(IMediator mediator, IAuthorizationContext authContext)
+    public CatechistController(IMediator mediator, IAuthorizationContext authContext, IFileStorage storage, ILogger<CatechistController> logger)
     {
         _mediator = mediator;
         _authContext = authContext;
+        _storage = storage;
+        _logger = logger;
     }
 
     #endregion
@@ -141,10 +146,41 @@ public class CatechistController : Controller
         return Ok(result);
     }
 
+    [HttpGet("photos/permissions")]
+    public async Task<IActionResult> GetPhotoPermissions([FromQuery] Guid catechistId, CancellationToken cancellationToken)
+    {
+        return Ok(new { canManage = await _authContext.CanManageCatechistPhotosAsync(catechistId, cancellationToken) });
+    }
+
+    [HttpPatch("photos")]
+    public async Task<IActionResult> UpdatePhoto(UpdateCatechistPhotoCommand command, CancellationToken cancellationToken)
+    {
+        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
+    }
+
     [HttpDelete("photos")]
     public async Task<IActionResult> RemovePhoto(RemoveCatechistPhotoCommand command, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
+        string? storageKey = await _mediator.Send(command, cancellationToken);
+        if (storageKey == null)
+        {
+            return Forbid();
+        }
+
+        await DeletePhotoFileAfterCommit(storageKey, command.PhotoId);
+        return Ok();
+    }
+
+    private async Task DeletePhotoFileAfterCommit(string storageKey, Guid photoId)
+    {
+        try
+        {
+            await _storage.DeleteAsync(storageKey);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Failed to delete file {StorageKey} for removed photo {PhotoId}", storageKey, photoId);
+        }
     }
 
     #endregion

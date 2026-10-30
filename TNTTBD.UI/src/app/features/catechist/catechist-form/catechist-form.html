@@ -52,18 +52,6 @@
     </mat-card-content>
   </mat-card>
 
-  @if (isEdit() && editIdSignal(); as catechistId) {
-    <mat-card class="mt-16">
-      <mat-card-content>
-        <app-photo-upload
-          entityType="catechists"
-          [entityId]="catechistId"
-          (uploaded)="onPhotoUploaded()"
-        ></app-photo-upload>
-      </mat-card-content>
-    </mat-card>
-  }
-
   <div class="actions mt-16">
     <a mat-button (click)="navigateBack()">{{ 'common.cancel' | t }}</a>
     <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || loading()">

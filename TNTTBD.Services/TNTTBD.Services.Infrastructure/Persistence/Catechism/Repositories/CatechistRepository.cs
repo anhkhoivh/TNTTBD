@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Catechism.Repositories;
 using TNTTBD.Services.Domain.Common;
+using TNTTBD.Services.Domain.Enums;
 using TNTTBD.Services.Domain.ValueObjects;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
@@ -68,27 +69,39 @@ public class CatechistRepository : ICatechistRepository
             .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
         if (catechistEntity == null)
         {
-            return;
+            throw new DomainException(DomainErrors.ValidationNotFound);
         }
-        Catechist domain = catechistEntity.ToDomain();
-        domain.AddPhoto(photoReference);
-        domain.UpdateEntity(catechistEntity);
+        await _context.Set<CatechistPhotoEntity>()
+            .AddAsync(photoReference.ToCatechistPhotoEntity(id), cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task UpdatePhoto(Guid id, Guid photoId, PhotoPurpose purpose, CancellationToken cancellationToken)
+    {
+        CatechistPhotoEntity photoEntity = await GetPhotoEntity(id, photoId, cancellationToken);
+        PhotoReference photoReference = photoEntity.ToDomain();
+        photoReference.UpdateSettings(purpose);
+        photoReference.UpdateEntity(photoEntity);
     }
 
     /// <inheritdoc />
     public async Task<string> RemovePhoto(Guid id, Guid photoId, CancellationToken cancellationToken)
     {
-        CatechistEntity? catechistEntity = await _context.Catechists
-            .Include(y => y.Photos)
-            .FirstOrDefaultAsync(y => y.Id == id, cancellationToken);
-        if (catechistEntity == null)
+        CatechistPhotoEntity photoEntity = await GetPhotoEntity(id, photoId, cancellationToken);
+        _context.Set<CatechistPhotoEntity>().Remove(photoEntity);
+        return photoEntity.StorageKey;
+    }
+
+    private async Task<CatechistPhotoEntity> GetPhotoEntity(Guid id, Guid photoId, CancellationToken cancellationToken)
+    {
+        CatechistPhotoEntity? photoEntity = await _context.Set<CatechistPhotoEntity>()
+            .FirstOrDefaultAsync(p => p.Id == photoId && p.CatechistId == id, cancellationToken);
+        if (photoEntity == null)
         {
             throw new DomainException(DomainErrors.ValidationNotFound);
         }
-        Catechist domain = catechistEntity.ToDomain();
-        PhotoReference photoReference = domain.RemovePhoto(photoId);
-        domain.UpdateEntity(catechistEntity);
-        return photoReference.StorageKey;
+
+        return photoEntity;
     }
 
     /// <inheritdoc />

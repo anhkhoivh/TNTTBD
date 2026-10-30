@@ -17,7 +17,7 @@ public static class EucharisticYouthPhotoMapper
     /// </summary>
     public static PhotoReference ToDomain(this EucharisticYouthPhotoEntity entity)
     {
-        PhotoReference domain = new(entity.Id, entity.StorageKey, entity.ContentType, entity.Purpose, entity.UploadedBy, entity.UploadedAt, entity.Visibility);
+        PhotoReference domain = new(entity.Id, entity.StorageKey, entity.ContentType, entity.Purpose, entity.UploadedBy, entity.UploadedAt);
         return domain;
     }
 
@@ -38,8 +38,7 @@ public static class EucharisticYouthPhotoMapper
             ContentType = domain.ContentType,
             Purpose = domain.Purpose,
             UploadedAt = domain.UploadedAt,
-            UploadedBy = domain.UploadedBy,
-            Visibility = domain.Visibility
+            UploadedBy = domain.UploadedBy
         };
 
         return entity;
@@ -55,7 +54,6 @@ public static class EucharisticYouthPhotoMapper
         entity.Purpose = domain.Purpose;
         entity.UploadedAt = domain.UploadedAt;
         entity.UploadedBy = domain.UploadedBy;
-        entity.Visibility = domain.Visibility;
     }
 
     #endregion
@@ -69,6 +67,7 @@ public static class EucharisticYouthPhotoMapper
     {
         return new PhotoReferenceDto
             {
+                PhotoId = entity.Id,
                 Purpose = entity.Purpose.ToString(),
                 ContentType = entity.ContentType,
                 UploadedBy = entity.UploadedBy,

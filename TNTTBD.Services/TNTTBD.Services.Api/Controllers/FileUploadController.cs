@@ -1,9 +1,7 @@
-using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TNTTBD.Services.Application.Auth.Interfaces;
-using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Api.Controllers;
 
@@ -13,8 +11,9 @@ namespace TNTTBD.Services.Api.Controllers;
 public class FileUploadController : ControllerBase
 {
     private readonly string _basePath;
-    private readonly IUserRepository _userRepository;
-    private const long MaxFileSize = 5 * 1024 * 1024; // 5MB
+    private readonly IAuthorizationContext _authContext;
+    private const long MaxFileSize = 20 * 1024 * 1024;
+    private const long MaxRequestSize = 22 * 1024 * 1024;
 
     private static readonly Regex StorageKeyPattern = new(
         @"^(catechists|youths)/[a-f0-9\-]{36}/photos/[a-f0-9\-]{36}\.(jpg|jpeg|png|gif|webp)$",
@@ -28,15 +27,15 @@ public class FileUploadController : ControllerBase
         { ".gif",  [0x47, 0x49, 0x46, 0x38] },
     };
 
-    public FileUploadController(IConfiguration configuration, IUserRepository userRepository)
+    public FileUploadController(IConfiguration configuration, IAuthorizationContext authContext)
     {
         _basePath = configuration["FileStorage:BasePath"]
             ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-        _userRepository = userRepository;
+        _authContext = authContext;
     }
 
     [HttpPost("upload/{**storageKey}")]
-    [RequestSizeLimit(MaxFileSize)]
+    [RequestSizeLimit(MaxRequestSize)]
     public async Task<IActionResult> Upload(string storageKey, IFormFile file, CancellationToken cancellationToken)
     {
         if (file == null || file.Length == 0)
@@ -46,7 +45,7 @@ public class FileUploadController : ControllerBase
 
         if (file.Length > MaxFileSize)
         {
-            return BadRequest("File size exceeds 5MB limit.");
+            return BadRequest("File size exceeds 20MB limit.");
         }
 
         if (!file.ContentType.StartsWith("image/"))
@@ -129,22 +128,9 @@ public class FileUploadController : ControllerBase
 
     private async Task<IActionResult?> ValidateOwnership(string storageKey, CancellationToken cancellationToken)
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
+        if (_authContext.GetCurrentUserId() == null)
         {
             return Unauthorized();
-        }
-
-        var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
-        if (user == null || !user.IsActive)
-        {
-            return Unauthorized();
-        }
-
-        // Admin can upload for anyone
-        if (user.UserRole == UserRole.Admin)
-        {
-            return null;
         }
 
         // Parse entity type and ID from storageKey: "{type}/{entityId}/photos/..."
@@ -155,12 +141,11 @@ public class FileUploadController : ControllerBase
             return BadRequest("Invalid storage key format.");
         }
 
-        return entityType switch
-        {
-            "catechists" when user.CatechistId == entityId => null,
-            "youths" when user.EucharisticYouthId == entityId => null,
-            _ => Forbid()
-        };
+        bool canManage = entityType == "catechists"
+            ? await _authContext.CanManageCatechistPhotosAsync(entityId, cancellationToken)
+            : await _authContext.CanManageYouthPhotosAsync(entityId, cancellationToken);
+
+        return canManage ? null : Forbid();
     }
 
     private static async Task<BadRequestObjectResult?> ValidateImageSignature(IFormFile file)

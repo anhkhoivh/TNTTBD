@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, effect, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
@@ -19,12 +19,11 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthService } from '../../../core/auth/auth.service';
-import { PatronSaint } from '../../../shared/models';
+import { EucharisticYouth, PatronSaint } from '../../../shared/models';
 import { ContactRelationType, MilestoneType, UserRole } from '../../../shared/enums';
 import { CONTACT_RELATION_TYPES } from '../../../shared/constants/contact-relation-types';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import { PatronSaintInput } from '../../../shared/components/patron-saint-input';
-import { PhotoUpload } from '../../../shared/components/photo-upload';
+import { PatronSaintInput } from '../../../shared/components/patron-saint-input/patron-saint-input';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { YouthService } from '../youth.service';
 
@@ -46,7 +45,6 @@ import { YouthService } from '../youth.service';
     MatCheckboxModule,
     TranslatePipe,
     PatronSaintInput,
-    PhotoUpload,
   ],
   templateUrl: './youth-form.html',
   styleUrl: './youth-form.scss',
@@ -137,34 +135,39 @@ export class YouthForm {
     }
 
     // Reactive forms are imperative; patching from the loaded resource is the accepted effect() exception.
+    // untracked keeps signals read by child form controls from re-running this effect and discarding edits.
     effect(() => {
       const y = this.youthService.detail();
       if (!y) return;
-      this.form.patchValue({
-        givenName: y.fullName.givenName,
-        middleName: y.fullName.middleName ?? '',
-        familyName: y.fullName.familyName ?? '',
-        christName: y.fullName.christName ?? '',
-        dateOfBirth: y.dateOfBirth ? new Date(y.dateOfBirth + 'T00:00:00') : null,
-        isMale: y.isMale,
-        address: y.address ?? '',
-        patronSaints: y.patronSaints ?? [],
-      });
-      this.milestones.clear();
-      for (const m of y.milestones) {
-        this.milestones.push(
-          this.makeMilestone(
-            m.type,
-            m.date ? new Date(m.date + 'T00:00:00') : null,
-            m.place ?? '',
-            m.documentCode ?? '',
-            m.note ?? '',
-          ),
-        );
-      }
-      // In edit mode contacts are managed via the detail page — clear defaults
-      this.contacts.clear();
+      untracked(() => this.patchFromDetail(y));
     });
+  }
+
+  private patchFromDetail(y: EucharisticYouth): void {
+    this.form.patchValue({
+      givenName: y.fullName.givenName,
+      middleName: y.fullName.middleName ?? '',
+      familyName: y.fullName.familyName ?? '',
+      christName: y.fullName.christName ?? '',
+      dateOfBirth: y.dateOfBirth ? new Date(y.dateOfBirth + 'T00:00:00') : null,
+      isMale: y.isMale,
+      address: y.address ?? '',
+      patronSaints: y.patronSaints ?? [],
+    });
+    this.milestones.clear();
+    for (const m of y.milestones) {
+      this.milestones.push(
+        this.makeMilestone(
+          m.type,
+          m.date ? new Date(m.date + 'T00:00:00') : null,
+          m.place ?? '',
+          m.documentCode ?? '',
+          m.note ?? '',
+        ),
+      );
+    }
+    // In edit mode contacts are managed via the detail page — clear defaults
+    this.contacts.clear();
   }
 
   protected addMilestone(): void {
@@ -181,10 +184,6 @@ export class YouthForm {
 
   protected removeContact(i: number): void {
     this.contacts.removeAt(i);
-  }
-
-  protected onPhotoUploaded(): void {
-    this.notify.success('photo.uploaded');
   }
 
   protected async submit(): Promise<void> {

@@ -33,6 +33,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
 
                 Photos = entity.Photos.Select(p => new PhotoReferenceDto
                 {
+                    PhotoId = p.Id,
                     Purpose = p.Purpose.ToString(),
                     ContentType = p.ContentType,
                     UploadedBy = p.UploadedBy,
@@ -66,6 +67,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
             .Where(c => c.EucharisticYouthId == youthId)
             .Select(entity => new PhotoReferenceDto
             {
+                PhotoId = entity.Id,
                 Purpose = entity.Purpose.ToString(),
                 ContentType = entity.ContentType,
                 UploadedBy = entity.UploadedBy,
@@ -122,6 +124,7 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
 
                 Photos = entity.Photos.Select(p => new PhotoReferenceDto
                 {
+                    PhotoId = p.Id,
                     Purpose = p.Purpose.ToString(),
                     ContentType = p.ContentType,
                     UploadedBy = p.UploadedBy,

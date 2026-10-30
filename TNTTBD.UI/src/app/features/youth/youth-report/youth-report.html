@@ -79,7 +79,8 @@
       @for (s of attendanceStatuses; track s) {
       <span class="count">
         <mat-icon [style.color]="statusDisplay[s].color" [matTooltip]="statusDisplay[s].labelKey | t">{{
-          statusDisplay[s].icon }}</mat-icon>
+          statusDisplay[s].icon }}
+        </mat-icon>
         {{ statusCounts()[s] }}
       </span>
       }
@@ -114,7 +115,6 @@
         @let d = display(row.status);
         <span class="status" [class.not-counted]="!row.isCounted">
           <mat-icon [style.color]="d.color">{{ d.icon }}</mat-icon>
-          {{ d.labelKey | t }}
         </span>
         @if (!row.isCounted) {
         <span class="secondary"> · {{ 'report.notCounted' | t }}</span>

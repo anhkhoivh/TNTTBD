@@ -142,6 +142,7 @@ public static class EucharisticYouthMapper
 
             Photos = entity.Photos.Select(p => new PhotoReferenceDto
             {
+                PhotoId = p.Id,
                 Purpose = p.Purpose.ToString(),
                 ContentType = p.ContentType,
                 UploadedBy = p.UploadedBy,

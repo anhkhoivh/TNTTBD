@@ -1,0 +1,36 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 90dvh;
+}
+
+mat-dialog-content {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+.settings {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px 24px 0;
+
+  mat-form-field {
+    flex: 1 1 180px;
+  }
+}
+
+mat-dialog-actions {
+  flex-shrink: 0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.remove {
+  color: var(--mat-sys-error);
+}

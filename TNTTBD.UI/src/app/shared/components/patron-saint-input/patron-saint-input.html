@@ -1,0 +1,26 @@
+<div class="patron-list">
+  <label class="section-label">{{ 'patron.title' | t }}</label>
+  @for (group of saints.controls; track group) {
+    <div class="patron-row" [formGroup]="group">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'patron.name' | t }}</mat-label>
+        <input matInput formControlName="saintName" required />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="narrow">
+        <mat-label>{{ 'patron.day' | t }}</mat-label>
+        <input matInput type="number" formControlName="day" min="1" max="31" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="narrow">
+        <mat-label>{{ 'patron.month' | t }}</mat-label>
+        <input matInput type="number" formControlName="month" min="1" max="12" />
+      </mat-form-field>
+      <button mat-icon-button type="button" (click)="remove($index)" [disabled]="disabled"
+        [attr.aria-label]="'common.delete' | t">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+  <button mat-stroked-button type="button" (click)="add()" [disabled]="disabled">
+    <mat-icon>add</mat-icon> {{ 'patron.add' | t }}
+  </button>
+</div>
