@@ -12,6 +12,17 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+## Scrollable tab headers
+
+Import `ScrollableTabsDirective` from `src/app/shared/directives/scrollable-tabs.directive.ts`
+and add `appScrollableTabs` to new `mat-tab-group` elements. The directive replaces
+Material's arrow pagination with native horizontal scrolling (swipe/trackpad/wheel)
+plus left/right arrows that scroll the same area. Arrows only appear when labels
+overflow and are disabled at either end. The selected tab is revealed only on
+initial render and on selection/keyboard-focus changes, so manual scrolling is kept.
+Header styles live in `src/styles.scss`; tab content, lazy loading, and selection
+handlers are unchanged.
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:

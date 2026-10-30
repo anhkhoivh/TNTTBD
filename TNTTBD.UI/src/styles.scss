@@ -103,3 +103,28 @@ body {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
+
+mat-tab-group.app-scrollable-tabs {
+  min-width: 0;
+  max-width: 100%;
+
+  > .mat-mdc-tab-header {
+    .mat-mdc-tab-label-container {
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .mat-mdc-tab-list {
+      flex-shrink: 0;
+    }
+  }
+
+  &.app-scrollable-tabs-overflowing > .mat-mdc-tab-header > .app-tab-scroll-arrow {
+    display: flex;
+  }
+}

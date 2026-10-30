@@ -30,6 +30,7 @@ import {
 import { ClassDetailService } from './class-detail.service';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-query-state';
+import { ScrollableTabsDirective } from '../../../shared/directives/scrollable-tabs.directive';
 
 @Component({
   selector: 'app-class-detail',
@@ -39,6 +40,7 @@ import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-q
     RouterLink,
     MatCardModule,
     MatTabsModule,
+    ScrollableTabsDirective,
     MatTableModule,
     MatIconModule,
     MatButtonModule,

@@ -30,6 +30,7 @@ import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
 import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-query-state';
 import { YouthService } from '../youth.service';
+import { ScrollableTabsDirective } from '../../../shared/directives/scrollable-tabs.directive';
 
 @Component({
   selector: 'app-youth-detail',
@@ -40,6 +41,7 @@ import { YouthService } from '../youth.service';
     RouterLink,
     MatCardModule,
     MatTabsModule,
+    ScrollableTabsDirective,
     MatIconModule,
     MatChipsModule,
     MatButtonModule,

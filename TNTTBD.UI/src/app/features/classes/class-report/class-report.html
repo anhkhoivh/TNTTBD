@@ -39,7 +39,7 @@
   </div>
 </div>
 
-<mat-tab-group>
+<mat-tab-group appScrollableTabs>
   <mat-tab [label]="'report.attendance' | t">
     <ng-template matTabContent>
       @if (r.sessions.length === 0) {

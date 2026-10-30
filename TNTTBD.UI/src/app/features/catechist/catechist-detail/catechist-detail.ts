@@ -16,6 +16,7 @@ import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
 import { CatechismClassCatechistRole, EnrollmentStatus } from '../../../shared/enums';
 import { CatechistService } from '../catechist.service';
 import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-query-state';
+import { ScrollableTabsDirective } from '../../../shared/directives/scrollable-tabs.directive';
 
 @Component({
   selector: 'app-catechist-detail',
@@ -26,6 +27,7 @@ import { tabIndexFromKey, tabKeyForSelection } from '../../../shared/utils/tab-q
     RouterLink,
     MatCardModule,
     MatTabsModule,
+    ScrollableTabsDirective,
     MatIconModule,
     MatButtonModule,
     MatChipsModule,
