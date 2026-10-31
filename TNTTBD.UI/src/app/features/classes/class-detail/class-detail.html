@@ -37,9 +37,10 @@
           <th mat-header-cell *matHeaderCellDef>{{ 'youth.fullName' | t }}</th>
           <td mat-cell *matCellDef="let row">
             @if (youthOfEnrollment(row.id); as y) {
-            @if (!isContact) {
-            <a mat-list-item [routerLink]="['/app/youth/detail']" [queryParams]="{ id: y.eucharisticYouthId}"
-              class="item-link">
+            @if (canViewYouth(y.eucharisticYouthId)) {
+            <a [routerLink]="['/app/youth/detail']" [queryParams]="{ id: y.eucharisticYouthId}"
+              class="item-link name-with-avatar">
+              <app-member-avatar entityType="youths" [entityId]="y.eucharisticYouthId" [alt]="y.fullName | fullName" />
               {{ y.fullName | fullName }}
             </a>
             } @else {
@@ -103,11 +104,20 @@
       <mat-list class="mt-16">
         @for (cc of cd.items; track cc.id) {
         <mat-list-item>
+          @if (canManage()) {
+          <app-member-avatar matListItemAvatar entityType="catechists" [entityId]="cc.catechistId"
+            [alt]="cc.fullName | fullName" />
+          } @else {
           <mat-icon matListItemIcon>person</mat-icon>
+          }
+          @if (canManage()) {
           <a [routerLink]="['/app/catechists/detail']" [queryParams]="{ id: cc.catechistId}" matListItemTitle
             class="item-link">
             {{ cc.fullName | fullName }}
           </a>
+          } @else {
+          <span matListItemTitle>{{ cc.fullName | fullName }}</span>
+          }
           <span matListItemLine>
             {{ roleKey(cc.role) | t }} ·
             {{ cc.enrolledAt | dateLocale: 'date' }}

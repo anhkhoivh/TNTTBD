@@ -78,6 +78,17 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
     }
 
     /// <inheritdoc />
+    public async Task<ProfilePhotoFileDto?> GetProfilePhotoAsync(Guid youthId, CancellationToken cancellationToken)
+    {
+        return await _context.EucharisticYouthPhotos
+            .AsNoTracking()
+            .Where(p => p.EucharisticYouthId == youthId && p.Purpose == PhotoPurpose.Profile)
+            .OrderByDescending(p => p.UploadedAt)
+            .Select(p => new ProfilePhotoFileDto { PhotoId = p.Id, StorageKey = p.StorageKey, ContentType = p.ContentType })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
     public async Task<PaginatedResult<EucharisticYouthDto>> GetAllAsync(string? search, Guid? classId, int page, int? pageSize, IFileStorage storage, CancellationToken cancellationToken)
     {
         var query = _context.EucharisticYouths.AsNoTracking();

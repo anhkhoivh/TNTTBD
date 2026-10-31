@@ -25,13 +25,29 @@ public class LocalFileStorage : IFileStorage
         return $"{_baseUrl}/api/files/{storageKey}";
     }
 
+    public Stream? OpenRead(string storageKey)
+    {
+        var filePath = GetFilePath(storageKey);
+        return File.Exists(filePath) ? File.OpenRead(filePath) : null;
+    }
+
     public Task DeleteAsync(string storageKey)
     {
-        var filePath = Path.Combine(_basePath, storageKey.Replace('/', Path.DirectorySeparatorChar));
+        var filePath = GetFilePath(storageKey);
         if (File.Exists(filePath))
         {
             File.Delete(filePath);
         }
         return Task.CompletedTask;
+    }
+
+    private string GetFilePath(string storageKey)
+    {
+        if (storageKey.Contains("..") || Path.IsPathRooted(storageKey))
+        {
+            throw new ArgumentException("Invalid storage key.", nameof(storageKey));
+        }
+
+        return Path.Combine(_basePath, storageKey.Replace('/', Path.DirectorySeparatorChar));
     }
 }

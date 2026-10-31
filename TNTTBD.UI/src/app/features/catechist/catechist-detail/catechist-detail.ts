@@ -9,6 +9,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatListModule } from '@angular/material/list';
 import { PhotoGallery } from '../../../shared/components/photo-gallery/photo-gallery';
+import { MemberAvatar } from '../../../shared/components/member-avatar/member-avatar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
@@ -23,6 +25,8 @@ import { ScrollableTabsDirective } from '../../../shared/directives/scrollable-t
   standalone: true,
   imports: [
     PhotoGallery,
+    MemberAvatar,
+    MatTooltipModule,
     CommonModule,
     RouterLink,
     MatCardModule,
@@ -86,6 +90,10 @@ export class CatechistDetail {
 
   protected reloadPhotos(): void {
     this.catechistService.detailRes.reload();
+  }
+
+  protected openPhotos(): void {
+    this.onTabChange(1);
   }
 
   /** Lazy-loaded assignments tab data */

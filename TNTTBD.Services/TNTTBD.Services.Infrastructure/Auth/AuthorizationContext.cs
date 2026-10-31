@@ -198,6 +198,17 @@ public class AuthorizationContext : IAuthorizationContext
         return false;
     }
 
+    public Task<bool> CanViewYouthAsync(Guid youthId, CancellationToken cancellationToken)
+    {
+        return CanManageYouthPhotosAsync(youthId, cancellationToken);
+    }
+
+    public async Task<bool> CanViewCatechistAsync(Guid catechistId, CancellationToken cancellationToken)
+    {
+        var user = await GetCurrentUserAsync(cancellationToken);
+        return user?.Role is UserRole.Admin or UserRole.Catechist;
+    }
+
     public async Task<bool> CanManageCatechistPhotosAsync(Guid catechistId, CancellationToken cancellationToken)
     {
         var user = await GetCurrentUserAsync(cancellationToken);

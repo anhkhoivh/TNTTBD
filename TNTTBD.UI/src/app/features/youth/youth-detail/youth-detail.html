@@ -1,4 +1,14 @@
 @if (data(); as d) {
+<header class="member-header">
+  <button type="button" class="avatar-button" (click)="openPhotos()"
+    [attr.aria-label]="'youth.photos' | t" [matTooltip]="'youth.photos' | t">
+    <app-member-avatar entityType="youths" [entityId]="d.id" size="lg" [alt]="d.fullName | fullName" />
+  </button>
+  <div>
+    <h1>{{ d.fullName | fullName }}</h1>
+    <p class="member-subtitle">{{ d.code }}</p>
+  </div>
+</header>
 <mat-tab-group appScrollableTabs [selectedIndex]="selectedTabIndex()" (selectedTabChange)="onTabChange($event.index)">
   <mat-tab [label]="'common.profile' | t">
     <ng-template matTabContent>

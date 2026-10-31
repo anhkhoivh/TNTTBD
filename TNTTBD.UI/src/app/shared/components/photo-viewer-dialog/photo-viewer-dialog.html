@@ -20,6 +20,11 @@
     </button>
   }
   <span class="spacer"></span>
+  @if (data.canManage && !isProfile) {
+    <button mat-button type="button" (click)="setAsProfile()" [disabled]="busy()">
+      <mat-icon>account_circle</mat-icon>{{ 'photo.setAsProfile' | t }}
+    </button>
+  }
   <button mat-button type="button" mat-dialog-close [disabled]="busy()">{{ 'photo.close' | t }}</button>
   @if (data.canManage) {
     <button mat-flat-button type="button" (click)="save()" [disabled]="busy() || form.invalid || !changed()">

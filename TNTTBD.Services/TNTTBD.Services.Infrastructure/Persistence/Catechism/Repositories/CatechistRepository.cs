@@ -72,6 +72,10 @@ public class CatechistRepository : ICatechistRepository
         {
             throw new DomainException(DomainErrors.ValidationNotFound);
         }
+        if (photoReference.Purpose == PhotoPurpose.Profile)
+        {
+            DemoteProfilePhotos(catechistEntity.Photos, photoReference.Id);
+        }
         await _context.Set<CatechistPhotoEntity>()
             .AddAsync(photoReference.ToCatechistPhotoEntity(id), cancellationToken);
     }
@@ -83,6 +87,22 @@ public class CatechistRepository : ICatechistRepository
         PhotoReference photoReference = photoEntity.ToDomain();
         photoReference.UpdateSettings(purpose);
         photoReference.UpdateEntity(photoEntity);
+        if (purpose == PhotoPurpose.Profile)
+        {
+            List<CatechistPhotoEntity> profilePhotos = await _context.Set<CatechistPhotoEntity>()
+                .Where(p => p.CatechistId == id && p.Purpose == PhotoPurpose.Profile && p.Id != photoId)
+                .ToListAsync(cancellationToken);
+            DemoteProfilePhotos(profilePhotos, photoId);
+        }
+    }
+
+    // A member has at most one profile photo: others become gallery photos.
+    private static void DemoteProfilePhotos(IEnumerable<CatechistPhotoEntity> photos, Guid keepPhotoId)
+    {
+        foreach (CatechistPhotoEntity photo in photos.Where(p => p.Purpose == PhotoPurpose.Profile && p.Id != keepPhotoId))
+        {
+            photo.Purpose = PhotoPurpose.Gallery;
+        }
     }
 
     /// <inheritdoc />

@@ -43,6 +43,45 @@ body {
 .mb-16 { margin-bottom: 16px; }
 .p-16 { padding: 16px; }
 
+// Member detail header (profile avatar + name)
+.member-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+
+  .avatar-button {
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    line-height: 0;
+
+    &:focus-visible {
+      outline: 3px solid var(--mat-sys-primary);
+      outline-offset: 3px;
+    }
+  }
+
+  h1 {
+    margin: 0;
+    font: var(--mat-sys-headline-small);
+  }
+
+  .member-subtitle {
+    margin: 4px 0 0;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+// Inline avatar next to a name (tables, lists)
+.name-with-avatar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 
 // Skeleton Loader animations
 @keyframes placeholder-shimmer {

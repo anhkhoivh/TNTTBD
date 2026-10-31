@@ -33,6 +33,7 @@ export class PhotoGallery {
   readonly memberName = input.required<string>();
   readonly changed = output<void>();
   protected readonly purposes = Object.values(PhotoPurpose);
+  protected readonly profilePurpose = PhotoPurpose.Profile;
   protected purpose = signal(PhotoPurpose.Profile);
   protected opening = signal(false);
   protected visiblePhotos = computed(() => this.photos().filter(photo => photo.purpose === this.purpose()));
@@ -56,6 +57,7 @@ export class PhotoGallery {
         data: { entityType: this.entityType(), entityId: this.entityId(), purpose: this.purpose() },
       });
       if (result) {
+        this.photoService.invalidateProfile(this.entityType(), this.entityId());
         this.purpose.set(result.purpose);
         this.changed.emit();
       }

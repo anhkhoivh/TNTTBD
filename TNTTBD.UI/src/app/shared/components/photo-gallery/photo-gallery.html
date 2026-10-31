@@ -13,6 +13,9 @@
     </button>
   }
 </div>
+@if (purpose() === profilePurpose) {
+  <p class="hint">{{ 'photo.profileHint' | t }}</p>
+}
 <div class="photo-grid">
   @for (photo of visiblePhotos(); track photo.photoId) {
     <button class="photo-button" type="button" (click)="view(photo)"

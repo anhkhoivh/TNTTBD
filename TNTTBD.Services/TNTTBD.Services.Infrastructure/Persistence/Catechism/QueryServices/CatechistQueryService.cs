@@ -79,6 +79,17 @@ public class CatechistQueryService : ICatechistQueryService
     }
 
     /// <inheritdoc />
+    public async Task<ProfilePhotoFileDto?> GetProfilePhotoAsync(Guid catechistId, CancellationToken cancellationToken)
+    {
+        return await _context.CatechistPhotos
+            .AsNoTracking()
+            .Where(p => p.CatechistId == catechistId && p.Purpose == PhotoPurpose.Profile)
+            .OrderByDescending(p => p.UploadedAt)
+            .Select(p => new ProfilePhotoFileDto { PhotoId = p.Id, StorageKey = p.StorageKey, ContentType = p.ContentType })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
     public async Task<PaginatedResult<CatechistDto>> GetAllAsync(int page, int? pageSize, string? search, Guid? pinnedCatechistId, IFileStorage storage, CancellationToken cancellationToken)
     {
         var query = _context.Catechists.AsNoTracking();

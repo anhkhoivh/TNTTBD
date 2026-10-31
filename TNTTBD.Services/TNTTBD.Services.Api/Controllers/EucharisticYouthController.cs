@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Api.Common;
 using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
@@ -65,6 +66,11 @@ public class EucharisticYouthController : Controller
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] GetEucharisticYouthsQuery query, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminOrCatechistAsync(cancellationToken))
+        {
+            return Forbid();
+        }
+
         PaginatedResult<EucharisticYouthDto> result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
@@ -75,6 +81,11 @@ public class EucharisticYouthController : Controller
     [HttpGet("detail")]
     public async Task<IActionResult> GetById([FromQuery] GetEucharisticYouthByIdQuery query, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanViewYouthAsync(query.Id, cancellationToken))
+        {
+            return Forbid();
+        }
+
         EucharisticYouthDto? result = await _mediator.Send(query, cancellationToken);
 
         if (result == null)
@@ -165,8 +176,28 @@ public class EucharisticYouthController : Controller
     [HttpGet("photos")]
     public async Task<IActionResult> GetPhotos(GetEucharisticYouthPhotosQuery query, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanViewYouthAsync(query.Id, cancellationToken))
+        {
+            return Forbid();
+        }
+
         List<PhotoReferenceDto> result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Current profile photo file (204 when the youth has none)
+    /// </summary>
+    [HttpGet("profile-photo")]
+    public async Task<IActionResult> GetProfilePhoto([FromQuery] Guid youthId, CancellationToken cancellationToken)
+    {
+        if (!await _authContext.CanViewYouthAsync(youthId, cancellationToken))
+        {
+            return Forbid();
+        }
+
+        ProfilePhotoFileDto? photo = await _mediator.Send(new GetEucharisticYouthProfilePhotoQuery(youthId), cancellationToken);
+        return this.ProfilePhotoResult(photo, _storage);
     }
 
     /// <summary>

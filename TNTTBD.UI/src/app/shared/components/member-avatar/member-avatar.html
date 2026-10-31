@@ -1,0 +1,5 @@
+@if (src(); as url) {
+  <img [src]="url" alt="" (error)="src.set(null)" />
+} @else {
+  <mat-icon aria-hidden="true">{{ icon() }}</mat-icon>
+}
