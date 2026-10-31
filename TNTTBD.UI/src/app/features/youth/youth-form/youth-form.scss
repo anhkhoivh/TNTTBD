@@ -54,3 +54,11 @@
   .milestone-row { grid-template-columns: 1fr; }
   .relation-field { flex: 1; }
 }
+
+.existing-contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+

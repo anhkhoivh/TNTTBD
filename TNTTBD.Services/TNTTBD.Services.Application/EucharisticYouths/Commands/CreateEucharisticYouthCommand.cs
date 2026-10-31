@@ -18,12 +18,17 @@ public record CreateEucharisticYouthCommand(
     Guid? CatechismClassId = null
 ) : IRequest<Guid?>;
 
+/// <summary>
+/// Contact to link on youth creation. When <see cref="ContactId"/> is set, the existing contact is linked
+/// and the name/phone/email fields are ignored; otherwise a new contact is created from them.
+/// </summary>
 public record YouthContactData(
     ContactRelationType RelationType,
-    string GivenName,
-    string? ChristName,
-    string? FamilyName,
-    string? MiddleName,
-    string? PhoneNumber,
-    string? Email
+    string? GivenName = null,
+    string? ChristName = null,
+    string? FamilyName = null,
+    string? MiddleName = null,
+    string? PhoneNumber = null,
+    string? Email = null,
+    Guid? ContactId = null
 );

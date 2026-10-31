@@ -129,7 +129,12 @@
       <mat-card-header>
         <mat-card-title>{{ 'youth.contacts' | t }}</mat-card-title>
         <span class="spacer"></span>
-        <button mat-icon-button type="button" (click)="addContact()" aria-label="Add contact">
+        <button mat-icon-button type="button" (click)="linkExistingContact()"
+          [attr.aria-label]="'contact.linkExisting' | t" [title]="'contact.linkExisting' | t">
+          <mat-icon>link</mat-icon>
+        </button>
+        <button mat-icon-button type="button" (click)="addContact()"
+          [attr.aria-label]="'contact.addNew' | t" [title]="'contact.addNew' | t">
           <mat-icon>person_add</mat-icon>
         </button>
       </mat-card-header>
@@ -160,6 +165,12 @@
                 </button>
               </div>
 
+              @if (c.value.contactId) {
+              <p class="existing-contact">
+                <mat-icon>link</mat-icon>
+                <span>{{ c.value.contactName }}</span>
+              </p>
+              } @else {
               <div class="grid-2">
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'fullName.christ' | t }}</mat-label>
@@ -189,6 +200,7 @@
                   <input matInput formControlName="email" type="email" />
                 </mat-form-field>
               </div>
+              }
 
               @if (i < contacts.length - 1) {
                 <mat-divider></mat-divider>

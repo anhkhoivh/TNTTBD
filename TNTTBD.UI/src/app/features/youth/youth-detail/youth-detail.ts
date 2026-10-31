@@ -205,7 +205,11 @@ export class YouthDetail {
     if (!result) return;
 
     try {
-      await this.youthService.linkContact(result);
+      await this.youthService.linkContact({
+        eucharisticYouthId: youthId,
+        contactId: result.contactId,
+        relationType: result.relationType,
+      });
       this.notify.success(this.translate.t('contact.linked'));
     } catch {
       // error toast already shown by global http error handling

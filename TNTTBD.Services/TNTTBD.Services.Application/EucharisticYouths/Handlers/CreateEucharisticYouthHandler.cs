@@ -1,5 +1,7 @@
 using MediatR;
 using TNTTBD.Services.Application.Auth.Interfaces;
+using TNTTBD.Services.Application.Common.Exceptions;
+using TNTTBD.Services.Domain.Common;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
 using TNTTBD.Services.Domain.Catechism.JoinModels;
 using TNTTBD.Services.Domain.Catechism.Members;
@@ -49,10 +51,24 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
 
     public async Task<Guid?> Handle(CreateEucharisticYouthCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminOrCatechistAsync(cancellationToken))
+        {
+            throw new ForbiddenException();
+        }
+
         if (command.CatechismClassId != null &&
             !await _authContext.CanAccessClassAsync(command.CatechismClassId.Value, cancellationToken))
         {
             return null;
+        }
+
+        // Resolve existing contacts up front so a bad id fails before anything is persisted.
+        Dictionary<Guid, Contact> existingContacts = new();
+        foreach (Guid contactId in (command.Contacts ?? []).Where(c => c.ContactId != null).Select(c => c.ContactId!.Value).Distinct())
+        {
+            Contact existing = await _contactRepository.GetByIdAsync(contactId, cancellationToken)
+                ?? throw new DomainException(DomainErrors.ValidationNotFound);
+            existingContacts[contactId] = existing;
         }
 
         FullName fullName = new FullName(command.GivenName, command.ChristName, command.FamilyName, command.MiddleName);
@@ -97,19 +113,30 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
 
         await _repository.AddAsync(youth, cancellationToken);
 
-        // Create contacts and link to youth
+        // Link existing contacts or create new ones, then link to youth
         if (command.Contacts != null)
         {
+            HashSet<Guid> linkedContactIds = new();
             foreach (var c in command.Contacts)
             {
-                var contactName = new FullName(c.GivenName, c.ChristName, c.FamilyName, c.MiddleName);
-                var contact = new Contact(Guid.NewGuid(), contactName, c.PhoneNumber, c.Email);
-                await _contactRepository.AddAsync(contact, cancellationToken);
+                Guid contactId;
+                if (c.ContactId != null)
+                {
+                    contactId = existingContacts[c.ContactId.Value].Id;
+                    if (!linkedContactIds.Add(contactId)) continue;
+                }
+                else
+                {
+                    var contactName = new FullName(c.GivenName ?? string.Empty, c.ChristName, c.FamilyName, c.MiddleName);
+                    var contact = new Contact(Guid.NewGuid(), contactName, c.PhoneNumber, c.Email);
+                    await _contactRepository.AddAsync(contact, cancellationToken);
+                    contactId = contact.Id;
+                }
 
                 var link = new EucharisticYouthContact(
                     Guid.NewGuid(),
                     youth.Id,
-                    contact.Id,
+                    contactId,
                     c.RelationType);
                 await _youthContactRepository.AddAsync(link, cancellationToken);
             }
