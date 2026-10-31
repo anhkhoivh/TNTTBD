@@ -6,6 +6,7 @@ export interface Catechist {
   fullName: FullName;
   dateOfBirth: IsoDate;
   address?: string | null;
+  phoneNumber?: string | null;
   isMale: boolean;
   photos: PhotoReference[];
   patronSaints: PatronSaint[];

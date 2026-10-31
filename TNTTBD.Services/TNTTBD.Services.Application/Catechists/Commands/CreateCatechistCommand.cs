@@ -11,5 +11,6 @@ public record CreateCatechistCommand(
     DateOnly DateOfBirth,
     string? Address,
     bool IsMale,
-    List<PatronSaintDto>? PatronSaints = null
+    List<PatronSaintDto>? PatronSaints = null,
+    string? PhoneNumber = null
 ) : IRequest<Guid?>;

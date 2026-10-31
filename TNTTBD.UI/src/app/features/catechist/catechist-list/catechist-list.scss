@@ -16,3 +16,16 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+table.full-width { width: 100%; }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-field {
+  flex: 1 1 280px;
+  max-width: 420px;
+}

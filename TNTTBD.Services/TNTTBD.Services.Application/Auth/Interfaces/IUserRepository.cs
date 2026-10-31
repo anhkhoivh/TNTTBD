@@ -15,5 +15,5 @@ public interface IUserRepository
     Task UpdateAsync(Guid id, string? userName, string? email, bool? isActive, UserRole? role, UserEntityLink? link, CancellationToken cancellationToken);
     Task DeactivateAsync(Guid id, CancellationToken cancellationToken);
     Task ChangePasswordAsync(Guid userId, string newPassword, CancellationToken cancellationToken);
-    Task<PaginatedResult<UserDto>> GetAllAsync(int page, int? pageSize, CancellationToken cancellationToken);
+    Task<PaginatedResult<UserDto>> GetAllAsync(int page, int? pageSize, string? search, UserRole? role, CancellationToken cancellationToken);
 }

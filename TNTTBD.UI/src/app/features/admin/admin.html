@@ -1,77 +1,92 @@
 <mat-card>
   <mat-card-header>
     <mat-card-title>{{ 'nav.users' | t }}</mat-card-title>
+    <span class="spacer"></span>
+    <button mat-flat-button color="primary" (click)="create()">
+      <mat-icon>person_add</mat-icon> {{ 'common.add' | t }}
+    </button>
   </mat-card-header>
   <mat-card-content>
     <div class="toolbar">
-      <button mat-flat-button color="primary" (click)="create()">
-        <mat-icon>person_add</mat-icon> {{ 'common.add' | t }}
-      </button>
-      <mat-slide-toggle [checked]="showInactive()" (change)="showInactive.set($event.checked)">
-        {{ 'user.showInactive' | t }}
-      </mat-slide-toggle>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label>{{ 'common.search' | t }}</mat-label>
+        <input matInput [ngModel]="searchQuery()" (ngModelChange)="onSearch($event)" [placeholder]="'user.searchUser' | t" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="role-field">
+        <mat-label>{{ 'user.role' | t }}</mat-label>
+        <mat-select [value]="roleFilter()" (selectionChange)="onRoleChange($event.value)">
+          @for (role of roles; track role) {
+            <mat-option [value]="role">{{ roleKey(role) | t }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     </div>
 
-    <table mat-table [dataSource]="filtered()" class="full-width">
-      <ng-container matColumnDef="userName">
-        <th mat-header-cell *matHeaderCellDef>{{ 'user.userName' | t }}</th>
-        <td mat-cell *matCellDef="let row">{{ row.userName }}</td>
-      </ng-container>
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef>{{ 'auth.email' | t }}</th>
-        <td mat-cell *matCellDef="let row">{{ row.email }}</td>
-      </ng-container>
-      <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef>{{ 'user.role' | t }}</th>
-        <td mat-cell *matCellDef="let row">
-          <mat-chip>{{ roleKey(row.userRole) | t }}</mat-chip>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="link">
-        <th mat-header-cell *matHeaderCellDef>{{ 'user.linkTo' | t }}</th>
-        <td mat-cell *matCellDef="let row">
-          @if (linkLabel(row)) {
-            <span class="link-badge">{{ linkLabel(row) }}</span>
-          }
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="active">
-        <th mat-header-cell *matHeaderCellDef>{{ 'user.active' | t }}</th>
-        <td mat-cell *matCellDef="let row">
-          @if (row.isActive) {
-            <mat-icon class="ok">check_circle</mat-icon>
-          } @else {
-            <mat-icon class="ko">block</mat-icon>
-          }
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let row">
-          <button mat-icon-button (click)="edit(row)" [attr.aria-label]="'common.edit' | t">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button (click)="resetPassword(row)" [attr.aria-label]="'password.reset' | t">
-            <mat-icon>lock_reset</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            (click)="toggleActive(row)"
-            [attr.aria-label]="(row.isActive ? 'user.deactivate' : 'user.activate') | t"
-          >
-            <mat-icon>{{ row.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
-          </button>
-          @if (row.isActive) {
-            <button mat-icon-button color="warn" (click)="remove(row)" [attr.aria-label]="'user.deactivate' | t">
-              <mat-icon>person_off</mat-icon>
+    <div class="table-responsive">
+      <table mat-table [dataSource]="data().items" class="full-width">
+        <ng-container matColumnDef="userName">
+          <th mat-header-cell *matHeaderCellDef>{{ 'user.userName' | t }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.userName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>{{ 'auth.email' | t }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+        </ng-container>
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>{{ 'user.role' | t }}</th>
+          <td mat-cell *matCellDef="let row">
+            <mat-chip>{{ roleKey(row.userRole) | t }}</mat-chip>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="link">
+          <th mat-header-cell *matHeaderCellDef>{{ 'user.linkTo' | t }}</th>
+          <td mat-cell *matCellDef="let row">
+            @if (row.fullName) {
+              <div>{{ row.fullName | fullName }}</div>
+            }
+            @if (linkLabel(row)) {
+              <span class="link-badge">{{ linkLabel(row) }}</span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>{{ 'user.active' | t }}</th>
+          <td mat-cell *matCellDef="let row">
+            @if (row.isActive) {
+              <mat-icon class="ok">check_circle</mat-icon>
+            } @else {
+              <mat-icon class="ko">block</mat-icon>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="text-right"></th>
+          <td mat-cell *matCellDef="let row" class="text-right">
+            <button mat-icon-button (click)="openActions(row)" [attr.aria-label]="'common.actions' | t">
+              <mat-icon>more_vert</mat-icon>
             </button>
-          }
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="cols"></tr>
-      <tr mat-row *matRowDef="let row; columns: cols"></tr>
-    </table>
-    @if (filtered().length === 0) {
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="cols"></tr>
+        <tr mat-row *matRowDef="let row; columns: cols"></tr>
+      </table>
+    </div>
+
+    @if (data().items.length > 0) {
+      <mat-paginator
+        [length]="data().total"
+        [pageSize]="data().pageSize"
+        [pageIndex]="data().page - 1"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        aria-label="Select page"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    }
+
+    @if (isLoading()) {
+      <mat-spinner></mat-spinner>
+    } @else if (data().items.length === 0) {
       <p class="text-center mt-16">{{ 'common.noData' | t }}</p>
     }
   </mat-card-content>

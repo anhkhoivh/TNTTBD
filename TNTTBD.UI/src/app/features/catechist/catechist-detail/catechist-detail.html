@@ -16,6 +16,12 @@
           <mat-icon matListItemIcon>{{ d.isMale ? 'male' : 'female' }}</mat-icon>
           <span matListItemTitle>{{ (d.isMale ? 'common.male' : 'common.female') | t }}</span>
         </mat-list-item>
+        @if (d.phoneNumber) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>phone</mat-icon>
+          <span matListItemTitle><a [href]="'tel:' + d.phoneNumber">{{ d.phoneNumber }}</a></span>
+        </mat-list-item>
+        }
         @if (d.address) {
         <mat-list-item>
           <mat-icon matListItemIcon>home</mat-icon>

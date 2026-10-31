@@ -17,6 +17,6 @@ public class GetUsersHandler : IRequestHandler<GetUsersQuery, PaginatedResult<Us
 
     public async Task<PaginatedResult<UserDto>> Handle(GetUsersQuery query, CancellationToken cancellationToken)
     {
-        return await _userRepository.GetAllAsync(query.Page, query.PageSize, cancellationToken);
+        return await _userRepository.GetAllAsync(query.Page, query.PageSize, query.Search, query.Role, cancellationToken);
     }
 }

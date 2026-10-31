@@ -45,7 +45,8 @@ public class CreateCatechistHandler : IRequestHandler<CreateCatechistCommand, Gu
             fullName,
             command.DateOfBirth,
             command.Address,
-            command.IsMale
+            command.IsMale,
+            command.PhoneNumber
         );
 
         // Add patron saints

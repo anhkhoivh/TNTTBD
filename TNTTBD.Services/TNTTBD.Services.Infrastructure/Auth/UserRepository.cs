@@ -155,10 +155,43 @@ public class UserRepository : IUserRepository
         entity.PasswordHash = _passwordHasher.HashPassword(entity, newPassword);
     }
 
-    public async Task<PaginatedResult<UserDto>> GetAllAsync(int page, int? pageSize, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<UserDto>> GetAllAsync(int page, int? pageSize, string? search, UserRole? role, CancellationToken cancellationToken)
     {
         var query = _context.Users.AsNoTracking();
+
+        if (role.HasValue)
+        {
+            query = query.Where(u => u.Role == role.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var s = search.Trim().ToLower();
+            query = query.Where(u =>
+                u.UserName.ToLower().Contains(s) ||
+                u.Email.ToLower().Contains(s) ||
+                (u.Catechist != null && (
+                    u.Catechist.FullName.GivenName.ToLower().Contains(s) ||
+                    (u.Catechist.FullName.FamilyName != null && u.Catechist.FullName.FamilyName.ToLower().Contains(s)) ||
+                    (u.Catechist.FullName.MiddleName != null && u.Catechist.FullName.MiddleName.ToLower().Contains(s)) ||
+                    (u.Catechist.FullName.ChristName != null && u.Catechist.FullName.ChristName.ToLower().Contains(s)))) ||
+                (u.EucharisticYouth != null && (
+                    u.EucharisticYouth.FullName.GivenName.ToLower().Contains(s) ||
+                    (u.EucharisticYouth.FullName.FamilyName != null && u.EucharisticYouth.FullName.FamilyName.ToLower().Contains(s)) ||
+                    (u.EucharisticYouth.FullName.MiddleName != null && u.EucharisticYouth.FullName.MiddleName.ToLower().Contains(s)) ||
+                    (u.EucharisticYouth.FullName.ChristName != null && u.EucharisticYouth.FullName.ChristName.ToLower().Contains(s)))) ||
+                (u.Contact != null && (
+                    u.Contact.FullName.GivenName.ToLower().Contains(s) ||
+                    (u.Contact.FullName.FamilyName != null && u.Contact.FullName.FamilyName.ToLower().Contains(s)) ||
+                    (u.Contact.FullName.MiddleName != null && u.Contact.FullName.MiddleName.ToLower().Contains(s)) ||
+                    (u.Contact.FullName.ChristName != null && u.Contact.FullName.ChristName.ToLower().Contains(s)))));
+        }
+
         int total = await query.CountAsync(cancellationToken);
+
+        query = query
+            .OrderBy(u => u.CreatedAt)
+            .ThenBy(u => u.Id);
 
         if (pageSize.HasValue)
         {
@@ -166,7 +199,6 @@ public class UserRepository : IUserRepository
         }
 
         var items = await query
-            .OrderBy(u => u.CreatedAt)
             .Select(u => new UserDto
             {
                 Id = u.Id,
@@ -176,7 +208,11 @@ public class UserRepository : IUserRepository
                 UserRole = u.Role,
                 CatechistId = u.CatechistId,
                 EucharisticYouthId = u.EucharisticYouthId,
-                ContactId = u.ContactId
+                ContactId = u.ContactId,
+                FullName = u.CatechistId != null ? u.Catechist!.FullName
+                    : u.EucharisticYouthId != null ? u.EucharisticYouth!.FullName
+                    : u.ContactId != null ? u.Contact!.FullName
+                    : null
             })
             .ToListAsync(cancellationToken);
 

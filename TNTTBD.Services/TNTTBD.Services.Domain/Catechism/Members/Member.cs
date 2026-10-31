@@ -27,18 +27,19 @@ public abstract class Member : AggregateRoot<Guid>
     /// <summary>
     /// Constructor from parameters
     /// </summary>
-    public Member(Guid id, FullName name, DateOnly? dateOfBirth, string? address, bool isMale) : base(id)
+    public Member(Guid id, FullName name, DateOnly? dateOfBirth, string? address, bool isMale, string? phoneNumber = null) : base(id)
     {
         FullName = name;
         DateOfBirth = dateOfBirth;
         IsMale = isMale;
         Address = address ?? string.Empty;
+        PhoneNumber = NormalizePhoneNumber(phoneNumber);
     }
 
     /// <summary>
     /// Constructor from parameters
     /// </summary>
-    public Member(Guid id, FullName name, DateOnly? dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<PatronSaint> patronSaints) : base(id)
+    public Member(Guid id, FullName name, DateOnly? dateOfBirth, string? address, bool isMale, IEnumerable<PhotoReference> photos, IEnumerable<PatronSaint> patronSaints, string? phoneNumber = null) : base(id)
     {
         FullName = name;
         _photos.AddRange(photos);
@@ -47,6 +48,7 @@ public abstract class Member : AggregateRoot<Guid>
         _patronSaints.AddRange(patronSaints);
         IsMale = isMale;
         Address = address ?? string.Empty;
+        PhoneNumber = NormalizePhoneNumber(phoneNumber);
     }
 
     #endregion
@@ -173,6 +175,19 @@ public abstract class Member : AggregateRoot<Guid>
             _patronSaints.Clear();
             _patronSaints.AddRange(patronSaints);
         }
+    }
+
+    /// <summary>
+    /// Update phone number
+    /// </summary>
+    public void UpdatePhoneNumber(string? phoneNumber)
+    {
+        PhoneNumber = NormalizePhoneNumber(phoneNumber);
+    }
+
+    private static string? NormalizePhoneNumber(string? phoneNumber)
+    {
+        return string.IsNullOrWhiteSpace(phoneNumber) ? null : phoneNumber.Trim();
     }
 
     #endregion

@@ -11,6 +11,12 @@
       <span matListItemTitle>{{ 'common.edit' | t }}</span>
     </button>
   }
+  @for (extra of data.extraActions ?? []; track extra.key) {
+    <button mat-list-item type="button" (click)="choose(extra.key)">
+      <mat-icon matListItemIcon [color]="extra.warn ? 'warn' : undefined">{{ extra.icon }}</mat-icon>
+      <span matListItemTitle>{{ extra.labelKey | t }}</span>
+    </button>
+  }
   @if (data.canDelete) {
     <button mat-list-item type="button" (click)="choose('delete')">
       <mat-icon matListItemIcon color="warn">{{ data.deleteIcon ?? 'delete' }}</mat-icon>

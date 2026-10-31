@@ -63,6 +63,7 @@ export class CatechistForm {
     dateOfBirth: [null as Date | null, Validators.required],
     isMale: [true, Validators.required],
     address: [''],
+    phoneNumber: [''],
     patronSaints: [[] as PatronSaint[]],
   });
 
@@ -93,6 +94,7 @@ export class CatechistForm {
         dateOfBirth: c.dateOfBirth ? new Date(c.dateOfBirth + 'T00:00:00') : null,
         isMale: c.isMale,
         address: c.address ?? '',
+        phoneNumber: c.phoneNumber ?? '',
         patronSaints: c.patronSaints ?? [],
       }));
     });
@@ -113,6 +115,7 @@ export class CatechistForm {
       dateOfBirth: this.toIsoDate(v.dateOfBirth),
       isMale: v.isMale,
       address: v.address || null,
+      phoneNumber: v.phoneNumber?.trim() || null,
       patronSaints: v.patronSaints,
     };
 

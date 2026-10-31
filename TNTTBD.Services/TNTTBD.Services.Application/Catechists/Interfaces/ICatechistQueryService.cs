@@ -19,7 +19,11 @@ public interface ICatechistQueryService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<List<PhotoReferenceDto>?> GetPhotosByCatechistId(Guid catechistId, IFileStorage storage, CancellationToken cancellationToken);
-    Task<PaginatedResult<CatechistDto>> GetAllAsync(int page, int? pageSize, IFileStorage storage, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Get catechist list, optionally filtered by name; <paramref name="pinnedCatechistId"/> is ordered first.
+    /// </summary>
+    Task<PaginatedResult<CatechistDto>> GetAllAsync(int page, int? pageSize, string? search, Guid? pinnedCatechistId, IFileStorage storage, CancellationToken cancellationToken);
 
     /// <summary>
     /// Resolve the catechist's active class in the most recent catechism year.
