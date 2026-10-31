@@ -21,6 +21,11 @@ public interface ICatechistQueryService
     Task<List<PhotoReferenceDto>?> GetPhotosByCatechistId(Guid catechistId, IFileStorage storage, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Get the current (newest) profile photo, or null when there is none.
+    /// </summary>
+    Task<ProfilePhotoFileDto?> GetProfilePhotoAsync(Guid catechistId, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Get catechist list, optionally filtered by name; <paramref name="pinnedCatechistId"/> is ordered first.
     /// </summary>
     Task<PaginatedResult<CatechistDto>> GetAllAsync(int page, int? pageSize, string? search, Guid? pinnedCatechistId, IFileStorage storage, CancellationToken cancellationToken);

@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PhotoGallery } from '../../../shared/components/photo-gallery/photo-gallery';
+import { MemberAvatar } from '../../../shared/components/member-avatar/member-avatar';
 import { DialogService } from '../../../core/services/dialog.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -43,6 +44,7 @@ import {
   standalone: true,
   imports: [
     PhotoGallery,
+    MemberAvatar,
     CommonModule,
     RouterLink,
     MatCardModule,
@@ -90,6 +92,10 @@ export class YouthDetail {
 
   protected reloadPhotos(): void {
     this.youthService.detailRes.reload();
+  }
+
+  protected openPhotos(): void {
+    this.onTabChange(2);
   }
 
   /** Lazy-loaded contacts tab */

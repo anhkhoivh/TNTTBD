@@ -1,5 +1,7 @@
 using MediatR;
 using TNTTBD.Services.Application.Abstractions;
+using TNTTBD.Services.Application.Auth.Interfaces;
+using TNTTBD.Services.Application.Common.Exceptions;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Interfaces;
 using TNTTBD.Services.Application.EucharisticYouths.Queries;
@@ -13,15 +15,20 @@ public class GetEucharisticYouthByIdHandler : IRequestHandler<GetEucharisticYout
     
     private readonly IEucharisticYouthQueryService _queryService;
     private readonly IFileStorage _storage;
+    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public GetEucharisticYouthByIdHandler(IEucharisticYouthQueryService queryService, IFileStorage fileStorage)
+    public GetEucharisticYouthByIdHandler(
+        IEucharisticYouthQueryService queryService,
+        IFileStorage fileStorage,
+        IAuthorizationContext authContext)
     {
         _storage = fileStorage;
         _queryService = queryService;
+        _authContext = authContext;
     }
 
     #endregion
@@ -30,6 +37,11 @@ public class GetEucharisticYouthByIdHandler : IRequestHandler<GetEucharisticYout
 
     public async Task<EucharisticYouthDto> Handle(GetEucharisticYouthByIdQuery query, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanViewYouthAsync(query.Id, cancellationToken))
+        {
+            throw new ForbiddenException();
+        }
+
         return await _queryService.GetByIdAsync(query.Id, _storage, cancellationToken) ?? throw new DomainException(DomainErrors.ValidationNotFound);
     }
 

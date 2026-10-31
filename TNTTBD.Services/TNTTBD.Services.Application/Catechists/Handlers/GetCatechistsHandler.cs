@@ -5,6 +5,7 @@ using TNTTBD.Services.Application.Catechists.DTOs;
 using TNTTBD.Services.Application.Catechists.Interfaces;
 using TNTTBD.Services.Application.Catechists.Queries;
 using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Application.Common.Exceptions;
 
 namespace TNTTBD.Services.Application.Catechists.Handlers;
 
@@ -23,6 +24,11 @@ public class GetCatechistsHandler : IRequestHandler<GetCatechistsQuery, Paginate
 
     public async Task<PaginatedResult<CatechistDto>> Handle(GetCatechistsQuery query, CancellationToken cancellationToken)
     {
+        if (!await _authContext.IsAdminOrCatechistAsync(cancellationToken))
+        {
+            throw new ForbiddenException();
+        }
+
         Guid? currentCatechistId = await _authContext.GetCurrentCatechistIdAsync(cancellationToken);
         return await _queryService.GetAllAsync(query.Page, query.PageSize, query.Search, currentCatechistId, _fileStorage, cancellationToken);
     }

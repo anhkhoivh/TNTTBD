@@ -33,7 +33,8 @@
     <mat-list>
       @for (y of d.youths; track y.id) {
       <mat-list-item>
-        <mat-icon matListItemIcon>face</mat-icon>
+        <app-member-avatar matListItemAvatar entityType="youths" [entityId]="y.eucharisticYouthId"
+          [alt]="y.fullName | fullName" />
         <span matListItemTitle>
           <a [routerLink]="['/app/youth/detail']" [queryParams]="{ id: y.eucharisticYouthId }" class="item-link">
             {{ y.fullName | fullName }}

@@ -11,6 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { MemberAvatar } from '../../../shared/components/member-avatar/member-avatar';
 import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
 import { DataTable, ColumnDef, ColumnConfig } from '../../../shared/components/data-table';
 import { AttendanceStatus, EnrollmentStatus } from '../../../shared/enums';
@@ -23,6 +24,7 @@ const ALL_CLASSES = 'all';
   selector: 'app-youth-report',
   standalone: true,
   imports: [
+    MemberAvatar,
     CommonModule,
     RouterLink,
     MatCardModule,

@@ -94,7 +94,7 @@ public class FileUploadController : ControllerBase
     }
 
     [HttpGet("{**storageKey}")]
-    public IActionResult GetFile(string storageKey)
+    public async Task<IActionResult> GetFile(string storageKey, CancellationToken cancellationToken)
     {
         if (!StorageKeyPattern.IsMatch(storageKey))
         {
@@ -104,6 +104,20 @@ public class FileUploadController : ControllerBase
         if (storageKey.Contains("..") || Path.IsPathRooted(storageKey))
         {
             return BadRequest("Invalid storage key.");
+        }
+
+        var segments = storageKey.Split('/');
+        if (!Guid.TryParse(segments[1], out var entityId))
+        {
+            return BadRequest("Invalid storage key format.");
+        }
+
+        bool canView = segments[0] == "catechists"
+            ? await _authContext.CanViewCatechistAsync(entityId, cancellationToken)
+            : await _authContext.CanViewYouthAsync(entityId, cancellationToken);
+        if (!canView)
+        {
+            return Forbid();
         }
 
         var filePath = Path.Combine(_basePath, storageKey.Replace('/', Path.DirectorySeparatorChar));
@@ -123,6 +137,7 @@ public class FileUploadController : ControllerBase
             _ => "application/octet-stream"
         };
 
+        Response.Headers.CacheControl = "private";
         return PhysicalFile(filePath, contentType);
     }
 

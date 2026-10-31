@@ -1,7 +1,7 @@
 @if (report(); as r) {
 <mat-card>
   <mat-card-header>
-    <mat-icon mat-card-avatar>assessment</mat-icon>
+    <app-member-avatar mat-card-avatar entityType="youths" [entityId]="r.youthId" [alt]="r.youthFullName | fullName" />
     <mat-card-title>{{ 'report.youthTitle' | t }} · {{ r.youthFullName | fullName }}</mat-card-title>
     <mat-card-subtitle>{{ 'youth.code' | t }}: {{ r.youthCode }}</mat-card-subtitle>
   </mat-card-header>

@@ -121,6 +121,10 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         {
             throw new DomainException(DomainErrors.ValidationNotFound);
         }
+        if (photoReference.Purpose == PhotoPurpose.Profile)
+        {
+            DemoteProfilePhotos(youthEntity.Photos, photoReference.Id);
+        }
         await _context.Set<EucharisticYouthPhotoEntity>()
             .AddAsync(photoReference.ToEucharisticYouthPhotoEntity(id), cancellationToken);
     }
@@ -132,6 +136,22 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         PhotoReference photoReference = photoEntity.ToDomain();
         photoReference.UpdateSettings(purpose);
         photoReference.UpdateEntity(photoEntity);
+        if (purpose == PhotoPurpose.Profile)
+        {
+            List<EucharisticYouthPhotoEntity> profilePhotos = await _context.Set<EucharisticYouthPhotoEntity>()
+                .Where(p => p.EucharisticYouthId == id && p.Purpose == PhotoPurpose.Profile && p.Id != photoId)
+                .ToListAsync(cancellationToken);
+            DemoteProfilePhotos(profilePhotos, photoId);
+        }
+    }
+
+    // A member has at most one profile photo: others become gallery photos.
+    private static void DemoteProfilePhotos(IEnumerable<EucharisticYouthPhotoEntity> photos, Guid keepPhotoId)
+    {
+        foreach (EucharisticYouthPhotoEntity photo in photos.Where(p => p.Purpose == PhotoPurpose.Profile && p.Id != keepPhotoId))
+        {
+            photo.Purpose = PhotoPurpose.Gallery;
+        }
     }
 
     /// <inheritdoc />

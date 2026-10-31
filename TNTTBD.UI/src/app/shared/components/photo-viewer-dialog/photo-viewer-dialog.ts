@@ -54,6 +54,7 @@ export class PhotoViewerDialog {
   private fb = inject(FormBuilder);
 
   protected readonly purposes = Object.values(PhotoPurpose);
+  protected readonly isProfile = this.data.photo.purpose === PhotoPurpose.Profile;
   protected form = this.fb.nonNullable.group({
     purpose: [this.data.photo.purpose, Validators.required],
   });
@@ -71,6 +72,20 @@ export class PhotoViewerDialog {
       await this.photos.updateSettings(this.data.entityType, this.data.entityId, this.data.photo.photoId, purpose);
       this.notify.success(this.translate.t('photo.updated'));
       this.ref.close({ action: 'updated', purpose });
+    }, 'photo.updateFailed');
+  }
+
+  protected async setAsProfile(): Promise<void> {
+    if (!this.data.canManage || this.busy() || this.data.photo.purpose === PhotoPurpose.Profile) return;
+    await this.run(async () => {
+      await this.photos.updateSettings(
+        this.data.entityType,
+        this.data.entityId,
+        this.data.photo.photoId,
+        PhotoPurpose.Profile,
+      );
+      this.notify.success(this.translate.t('photo.updated'));
+      this.ref.close({ action: 'updated', purpose: PhotoPurpose.Profile });
     }, 'photo.updateFailed');
   }
 

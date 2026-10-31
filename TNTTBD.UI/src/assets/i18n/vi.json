@@ -74,6 +74,8 @@
   "photo.deleteConfirm": "Xóa ảnh này?",
   "photo.deleteFailed": "Không thể xóa ảnh.",
   "photo.updated": "Đã cập nhật mục đích ảnh.",
+  "photo.setAsProfile": "Đặt làm ảnh đại diện",
+  "photo.profileHint": "Ảnh hồ sơ được dùng làm ảnh đại diện của thành viên. Khi đặt ảnh mới, ảnh cũ sẽ được chuyển sang Thư viện.",
   "photo.updateFailed": "Không thể cập nhật mục đích ảnh.",
 
   "landing.welcome": "Chào mừng đến với Đoàn Thiếu nhi Thánh Thể Giáo xứ Bình Đông",

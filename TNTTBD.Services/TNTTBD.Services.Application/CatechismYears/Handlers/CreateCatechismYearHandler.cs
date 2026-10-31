@@ -1,4 +1,6 @@
 using MediatR;
+using TNTTBD.Services.Application.Auth.Interfaces;
+using TNTTBD.Services.Application.Common.Exceptions;
 using TNTTBD.Services.Application.CatechismYears.Commands;
 using TNTTBD.Services.Domain.Catechism;
 using TNTTBD.Services.Domain.Catechism.Repositories;
@@ -13,14 +15,16 @@ public class CreateCatechismYearHandler : IRequestHandler<CreateCatechismYearCom
     #region Fields
 
     private readonly ICatechismYearRepository _repository;
+    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public CreateCatechismYearHandler(ICatechismYearRepository repository)
+    public CreateCatechismYearHandler(ICatechismYearRepository repository, IAuthorizationContext authContext)
     {
         _repository = repository;
+        _authContext = authContext;
     }
 
     #endregion
@@ -29,6 +33,11 @@ public class CreateCatechismYearHandler : IRequestHandler<CreateCatechismYearCom
 
     public async Task<Guid> Handle(CreateCatechismYearCommand command, CancellationToken cancellationToken)
     {
+        if (!await _authContext.CanWriteYearsAsync(cancellationToken))
+        {
+            throw new ForbiddenException();
+        }
+
         CatechismYear year = new(Guid.NewGuid(), command.StartDate, command.EndDate, command.Theme);
         await _repository.AddAsync(year, cancellationToken);
         return year.Id;

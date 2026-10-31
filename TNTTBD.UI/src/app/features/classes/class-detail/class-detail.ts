@@ -23,6 +23,7 @@ import { SessionFormDialog } from '../../../shared/components/session-form-dialo
 import { ExamFormDialog } from '../../../shared/components/exam-form-dialog';
 import { CatechistAssignDialog, CatechistAssignData } from '../../../shared/components/catechist-assign-dialog';
 import { EnrollYouthDialog, EnrollYouthData } from '../../../shared/components/enroll-youth-dialog';
+import { MemberAvatar } from '../../../shared/components/member-avatar/member-avatar';
 import {
   AddChoice,
   AddChoiceBottomSheet,
@@ -57,6 +58,7 @@ import {
     TranslatePipe,
     FullNamePipe,
     DateLocalePipe,
+    MemberAvatar,
   ],
   templateUrl: './class-detail.html',
   styleUrl: './class-detail.scss',
@@ -88,6 +90,11 @@ export class ClassDetail {
 
   protected get isContact(): boolean {
     return this.auth.currentUser()?.userRole === UserRole.EucharisticYouthContact;
+  }
+
+  /** Staff see every enrolled youth; a youth only sees their own profile (matches the API view rules). */
+  protected canViewYouth(youthId: string): boolean {
+    return this.canManage() || (!!youthId && this.auth.currentUser()?.eucharisticYouthId === youthId);
   }
 
   constructor() {

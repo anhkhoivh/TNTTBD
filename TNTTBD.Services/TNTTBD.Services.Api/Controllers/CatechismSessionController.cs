@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismSessions.Commands;
 using TNTTBD.Services.Application.CatechismSessions.DTOs;
 using TNTTBD.Services.Application.CatechismSessions.Queries;
@@ -17,16 +16,14 @@ public class CatechismSessionController : Controller
     #region Fields
 
     private readonly IMediator _mediator;
-    private readonly IAuthorizationContext _authContext;
 
     #endregion
 
     #region Constructors
 
-    public CatechismSessionController(IMediator mediator, IAuthorizationContext authContext)
+    public CatechismSessionController(IMediator mediator)
     {
         _mediator = mediator;
-        _authContext = authContext;
     }
 
     #endregion
@@ -42,11 +39,6 @@ public class CatechismSessionController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCatechismSessionCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessClassAsync(command.CatechismClassId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         Guid id = await _mediator.Send(command, cancellationToken);
 
         return CreatedAtAction(nameof(GetById), new { id }, id);
@@ -98,11 +90,6 @@ public class CatechismSessionController : Controller
     [HttpPost("attendances")]
     public async Task<IActionResult> MarkAttendances([FromBody] MarkAttendanceListCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessCatechistAsync(command.MarkedByCatechistId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }
@@ -110,11 +97,6 @@ public class CatechismSessionController : Controller
     [HttpPost("attendance")]
     public async Task<IActionResult> MarkAttendance([FromBody] MarkAttendanceCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessCatechistAsync(command.MarkedByCatechistId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         await _mediator.Send(command, cancellationToken);
         return Ok();
     }

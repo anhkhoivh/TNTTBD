@@ -74,6 +74,8 @@
   "photo.deleteConfirm": "Delete this photo permanently? This cannot be undone.",
   "photo.deleteFailed": "Photo could not be deleted.",
   "photo.updated": "Photo purpose updated.",
+  "photo.setAsProfile": "Set as profile photo",
+  "photo.profileHint": "The profile photo is shown as the member's avatar. Setting a new one moves the previous one to Gallery.",
   "photo.updateFailed": "Photo purpose could not be updated.",
 
   "landing.welcome": "Welcome to the Parish Eucharistic Youth Movement",

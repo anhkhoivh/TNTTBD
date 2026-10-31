@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Api.Common;
 using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.Catechists.Commands;
@@ -18,7 +19,6 @@ public class CatechistController : Controller
     #region Fields
 
     private readonly IMediator _mediator;
-    private readonly IAuthorizationContext _authContext;
     private readonly IFileStorage _storage;
     private readonly ILogger<CatechistController> _logger;
 
@@ -26,10 +26,9 @@ public class CatechistController : Controller
 
     #region Constructors
 
-    public CatechistController(IMediator mediator, IAuthorizationContext authContext, IFileStorage storage, ILogger<CatechistController> logger)
+    public CatechistController(IMediator mediator, IFileStorage storage, ILogger<CatechistController> logger)
     {
         _mediator = mediator;
-        _authContext = authContext;
         _storage = storage;
         _logger = logger;
     }
@@ -44,13 +43,7 @@ public class CatechistController : Controller
     [HttpGet("current-class")]
     public async Task<IActionResult> GetCurrentClass(CancellationToken cancellationToken)
     {
-        var catechistId = await _authContext.GetCurrentCatechistIdAsync(cancellationToken);
-        if (catechistId == null)
-        {
-            return Ok(null);
-        }
-
-        var result = await _mediator.Send(new GetCatechistCurrentClassQuery(catechistId.Value), cancellationToken);
+        var result = await _mediator.Send(new GetCatechistCurrentClassQuery(), cancellationToken);
         return Ok(result);
     }
 
@@ -146,10 +139,21 @@ public class CatechistController : Controller
         return Ok(result);
     }
 
+    /// <summary>
+    /// Current profile photo file (204 when the catechist has none)
+    /// </summary>
+    [HttpGet("profile-photo")]
+    public async Task<IActionResult> GetProfilePhoto([FromQuery] Guid catechistId, CancellationToken cancellationToken)
+    {
+        ProfilePhotoFileDto? photo = await _mediator.Send(new GetCatechistProfilePhotoQuery(catechistId), cancellationToken);
+        return this.ProfilePhotoResult(photo, _storage);
+    }
+
     [HttpGet("photos/permissions")]
     public async Task<IActionResult> GetPhotoPermissions([FromQuery] Guid catechistId, CancellationToken cancellationToken)
     {
-        return Ok(new { canManage = await _authContext.CanManageCatechistPhotosAsync(catechistId, cancellationToken) });
+        bool canManage = await _mediator.Send(new GetCatechistPhotoPermissionsQuery(catechistId), cancellationToken);
+        return Ok(new { canManage });
     }
 
     [HttpPatch("photos")]

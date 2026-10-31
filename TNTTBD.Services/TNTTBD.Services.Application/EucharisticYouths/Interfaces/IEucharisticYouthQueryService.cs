@@ -19,5 +19,10 @@ public interface IEucharisticYouthQueryService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<List<PhotoReferenceDto>?> GetPhotosByYouthId(Guid youthId, IFileStorage storage, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Get the current (newest) profile photo, or null when there is none.
+    /// </summary>
+    Task<ProfilePhotoFileDto?> GetProfilePhotoAsync(Guid youthId, CancellationToken cancellationToken);
     Task<PaginatedResult<EucharisticYouthDto>> GetAllAsync(string? search, Guid? classId, int page, int? pageSize, IFileStorage storage, CancellationToken cancellationToken);
 }

@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Api.Common;
 using TNTTBD.Services.Application.Abstractions;
-using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.DTOs;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Queries;
 using TNTTBD.Services.Application.Common.DTOs;
@@ -21,7 +21,6 @@ public class EucharisticYouthController : Controller
     #region Fields
 
     private readonly IMediator _mediator;
-    private readonly IAuthorizationContext _authContext;
     private readonly IFileStorage _storage;
     private readonly ILogger<EucharisticYouthController> _logger;
 
@@ -29,10 +28,9 @@ public class EucharisticYouthController : Controller
 
     #region Constructors
 
-    public EucharisticYouthController(IMediator mediator, IAuthorizationContext authContext, IFileStorage storage, ILogger<EucharisticYouthController> logger)
+    public EucharisticYouthController(IMediator mediator, IFileStorage storage, ILogger<EucharisticYouthController> logger)
     {
         _mediator = mediator;
-        _authContext = authContext;
         _storage = storage;
         _logger = logger;
     }
@@ -170,12 +168,23 @@ public class EucharisticYouthController : Controller
     }
 
     /// <summary>
+    /// Current profile photo file (204 when the youth has none)
+    /// </summary>
+    [HttpGet("profile-photo")]
+    public async Task<IActionResult> GetProfilePhoto([FromQuery] Guid youthId, CancellationToken cancellationToken)
+    {
+        ProfilePhotoFileDto? photo = await _mediator.Send(new GetEucharisticYouthProfilePhotoQuery(youthId), cancellationToken);
+        return this.ProfilePhotoResult(photo, _storage);
+    }
+
+    /// <summary>
     /// Get the current user's photo management permission
     /// </summary>
     [HttpGet("photos/permissions")]
     public async Task<IActionResult> GetPhotoPermissions([FromQuery] Guid youthId, CancellationToken cancellationToken)
     {
-        return Ok(new { canManage = await _authContext.CanManageYouthPhotosAsync(youthId, cancellationToken) });
+        bool canManage = await _mediator.Send(new GetEucharisticYouthPhotoPermissionsQuery(youthId), cancellationToken);
+        return Ok(new { canManage });
     }
 
     /// <summary>

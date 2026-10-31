@@ -13,12 +13,13 @@ import { ContactRelationType, UserRole } from '../../../shared/enums';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
+import { MemberAvatar } from '../../../shared/components/member-avatar/member-avatar';
 import { ContactService } from '../contact.service';
 
 @Component({
   selector: 'app-contact-detail',
   standalone: true,
-  imports: [RouterLink, MatCardModule, MatIconModule, MatButtonModule, MatListModule, TranslatePipe, FullNamePipe],
+  imports: [RouterLink, MatCardModule, MatIconModule, MatButtonModule, MatListModule, TranslatePipe, FullNamePipe, MemberAvatar],
   templateUrl: './contact-detail.html',
   styleUrl: './contact-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -7,5 +7,10 @@ public interface IFileStorage
 
     string GetFileUrl(string storageKey);
 
+    /// <summary>
+    /// Open a stored file for reading; null when it does not exist.
+    /// </summary>
+    Stream? OpenRead(string storageKey);
+
     Task DeleteAsync(string storageKey);
 }

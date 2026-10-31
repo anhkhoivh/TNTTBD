@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.Exams.Commands;
 using TNTTBD.Services.Application.Exams.DTOs;
@@ -15,22 +14,15 @@ namespace TNTTBD.Services.Api.Controllers;
 public class ExamController : Controller
 {
     private readonly IMediator _mediator;
-    private readonly IAuthorizationContext _authContext;
 
-    public ExamController(IMediator mediator, IAuthorizationContext authContext)
+    public ExamController(IMediator mediator)
     {
         _mediator = mediator;
-        _authContext = authContext;
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateExamCommand command, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanAccessClassAsync(command.CatechismClassId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         Guid id = await _mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id }, id);
     }
