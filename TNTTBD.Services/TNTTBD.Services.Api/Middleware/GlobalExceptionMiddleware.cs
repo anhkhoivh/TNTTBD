@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using TNTTBD.Services.Api.Common.Errors;
 using TNTTBD.Services.Api.Common.Localization;
+using TNTTBD.Services.Application.Common.Exceptions;
 using TNTTBD.Services.Domain.Common;
 
 namespace TNTTBD.Services.Api.Middleware;
@@ -25,6 +26,10 @@ public class GlobalExceptionMiddleware
         try
         {
             await _next(context);
+        }
+        catch (ForbiddenException)
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
         }
         catch (DomainException ex)
         {

@@ -79,11 +79,6 @@ public class CatechistController : Controller
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] GetCatechistsQuery query, CancellationToken cancellationToken)
     {
-        if (!await _authContext.IsAdminOrCatechistAsync(cancellationToken))
-        {
-            return Forbid();
-        }
-
         PaginatedResult<CatechistDto> result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
@@ -94,11 +89,6 @@ public class CatechistController : Controller
     [HttpGet("detail")]
     public async Task<IActionResult> GetById([FromQuery] GetCatechistByIdQuery query, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanViewCatechistAsync(query.Id, cancellationToken))
-        {
-            return Forbid();
-        }
-
         CatechistDto? result = await _mediator.Send(query, cancellationToken);
 
         if (result == null)
@@ -153,11 +143,6 @@ public class CatechistController : Controller
     [HttpGet("photos")]
     public async Task<IActionResult> GetPhotos(GetCatechistPhotosQuery query, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanViewCatechistAsync(query.CatechistId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         List<PhotoReferenceDto> result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
@@ -168,11 +153,6 @@ public class CatechistController : Controller
     [HttpGet("profile-photo")]
     public async Task<IActionResult> GetProfilePhoto([FromQuery] Guid catechistId, CancellationToken cancellationToken)
     {
-        if (!await _authContext.CanViewCatechistAsync(catechistId, cancellationToken))
-        {
-            return Forbid();
-        }
-
         ProfilePhotoFileDto? photo = await _mediator.Send(new GetCatechistProfilePhotoQuery(catechistId), cancellationToken);
         return this.ProfilePhotoResult(photo, _storage);
     }
