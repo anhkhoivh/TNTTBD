@@ -30,6 +30,13 @@
     <mat-card-title>{{ 'contact.linkedYouths' | t }}</mat-card-title>
   </mat-card-header>
   <mat-card-content>
+    @if (canLinkYouth()) {
+    <div class="actions mt-16">
+      <button mat-stroked-button type="button" (click)="addYouth(d)">
+        <mat-icon>add</mat-icon> {{ 'youth.add' | t }}
+      </button>
+    </div>
+    }
     <mat-list>
       @for (y of d.youths; track y.id) {
       <mat-list-item>
@@ -41,11 +48,19 @@
           </a>
         </span>
         <span matListItemLine>{{ relationKey(y.contactRelationType) | t }}</span>
-        <a mat-icon-button [routerLink]="['/app/youth/report']"
-          [queryParams]="{ youthId: y.eucharisticYouthId }"
-          [attr.aria-label]="'report.open' | t">
-          <mat-icon>assessment</mat-icon>
-        </a>
+        <span matListItemMeta class="row-actions">
+          <a mat-icon-button [routerLink]="['/app/youth/report']"
+            [queryParams]="{ youthId: y.eucharisticYouthId }"
+            [attr.aria-label]="'report.open' | t" [matTooltip]="'report.open' | t">
+            <mat-icon>assessment</mat-icon>
+          </a>
+          @if (canUnlinkYouth(d.id)) {
+          <button mat-icon-button type="button" (click)="unlinkYouth(y)"
+            [attr.aria-label]="'contact.unlinkYouth' | t" [matTooltip]="'contact.unlinkYouth' | t">
+            <mat-icon>link_off</mat-icon>
+          </button>
+          }
+        </span>
       </mat-list-item>
       } @empty {
       <p>{{ 'common.noData' | t }}</p>

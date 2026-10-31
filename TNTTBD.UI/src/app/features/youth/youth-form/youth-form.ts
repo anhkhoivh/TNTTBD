@@ -18,12 +18,20 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NotificationService } from '../../../core/services/notification.service';
+import { DialogService } from '../../../core/services/dialog.service';
+import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/auth/auth.service';
-import { EucharisticYouth, PatronSaint } from '../../../shared/models';
+import { Contact, EucharisticYouth, PatronSaint } from '../../../shared/models';
 import { ContactRelationType, MilestoneType, UserRole } from '../../../shared/enums';
 import { CONTACT_RELATION_TYPES } from '../../../shared/constants/contact-relation-types';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../../shared/components/patron-saint-input/patron-saint-input';
+import {
+  LinkContactDialog,
+  LinkContactData,
+  LinkContactResult,
+} from '../../../shared/components/link-contact-dialog/link-contact-dialog';
+import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { YouthService } from '../youth.service';
 
@@ -60,6 +68,9 @@ export class YouthForm {
   private notify = inject(NotificationService);
   private auth = inject(AuthService);
   private translate = inject(TranslationService);
+  private dialogs = inject(DialogService);
+  private api = inject(ApiService);
+  private fullNamePipe = new FullNamePipe();
 
   protected readonly UserRole = UserRole;
 
@@ -114,6 +125,12 @@ export class YouthForm {
     const classIdParam = this.route.snapshot.queryParamMap.get('classId');
     if (classIdParam) {
       this.enrollInClassId.set(classIdParam);
+    }
+
+    // Set when navigating from contact-detail "Add new youth" with ?contactId=
+    const contactIdParam = this.route.snapshot.queryParamMap.get('contactId');
+    if (contactIdParam && !this.route.snapshot.queryParamMap.get('id')) {
+      void this.prefillContact(contactIdParam);
     }
 
     // Resolve catechist's current class for "add to my class" checkbox
@@ -182,6 +199,34 @@ export class YouthForm {
     this.contacts.push(this.makeContact(ContactRelationType.Undefined));
   }
 
+  protected async linkExistingContact(): Promise<void> {
+    const existingContactIds = new Set<string>(
+      this.contacts.controls.map((c) => c.value.contactId).filter((id): id is string => !!id),
+    );
+    const result = await this.dialogs.open<LinkContactDialog, LinkContactData, LinkContactResult>(LinkContactDialog, {
+      data: { existingContactIds },
+      width: '480px',
+    });
+    if (!result) return;
+    this.contacts.push(this.makeExistingContact(result.relationType, result.contactId, result.contactName));
+  }
+
+  /** Replaces the blank Father/Mother defaults with the contact we came from. */
+  private async prefillContact(contactId: string): Promise<void> {
+    try {
+      const c = await this.api.getAsync<Contact>('/contacts/detail', { id: contactId });
+      if (!c) return;
+      const name = this.fullNamePipe.transform(c.fullName);
+      const extra = c.phoneNumber || c.email;
+      this.contacts.clear();
+      this.contacts.push(
+        this.makeExistingContact(ContactRelationType.Undefined, c.id, extra ? `${name} — ${extra}` : name),
+      );
+    } catch {
+      // error toast already shown by global http error handling
+    }
+  }
+
   protected removeContact(i: number): void {
     this.contacts.removeAt(i);
   }
@@ -211,15 +256,18 @@ export class YouthForm {
         note: m.note || null,
       })),
       ...(this.isEdit() ? {} : {
-        contacts: (v.contacts as Array<{ relationType: ContactRelationType; christName: string; familyName: string; middleName: string; givenName: string; phoneNumber: string; email: string }>).map((c) => ({
-          relationType: c.relationType,
-          givenName: c.givenName,
-          christName: c.christName || null,
-          familyName: c.familyName || null,
-          middleName: c.middleName || null,
-          phoneNumber: c.phoneNumber || null,
-          email: c.email || null,
-        })),
+        contacts: (v.contacts as Array<{ contactId: string | null; relationType: ContactRelationType; christName: string; familyName: string; middleName: string; givenName: string; phoneNumber: string; email: string }>).map((c) =>
+          c.contactId
+            ? { relationType: c.relationType, contactId: c.contactId }
+            : {
+                relationType: c.relationType,
+                givenName: c.givenName,
+                christName: c.christName || null,
+                familyName: c.familyName || null,
+                middleName: c.middleName || null,
+                phoneNumber: c.phoneNumber || null,
+                email: c.email || null,
+              }),
       }),
       catechismClassId: this.enrollInClassId() ?? (this.addToMyClass() && this.myCurrentClassId() ? this.myCurrentClassId() : null),
     };
@@ -252,6 +300,8 @@ export class YouthForm {
   ) {
     return this.fb.group({
       id: [crypto.randomUUID()],
+      contactId: [null as string | null],
+      contactName: [''],
       relationType: [relationType, Validators.required],
       christName: [christName],
       familyName: [familyName],
@@ -260,6 +310,15 @@ export class YouthForm {
       phoneNumber: [phoneNumber],
       email: [email],
     });
+  }
+
+  /** Entry for an already-existing contact: only the relation is editable. */
+  private makeExistingContact(relationType: ContactRelationType, contactId: string, contactName: string) {
+    const group = this.makeContact(relationType);
+    group.patchValue({ contactId, contactName });
+    group.controls.givenName.clearValidators();
+    group.controls.givenName.updateValueAndValidity();
+    return group;
   }
 
   private makeMilestone(

@@ -16,14 +16,17 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../pipes/full-name.pipe';
 
 export interface LinkContactData {
-  youthId: string;
+  /** Omitted when the youth does not exist yet (youth create form). */
+  youthId?: string | null;
   existingContactIds: Set<string>;
 }
 
 export interface LinkContactResult {
-  eucharisticYouthId: string;
+  eucharisticYouthId: string | null;
   contactId: string;
   relationType: ContactRelationType;
+  /** Display label of the picked contact. */
+  contactName: string;
 }
 
 interface ContactOption {
@@ -93,9 +96,10 @@ export class LinkContactDialog {
     if (!contact || this.form.invalid) return;
 
     this.ref.close({
-      eucharisticYouthId: this.data.youthId,
+      eucharisticYouthId: this.data.youthId ?? null,
       contactId: contact.id,
       relationType: this.form.getRawValue().relationType,
+      contactName: contact.label,
     });
   }
 

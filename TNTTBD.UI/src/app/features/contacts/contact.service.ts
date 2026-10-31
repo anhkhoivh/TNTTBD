@@ -51,4 +51,15 @@ export class ContactService {
     await this.api.deleteAsync('/contacts', { id });
     this.listRes.reload();
   }
+
+  async linkYouth(payload: { eucharisticYouthId: string; contactId: string; relationType: string }): Promise<void> {
+    await this.api.postAsync('/youths/contacts', payload);
+    this.detailRes.reload();
+  }
+
+  /** @param linkId EucharisticYouthContact id */
+  async unlinkYouth(linkId: string): Promise<void> {
+    await this.api.deleteAsync('/youths/contacts', { id: linkId });
+    this.detailRes.reload();
+  }
 }
