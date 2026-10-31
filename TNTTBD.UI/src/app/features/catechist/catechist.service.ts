@@ -17,15 +17,31 @@ export interface CatechistPayload {
   dateOfBirth: string | null;
   isMale: boolean | null;
   address: string | null;
+  phoneNumber: string | null;
   patronSaints: unknown[] | null;
+}
+
+export interface CatechistListParams {
+  search: string;
+  page: number;
+  pageSize: number;
 }
 
 @Injectable()
 export class CatechistService {
   private api = inject(ApiService);
 
-  readonly listRes = rxResource<PaginatedResult<Catechist>, void>({
-    stream: () => this.api.list<Catechist>('/catechists'),
+  readonly listParams = signal<CatechistListParams>({ search: '', page: 1, pageSize: 25 });
+  readonly listRes = rxResource<PaginatedResult<Catechist>, CatechistListParams>({
+    params: () => this.listParams(),
+    stream: ({ params }) =>
+      this.api
+        .list<Catechist>('/catechists', {
+          page: params.page,
+          pageSize: params.pageSize,
+          search: params.search.trim() || undefined,
+        })
+        .pipe(catchError(() => of(emptyPage<Catechist>()))),
   });
   readonly catechists = computed(() => this.listRes.value() ?? emptyPage<Catechist>());
   readonly isListLoading = computed(() => this.listRes.isLoading());

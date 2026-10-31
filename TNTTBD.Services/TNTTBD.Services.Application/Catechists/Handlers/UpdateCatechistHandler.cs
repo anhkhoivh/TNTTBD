@@ -39,7 +39,7 @@ public class UpdateCatechistHandler : IRequestHandler<UpdateCatechistCommand, bo
 
         FullName fullName = new FullName(command.GivenName, command.ChristName, command.FamilyName, command.MiddleName);
         List<PatronSaint>? patronSaints = command.PatronSaints != null ? command.PatronSaints.Select(p => p.ToDomain()).ToList() : null;
-        await _repository.Update(command.CatechistId, fullName, command.DateOfBirth, command.Address, command.IsMale, patronSaints, cancellationToken);
+        await _repository.Update(command.CatechistId, fullName, command.DateOfBirth, command.Address, command.IsMale, command.PhoneNumber, patronSaints, cancellationToken);
         return true;
     }
 

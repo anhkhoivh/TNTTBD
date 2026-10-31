@@ -42,7 +42,12 @@
           </mat-radio-group>
         </div>
 
-        <mat-form-field appearance="outline" class="span-2">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'contact.phone' | t }}</mat-label>
+          <input matInput formControlName="phoneNumber" type="tel" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
           <mat-label>{{ 'youth.address' | t }}</mat-label>
           <input matInput formControlName="address" />
         </mat-form-field>

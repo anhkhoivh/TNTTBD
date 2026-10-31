@@ -1,20 +1,45 @@
-import { Injectable, computed, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { catchError, of } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { PaginatedResult, User } from '../../shared/models';
+import { UserRole } from '../../shared/enums';
 
 function emptyPage(): PaginatedResult<User> {
-  return { items: [], total: 0, page: 1, pageSize: 100 };
+  return { items: [], total: 0, page: 1, pageSize: 25 };
+}
+
+export interface UserListParams {
+  search: string;
+  role: UserRole;
+  page: number;
+  pageSize: number;
 }
 
 @Injectable()
 export class AdminService {
   private api = inject(ApiService);
 
-  readonly usersRes = rxResource<PaginatedResult<User>, void>({
-    stream: () => this.api.list<User>('/users', { page: 1, pageSize: 100 }),
+  readonly listParams = signal<UserListParams>({
+    search: '',
+    role: UserRole.Admin,
+    page: 1,
+    pageSize: 25,
+  });
+  readonly usersRes = rxResource<PaginatedResult<User>, UserListParams>({
+    params: () => this.listParams(),
+    stream: ({ params }) =>
+      this.api
+        .list<User>('/users', {
+          page: params.page,
+          pageSize: params.pageSize,
+          search: params.search.trim() || undefined,
+          role: params.role,
+        })
+        .pipe(catchError(() => of(emptyPage()))),
   });
   readonly users = computed(() => this.usersRes.value() ?? emptyPage());
+  readonly isLoading = computed(() => this.usersRes.isLoading());
 
   async createUser(payload: unknown): Promise<void> {
     await this.api.postAsync('/users', payload);

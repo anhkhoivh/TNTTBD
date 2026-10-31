@@ -19,7 +19,6 @@ import localeEn from '@angular/common/locales/en';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
-import { mockApiInterceptor } from './core/mocks/mock-api.interceptor';
 import { errorLoadingInterceptor } from './core/error-loading.interceptor';
 import { TranslationService } from './core/i18n/translation.service';
 
@@ -32,7 +31,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
       withFetch(),
-      withInterceptors([errorLoadingInterceptor, mockApiInterceptor, authInterceptor]),
+      withInterceptors([errorLoadingInterceptor, authInterceptor]),
     ),
     provideAnimationsAsync(),
     provideNativeDateAdapter(),

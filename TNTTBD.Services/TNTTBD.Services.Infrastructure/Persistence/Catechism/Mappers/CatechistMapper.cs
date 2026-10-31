@@ -20,7 +20,7 @@ public static class CatechistMapper
     public static Catechist ToDomain(this CatechistEntity entity)
     {
         IEnumerable<PhotoReference> photos = entity.Photos.Select(m => m.ToDomain());
-        Catechist domain = new Catechist(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, photos, entity.PatronSaints);
+        Catechist domain = new Catechist(entity.Id, entity.FullName, entity.DateOfBirth, entity.Address, entity.IsMale, photos, entity.PatronSaints, entity.PhoneNumber);
         return domain;
     }
 

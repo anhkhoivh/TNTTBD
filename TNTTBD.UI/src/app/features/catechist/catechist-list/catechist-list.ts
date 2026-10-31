@@ -1,10 +1,14 @@
 import { Component, inject , ChangeDetectionStrategy, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
 import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
@@ -25,10 +29,14 @@ import { TranslationService } from '../../../core/i18n/translation.service';
   imports: [
     CommonModule,
     RouterLink,
+    FormsModule,
     MatTableModule,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatPaginatorModule,
     TranslatePipe,
     FullNamePipe,
     DateLocalePipe,
@@ -50,10 +58,29 @@ export class CatechistList {
   private notify = inject(NotificationService);
   protected data = this.catechistService.catechists;
   protected cols = ['index', 'name', 'dob', 'gender', 'actions'];
-  private user = signal(this.auth.currentUser());
-  protected myCatechistId = signal<string | null>(null);
+  protected searchQuery = signal('');
+
   protected isMe(id: string): boolean {
-    return this.user()?.catechistId != null && this.user()?.catechistId === id;
+    const catechistId = this.auth.currentUser()?.catechistId;
+    return catechistId != null && catechistId === id;
+  }
+
+  protected rowNumber(i: number): number {
+    const d = this.data();
+    return (d.page - 1) * d.pageSize + i + 1;
+  }
+
+  protected onSearch(query: string): void {
+    this.searchQuery.set(query);
+    this.catechistService.listParams.update((p) => ({ ...p, search: query, page: 1 }));
+  }
+
+  protected onPageChange(event: PageEvent): void {
+    this.catechistService.listParams.update((p) => ({
+      ...p,
+      page: event.pageIndex + 1,
+      pageSize: event.pageSize,
+    }));
   }
 
   private canEdit(row: Catechist): boolean {
