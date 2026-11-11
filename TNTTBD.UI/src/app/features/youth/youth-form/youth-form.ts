@@ -17,12 +17,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DialogService } from '../../../core/services/dialog.service';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/auth/auth.service';
-import { Contact, EucharisticYouth, PatronSaint } from '../../../shared/models';
-import { ContactRelationType, MilestoneType, UserRole } from '../../../shared/enums';
+import { Contact, EucharisticYouth, MilestoneSponsor, PatronSaint } from '../../../shared/models';
+import { ContactRelationType, MilestoneType, UserRole, milestoneSupportsSponsor } from '../../../shared/enums';
 import { CONTACT_RELATION_TYPES } from '../../../shared/constants/contact-relation-types';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { PatronSaintInput } from '../../../shared/components/patron-saint-input/patron-saint-input';
@@ -31,6 +32,10 @@ import {
   LinkContactData,
   LinkContactResult,
 } from '../../../shared/components/link-contact-dialog/link-contact-dialog';
+import {
+  GodparentPickerData,
+  GodparentPickerDialog,
+} from '../../../shared/components/godparent-picker-dialog/godparent-picker-dialog';
 import { FullNamePipe } from '../../../shared/pipes/full-name.pipe';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { YouthService } from '../youth.service';
@@ -51,8 +56,10 @@ import { YouthService } from '../youth.service';
     MatDividerModule,
     MatRadioModule,
     MatCheckboxModule,
+    MatTooltipModule,
     TranslatePipe,
     PatronSaintInput,
+    FullNamePipe,
   ],
   templateUrl: './youth-form.html',
   styleUrl: './youth-form.scss',
@@ -180,6 +187,11 @@ export class YouthForm {
           m.place ?? '',
           m.documentCode ?? '',
           m.note ?? '',
+          m.sponsorContactId && m.sponsorFullName
+            ? { contactId: m.sponsorContactId, fullName: m.sponsorFullName, phoneNumber: m.sponsorPhoneNumber }
+            : null,
+          m.celebrant ?? '',
+          m.milestoneEventName ?? null,
         ),
       );
     }
@@ -189,6 +201,23 @@ export class YouthForm {
 
   protected addMilestone(): void {
     this.milestones.push(this.makeMilestone(MilestoneType.Baptism, null, '', '', ''));
+  }
+
+  protected async pickSponsor(i: number): Promise<void> {
+    const control = this.milestones.at(i).get('sponsor');
+    const sponsor = await this.dialogs.open<GodparentPickerDialog, GodparentPickerData, MilestoneSponsor>(
+      GodparentPickerDialog,
+      { data: { current: control?.value ?? null } },
+    );
+    if (!sponsor) return;
+    control?.setValue(sponsor);
+    control?.markAsDirty();
+  }
+
+  protected clearSponsor(i: number): void {
+    const control = this.milestones.at(i).get('sponsor');
+    control?.setValue(null);
+    control?.markAsDirty();
   }
 
   protected removeMilestone(i: number): void {
@@ -248,12 +277,14 @@ export class YouthForm {
       isMale: v.isMale,
       address: v.address || null,
       patronSaints: v.patronSaints,
-      milestones: (v.milestones as Array<{ type: MilestoneType; date: Date | null; place: string; documentCode: string; note: string }>).map((m) => ({
+      milestones: (v.milestones as Array<{ type: MilestoneType; date: Date | null; place: string; documentCode: string; note: string; sponsor: MilestoneSponsor | null; celebrant: string }>).map((m) => ({
         type: m.type,
         date: this.toIsoDate(m.date),
         place: m.place || null,
         documentCode: m.documentCode || null,
         note: m.note || null,
+        sponsorContactId: milestoneSupportsSponsor(m.type) ? (m.sponsor?.contactId ?? null) : null,
+        celebrant: m.celebrant?.trim() || null,
       })),
       ...(this.isEdit() ? {} : {
         contacts: (v.contacts as Array<{ contactId: string | null; relationType: ContactRelationType; christName: string; familyName: string; middleName: string; givenName: string; phoneNumber: string; email: string }>).map((c) =>
@@ -327,14 +358,25 @@ export class YouthForm {
     place: string,
     documentCode: string,
     note: string,
+    sponsor: MilestoneSponsor | null = null,
+    celebrant = '',
+    milestoneEventName: string | null = null,
   ) {
     return this.fb.group({
-      type: [type, Validators.required],
+      // The type of an event-linked milestone is fixed by the event
+      type: [{ value: type, disabled: !!milestoneEventName }, Validators.required],
       date: [date],
       place: [place],
       documentCode: [documentCode],
       note: [note],
+      sponsor: [sponsor],
+      celebrant: [celebrant, Validators.maxLength(200)],
+      milestoneEventName: [milestoneEventName],
     });
+  }
+
+  protected supportsSponsor(i: number): boolean {
+    return milestoneSupportsSponsor(this.milestones.at(i).get('type')?.value);
   }
 
   private toIsoDate(d: Date | null): string | null {

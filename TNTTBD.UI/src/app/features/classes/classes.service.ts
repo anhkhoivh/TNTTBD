@@ -35,6 +35,16 @@ export class ClassesService {
     this.yearsRes.reload();
   }
 
+  async updateYear(payload: {
+    catechismYearId: string;
+    startDate: string;
+    endDate: string;
+    theme: string | null;
+  }): Promise<void> {
+    await this.api.patchAsync('/catechism-years', payload);
+    this.yearsRes.reload();
+  }
+
   async createClass(payload: unknown): Promise<void> {
     await this.api.postAsync('/classes', payload);
     this.classesRes.reload();

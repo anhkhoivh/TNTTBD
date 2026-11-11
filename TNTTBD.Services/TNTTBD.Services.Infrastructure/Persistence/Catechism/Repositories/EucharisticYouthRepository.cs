@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Catechism.Repositories;
 using TNTTBD.Services.Domain.Common;
@@ -45,7 +45,9 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         {
             domain.UpdateMilestoneList(milestones);
         }
+        HashSet<Guid> loadedMilestoneIds = youthEntity.SpiritualMilestones.Select(m => m.Id).ToHashSet();
         domain.UpdateEntity(youthEntity);
+        MarkNewMilestonesAdded(youthEntity, loadedMilestoneIds);
     }
 
     /// <inheritdoc />
@@ -72,11 +74,13 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
         }
         EucharisticYouth domain = youthEntity.ToDomain();
         domain.AddMilestone(milestone);
+        HashSet<Guid> loadedMilestoneIds = youthEntity.SpiritualMilestones.Select(m => m.Id).ToHashSet();
         domain.UpdateEntity(youthEntity);
+        MarkNewMilestonesAdded(youthEntity, loadedMilestoneIds);
     }
 
     /// <inheritdoc />
-    public async Task UpdateMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken)
+    public async Task<MilestoneType> UpdateMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken)
     {
         EucharisticYouthEntity? youthEntity = await _context.EucharisticYouths
             .Include(y => y.SpiritualMilestones)
@@ -92,9 +96,22 @@ public class EucharisticYouthRepository : IEucharisticYouthRepository
             throw new DomainException(DomainErrors.ValidationNotFound);
         }
         EucharisticYouth domain = youthEntity.ToDomain();
-        domain.UpdateMilestone(milestone.Id, milestone.Date, milestone.DocumentCode, milestone.Place, milestone.Note);
+        domain.UpdateMilestone(milestone.Id, milestone.Date, milestone.DocumentCode, milestone.Place, milestone.Note, milestone.SponsorContactId, milestone.Celebrant);
         domain.UpdateEntity(youthEntity);
+        return milestoneEntity.Type;
     }  
+
+    // New children with client-generated keys would otherwise be tracked as Modified.
+    private void MarkNewMilestonesAdded(EucharisticYouthEntity youthEntity, HashSet<Guid> loadedMilestoneIds)
+    {
+        foreach (SpiritualMilestoneEntity milestone in youthEntity.SpiritualMilestones)
+        {
+            if (!loadedMilestoneIds.Contains(milestone.Id))
+            {
+                _context.Entry(milestone).State = EntityState.Added;
+            }
+        }
+    }
 
     /// <inheritdoc />
     public async Task RemoveMilestone(Guid id, Guid milestoneId, CancellationToken cancellationToken)

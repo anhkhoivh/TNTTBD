@@ -9,5 +9,7 @@ public record AddEucharisticYouthMilestoneCommand(
     DateOnly Date,
     string? DocumentCode,
     string? Place,
-    string? Note
+    string? Note,
+    Guid? SponsorContactId = null,
+    string? Celebrant = null
 ) : IRequest<bool>;

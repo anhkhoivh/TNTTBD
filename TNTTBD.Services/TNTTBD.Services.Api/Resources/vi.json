@@ -11,5 +11,13 @@
   "user.email_already_exists": "Email này đã được sử dụng.",
   "class_catechist.main_already_active": "Lớp này đã có giáo lý viên chính đang hoạt động.",
   "exam.score_out_of_range": "Điểm phải nằm trong khoảng từ 0 đến 10.",
-  "exam.remark_too_long": "Nhận xét tối đa 500 ký tự."
+  "exam.remark_too_long": "Nhận xét tối đa 500 ký tự.",
+  "milestone.not_baptised": "Phải có Bí tích Rửa Tội trước khi thêm các mốc khác.",
+  "milestone.linked_to_event": "Mốc này đang thuộc một sự kiện lãnh bí tích. Hãy gỡ khỏi sự kiện trước.",
+  "milestone_event.not_empty": "Sự kiện vẫn còn người tham dự. Hãy gỡ hết trước khi xoá.",
+  "milestone_event.type_locked": "Không thể đổi loại bí tích khi sự kiện đã có người tham dự.",
+  "milestone_event.conflict": "Mốc của một em đã thuộc một sự kiện khác.",
+  "milestone_event.invalid_template": "Mẫu mã số không hợp lệ. Dùng chữ kèm {yyyy}, {yy}, {MM}, {dd}, {index} hoặc {index:000}.",
+  "milestone_event.duplicate_youth": "Một em xuất hiện nhiều lần trong danh sách.",
+  "milestone_event.unlinked_existing": "Em này đã có mốc này. Hãy chọn liên kết mốc hiện có."
 }

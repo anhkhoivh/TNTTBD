@@ -8,6 +8,11 @@
       }
     </mat-select>
   </mat-form-field>
+  @if (canManage() && selectedYear()) {
+    <button mat-icon-button type="button" (click)="editYear()" [attr.aria-label]="'common.edit' | t">
+      <mat-icon>edit</mat-icon>
+    </button>
+  }
   
   <mat-form-field appearance="outline">
     <mat-icon matPrefix>search</mat-icon>
@@ -25,6 +30,18 @@
     </button>
   }
 </div>
+
+@if (selectedYear(); as y) {
+<div class="year-info">
+  <span class="year-dates">
+    <mat-icon inline>date_range</mat-icon>
+    {{ y.startDate | dateLocale }} – {{ y.endDate | dateLocale }}
+  </span>
+  @if (y.theme) {
+  <span class="year-theme"><span class="label">{{ 'class.theme' | t }}:</span> {{ y.theme }}</span>
+  }
+</div>
+}
 
 <mat-card>
   <mat-card-content class="p-0">

@@ -13,7 +13,7 @@ import { DialogService } from '../../../core/services/dialog.service';
 import { CatechismClass, CatechismYear } from '../../../shared/models';
 import { UserRole } from '../../../shared/enums';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import { YearFormDialog } from '../../../shared/components/year-form-dialog';
+import { YearFormDialog, YearFormData, YearFormResult } from '../../../shared/components/year-form-dialog';
 import { ClassFormDialog } from '../../../shared/components/class-form-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { EmptyState } from '../../../shared/components/empty-state';
@@ -24,6 +24,7 @@ import { ClassesService } from '../classes.service';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RowActionsBottomSheet, RowActionsData, RowAction } from '../../../shared/components/row-actions-bottom-sheet/row-actions-bottom-sheet';
 import { TranslationService } from '../../../core/i18n/translation.service';
+import { DateLocalePipe } from '../../../shared/pipes/date-locale.pipe';
 
 @Component({
   selector: 'app-class-list',
@@ -43,7 +44,8 @@ import { TranslationService } from '../../../core/i18n/translation.service';
     TranslatePipe,
     EmptyState,
     MatListModule,
-    MatProgressSpinner
+    MatProgressSpinner,
+    DateLocalePipe
   ],
   templateUrl: './class-list.html',
   styleUrl: './class-list.scss',
@@ -63,11 +65,14 @@ export class ClassList {
 
   protected years = this.classesService.years;
   protected isLoading = this.classesService.isListLoading;
-  // Defaults to the latest year once loaded, but stays writable for manual selection
-  protected selectedYear = linkedSignal<CatechismYear | null>(() => {
-    const years = this.classesService.years();
-    if (years.length === 0) return null;
-    return [...years].sort((a, b) => b.startDate.localeCompare(a.startDate))[0];
+  // Defaults to the latest year once loaded; keeps the user's choice (matched by id) when the list reloads
+  protected selectedYear = linkedSignal<CatechismYear[], CatechismYear | null>({
+    source: () => this.classesService.years(),
+    computation: (years, previous) => {
+      if (years.length === 0) return null;
+      const kept = previous?.value ? years.find((y) => y.id === previous.value!.id) : undefined;
+      return kept ?? [...years].sort((a, b) => b.startDate.localeCompare(a.startDate))[0];
+    },
   });
   protected searchQuery = signal<string>('');
 
@@ -132,6 +137,22 @@ export class ClassList {
     const v = await this.dialogs.open(YearFormDialog, { data: {} });
     if (!v) return;
     await this.classesService.createYear(v);
+    this.notify.success('Saved');
+  }
+
+  protected async editYear(): Promise<void> {
+    const year = this.selectedYear();
+    if (!year || !this.canManage()) return;
+    const v = await this.dialogs.open<YearFormDialog, YearFormData, YearFormResult>(YearFormDialog, {
+      data: { year },
+    });
+    if (!v?.startDate || !v.endDate) return;
+    await this.classesService.updateYear({
+      catechismYearId: year.id,
+      startDate: v.startDate,
+      endDate: v.endDate,
+      theme: v.theme,
+    });
     this.notify.success('Saved');
   }
 

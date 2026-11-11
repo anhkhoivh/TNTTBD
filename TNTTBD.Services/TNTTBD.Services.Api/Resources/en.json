@@ -11,5 +11,13 @@
   "user.email_already_exists": "This email is already in use by another user.",
   "class_catechist.main_already_active": "This class already has an active main catechist.",
   "exam.score_out_of_range": "Score must be between 0 and 10.",
-  "exam.remark_too_long": "Remark must be at most 500 characters."
+  "exam.remark_too_long": "Remark must be at most 500 characters.",
+  "milestone.not_baptised": "Baptism must be recorded before other milestones.",
+  "milestone.linked_to_event": "This milestone is linked to a milestone event. Remove it from the event first.",
+  "milestone_event.not_empty": "The event still has participants. Remove them before deleting the event.",
+  "milestone_event.type_locked": "The milestone type cannot be changed while the event has participants.",
+  "milestone_event.conflict": "A youth's milestone is already linked to another event.",
+  "milestone_event.invalid_template": "The code template is invalid. Use text with {yyyy}, {yy}, {MM}, {dd}, {index} or {index:000}.",
+  "milestone_event.duplicate_youth": "A youth appears more than once in the list.",
+  "milestone_event.unlinked_existing": "A youth already has this milestone recorded. Choose to link the existing milestone."
 }

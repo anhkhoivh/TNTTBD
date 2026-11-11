@@ -20,6 +20,7 @@ using TNTTBD.Services.Application.Contacts.Interfaces;
 using TNTTBD.Services.Application.Dashboard.Interfaces;
 using TNTTBD.Services.Application.EucharisticYouths.Interfaces;
 using TNTTBD.Services.Application.Exams.Interfaces;
+using TNTTBD.Services.Application.MilestoneEvents.Interfaces;
 using TNTTBD.Services.Application.Reports.Interfaces;
 using TNTTBD.Services.Domain.Catechism.Repositories;
 using TNTTBD.Services.Infrastructure.Auth;
@@ -80,6 +81,7 @@ builder.Services.AddScoped<IEucharisticYouthRunningNumberRepository, Eucharistic
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IEucharisticYouthContactRepository, EucharisticYouthContactRepository>();
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
+builder.Services.AddScoped<IMilestoneEventRepository, MilestoneEventRepository>();
 
 // File Storage
 var fileStorageBasePath = builder.Configuration["FileStorage:BasePath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads");
@@ -127,6 +129,8 @@ builder.Services.AddScoped<IExamQueryService, ExamQueryService>();
 builder.Services.AddScoped<IContactQueryService, ContactQueryService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.AddScoped<IClassReportExcelGenerator, ClassReportExcelGenerator>();
+builder.Services.AddScoped<IMilestoneEventQueryService, MilestoneEventQueryService>();
+builder.Services.AddScoped<IMilestoneEventExcelGenerator, MilestoneEventExcelGenerator>();
 builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>

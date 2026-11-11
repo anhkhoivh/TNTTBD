@@ -45,6 +45,12 @@ export class ApiService {
     return firstValueFrom(this.postBlob(path, body));
   }
 
+  getBlobAsync(path: string, params?: Record<string, string | number | undefined>): Promise<Blob> {
+    return firstValueFrom(
+      this.http.get(`${this.base}${path}`, { params: this.toParams(params), responseType: 'blob' }),
+    );
+  }
+
   patchAsync<T>(path: string, body: unknown): Promise<T> {
     return firstValueFrom(this.patch<T>(path, body));
   }

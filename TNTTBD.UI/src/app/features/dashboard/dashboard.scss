@@ -20,3 +20,9 @@
 .metric.small {
   font: var(--mat-sys-headline-small);
 }
+
+.year-theme {
+  font: var(--mat-sys-body-medium);
+  font-style: italic;
+  color: var(--mat-sys-on-surface-variant);
+}

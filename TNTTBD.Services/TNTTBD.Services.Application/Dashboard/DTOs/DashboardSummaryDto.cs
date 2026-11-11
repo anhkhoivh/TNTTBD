@@ -3,6 +3,7 @@ namespace TNTTBD.Services.Application.Dashboard.DTOs;
 public class DashboardSummaryDto
 {
     public string CurrentYearTitle { get; set; } = "—";
+    public string? CurrentYearTheme { get; set; }
     public List<DashboardClassDto> MyClasses { get; set; } = [];
     public List<DashboardSessionDto> UpcomingSessions { get; set; } = [];
     public DashboardTotalsDto? Totals { get; set; }

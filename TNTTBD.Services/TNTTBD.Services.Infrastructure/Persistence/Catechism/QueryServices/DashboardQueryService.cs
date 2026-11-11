@@ -34,6 +34,7 @@ public class DashboardQueryService : IDashboardQueryService
         if (latestYear == null) return result;
 
         result.CurrentYearTitle = $"{latestYear.StartDate.Year} - {latestYear.EndDate.Year}";
+        result.CurrentYearTheme = string.IsNullOrWhiteSpace(latestYear.Theme) ? null : latestYear.Theme.Trim();
 
         // Classes relevant to the caller, resolved by role
         var myClassIds = new List<Guid>();

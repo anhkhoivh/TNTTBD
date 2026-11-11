@@ -1,0 +1,25 @@
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  mat-form-field {
+    min-width: 220px;
+  }
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+table.full-width {
+  width: 100%;
+}
+
+.item-link {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}

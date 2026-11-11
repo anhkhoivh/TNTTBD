@@ -3,6 +3,7 @@ using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.EucharisticYouths.DTOs;
 using TNTTBD.Services.Application.EucharisticYouths.Interfaces;
 using TNTTBD.Services.Application.EucharisticYouths.Queries;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Handlers;
 
@@ -24,6 +25,18 @@ public class GetEucharisticYouthContactsHandler : IRequestHandler<GetEucharistic
             return new List<EucharisticYouthContactDto>();
         }
 
-        return await _queryService.GetByYouthIdAsync(query.EucharisticYouthId, cancellationToken);
+        List<EucharisticYouthContactDto> contacts = await _queryService.GetByYouthIdAsync(query.EucharisticYouthId, cancellationToken);
+
+        // Parents / youths get a limited view: no godparent phone number or email
+        if (!await _authContext.IsAdminOrCatechistAsync(cancellationToken))
+        {
+            foreach (EucharisticYouthContactDto c in contacts.Where(c => c.ContactRelationType == ContactRelationType.Godparent))
+            {
+                c.Contact.PhoneNumber = null;
+                c.Contact.Email = null;
+            }
+        }
+
+        return contacts;
     }
 }

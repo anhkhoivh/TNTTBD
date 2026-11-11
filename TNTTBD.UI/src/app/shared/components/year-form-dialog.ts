@@ -1,6 +1,6 @@
 import { Component, inject , ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,6 +11,19 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 export interface YearFormData {
   year?: CatechismYear;
+}
+
+export interface YearFormResult {
+  id?: string;
+  startDate: string | null;
+  endDate: string | null;
+  theme: string | null;
+}
+
+function endAfterStart(group: AbstractControl): ValidationErrors | null {
+  const start = group.get('startDate')?.value as Date | null;
+  const end = group.get('endDate')?.value as Date | null;
+  return start && end && end < start ? { endBeforeStart: true } : null;
 }
 
 @Component({
@@ -27,7 +40,9 @@ export interface YearFormData {
     TranslatePipe,
   ],
   template: `
-    <h2 mat-dialog-title>{{ 'class.year' | t }}</h2>
+    <h2 mat-dialog-title>
+      @if (data.year) { {{ 'common.edit' | t }}: {{ data.year.title }} } @else { {{ 'class.year' | t }} }
+    </h2>
     <form [formGroup]="form" (ngSubmit)="save()">
       <mat-dialog-content class="form-grid">
         <mat-form-field appearance="outline">
@@ -42,6 +57,9 @@ export interface YearFormData {
           <mat-datepicker-toggle matIconSuffix [for]="ep"></mat-datepicker-toggle>
           <mat-datepicker #ep></mat-datepicker>
         </mat-form-field>
+        @if (form.hasError('endBeforeStart')) {
+          <p class="full error">{{ 'class.endBeforeStart' | t }}</p>
+        }
         <mat-form-field appearance="outline" class="full">
           <mat-label>{{ 'class.theme' | t }}</mat-label>
           <input matInput formControlName="theme" />
@@ -68,6 +86,11 @@ export interface YearFormData {
       .full {
         grid-column: 1 / -1;
       }
+      .error {
+        margin: -0.5rem 0 0;
+        color: var(--mat-sys-error);
+        font: var(--mat-sys-body-small);
+      }
     `,
   ],
 
@@ -83,10 +106,12 @@ export class YearFormDialog {
     startDate: [this.toDate(this.data.year?.startDate), Validators.required],
     endDate: [this.toDate(this.data.year?.endDate), Validators.required],
     theme: [this.data.year?.theme ?? ''],
-  });
+  }, { validators: endAfterStart });
 
   private toDate(s: string | undefined): Date | null {
-    return s ? new Date(s) : null;
+    if (!s) return null;
+    const [y, m, d] = s.split('-').map(Number);
+    return new Date(y, m - 1, d);
   }
 
   private toIsoDate(d: Date | null): string | null {
@@ -99,7 +124,7 @@ export class YearFormDialog {
 
   protected save(): void {
     const v = this.form.getRawValue();
-    this.ref.close({
+    this.ref.close(<YearFormResult>{
       id: v.id || undefined,
       startDate: this.toIsoDate(v.startDate),
       endDate: this.toIsoDate(v.endDate),

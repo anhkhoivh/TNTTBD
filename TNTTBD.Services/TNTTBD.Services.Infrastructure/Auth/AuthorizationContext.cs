@@ -166,11 +166,12 @@ public class AuthorizationContext : IAuthorizationContext
             return true;
         }
 
-        // Youth can access their own contacts
+        // Youth can access their own contacts (godparent details are staff-only)
         if (user.Role == UserRole.EucharisticYouth && user.EucharisticYouthId.HasValue)
         {
             return await _dbContext.EucharisticYouthContacts
                 .AnyAsync(yc => yc.ContactId == contactId
+                    && yc.ContactRelationType != ContactRelationType.Godparent
                     && yc.EucharisticYouthId == user.EucharisticYouthId.Value,
                     cancellationToken);
         }
@@ -185,12 +186,13 @@ public class AuthorizationContext : IAuthorizationContext
             return true;
         }
 
-        // Contact linked to the youth
+        // Contact linked to the youth (a godparent link grants no access)
         var contactId = await GetCurrentContactIdAsync(cancellationToken);
         if (contactId.HasValue)
         {
             return await _dbContext.EucharisticYouthContacts
                 .AnyAsync(yc => yc.ContactId == contactId.Value
+                    && yc.ContactRelationType != ContactRelationType.Godparent
                     && yc.EucharisticYouthId == youthId,
                     cancellationToken);
         }
@@ -234,10 +236,12 @@ public class AuthorizationContext : IAuthorizationContext
             return user.EucharisticYouthId == youthId;
         }
 
+        // A godparent link grants no access to the youth
         if (user.Role == UserRole.EucharisticYouthContact && user.ContactId.HasValue)
         {
             return await _dbContext.EucharisticYouthContacts
                 .AnyAsync(yc => yc.ContactId == user.ContactId.Value
+                    && yc.ContactRelationType != ContactRelationType.Godparent
                     && yc.EucharisticYouthId == youthId,
                     cancellationToken);
         }

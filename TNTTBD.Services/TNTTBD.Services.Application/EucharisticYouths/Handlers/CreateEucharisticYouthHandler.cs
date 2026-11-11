@@ -1,5 +1,6 @@
 using MediatR;
 using TNTTBD.Services.Application.Auth.Interfaces;
+using TNTTBD.Services.Application.Common;
 using TNTTBD.Services.Application.Common.Exceptions;
 using TNTTBD.Services.Domain.Common;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
@@ -70,6 +71,7 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
                 ?? throw new DomainException(DomainErrors.ValidationNotFound);
             existingContacts[contactId] = existing;
         }
+        await _contactRepository.EnsureSponsorsExistAsync((command.Milestones ?? []).Select(m => m.SponsorContactId), cancellationToken);
 
         FullName fullName = new FullName(command.GivenName, command.ChristName, command.FamilyName, command.MiddleName);
         int year = DateTimeOffset.Now.Year;
@@ -107,16 +109,18 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
                     m.Date.Value,
                     m.DocumentCode,
                     m.Place,
-                    m.Note));
+                    m.Note,
+                    m.SponsorContactId,
+                    m.Celebrant));
             }
         }
 
         await _repository.AddAsync(youth, cancellationToken);
 
         // Link existing contacts or create new ones, then link to youth
+        HashSet<Guid> linkedContactIds = new();
         if (command.Contacts != null)
         {
-            HashSet<Guid> linkedContactIds = new();
             foreach (var c in command.Contacts)
             {
                 Guid contactId;
@@ -140,6 +144,11 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
                     c.RelationType);
                 await _youthContactRepository.AddAsync(link, cancellationToken);
             }
+        }
+
+        foreach (SpiritualMilestone m in youth.Milestones)
+        {
+            await _youthContactRepository.LinkGodparentAsync(youth.Id, m.Type, m.SponsorContactId, linkedContactIds, cancellationToken);
         }
 
         if (command.CatechismClassId != null)

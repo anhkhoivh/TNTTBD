@@ -11,7 +11,10 @@ export const errorLoadingInterceptor: HttpInterceptorFn = (req, next) => {
   const t = inject(TranslationService);
 
   const isAsset = req.url.includes('/assets/');
-  if (!isAsset) loading.begin();
+  if (!isAsset) {
+    loading.begin();
+    req = req.clone({ setHeaders: { 'Accept-Language': t.currentLang() } });
+  }
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
@@ -23,7 +26,9 @@ export const errorLoadingInterceptor: HttpInterceptorFn = (req, next) => {
         else if (status === 403) key = 'error.forbidden';
         else if (status === 404) key = 'error.notFound';
         else if (status >= 500) key = 'error.server';
-        notify.error(t.t(key));
+        // Business-rule errors carry a localized message from the API
+        const serverMessage = status === 400 && typeof err.error?.message === 'string' ? err.error.message : null;
+        notify.error(serverMessage ?? t.t(key));
       }
       return throwError(() => err);
     }),

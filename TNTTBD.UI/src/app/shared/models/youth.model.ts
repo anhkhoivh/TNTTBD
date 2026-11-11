@@ -16,6 +16,13 @@ export interface SpiritualMilestone {
   documentCode?: string | null;
   place?: string | null;
   note?: string | null;
+  sponsorContactId?: string | null;
+  celebrant?: string | null;
+  milestoneEventId?: string | null;
+  milestoneEventName?: string | null;
+  /** Read-only, resolved from the sponsor contact. */
+  sponsorFullName?: FullName | null;
+  sponsorPhoneNumber?: string | null;
 }
 
 export interface EucharisticYouth {

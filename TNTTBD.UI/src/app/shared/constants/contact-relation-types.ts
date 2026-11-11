@@ -8,5 +8,6 @@ export const CONTACT_RELATION_TYPES: readonly { v: ContactRelationType; k: strin
   { v: ContactRelationType.Grandmother, k: 'contact.relation.Grandmother' },
   { v: ContactRelationType.Babysitter, k: 'contact.relation.Babysitter' },
   { v: ContactRelationType.Sibling, k: 'contact.relation.Sibling' },
+  { v: ContactRelationType.Godparent, k: 'contact.relation.Godparent' },
   { v: ContactRelationType.Undefined, k: 'contact.relation.Undefined' },
 ];

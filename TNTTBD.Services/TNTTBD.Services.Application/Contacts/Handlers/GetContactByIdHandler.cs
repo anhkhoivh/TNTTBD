@@ -3,6 +3,7 @@ using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.Contacts.DTOs;
 using TNTTBD.Services.Application.Contacts.Interfaces;
 using TNTTBD.Services.Application.Contacts.Queries;
+using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.Contacts.Handlers;
 
@@ -31,8 +32,8 @@ public class GetContactByIdHandler : IRequestHandler<GetContactByIdQuery, Contac
         }
 
         // Youth-role users only see the youths they can access (themselves)
-        bool seesAll = await _authContext.IsAdminOrCatechistAsync(cancellationToken)
-            || await _authContext.GetCurrentContactIdAsync(cancellationToken) == query.Id;
+        bool isStaff = await _authContext.IsAdminOrCatechistAsync(cancellationToken);
+        bool seesAll = isStaff || await _authContext.GetCurrentContactIdAsync(cancellationToken) == query.Id;
         if (!seesAll)
         {
             List<ContactYouthDto> visible = new();
@@ -44,6 +45,12 @@ public class GetContactByIdHandler : IRequestHandler<GetContactByIdQuery, Contac
                 }
             }
             dto.Youths = visible;
+        }
+
+        // A godparent link grants no access to the youth, so don't list godchildren for non-staff
+        if (!isStaff)
+        {
+            dto.Youths = dto.Youths.Where(y => y.ContactRelationType != ContactRelationType.Godparent).ToList();
         }
 
         return dto;

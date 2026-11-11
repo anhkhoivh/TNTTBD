@@ -22,6 +22,7 @@ export interface DashboardTotals {
 
 export interface DashboardSummary {
   currentYearTitle: string;
+  currentYearTheme?: string | null;
   myClasses: DashboardClass[];
   upcomingSessions: DashboardSession[];
   totals?: DashboardTotals | null;

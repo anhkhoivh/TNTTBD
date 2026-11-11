@@ -438,6 +438,61 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.ToTable("ExamResultEntity", (string)null);
                 });
 
+            modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.MilestoneEventEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Celebrant")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("CodeTemplate")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Place")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("StartIndex")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type", "Date");
+
+                    b.ToTable("MilestoneEventEntity", (string)null);
+                });
+
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.RefreshTokenEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -471,6 +526,10 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Celebrant")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<DateOnly?>("Date")
                         .HasColumnType("date");
 
@@ -480,18 +539,28 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                     b.Property<Guid>("EucharisticYouthId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("MilestoneEventId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Note")
                         .HasColumnType("text");
 
                     b.Property<string>("Place")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("SponsorContactId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EucharisticYouthId");
+                    b.HasIndex("MilestoneEventId");
+
+                    b.HasIndex("SponsorContactId");
+
+                    b.HasIndex("EucharisticYouthId", "Type");
 
                     b.ToTable("SpiritualMilestoneEntity", (string)null);
                 });
@@ -927,7 +996,21 @@ namespace TNTTBD.Services.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.MilestoneEventEntity", "MilestoneEvent")
+                        .WithMany("Milestones")
+                        .HasForeignKey("MilestoneEventId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ContactEntity", "SponsorContact")
+                        .WithMany()
+                        .HasForeignKey("SponsorContactId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("EucharisticYouth");
+
+                    b.Navigation("MilestoneEvent");
+
+                    b.Navigation("SponsorContact");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", b =>
@@ -1025,6 +1108,11 @@ namespace TNTTBD.Services.Infrastructure.Migrations
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.ExamEntity", b =>
                 {
                     b.Navigation("ExamResults");
+                });
+
+            modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.MilestoneEventEntity", b =>
+                {
+                    b.Navigation("Milestones");
                 });
 
             modelBuilder.Entity("TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities.UserEntity", b =>
