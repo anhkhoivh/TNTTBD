@@ -88,6 +88,7 @@ export class ClassDetailService {
   async changeEnrollmentStatus(payload: unknown): Promise<void> {
     await this.api.patchAsync('/class-youth', payload);
     this.enrollmentsRes.reload();
+    this.classRes.reload();
   }
 
   async removeEnrollment(enrollmentId: string): Promise<void> {
