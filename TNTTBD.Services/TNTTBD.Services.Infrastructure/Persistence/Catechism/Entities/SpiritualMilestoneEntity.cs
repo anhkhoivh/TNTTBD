@@ -51,5 +51,30 @@ public class SpiritualMilestoneEntity
     /// </summary>
     public string? Note { get; set; }
 
+    /// <summary>
+    /// Godfather / Godmother contact (Baptism and Confirmation)
+    /// </summary>
+    public Guid? SponsorContactId { get; set; }
+
+    /// <summary>
+    /// Godfather / Godmother
+    /// </summary>
+    public ContactEntity? SponsorContact { get; set; }
+
+    /// <summary>
+    /// Bishop / priest who celebrated the sacrament
+    /// </summary>
+    public string? Celebrant { get; set; }
+
+    /// <summary>
+    /// Optional group sacrament event
+    /// </summary>
+    public Guid? MilestoneEventId { get; set; }
+
+    /// <summary>
+    /// Event
+    /// </summary>
+    public MilestoneEventEntity? MilestoneEvent { get; set; }
+
     #endregion
 }

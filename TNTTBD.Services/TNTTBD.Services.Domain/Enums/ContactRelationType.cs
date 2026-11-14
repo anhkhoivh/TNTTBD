@@ -13,4 +13,5 @@ public enum ContactRelationType
     Grandmother = 5,
     Babysitter = 6,
     Sibling = 7,
+    Godparent = 8,
 }

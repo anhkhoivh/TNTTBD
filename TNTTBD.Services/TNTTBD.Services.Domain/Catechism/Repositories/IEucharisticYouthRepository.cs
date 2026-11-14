@@ -51,7 +51,8 @@ public interface IEucharisticYouthRepository
     /// <summary>
     /// Update milestone
     /// </summary>
-    Task UpdateMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken);
+    /// <returns>The type of the updated milestone</returns>
+    Task<MilestoneType> UpdateMilestone(Guid id, SpiritualMilestone milestone, CancellationToken cancellationToken);
 
     /// <summary>
     /// Remove milestone

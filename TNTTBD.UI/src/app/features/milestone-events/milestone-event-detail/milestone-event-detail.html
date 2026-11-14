@@ -1,0 +1,162 @@
+<div class="page-header">
+  <a mat-icon-button routerLink="/app/milestone-events" [attr.aria-label]="'common.back' | t">
+    <mat-icon>arrow_back</mat-icon>
+  </a>
+  <h2>{{ detail()?.name ?? ('milestoneEvent.details' | t) }}</h2>
+  <span class="spacer"></span>
+  @if (isStaff && detail(); as d) {
+    <button mat-stroked-button type="button" (click)="exportExcel()" [disabled]="exporting()">
+      <mat-icon>download</mat-icon> {{ 'milestoneEvent.exportExcel' | t }}
+    </button>
+    <a mat-flat-button color="primary" [routerLink]="['/app/milestone-events/edit']" [queryParams]="{ id: d.id }">
+      <mat-icon>edit</mat-icon> {{ 'common.edit' | t }}
+    </a>
+  }
+</div>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+@if (notFound()) {
+  <p class="empty">{{ 'common.noData' | t }}</p>
+}
+
+@if (detail(); as d) {
+  <mat-card>
+    <mat-card-content>
+      <dl class="info">
+        <div>
+          <dt>{{ 'milestoneEvent.type' | t }}</dt>
+          <dd>{{ typeKeys[d.type] | t }}</dd>
+        </div>
+        <div>
+          <dt>{{ 'milestone.date' | t }}</dt>
+          <dd>{{ d.date | dateLocale }}</dd>
+        </div>
+        @if (d.place) {
+          <div>
+            <dt>{{ 'milestone.place' | t }}</dt>
+            <dd>{{ d.place }}</dd>
+          </div>
+        }
+        @if (d.celebrant) {
+          <div>
+            <dt>{{ 'milestone.celebrant' | t }}</dt>
+            <dd>{{ d.celebrant }}</dd>
+          </div>
+        }
+        <div>
+          <dt>{{ 'milestoneEvent.participants' | t }}</dt>
+          <dd>{{ d.participants.length }}</dd>
+        </div>
+        @if (d.codeTemplate) {
+          <div>
+            <dt>{{ 'milestoneEvent.codeTemplate' | t }}</dt>
+            <dd>{{ d.codeTemplate }}</dd>
+          </div>
+        }
+        @if (d.note) {
+          <div class="wide">
+            <dt>{{ 'milestone.note' | t }}</dt>
+            <dd class="pre">{{ d.note }}</dd>
+          </div>
+        }
+      </dl>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="mt-16">
+    <mat-card-header>
+      <mat-card-title>{{ 'milestoneEvent.participants' | t }} ({{ d.participants.length }})</mat-card-title>
+      @if (warningCount() > 0) {
+        <span class="warning-summary">
+          <mat-icon inline>warning</mat-icon>
+          {{ 'milestone.warning.count' | t }}: {{ warningCount() }}
+        </span>
+      }
+    </mat-card-header>
+    <mat-card-content>
+      @if (d.participants.length === 0) {
+        <p class="empty">{{ 'milestoneEvent.noParticipants' | t }}</p>
+      } @else {
+        <div class="table-responsive">
+          <table class="participants">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{{ 'youth.fullName' | t }}</th>
+                <th>{{ 'milestoneEvent.class' | t }}</th>
+                @if (isStaff) {
+                  <th>{{ 'milestone.documentCode' | t }}</th>
+                  <th>{{ 'milestone.date' | t }} / {{ 'milestone.place' | t }}</th>
+                  <th>{{ 'milestone.celebrant' | t }}</th>
+                  @if (supportsSponsor()) {
+                    <th>{{ 'milestone.sponsor' | t }}</th>
+                  }
+                  <th>{{ 'milestone.note' | t }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of d.participants; track p.eucharisticYouthId; let i = $index) {
+                <tr>
+                  <td class="order">{{ i + 1 }}</td>
+                  <td>
+                    <div class="name">
+                      @if (isStaff) {
+                        <a [routerLink]="['/app/youth/detail']" [queryParams]="{ id: p.eucharisticYouthId }" class="item-link">
+                          {{ p.fullName | fullName }}
+                        </a>
+                      } @else {
+                        {{ p.fullName | fullName }}
+                      }
+                      @if (p.warnings.length) {
+                        <mat-icon class="prereq-warning" [matTooltip]="warningText(p)" matTooltipClass="multiline-tooltip"
+                          >warning</mat-icon
+                        >
+                      }
+                    </div>
+                    @if (isStaff) {
+                      <div class="sub">
+                        {{ p.youthCode }}@if (p.dateOfBirth) { · {{ p.dateOfBirth | dateLocale }} }
+                      </div>
+                    }
+                  </td>
+                  <td>{{ p.className }}</td>
+                  @if (isStaff) {
+                    <td>{{ p.documentCode }}</td>
+                    <td>
+                      @if (own(p.date, d.date); as date) {
+                        <div>{{ date | dateLocale }}</div>
+                      }
+                      @if (own(p.place, d.place); as place) {
+                        <div>{{ place }}</div>
+                      }
+                    </td>
+                    <td>{{ own(p.celebrant, d.celebrant) }}</td>
+                    @if (supportsSponsor()) {
+                      <td>
+                        @if (p.sponsor; as s) {
+                          <a [routerLink]="['/app/contacts/detail']" [queryParams]="{ id: s.contactId }" class="item-link">
+                            {{ s.fullName | fullName }}
+                          </a>
+                          @if (s.phoneNumber) {
+                            <div>
+                              <a class="sub" [href]="'tel:' + s.phoneNumber">{{ s.phoneNumber }}</a>
+                            </div>
+                          }
+                        }
+                      </td>
+                    }
+                    <td class="pre">{{ p.note }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+}

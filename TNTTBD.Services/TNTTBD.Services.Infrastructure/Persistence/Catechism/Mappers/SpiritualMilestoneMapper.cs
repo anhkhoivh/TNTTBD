@@ -1,11 +1,11 @@
-using TNTTBD.Services.Application.Common.DTOs;
+﻿using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Mappers;
 
 /// <summary>
-/// User mapper
+/// Spiritual milestone mapper
 /// </summary>
 public static class SpiritualMilestoneMapper
 {
@@ -16,8 +16,16 @@ public static class SpiritualMilestoneMapper
     /// </summary>
     public static SpiritualMilestone ToDomain(this SpiritualMilestoneEntity entity)
     {
-        SpiritualMilestone domain = new(entity.Id, entity.Type, entity.Date, entity.DocumentCode, entity.Place, entity.Note);
-        return domain;
+        return new SpiritualMilestone(
+            entity.Id,
+            entity.Type,
+            entity.Date,
+            entity.DocumentCode,
+            entity.Place,
+            entity.Note,
+            entity.SponsorContactId,
+            entity.Celebrant,
+            entity.MilestoneEventId);
     }
 
     #endregion
@@ -32,14 +40,10 @@ public static class SpiritualMilestoneMapper
         SpiritualMilestoneEntity entity = new SpiritualMilestoneEntity
         {
             Id = domain.Id,
-            Date = domain.Date,
-            DocumentCode = domain.DocumentCode,
-            Note = domain.Note,
-            Place = domain.Place,
             Type = domain.Type,
             EucharisticYouthId = eucharisticYouthId
         };
-
+        domain.UpdateEntity(entity);
         return entity;
     }
 
@@ -53,25 +57,9 @@ public static class SpiritualMilestoneMapper
         entity.Type = domain.Type;
         entity.Note = domain.Note;
         entity.Place = domain.Place;
-    }
-
-    #endregion
-
-    #region Convert methods from entity to DTO
-
-    /// <summary>
-    /// Convert from entity to DTO
-    /// </summary>
-    public static SpiritualMilestoneDto ToDTO(this SpiritualMilestoneEntity entity)
-    {
-        return new SpiritualMilestoneDto(
-            entity.Id,
-            entity.Type,
-            entity.Date,
-            entity.Place,
-            entity.DocumentCode,
-            entity.Note
-        );
+        entity.SponsorContactId = domain.SponsorContactId;
+        entity.Celebrant = domain.Celebrant;
+        entity.MilestoneEventId = domain.MilestoneEventId;
     }
 
     #endregion

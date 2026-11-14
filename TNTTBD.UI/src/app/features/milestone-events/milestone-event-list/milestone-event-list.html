@@ -1,0 +1,110 @@
+<div class="toolbar">
+  <mat-form-field appearance="outline">
+    <mat-icon matPrefix>search</mat-icon>
+    <mat-label>{{ 'common.search' | t }}</mat-label>
+    <input matInput [ngModel]="search()" (ngModelChange)="search.set($event); applyFilters()" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'milestoneEvent.type' | t }}</mat-label>
+    <mat-select [ngModel]="type()" (ngModelChange)="type.set($event); applyFilters()">
+      <mat-option value="">{{ 'common.all' | t }}</mat-option>
+      @for (t of types; track t) {
+        <mat-option [value]="t">{{ typeKeys[t] | t }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'milestoneEvent.dateRange' | t }}</mat-label>
+    <mat-date-range-input [rangePicker]="range">
+      <input matStartDate [ngModel]="from()" (ngModelChange)="from.set($event)" (dateChange)="applyFilters()" />
+      <input matEndDate [ngModel]="to()" (ngModelChange)="to.set($event)" (dateChange)="applyFilters()" />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="range"></mat-datepicker-toggle>
+    <mat-date-range-picker #range></mat-date-range-picker>
+  </mat-form-field>
+</div>
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ 'milestoneEvent.list' | t }}</mat-card-title>
+    <span class="spacer"></span>
+    @if (canEdit) {
+      <a mat-flat-button color="primary" routerLink="/app/milestone-events/edit">
+        <mat-icon>add</mat-icon>
+        {{ 'milestoneEvent.create' | t }}
+      </a>
+    }
+  </mat-card-header>
+  <mat-card-content class="p-0">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="data().items" class="full-width">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>{{ 'milestoneEvent.name' | t }}</th>
+          <td mat-cell *matCellDef="let row">
+            <a [routerLink]="['/app/milestone-events', row.id]" class="item-link">
+              {{ row.name }}
+            </a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>{{ 'milestoneEvent.type' | t }}</th>
+          <td mat-cell *matCellDef="let row">{{ typeKey(row) | t }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>{{ 'milestone.date' | t }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.date | dateLocale }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="place">
+          <th mat-header-cell *matHeaderCellDef>{{ 'milestone.place' | t }}</th>
+          <td mat-cell *matCellDef="let row">{{ row.place }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="participantCount">
+          <th mat-header-cell *matHeaderCellDef class="text-right">{{ 'milestoneEvent.participants' | t }}</th>
+          <td mat-cell *matCellDef="let row" class="text-right">{{ row.participantCount }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="text-right"></th>
+          <td mat-cell *matCellDef="let row" class="text-right">
+            <button mat-icon-button (click)="openActions(row)" [attr.aria-label]="'common.actions' | t">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    @if (data().items.length > 0) {
+      <mat-paginator
+        [length]="data().total"
+        [pageSize]="data().pageSize"
+        [pageIndex]="data().page - 1"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        aria-label="Select page"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    }
+
+    @if (isLoading()) {
+      <mat-spinner></mat-spinner>
+    } @else if (data().items.length === 0) {
+      <app-empty-state icon="event" titleKey="milestoneEvent.empty" [descKey]="canEdit ? 'milestoneEvent.emptyDesc' : ''">
+        @if (canEdit) {
+          <a mat-flat-button color="primary" routerLink="/app/milestone-events/edit">
+            <mat-icon>add</mat-icon>
+            {{ 'milestoneEvent.create' | t }}
+          </a>
+        }
+      </app-empty-state>
+    }
+  </mat-card-content>
+</mat-card>

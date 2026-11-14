@@ -91,6 +91,12 @@ export class Shell {
       roles: [UserRole.Admin, UserRole.Catechist, UserRole.EucharisticYouth, UserRole.EucharisticYouthContact],
     },
     {
+      labelKey: 'nav.milestoneEvents',
+      route: '/app/milestone-events',
+      icon: 'church',
+      roles: [UserRole.Admin, UserRole.Catechist, UserRole.EucharisticYouth, UserRole.EucharisticYouthContact],
+    },
+    {
       labelKey: 'nav.admin',
       route: '/app/admin/users',
       icon: 'admin_panel_settings',

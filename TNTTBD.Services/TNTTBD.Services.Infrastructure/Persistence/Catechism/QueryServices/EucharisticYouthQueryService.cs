@@ -46,7 +46,13 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
                     m.Date,
                     m.Place,
                     m.DocumentCode,
-                    m.Note
+                    m.Note,
+                    m.SponsorContactId,
+                    m.Celebrant,
+                    m.MilestoneEventId,
+                    m.MilestoneEvent != null ? m.MilestoneEvent.Name : null,
+                    m.SponsorContact != null ? m.SponsorContact.FullName : null,
+                    m.SponsorContact != null ? m.SponsorContact.PhoneNumber : null
                 )).ToList(),
 
                 PatronSaints = entity.PatronSaints.Select(p => new PatronSaintDto
@@ -148,7 +154,13 @@ public class EucharisticYouthQueryService : IEucharisticYouthQueryService
                     m.Date,
                     m.Place,
                     m.DocumentCode,
-                    m.Note
+                    m.Note,
+                    m.SponsorContactId,
+                    m.Celebrant,
+                    m.MilestoneEventId,
+                    m.MilestoneEvent != null ? m.MilestoneEvent.Name : null,
+                    m.SponsorContact != null ? m.SponsorContact.FullName : null,
+                    m.SponsorContact != null ? m.SponsorContact.PhoneNumber : null
                 )).ToList(),
 
                 PatronSaints = entity.PatronSaints.Select(p => new PatronSaintDto

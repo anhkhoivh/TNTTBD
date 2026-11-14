@@ -167,3 +167,8 @@ mat-tab-group.app-scrollable-tabs {
     display: flex;
   }
 }
+
+// Tooltips whose text has one item per line
+.multiline-tooltip .mdc-tooltip__surface {
+  white-space: pre-line;
+}

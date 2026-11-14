@@ -1,4 +1,4 @@
-using TNTTBD.Services.Domain.Common;
+﻿using TNTTBD.Services.Domain.Common;
 using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Domain.Catechism.Members;
@@ -8,21 +8,29 @@ namespace TNTTBD.Services.Domain.Catechism.Members;
 /// </summary>
 public class SpiritualMilestone : DomainEntity<Guid>
 {
+    public const int MaxCelebrantLength = 200;
+
     #region Constructors
 
     public SpiritualMilestone(
-        Guid id, 
-        MilestoneType type, 
-        DateOnly? date, 
+        Guid id,
+        MilestoneType type,
+        DateOnly? date,
         string? documentCode,
-        string? place = null, 
-        string? note = null) : base(id)
+        string? place = null,
+        string? note = null,
+        Guid? sponsorContactId = null,
+        string? celebrant = null,
+        Guid? milestoneEventId = null) : base(id)
     {
         Type = type;
         Date = date;
         Place = place;
         Note = note;
-        DocumentCode = documentCode;
+        DocumentCode = NormalizeCode(documentCode);
+        SponsorContactId = NormalizeSponsor(type, sponsorContactId);
+        Celebrant = NormalizeText(celebrant, MaxCelebrantLength);
+        MilestoneEventId = milestoneEventId;
     }
 
     #endregion
@@ -40,7 +48,7 @@ public class SpiritualMilestone : DomainEntity<Guid>
     public DateOnly? Date { get; private set; }
 
     /// <summary>
-    /// Id
+    /// Document / certificate code
     /// </summary>
     public string? DocumentCode { get; private set; }
 
@@ -54,6 +62,27 @@ public class SpiritualMilestone : DomainEntity<Guid>
     /// </summary>
     public string? Note { get; private set; }
 
+    /// <summary>
+    /// Godfather / Godmother contact (Baptism and Confirmation only)
+    /// </summary>
+    public Guid? SponsorContactId { get; private set; }
+
+    /// <summary>
+    /// Bishop / priest who celebrated the sacrament
+    /// </summary>
+    public string? Celebrant { get; private set; }
+
+    /// <summary>
+    /// Optional group sacrament event this milestone was received in
+    /// </summary>
+    public Guid? MilestoneEventId { get; private set; }
+
+    /// <summary>
+    /// Whether this milestone type supports a sponsor
+    /// </summary>
+    public static bool SupportsSponsor(MilestoneType type) =>
+        type == MilestoneType.Baptism || type == MilestoneType.Confirmation;
+
     #endregion
 
     #region Methods
@@ -61,12 +90,46 @@ public class SpiritualMilestone : DomainEntity<Guid>
     /// <summary>
     /// Update
     /// </summary>
-    public void Update(DateOnly? date, string? documentCode, string? place, string? note)
+    public void Update(DateOnly? date, string? documentCode, string? place, string? note, Guid? sponsorContactId, string? celebrant)
     {
         Date = date;
-        DocumentCode = documentCode;
+        DocumentCode = NormalizeCode(documentCode);
         Place = place;
         Note = note;
+        SponsorContactId = NormalizeSponsor(Type, sponsorContactId);
+        Celebrant = NormalizeText(celebrant, MaxCelebrantLength);
+    }
+
+    /// <summary>
+    /// Link to a group sacrament event
+    /// </summary>
+    public void LinkToEvent(Guid milestoneEventId)
+    {
+        MilestoneEventId = milestoneEventId;
+    }
+
+    /// <summary>
+    /// Unlink from its event (keeps the milestone)
+    /// </summary>
+    public void UnlinkFromEvent()
+    {
+        MilestoneEventId = null;
+    }
+
+    /// <summary>
+    /// Normalize a document code (trim, empty to null)
+    /// </summary>
+    public static string? NormalizeCode(string? code) =>
+        string.IsNullOrWhiteSpace(code) ? null : code.Trim();
+
+    private static Guid? NormalizeSponsor(MilestoneType type, Guid? sponsorContactId) =>
+        SupportsSponsor(type) && sponsorContactId != Guid.Empty ? sponsorContactId : null;
+
+    private static string? NormalizeText(string? value, int max)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+        string trimmed = value.Trim();
+        return trimmed.Length > max ? trimmed[..max] : trimmed;
     }
 
     #endregion

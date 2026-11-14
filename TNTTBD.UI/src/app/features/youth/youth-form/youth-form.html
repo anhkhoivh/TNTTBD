@@ -106,15 +106,46 @@
               <mat-label>{{ 'milestone.documentCode' | t }}</mat-label>
               <input matInput formControlName="documentCode" />
             </mat-form-field>
-            <button
-              mat-icon-button
-              type="button"
-              color="warn"
-              (click)="removeMilestone(i)"
-              aria-label="Remove"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
+            @if (m.get('milestoneEventName')?.value; as eventName) {
+              <mat-icon class="event-lock" [matTooltip]="('milestoneEvent.linkedTo' | t) + ': ' + eventName">event_available</mat-icon>
+            } @else {
+              <button
+                mat-icon-button
+                type="button"
+                color="warn"
+                (click)="removeMilestone(i)"
+                aria-label="Remove"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+            <mat-form-field appearance="outline" class="milestone-extra">
+              <mat-label>{{ 'milestone.celebrant' | t }}</mat-label>
+              <input matInput formControlName="celebrant" maxlength="200" [placeholder]="'milestone.celebrantHint' | t" />
+            </mat-form-field>
+            @if (supportsSponsor(i)) {
+              <div class="milestone-extra sponsor">
+                <span class="sponsor-label">{{ 'milestone.sponsor' | t }}:</span>
+                @if (m.get('sponsor')?.value; as s) {
+                  <span>
+                    {{ s.fullName | fullName }}@if (s.phoneNumber) { ? {{ s.phoneNumber }} }
+                  </span>
+                  <button mat-icon-button type="button" (click)="pickSponsor(i)" [matTooltip]="'milestone.sponsorPick' | t">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button type="button" (click)="clearSponsor(i)" [matTooltip]="'milestone.sponsorClear' | t">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                } @else {
+                  <button mat-stroked-button type="button" (click)="pickSponsor(i)">
+                    <mat-icon>person_add</mat-icon> {{ 'milestone.sponsorPick' | t }}
+                  </button>
+                }
+              </div>
+            }
+            @if (m.get('milestoneEventName')?.value; as eventName) {
+              <p class="milestone-extra event-note">{{ 'milestoneEvent.linkedTo' | t }}: {{ eventName }}</p>
+            }
           </div>
         }
         @if (milestones.length === 0) {

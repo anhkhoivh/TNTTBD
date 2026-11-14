@@ -155,7 +155,11 @@ public static class EucharisticYouthMapper
                 m.Date,
                 m.Place,
                 m.DocumentCode,
-                m.Note
+                m.Note,
+                m.SponsorContactId,
+                m.Celebrant,
+                m.MilestoneEventId,
+                m.MilestoneEvent != null ? m.MilestoneEvent.Name : null
             )).ToList(),
 
             PatronSaints = entity.PatronSaints.Select(p => new PatronSaintDto

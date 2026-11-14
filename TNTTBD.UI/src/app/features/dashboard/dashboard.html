@@ -8,7 +8,12 @@
         <mat-icon mat-card-avatar>calendar_today</mat-icon>
         <mat-card-title>{{ 'dashboard.currentYear' | t }}</mat-card-title>
       </mat-card-header>
-      <mat-card-content class="metric small">{{ currentYearLabel() }}</mat-card-content>
+      <mat-card-content class="metric small">
+        {{ currentYearLabel() }}
+        @if (data()?.currentYearTheme; as theme) {
+        <div class="year-theme">{{ theme }}</div>
+        }
+      </mat-card-content>
     </mat-card>
     <mat-card>
       <mat-card-header>

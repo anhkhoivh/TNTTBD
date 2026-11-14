@@ -15,15 +15,20 @@ public class AddEucharisticYouthMilestoneHandler : IRequestHandler<AddEucharisti
 
     private readonly IEucharisticYouthRepository _repository;
     private readonly IAuthorizationContext _authContext;
+    private readonly IEucharisticYouthContactRepository _youthContactRepository;
 
     #endregion
 
     #region Constructors
 
-    public AddEucharisticYouthMilestoneHandler(IEucharisticYouthRepository repository, IAuthorizationContext authContext)
+    public AddEucharisticYouthMilestoneHandler(
+        IEucharisticYouthRepository repository,
+        IAuthorizationContext authContext,
+        IEucharisticYouthContactRepository youthContactRepository)
     {
         _repository = repository;
         _authContext = authContext;
+        _youthContactRepository = youthContactRepository;
     }
 
     #endregion
@@ -37,8 +42,9 @@ public class AddEucharisticYouthMilestoneHandler : IRequestHandler<AddEucharisti
             return false;
         }
 
-        SpiritualMilestone milestone = new(Guid.NewGuid(), command.Type, command.Date, command.DocumentCode, command.Place, command.Note);
+        SpiritualMilestone milestone = new(Guid.NewGuid(), command.Type, command.Date, command.DocumentCode, command.Place, command.Note, command.SponsorContactId, command.Celebrant);
         await _repository.AddMilestone(command.EucharisticYouthId, milestone, cancellationToken);
+        await _youthContactRepository.LinkGodparentAsync(command.EucharisticYouthId, milestone.Type, milestone.SponsorContactId, cancellationToken);
         return true;
     }
 

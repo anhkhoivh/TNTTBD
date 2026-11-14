@@ -60,8 +60,17 @@
         @for (m of d.milestones; track m.id) {
         <mat-list-item>
           <mat-icon matListItemIcon>celebration</mat-icon>
-          <span matListItemTitle>{{ milestoneKey(m.type) | t }}</span>
+          <span matListItemTitle>{{ milestoneKey(m.type) | t }}@if (m.documentCode) { · {{ m.documentCode }} }</span>
           <span matListItemLine>{{ m.date | dateLocale }}@if (m.place) { · {{ m.place }} }</span>
+          @if (m.celebrant) {
+          <span matListItemLine>{{ 'milestone.celebrant' | t }}: {{ m.celebrant }}</span>
+          }
+          @if (m.sponsorFullName) {
+          <span matListItemLine>{{ 'milestone.sponsor' | t }}: {{ m.sponsorFullName | fullName }}@if (m.sponsorPhoneNumber) { · <a [href]="'tel:' + m.sponsorPhoneNumber">{{ m.sponsorPhoneNumber }}</a> }</span>
+          }
+          @if (m.milestoneEventName) {
+          <span matListItemLine>{{ 'milestoneEvent.linkedTo' | t }}: <a [routerLink]="['/app/milestone-events', m.milestoneEventId]" class="item-link">{{ m.milestoneEventName }}</a></span>
+          }
         </mat-list-item>
         } @empty {
         <p>{{ 'common.noData' | t }}</p>

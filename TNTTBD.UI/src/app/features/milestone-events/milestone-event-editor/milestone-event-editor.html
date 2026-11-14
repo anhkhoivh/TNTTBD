@@ -1,0 +1,248 @@
+<div class="page-header">
+  <a
+    mat-icon-button
+    [routerLink]="id() ? ['/app/milestone-events', id()] : '/app/milestone-events'"
+    [attr.aria-label]="'common.back' | t"
+  >
+    <mat-icon>arrow_back</mat-icon>
+  </a>
+  <h2>{{ (id() ? 'milestoneEvent.edit' : 'milestoneEvent.create') | t }}</h2>
+  @if (dirty()) {
+    <span class="unsaved">{{ 'milestoneEvent.unsaved' | t }}</span>
+  }
+  <span class="spacer"></span>
+  @if (canDelete()) {
+    <button mat-stroked-button color="warn" type="button" (click)="deleteEvent()">
+      <mat-icon>delete</mat-icon> {{ 'common.delete' | t }}
+    </button>
+  }
+  <span [matTooltip]="dirty() ? ('milestoneEvent.saveBeforeExport' | t) : ''">
+    <button mat-stroked-button type="button" (click)="exportExcel()" [disabled]="!id() || dirty() || exporting()">
+      <mat-icon>download</mat-icon> {{ 'milestoneEvent.exportExcel' | t }}
+    </button>
+  </span>
+  <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving() || loading()">
+    <mat-icon>save</mat-icon> {{ 'common.save' | t }}
+  </button>
+</div>
+
+@if (loading() || saving()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ 'milestoneEvent.details' | t }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form" class="header-grid" (ngSubmit)="save()">
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>{{ 'milestoneEvent.name' | t }}</mat-label>
+        <input matInput formControlName="name" required maxlength="200" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>{{ 'validation.required' | t }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'milestoneEvent.type' | t }}</mat-label>
+        <mat-select formControlName="type" required>
+          @for (t of types; track t) {
+            <mat-option [value]="t">{{ typeKeys[t] | t }}</mat-option>
+          }
+        </mat-select>
+        @if (rows().length > 0) {
+          <mat-hint>{{ 'milestoneEvent.typeLocked' | t }}</mat-hint>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'milestone.date' | t }}</mat-label>
+        <input matInput [matDatepicker]="eventDp" formControlName="date" required />
+        <mat-datepicker-toggle matIconSuffix [for]="eventDp"></mat-datepicker-toggle>
+        <mat-datepicker #eventDp></mat-datepicker>
+        @if (form.controls.date.hasError('required')) {
+          <mat-error>{{ 'validation.required' | t }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>{{ 'milestone.place' | t }}</mat-label>
+        <input matInput formControlName="place" maxlength="200" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>{{ 'milestone.celebrant' | t }}</mat-label>
+        <input matInput formControlName="celebrant" maxlength="200" [placeholder]="'milestone.celebrantHint' | t" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>{{ 'milestone.note' | t }}</mat-label>
+        <textarea matInput formControlName="note" rows="2" maxlength="1000"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label>{{ 'milestoneEvent.codeTemplate' | t }}</mat-label>
+        <input matInput formControlName="codeTemplate" maxlength="100" placeholder="RLLD{yyyy}-{index:000}" />
+        @if (template().raw && !template().parsed) {
+          <mat-hint class="error-text">{{ 'milestoneEvent.invalidTemplate' | t }}</mat-hint>
+        } @else if (template().parsed && !template().parsed!.hasIndex) {
+          <mat-hint class="warn-text">{{ 'milestoneEvent.templateNoIndex' | t }}</mat-hint>
+        } @else if (preview()) {
+          <mat-hint>{{ 'milestoneEvent.preview' | t }}: {{ preview() }}</mat-hint>
+        } @else {
+          <mat-hint>{{ 'milestoneEvent.codeTemplateHint' | t }}</mat-hint>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'milestoneEvent.startIndex' | t }}</mat-label>
+        <input matInput type="number" min="0" formControlName="startIndex" />
+      </mat-form-field>
+
+      <div class="generate">
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="generateCodes()"
+          [disabled]="!template().parsed || rows().length === 0"
+        >
+          <mat-icon>auto_fix_high</mat-icon> {{ 'milestoneEvent.generateCodes' | t }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="mt-16">
+  <mat-card-header>
+    <mat-card-title>{{ 'milestoneEvent.participants' | t }} ({{ rows().length }})</mat-card-title>
+    <span class="spacer"></span>
+    <button mat-flat-button color="primary" type="button" (click)="addYouths()" [disabled]="loading()">
+      <mat-icon>group_add</mat-icon> {{ 'milestoneEvent.addYouths' | t }}
+    </button>
+  </mat-card-header>
+  <mat-card-content>
+    @if (rows().length === 0) {
+      <p class="empty">{{ 'milestoneEvent.noParticipants' | t }}</p>
+    } @else {
+      <div class="table-responsive">
+        <table class="participants">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{{ 'youth.fullName' | t }}</th>
+              <th>{{ 'milestone.date' | t }}</th>
+              <th>{{ 'milestone.place' | t }}</th>
+              <th>{{ 'milestone.documentCode' | t }}</th>
+              <th>{{ 'milestone.celebrant' | t }}</th>
+              @if (supportsSponsor()) {
+                <th>{{ 'milestone.sponsor' | t }}</th>
+              }
+              <th>{{ 'milestone.note' | t }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows(); track row.eucharisticYouthId; let i = $index) {
+              <tr>
+                <td class="order">{{ i + 1 }}</td>
+                <td class="youth">
+                  <div class="name">
+                    {{ row.fullName | fullName }}
+                    @if (row.warnings.length) {
+                      <mat-icon class="prereq-warning" [matTooltip]="warningText(row)" matTooltipClass="multiline-tooltip"
+                        >warning</mat-icon
+                      >
+                    }
+                  </div>
+                  <div class="sub">
+                    {{ row.youthCode }}@if (row.className) { · {{ row.className }} }@if (row.dateOfBirth) { · {{ row.dateOfBirth | dateLocale }} }
+                  </div>
+                  @if (row.linkingExisting) {
+                    <span class="badge info">{{ 'milestoneEvent.status.linkExisting' | t }}</span>
+                  }
+                </td>
+                <td class="date">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input
+                      matInput
+                      [matDatepicker]="dp"
+                      [(ngModel)]="row.date"
+                      (dateChange)="markDirty()"
+                      [placeholder]="eventDateIso() | dateLocale"
+                    />
+                    <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+                    <mat-datepicker #dp></mat-datepicker>
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput [(ngModel)]="row.place" (ngModelChange)="markDirty()" [placeholder]="eventPlace()" maxlength="200" />
+                  </mat-form-field>
+                </td>
+                <td class="code">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput [(ngModel)]="row.documentCode" (ngModelChange)="markDirty()" maxlength="100" />
+                  </mat-form-field>
+                </td>
+                <td>
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input
+                      matInput
+                      [(ngModel)]="row.celebrant"
+                      (ngModelChange)="markDirty()"
+                      [placeholder]="eventCelebrant()"
+                      maxlength="200"
+                    />
+                  </mat-form-field>
+                </td>
+                @if (supportsSponsor()) {
+                  <td class="sponsor">
+                    @if (row.sponsor) {
+                      <div class="sponsor-value">
+                        <span>
+                          {{ row.sponsor.fullName | fullName }}
+                          @if (row.sponsor.phoneNumber) {
+                            <a class="sub" [href]="'tel:' + row.sponsor.phoneNumber">{{ row.sponsor.phoneNumber }}</a>
+                          }
+                        </span>
+                        <button mat-icon-button type="button" (click)="pickSponsor(row)" [matTooltip]="'milestone.sponsorPick' | t">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button type="button" (click)="clearSponsor(row)" [matTooltip]="'milestone.sponsorClear' | t">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </div>
+                    } @else {
+                      <button mat-stroked-button type="button" (click)="pickSponsor(row)">
+                        <mat-icon>person_add</mat-icon> {{ 'milestone.sponsorPick' | t }}
+                      </button>
+                    }
+                  </td>
+                }
+                <td>
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <input matInput [(ngModel)]="row.note" (ngModelChange)="markDirty()" maxlength="1000" />
+                  </mat-form-field>
+                </td>
+                <td class="actions">
+                  <button
+                    mat-icon-button
+                    type="button"
+                    color="warn"
+                    (click)="removeRow(i)"
+                    [matTooltip]="'milestoneEvent.removeHint' | t"
+                    [attr.aria-label]="'milestoneEvent.remove' | t"
+                  >
+                    <mat-icon>person_remove</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

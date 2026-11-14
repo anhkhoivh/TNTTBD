@@ -61,7 +61,8 @@ public class EucharisticYouth : Member
     #region Methods
 
     /// <summary>
-    /// Update
+    /// Replace the milestone list from a profile edit. Milestones are matched by type so that
+    /// existing records (and their event links) are updated in place.
     /// </summary>
     public void UpdateMilestoneList(IReadOnlyCollection<SpiritualMilestone> milestones)
     {
@@ -69,16 +70,43 @@ public class EucharisticYouth : Member
         {
             throw new DomainException(DomainErrors.NotBaptised);
         }
-        var duplicates = milestones
-            .GroupBy(m => m.Type)
-            .Where(g => g.Count() > 1)
-            .Select(g => new { Value = g.Key, Count = g.Count() });
-        if (duplicates.Any())
+        if (milestones.GroupBy(m => m.Type).Any(g => g.Count() > 1))
         {
             throw new DomainException(DomainErrors.MilestoneAlreadyExists);
         }
-        _milestones.Clear();
-        _milestones.AddRange(milestones);
+
+        List<SpiritualMilestone> removed = _milestones
+            .Where(existing => milestones.All(m => m.Type != existing.Type))
+            .ToList();
+        if (removed.Any(m => m.MilestoneEventId.HasValue))
+        {
+            throw new DomainException(DomainErrors.MilestoneLinkedToEvent);
+        }
+        foreach (SpiritualMilestone r in removed)
+        {
+            _milestones.Remove(r);
+        }
+
+        foreach (SpiritualMilestone incoming in milestones)
+        {
+            SpiritualMilestone? existing = _milestones.FirstOrDefault(m => m.Type == incoming.Type);
+            if (existing != null)
+            {
+                existing.Update(incoming.Date, incoming.DocumentCode, incoming.Place, incoming.Note, incoming.SponsorContactId, incoming.Celebrant);
+            }
+            else
+            {
+                _milestones.Add(new SpiritualMilestone(
+                    incoming.Id == Guid.Empty ? Guid.NewGuid() : incoming.Id,
+                    incoming.Type,
+                    incoming.Date,
+                    incoming.DocumentCode,
+                    incoming.Place,
+                    incoming.Note,
+                    incoming.SponsorContactId,
+                    incoming.Celebrant));
+            }
+        }
     }
 
     /// <summary>
@@ -92,22 +120,34 @@ public class EucharisticYouth : Member
         }
         if (_milestones.Any(m => m.Type == milestone.Type))
         {
-            throw new DomainException(DomainErrors.MilestoneAlreadyExists);            
+            throw new DomainException(DomainErrors.MilestoneAlreadyExists);
         }
-        
+
         _milestones.Add(milestone);
     }
 
     /// <summary>
     /// Update
     /// </summary>
-    public void UpdateMilestone(Guid milestoneId, DateOnly? date, string? documentCode, string? place, string? note)
+    public void UpdateMilestone(Guid milestoneId, DateOnly? date, string? documentCode, string? place, string? note, Guid? sponsorContactId, string? celebrant)
     {
-        SpiritualMilestone milestone = _milestones
-            .FirstOrDefault(x => x.Id == milestoneId)
-            ?? throw new DomainException(DomainErrors.ValidationNotFound);
+        GetMilestone(milestoneId).Update(date, documentCode, place, note, sponsorContactId, celebrant);
+    }
 
-        milestone.Update(date, documentCode, place, note);
+    /// <summary>
+    /// Link a milestone to a group sacrament event
+    /// </summary>
+    public void LinkMilestoneToEvent(Guid milestoneId, Guid milestoneEventId)
+    {
+        GetMilestone(milestoneId).LinkToEvent(milestoneEventId);
+    }
+
+    /// <summary>
+    /// Unlink a milestone from its event (the milestone itself is kept)
+    /// </summary>
+    public void UnlinkMilestoneFromEvent(Guid milestoneId)
+    {
+        GetMilestone(milestoneId).UnlinkFromEvent();
     }
 
     /// <summary>
@@ -115,11 +155,17 @@ public class EucharisticYouth : Member
     /// </summary>
     public void RemoveMilestone(Guid milestoneId)
     {
-        SpiritualMilestone milestone = _milestones
-            .FirstOrDefault(x => x.Id == milestoneId)
-            ?? throw new DomainException(DomainErrors.ValidationNotFound);
+        SpiritualMilestone milestone = GetMilestone(milestoneId);
+        if (milestone.MilestoneEventId.HasValue)
+        {
+            throw new DomainException(DomainErrors.MilestoneLinkedToEvent);
+        }
         _milestones.Remove(milestone);
     }
+
+    private SpiritualMilestone GetMilestone(Guid milestoneId) =>
+        _milestones.FirstOrDefault(x => x.Id == milestoneId)
+        ?? throw new DomainException(DomainErrors.ValidationNotFound);
 
     #endregion
 }

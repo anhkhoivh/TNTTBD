@@ -42,7 +42,16 @@ public class GetEucharisticYouthByIdHandler : IRequestHandler<GetEucharisticYout
             throw new ForbiddenException();
         }
 
-        return await _queryService.GetByIdAsync(query.Id, _storage, cancellationToken) ?? throw new DomainException(DomainErrors.ValidationNotFound);
+        EucharisticYouthDto youth = await _queryService.GetByIdAsync(query.Id, _storage, cancellationToken)
+            ?? throw new DomainException(DomainErrors.ValidationNotFound);
+
+        // Parents / youths get a limited view: no godparent phone number
+        if (!await _authContext.IsAdminOrCatechistAsync(cancellationToken))
+        {
+            youth.Milestones = youth.Milestones.Select(m => m with { SponsorPhoneNumber = null }).ToList();
+        }
+
+        return youth;
     }
 
     #endregion

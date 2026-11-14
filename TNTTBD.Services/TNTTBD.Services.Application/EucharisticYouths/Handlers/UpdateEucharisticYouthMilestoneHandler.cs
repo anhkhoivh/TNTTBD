@@ -13,20 +13,20 @@ public class UpdateEucharisticYouthMilestoneHandler : IRequestHandler<UpdateEuch
 
     private readonly IEucharisticYouthRepository _repository;
     private readonly IAuthorizationContext _authContext;
+    private readonly IEucharisticYouthContactRepository _youthContactRepository;
 
     #endregion
 
     #region Constructors
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="repository"></param>
-    /// <param name="unitOfWork"></param>
-    public UpdateEucharisticYouthMilestoneHandler(IEucharisticYouthRepository repository, IUnitOfWork unitOfWork, IAuthorizationContext authContext)
+    public UpdateEucharisticYouthMilestoneHandler(
+        IEucharisticYouthRepository repository,
+        IAuthorizationContext authContext,
+        IEucharisticYouthContactRepository youthContactRepository)
     {
         _repository = repository;
         _authContext = authContext;
+        _youthContactRepository = youthContactRepository;
     }
 
     #endregion
@@ -40,8 +40,10 @@ public class UpdateEucharisticYouthMilestoneHandler : IRequestHandler<UpdateEuch
             return false;
         }
 
-        SpiritualMilestone milestone = new(command.MilestoneId, MilestoneType.Baptism, command.Date, command.DocumentCode, command.Place, command.Note);
-        await _repository.UpdateMilestone(command.EucharisticYouthId, milestone, cancellationToken);
+        // Type is a placeholder (it keeps the sponsor); the repository applies the update to the stored milestone.
+        SpiritualMilestone milestone = new(command.MilestoneId, MilestoneType.Baptism, command.Date, command.DocumentCode, command.Place, command.Note, command.SponsorContactId, command.Celebrant);
+        MilestoneType actualType = await _repository.UpdateMilestone(command.EucharisticYouthId, milestone, cancellationToken);
+        await _youthContactRepository.LinkGodparentAsync(command.EucharisticYouthId, actualType, command.SponsorContactId, cancellationToken);
         return true;
     }
 

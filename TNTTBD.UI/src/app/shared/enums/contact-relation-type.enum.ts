@@ -7,4 +7,5 @@ export enum ContactRelationType {
   Grandmother = 'Grandmother',
   Babysitter = 'Babysitter',
   Sibling = 'Sibling',
+  Godparent = 'Godparent',
 }

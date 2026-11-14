@@ -5,7 +5,7 @@ using TNTTBD.Services.Infrastructure.Persistence.Catechism.Entities;
 namespace TNTTBD.Services.Infrastructure.Persistence.Catechism.Configurations;
 
 /// <summary>
-/// Catechist entity configuration
+/// Spiritual milestone entity configuration
 /// </summary>
 public class SpiritualMilestoneEntityConfiguration : IEntityTypeConfiguration<SpiritualMilestoneEntity>
 {
@@ -18,6 +18,19 @@ public class SpiritualMilestoneEntityConfiguration : IEntityTypeConfiguration<Sp
     {
         builder.ToTable(nameof(SpiritualMilestoneEntity));
         builder.HasKey(c => c.Id);
+        builder.Property(c => c.Celebrant).HasMaxLength(200);
+
+        builder.HasOne(c => c.SponsorContact)
+            .WithMany()
+            .HasForeignKey(c => c.SponsorContactId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasIndex(c => new { c.EucharisticYouthId, c.Type });
+
+        builder.HasOne(c => c.MilestoneEvent)
+            .WithMany(e => e.Milestones)
+            .HasForeignKey(c => c.MilestoneEventId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     #endregion

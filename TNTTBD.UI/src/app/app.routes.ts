@@ -174,6 +174,38 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/admin').then((m) => m.AdminPage),
       },
+      {
+        path: 'milestone-events',
+        canActivate: [roleGuard],
+        data: {
+          roles: [UserRole.Admin, UserRole.Catechist, UserRole.EucharisticYouth, UserRole.EucharisticYouthContact],
+        },
+        loadComponent: () =>
+          import('./features/milestone-events/milestone-event-list/milestone-event-list').then(
+            (m) => m.MilestoneEventList,
+          ),
+      },
+      {
+        path: 'milestone-events/edit',
+        canActivate: [roleGuard],
+        canDeactivate: [(c: { canLeave(): Promise<boolean> }) => c.canLeave()],
+        data: { roles: [UserRole.Admin, UserRole.Catechist] },
+        loadComponent: () =>
+          import('./features/milestone-events/milestone-event-editor/milestone-event-editor').then(
+            (m) => m.MilestoneEventEditor,
+          ),
+      },
+      {
+        path: 'milestone-events/:id',
+        canActivate: [roleGuard],
+        data: {
+          roles: [UserRole.Admin, UserRole.Catechist, UserRole.EucharisticYouth, UserRole.EucharisticYouthContact],
+        },
+        loadComponent: () =>
+          import('./features/milestone-events/milestone-event-detail/milestone-event-detail').then(
+            (m) => m.MilestoneEventDetailPage,
+          ),
+      },
     ],
   },
   {
