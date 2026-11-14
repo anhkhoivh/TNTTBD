@@ -1,4 +1,4 @@
-﻿using TNTTBD.Services.Application.Common.DTOs;
+using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.MilestoneEvents.DTOs;
 using TNTTBD.Services.Domain.Enums;
 
@@ -13,9 +13,4 @@ public interface IMilestoneEventQueryService
     Task<PaginatedResult<MilestoneEventCandidateDto>> GetCandidatesAsync(MilestoneType type, DateOnly? date, string? search, Guid? classId, Guid? catechismYearId, int page, int? pageSize, CancellationToken cancellationToken);
 
     Task<MilestoneEventExportDto?> GetExportDataAsync(Guid id, CancellationToken cancellationToken);
-}
-
-public interface IMilestoneEventExcelGenerator
-{
-    byte[] Generate(MilestoneEventExportDto data, string language);
 }

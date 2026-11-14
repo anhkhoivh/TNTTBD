@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using TNTTBD.Services.Application.MilestoneEvents.DTOs;
 using TNTTBD.Services.Domain.Enums;
 
@@ -19,5 +19,3 @@ public record SaveMilestoneEventCommand(
     int StartIndex,
     List<SaveMilestoneEventParticipantDto> Participants
 ) : IRequest<Guid>;
-
-public record DeleteMilestoneEventCommand(Guid Id) : IRequest<bool>;
