@@ -71,8 +71,6 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
                 ?? throw new DomainException(DomainErrors.ValidationNotFound);
             existingContacts[contactId] = existing;
         }
-        await _contactRepository.EnsureSponsorsExistAsync((command.Milestones ?? []).Select(m => m.SponsorContactId), cancellationToken);
-
         FullName fullName = new FullName(command.GivenName, command.ChristName, command.FamilyName, command.MiddleName);
         int year = DateTimeOffset.Now.Year;
         int currentNumber = await _runningNumberRepository.IncreaseRunningNumber(year, cancellationToken);
@@ -148,7 +146,7 @@ public class CreateEucharisticYouthHandler : IRequestHandler<CreateEucharisticYo
 
         foreach (SpiritualMilestone m in youth.Milestones)
         {
-            await _youthContactRepository.LinkGodparentAsync(youth.Id, m.Type, m.SponsorContactId, linkedContactIds, cancellationToken);
+            await _youthContactRepository.LinkGodparentAsync(youth.Id, m.Type, m.SponsorContactId, cancellationToken);
         }
 
         if (command.CatechismClassId != null)

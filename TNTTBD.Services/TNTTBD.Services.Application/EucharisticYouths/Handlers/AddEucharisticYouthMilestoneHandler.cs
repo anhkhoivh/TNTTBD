@@ -1,6 +1,5 @@
 using MediatR;
 using TNTTBD.Services.Application.Auth.Interfaces;
-using TNTTBD.Services.Application.Common;
 using TNTTBD.Services.Application.EucharisticYouths.Commands;
 using TNTTBD.Services.Domain.Catechism.Members;
 using TNTTBD.Services.Domain.Catechism.Repositories;
@@ -16,7 +15,6 @@ public class AddEucharisticYouthMilestoneHandler : IRequestHandler<AddEucharisti
 
     private readonly IEucharisticYouthRepository _repository;
     private readonly IAuthorizationContext _authContext;
-    private readonly IContactRepository _contactRepository;
     private readonly IEucharisticYouthContactRepository _youthContactRepository;
 
     #endregion
@@ -26,12 +24,10 @@ public class AddEucharisticYouthMilestoneHandler : IRequestHandler<AddEucharisti
     public AddEucharisticYouthMilestoneHandler(
         IEucharisticYouthRepository repository,
         IAuthorizationContext authContext,
-        IContactRepository contactRepository,
         IEucharisticYouthContactRepository youthContactRepository)
     {
         _repository = repository;
         _authContext = authContext;
-        _contactRepository = contactRepository;
         _youthContactRepository = youthContactRepository;
     }
 
@@ -46,10 +42,9 @@ public class AddEucharisticYouthMilestoneHandler : IRequestHandler<AddEucharisti
             return false;
         }
 
-        await _contactRepository.EnsureSponsorsExistAsync([command.SponsorContactId], cancellationToken);
         SpiritualMilestone milestone = new(Guid.NewGuid(), command.Type, command.Date, command.DocumentCode, command.Place, command.Note, command.SponsorContactId, command.Celebrant);
         await _repository.AddMilestone(command.EucharisticYouthId, milestone, cancellationToken);
-        await _youthContactRepository.LinkGodparentAsync(command.EucharisticYouthId, milestone.Type, milestone.SponsorContactId, new HashSet<Guid>(), cancellationToken);
+        await _youthContactRepository.LinkGodparentAsync(command.EucharisticYouthId, milestone.Type, milestone.SponsorContactId, cancellationToken);
         return true;
     }
 

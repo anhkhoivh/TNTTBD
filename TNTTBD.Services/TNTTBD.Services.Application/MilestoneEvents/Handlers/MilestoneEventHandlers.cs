@@ -45,7 +45,6 @@ internal static class MilestoneEventAccess
 
 public class SaveMilestoneEventHandler(
     IMilestoneEventRepository repository,
-    IContactRepository contactRepository,
     IEucharisticYouthContactRepository youthContactRepository,
     IAuthorizationContext auth) : IRequestHandler<SaveMilestoneEventCommand, Guid>
 {
@@ -95,11 +94,10 @@ public class SaveMilestoneEventHandler(
                 string.IsNullOrWhiteSpace(p.Note) ? null : p.Note.Trim()))
             .ToList();
 
-        await contactRepository.EnsureSponsorsExistAsync(participants.Select(p => p.SponsorContactId), cancellationToken);
         await repository.SaveAsync(milestoneEvent, isNew, participants, auth.GetCurrentUserId(), cancellationToken);
         foreach (MilestoneEventParticipant p in participants)
         {
-            await youthContactRepository.LinkGodparentAsync(p.EucharisticYouthId, milestoneEvent.Type, p.SponsorContactId, new HashSet<Guid>(), cancellationToken);
+            await youthContactRepository.LinkGodparentAsync(p.EucharisticYouthId, milestoneEvent.Type, p.SponsorContactId, cancellationToken);
         }
         return milestoneEvent.Id;
     }
