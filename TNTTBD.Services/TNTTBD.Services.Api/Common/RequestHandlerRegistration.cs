@@ -7,9 +7,12 @@ namespace TNTTBD.Services.Api.Common;
 
 public static class RequestHandlerRegistration
 {
+    private const string QueriesNamespaceSuffix = ".Queries";
+
     /// <summary>
     /// Registers every <see cref="IRequestHandler{TRequest,TResponse}"/> and <see cref="IRequestHandler{TRequest}"/>
-    /// in the assembly, each wrapped in a transactional decorator.
+    /// in the assembly. Command handlers are wrapped in a transactional decorator; handlers for requests
+    /// in a <c>*.Queries</c> namespace are read-only and registered without a transaction.
     /// </summary>
     public static IServiceCollection AddRequestHandlers(this IServiceCollection services, Assembly assembly)
     {
@@ -36,7 +39,15 @@ public static class RequestHandlerRegistration
                     throw new InvalidOperationException($"Multiple handlers registered for {serviceType}.");
                 }
 
-                Type decoratorType = decoratorDefinition.MakeGenericType(serviceType.GetGenericArguments());
+                Type[] typeArguments = serviceType.GetGenericArguments();
+
+                if (IsQuery(typeArguments[0]))
+                {
+                    services.AddTransient(serviceType, handlerType);
+                    continue;
+                }
+
+                Type decoratorType = decoratorDefinition.MakeGenericType(typeArguments);
 
                 services.TryAddTransient(handlerType);
                 services.AddTransient(serviceType, sp => ActivatorUtilities.CreateInstance(
@@ -46,4 +57,7 @@ public static class RequestHandlerRegistration
 
         return services;
     }
+
+    private static bool IsQuery(Type requestType)
+        => requestType.Namespace?.EndsWith(QueriesNamespaceSuffix, StringComparison.Ordinal) == true;
 }
