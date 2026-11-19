@@ -1,7 +1,3 @@
-using MediatR;
-using TNTTBD.Services.Application.CatechismYears.DTOs;
-using TNTTBD.Services.Application.Common.DTOs;
-
 namespace TNTTBD.Services.Application.CatechismYears.Queries;
 
-public record GetCatechismYearsQuery(int Page = 1, int? PageSize = null) : IRequest<PaginatedResult<CatechismYearDto>>;
+public record GetCatechismYearsQuery(int Page = 1, int? PageSize = null);

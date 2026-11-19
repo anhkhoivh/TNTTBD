@@ -1,4 +1,4 @@
-using MediatR;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Registration.Commands;
 using TNTTBD.Services.Domain.Catechism.JoinModels;
 using TNTTBD.Services.Domain.Catechism.Members;

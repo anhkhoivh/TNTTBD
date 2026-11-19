@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace TNTTBD.Services.Application.Contacts.Commands;
 
 public record UpdateContactCommand(
@@ -10,4 +8,4 @@ public record UpdateContactCommand(
     string? MiddleName,
     string? PhoneNumber,
     string? Email
-) : IRequest<bool>;
+);

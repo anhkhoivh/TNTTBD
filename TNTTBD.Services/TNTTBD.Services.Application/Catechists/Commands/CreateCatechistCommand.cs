@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Application.Common.DTOs;
 
 namespace TNTTBD.Services.Application.Catechists.Commands;
@@ -13,4 +12,4 @@ public record CreateCatechistCommand(
     bool IsMale,
     List<PatronSaintDto>? PatronSaints = null,
     string? PhoneNumber = null
-) : IRequest<Guid?>;
+);

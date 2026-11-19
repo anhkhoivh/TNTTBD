@@ -1,4 +1,4 @@
-using MediatR;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Exams.Commands;
 using TNTTBD.Services.Domain.Catechism.Repositories;
 

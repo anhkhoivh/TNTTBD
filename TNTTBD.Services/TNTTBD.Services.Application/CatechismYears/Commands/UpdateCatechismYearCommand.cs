@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace TNTTBD.Services.Application.CatechismYears.Commands;
 
 public record UpdateCatechismYearCommand(
@@ -7,4 +5,4 @@ public record UpdateCatechismYearCommand(
     DateOnly StartDate,
     DateOnly EndDate,
     string? Theme
-) : IRequest;
+);

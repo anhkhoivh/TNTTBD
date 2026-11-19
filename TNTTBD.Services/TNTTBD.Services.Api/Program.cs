@@ -1,14 +1,13 @@
-using MediatR;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using TNTTBD.Services.Api.Common;
 using TNTTBD.Services.Api.Common.Localization;
 using TNTTBD.Services.Api.Middleware;
 using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Auth.Interfaces;
-using TNTTBD.Services.Application.Behaviors;
 using TNTTBD.Services.Application.CatechismClasses.Interfaces;
 using TNTTBD.Services.Application.CatechismClassEucharisticYouths.Interfaces;
 using TNTTBD.Services.Application.CatechismClassCatechists.Interfaces;
@@ -142,11 +141,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
            .AddSupportedUICultures(supportedCultures);
 });
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(ApplicationAssemblyMarker).Assembly);
-});
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+builder.Services.AddRequestHandlers(typeof(ApplicationAssemblyMarker).Assembly);
 
 
 var app = builder.Build();

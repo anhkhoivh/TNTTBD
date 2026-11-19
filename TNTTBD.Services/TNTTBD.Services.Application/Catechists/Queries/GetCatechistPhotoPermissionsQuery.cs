@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace TNTTBD.Services.Application.Catechists.Queries;
 
-public record GetCatechistPhotoPermissionsQuery(Guid CatechistId) : IRequest<bool>;
+public record GetCatechistPhotoPermissionsQuery(Guid CatechistId);

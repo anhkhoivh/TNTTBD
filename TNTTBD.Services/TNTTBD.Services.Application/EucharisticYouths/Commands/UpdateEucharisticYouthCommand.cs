@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Domain.Enums;
 
@@ -15,4 +14,4 @@ public record UpdateEucharisticYouthCommand(
     bool IsMale,
     List<PatronSaintDto>? PatronSaints = null,
     List<SpiritualMilestoneDto>? Milestones = null
-) : IRequest<bool>;
+);

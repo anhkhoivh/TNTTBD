@@ -1,6 +1,6 @@
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Auth.DTOs;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.Users.Commands;
@@ -13,24 +13,23 @@ namespace TNTTBD.Services.Api.Controllers;
 [Authorize(Roles = "Admin")]
 public class UsersController : Controller
 {
-    private readonly IMediator _mediator;
-
-    public UsersController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] GetUsersQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(
+        [FromQuery] GetUsersQuery query,
+        [FromServices] IRequestHandler<GetUsersQuery, PaginatedResult<UserDto>> handler,
+        CancellationToken cancellationToken)
     {
-        PaginatedResult<UserDto> result = await _mediator.Send(query, cancellationToken);
+        PaginatedResult<UserDto> result = await handler.Handle(query, cancellationToken);
         return Ok(result);
     }
 
     [HttpGet("detail")]
-    public async Task<IActionResult> GetById([FromQuery] GetUserByIdQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(
+        [FromQuery] GetUserByIdQuery query,
+        [FromServices] IRequestHandler<GetUserByIdQuery, UserDto?> handler,
+        CancellationToken cancellationToken)
     {
-        UserDto? user = await _mediator.Send(query, cancellationToken);
+        UserDto? user = await handler.Handle(query, cancellationToken);
         if (user == null)
         {
             return NotFound();
@@ -39,30 +38,42 @@ public class UsersController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateUserCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(
+        [FromBody] CreateUserCommand command,
+        [FromServices] IRequestHandler<CreateUserCommand, Guid> handler,
+        CancellationToken cancellationToken)
     {
-        Guid id = await _mediator.Send(command, cancellationToken);
+        Guid id = await handler.Handle(command, cancellationToken);
         return Created($"/api/users?id={id}", id);
     }
 
     [HttpPatch]
-    public async Task<IActionResult> Update([FromBody] UpdateUserCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(
+        [FromBody] UpdateUserCommand command,
+        [FromServices] IRequestHandler<UpdateUserCommand> handler,
+        CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
+        await handler.Handle(command, cancellationToken);
         return Ok();
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Remove([FromBody] RemoveUserCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Remove(
+        [FromBody] RemoveUserCommand command,
+        [FromServices] IRequestHandler<RemoveUserCommand> handler,
+        CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
+        await handler.Handle(command, cancellationToken);
         return NoContent();
     }
 
     [HttpPost("reset-password")]
-    public async Task<IActionResult> ResetPassword([FromBody] AdminResetPasswordCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> ResetPassword(
+        [FromBody] AdminResetPasswordCommand command,
+        [FromServices] IRequestHandler<AdminResetPasswordCommand> handler,
+        CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
+        await handler.Handle(command, cancellationToken);
         return Ok();
     }
 }

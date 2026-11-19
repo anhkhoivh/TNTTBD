@@ -15,7 +15,7 @@ API Layer (Controllers) → Application Layer (Commands/Queries + Handlers) → 
 
 - **Commands** = write operations (Create, Update, Delete). Return `Guid` or `void`. Go through the Domain to enforce business rules.
 - **Queries** = read operations. Bypass domain logic, use QueryServices that query EF directly and return DTOs.
-- **Handlers** = MediatR handlers that orchestrate Commands/Queries.
+- **Handlers** = `IRequestHandler` implementations (registered via DI) that orchestrate Commands/Queries.
 - **QueryServices** = Infrastructure implementations that read from DB, map to DTOs — used for list/paginated reads where going through the domain is wasteful.
 - **Repositories** = Domain-centric persistence (load/save aggregates).
 
@@ -297,8 +297,8 @@ The following integration issues were identified and fixed:
 | `Application/CatechismClasses/Interfaces/ICatechismClassQueryService.cs` | QueryService interface pattern |
 | `Infrastructure/Persistence/Catechism/QueryServices/CatechismClassQueryService.cs` | QueryService EF implementation |
 | `Infrastructure/Persistence/Catechism/Repositories/CatechismSessionRepository.cs` | Repository pattern |
-| `Api/Controllers/CatechismSessionController.cs` | Controller pattern (MediatR injection) |
-| `Application/Behaviors/TransactionBehavior.cs` | MediatR pipeline behavior pattern |
+| `Api/Controllers/CatechismSessionController.cs` | Controller pattern (`[FromServices]` handler injection) |
+| `Application/Behaviors/TransactionalRequestHandler.cs` | Transactional handler decorator pattern |
 | `Domain/Catechism/CatechismSession.cs` | Aggregate with child entity collection |
 | `Domain/Common/AggregateRoot.cs` | Base class for aggregates |
 
@@ -355,7 +355,7 @@ API (Controllers) → Application (Commands/Queries + Handlers) → Domain (Aggr
 
 - **Commands** = writes (enforce domain rules via aggregates)
 - **Queries** = reads (bypass domain, use QueryServices → DTOs directly)
-- **Handlers** = MediatR orchestrators
+- **Handlers** = `IRequestHandler` orchestrators
 - **QueryServices** = EF reads mapped to DTOs (no domain loading)
 
 ---

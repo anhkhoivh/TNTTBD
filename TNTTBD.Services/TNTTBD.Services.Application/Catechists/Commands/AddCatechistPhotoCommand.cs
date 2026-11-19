@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.Catechists.Commands;
@@ -10,4 +9,4 @@ public record AddCatechistPhotoCommand(
     PhotoPurpose Purpose,
     DateTimeOffset UploadedAt,
     Guid UploadBy
-) : IRequest;
+);

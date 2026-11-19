@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
 public record RemoveEucharisticYouthPatronSaintCommand(
@@ -7,4 +5,4 @@ public record RemoveEucharisticYouthPatronSaintCommand(
     string SaintName,
     int Day, 
     int Month
-) : IRequest<bool>;
+);

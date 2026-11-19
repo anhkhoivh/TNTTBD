@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace TNTTBD.Services.Application.Catechists.Commands;
 
 public record AddCatechistPatronSaintCommand(
@@ -7,4 +5,4 @@ public record AddCatechistPatronSaintCommand(
     string SaintName,
     int Day,
     int Month
-) : IRequest<bool>;
+);

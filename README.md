@@ -29,7 +29,7 @@ The application is actively developed, with additional features and improvements
 |---|---|
 | Backend | C#, ASP.NET Core, .NET |
 | Architecture | Domain-Driven Design, CQRS, Clean Architecture |
-| Application Layer | MediatR, Commands, Queries, Handlers |
+| Application Layer | Commands, Queries, Handlers (plain DI, no mediator) |
 | Data Access | Entity Framework Core |
 | Database | PostgreSQL |
 | Frontend | Angular, TypeScript |
@@ -56,7 +56,7 @@ The project applies Command Query Responsibility Segregation (CQRS) to separate 
 Commands handle operations that modify application state, such as creating, updating, deleting, and marking attendance.
 
 - Implemented as dedicated command objects.
-- Processed through MediatR handlers.
+- Processed by `IRequestHandler` implementations injected directly into controllers, each wrapped in a transactional decorator.
 - Use domain entities and aggregates to enforce business rules.
 - Persist changes through repositories and the application's persistence mechanisms.
 
@@ -181,7 +181,7 @@ Some of the key engineering aspects explored in this project include:
 
 - Applying DDD concepts to model business entities and aggregates.
 - Separating write and read use cases with CQRS.
-- Using MediatR to dispatch commands and queries.
+- Injecting command and query handlers directly through dependency injection, with transactions applied by a decorator.
 - Implementing repository and QueryService patterns.
 - Using Entity Framework Core for relational persistence.
 - Integrating Angular with ASP.NET Core REST APIs.

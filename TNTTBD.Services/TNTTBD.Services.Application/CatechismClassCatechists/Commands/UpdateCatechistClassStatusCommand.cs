@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.CatechismClassCatechists.Commands;
@@ -6,4 +5,4 @@ namespace TNTTBD.Services.Application.CatechismClassCatechists.Commands;
 public record UpdateCatechistClassStatusCommand(
     Guid Id,
     EnrollmentStatus Status
-) : IRequest<bool>;
+);

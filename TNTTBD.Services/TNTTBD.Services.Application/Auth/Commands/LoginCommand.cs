@@ -1,6 +1,3 @@
-using MediatR;
-using TNTTBD.Services.Application.Auth.DTOs;
-
 namespace TNTTBD.Services.Application.Auth.Commands;
 
-public record LoginCommand(string Identifier, string Password) : IRequest<LoginResponse>;
+public record LoginCommand(string Identifier, string Password);

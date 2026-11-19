@@ -1,6 +1,6 @@
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Registration.Commands;
 
 namespace TNTTBD.Services.Api.Controllers;
@@ -10,17 +10,13 @@ namespace TNTTBD.Services.Api.Controllers;
 [Route("api/registration")]
 public class RegistrationController : Controller
 {
-    private readonly IMediator _mediator;
-
-    public RegistrationController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpPost("youth")]
-    public async Task<IActionResult> RegisterYouth([FromBody] RegisterEucharisticYouthCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> RegisterYouth(
+        [FromBody] RegisterEucharisticYouthCommand command,
+        [FromServices] IRequestHandler<RegisterEucharisticYouthCommand, Guid> handler,
+        CancellationToken cancellationToken)
     {
-        Guid id = await _mediator.Send(command, cancellationToken);
+        Guid id = await handler.Handle(command, cancellationToken);
         return Created($"/api/youths/detail?id={id}", id);
     }
 }

@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.Contacts.Commands;
@@ -12,4 +11,4 @@ public record CreateContactCommand(
     string? Email,
     Guid? LinkEucharisticYouthId = null,
     ContactRelationType? LinkRelationType = null
-) : IRequest<Guid?>;
+);

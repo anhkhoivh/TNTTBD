@@ -1,6 +1,6 @@
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.CatechismClasses.Commands;
 using TNTTBD.Services.Application.CatechismClasses.DTOs;
@@ -16,21 +16,6 @@ namespace TNTTBD.Services.Api.Controllers;
 [Route("api/classes")]
 public class CatechismClassController : Controller
 {
-    #region Fields
-
-    private readonly IMediator _mediator;
-
-    #endregion
-
-    #region Constructors
-
-    public CatechismClassController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
-    #endregion
-
     #region Methods
 
     /// <summary>
@@ -40,9 +25,12 @@ public class CatechismClassController : Controller
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateCatechismClassCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(
+        [FromBody] CreateCatechismClassCommand command,
+        [FromServices] IRequestHandler<CreateCatechismClassCommand, Guid?> handler,
+        CancellationToken cancellationToken)
     {
-        Guid? id = await _mediator.Send(command, cancellationToken);
+        Guid? id = await handler.Handle(command, cancellationToken);
 
         return id switch
         {
@@ -55,9 +43,12 @@ public class CatechismClassController : Controller
     /// Get list (paginated, optional yearId filter)
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] GetCatechismClassesQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(
+        [FromQuery] GetCatechismClassesQuery query,
+        [FromServices] IRequestHandler<GetCatechismClassesQuery, PaginatedResult<CatechismClassDto>> handler,
+        CancellationToken cancellationToken)
     {
-        PaginatedResult<CatechismClassDto> result = await _mediator.Send(query, cancellationToken);
+        PaginatedResult<CatechismClassDto> result = await handler.Handle(query, cancellationToken);
         return Ok(result);
     }
 
@@ -65,9 +56,12 @@ public class CatechismClassController : Controller
     /// Get by id
     /// </summary>
     [HttpGet("detail")]
-    public async Task<IActionResult> GetById([FromQuery] GetCatechismClassByIdQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(
+        [FromQuery] GetCatechismClassByIdQuery query,
+        [FromServices] IRequestHandler<GetCatechismClassByIdQuery, CatechismClassDto> handler,
+        CancellationToken cancellationToken)
     {
-        CatechismClassDto result = await _mediator.Send(query, cancellationToken);
+        CatechismClassDto result = await handler.Handle(query, cancellationToken);
         return Ok(result);
     }
 
@@ -78,9 +72,12 @@ public class CatechismClassController : Controller
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPost("sessions")]
-    public async Task<IActionResult> GetSessionsByClass([FromBody] GetSessionsByClassQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetSessionsByClass(
+        [FromBody] GetSessionsByClassQuery query,
+        [FromServices] IRequestHandler<GetSessionsByClassQuery, List<CatechismSessionDto>> handler,
+        CancellationToken cancellationToken)
     {
-        List<CatechismSessionDto> classes = await _mediator.Send(query, cancellationToken);
+        List<CatechismSessionDto> classes = await handler.Handle(query, cancellationToken);
         if (classes == null || classes.Count == 0)
         {
             return NotFound();
@@ -93,16 +90,22 @@ public class CatechismClassController : Controller
     /// Update
     /// </summary>
     [HttpPatch]
-    public async Task<IActionResult> Update(UpdateCatechismClassCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(
+        UpdateCatechismClassCommand command,
+        [FromServices] IRequestHandler<UpdateCatechismClassCommand, bool> handler,
+        CancellationToken cancellationToken)
     {
-        await _mediator.Send(command, cancellationToken);
+        await handler.Handle(command, cancellationToken);
         return Ok();
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Remove(RemoveCatechismClassCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Remove(
+        RemoveCatechismClassCommand command,
+        [FromServices] IRequestHandler<RemoveCatechismClassCommand, bool> handler,
+        CancellationToken cancellationToken)
     {
-        if (await _mediator.Send(command, cancellationToken))
+        if (await handler.Handle(command, cancellationToken))
         {
             return Ok();
         }

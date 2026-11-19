@@ -1,4 +1,4 @@
-using MediatR;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.MilestoneEvents.DTOs;
 using TNTTBD.Services.Application.MilestoneEvents.Interfaces;
