@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Application.Common.DTOs;
 
 namespace TNTTBD.Services.Application.Catechists.Commands;
@@ -14,4 +13,4 @@ public record UpdateCatechistCommand(
     bool IsMale,
     IReadOnlyCollection<PatronSaintDto>? PatronSaints = null,
     string? PhoneNumber = null
-) : IRequest<bool>;
+);

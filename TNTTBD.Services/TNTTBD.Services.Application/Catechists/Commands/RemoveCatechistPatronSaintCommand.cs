@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace TNTTBD.Services.Application.Catechists.Commands;
 
 public record RemoveCatechistPatronSaintCommand(
@@ -7,4 +5,4 @@ public record RemoveCatechistPatronSaintCommand(
     string SaintName,
     int Day, 
     int Month
-) : IRequest<bool>;
+);

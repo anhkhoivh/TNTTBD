@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
 public record AddEucharisticYouthPatronSaintCommand(
@@ -7,4 +5,4 @@ public record AddEucharisticYouthPatronSaintCommand(
     string SaintName,
     int Day,
     int Month
-) : IRequest<bool>;
+);

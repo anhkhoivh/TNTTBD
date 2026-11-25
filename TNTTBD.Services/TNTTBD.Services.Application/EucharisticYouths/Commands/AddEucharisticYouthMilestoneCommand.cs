@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
@@ -12,4 +11,4 @@ public record AddEucharisticYouthMilestoneCommand(
     string? Note,
     Guid? SponsorContactId = null,
     string? Celebrant = null
-) : IRequest<bool>;
+);

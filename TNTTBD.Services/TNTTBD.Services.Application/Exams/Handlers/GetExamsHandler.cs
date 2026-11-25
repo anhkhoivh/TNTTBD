@@ -1,4 +1,4 @@
-using MediatR;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.Exams.DTOs;
 using TNTTBD.Services.Application.Exams.Interfaces;

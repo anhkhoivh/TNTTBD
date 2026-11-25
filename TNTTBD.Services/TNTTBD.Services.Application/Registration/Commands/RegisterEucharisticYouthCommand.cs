@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.Registration.Commands;
@@ -6,7 +5,7 @@ namespace TNTTBD.Services.Application.Registration.Commands;
 public record RegisterEucharisticYouthCommand(
     YouthData Youth,
     List<ContactData> Contacts
-) : IRequest<Guid>;
+);
 
 public record YouthData(
     FullNameData FullName,

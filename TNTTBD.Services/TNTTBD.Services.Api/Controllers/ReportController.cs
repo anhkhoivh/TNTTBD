@@ -1,6 +1,6 @@
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Reports.DTOs;
 using TNTTBD.Services.Application.Reports.Queries;
 
@@ -9,12 +9,15 @@ namespace TNTTBD.Services.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/reports")]
-public class ReportController(IMediator mediator) : Controller
+public class ReportController : Controller
 {
     [HttpGet("classes/{classId:guid}")]
-    public async Task<IActionResult> GetClassReport(Guid classId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetClassReport(
+        Guid classId,
+        [FromServices] IRequestHandler<GetClassReportQuery, ClassReportDto?> handler,
+        CancellationToken cancellationToken)
     {
-        ClassReportDto? result = await mediator.Send(new GetClassReportQuery(classId), cancellationToken);
+        ClassReportDto? result = await handler.Handle(new GetClassReportQuery(classId), cancellationToken);
         return result == null ? NotFound() : Ok(result);
     }
 
@@ -22,9 +25,10 @@ public class ReportController(IMediator mediator) : Controller
     public async Task<IActionResult> ExportClassReportExcel(
         Guid classId,
         [FromBody] ClassReportExcelRequestDto request,
+        [FromServices] IRequestHandler<ExportClassReportExcelQuery, ClassReportExcelFileDto?> handler,
         CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(
+        var result = await handler.Handle(
             new ExportClassReportExcelQuery(
                 classId,
                 request.AttendanceEnrollmentIds,
@@ -42,9 +46,10 @@ public class ReportController(IMediator mediator) : Controller
         Guid youthId,
         [FromQuery] Guid? catechismYearId,
         [FromQuery] Guid? enrollmentId,
+        [FromServices] IRequestHandler<GetYouthReportQuery, YouthReportDto?> handler,
         CancellationToken cancellationToken = default)
     {
-        YouthReportDto? result = await mediator.Send(
+        YouthReportDto? result = await handler.Handle(
             new GetYouthReportQuery(youthId, catechismYearId, enrollmentId),
             cancellationToken);
 

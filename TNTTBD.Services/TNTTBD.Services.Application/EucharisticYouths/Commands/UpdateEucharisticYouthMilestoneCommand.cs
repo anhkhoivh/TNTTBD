@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace TNTTBD.Services.Application.EucharisticYouths.Commands;
 
 public record UpdateEucharisticYouthMilestoneCommand(
@@ -11,4 +9,4 @@ public record UpdateEucharisticYouthMilestoneCommand(
     string? Note,
     Guid? SponsorContactId = null,
     string? Celebrant = null
-) : IRequest<bool>;
+);

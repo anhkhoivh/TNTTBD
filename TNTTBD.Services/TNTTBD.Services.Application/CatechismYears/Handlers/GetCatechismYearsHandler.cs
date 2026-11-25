@@ -1,4 +1,4 @@
-using MediatR;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.CatechismYears.DTOs;
 using TNTTBD.Services.Application.CatechismYears.Interfaces;
 using TNTTBD.Services.Application.CatechismYears.Queries;

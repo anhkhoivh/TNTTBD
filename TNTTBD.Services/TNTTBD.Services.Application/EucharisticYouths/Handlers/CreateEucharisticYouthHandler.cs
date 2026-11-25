@@ -1,4 +1,4 @@
-using MediatR;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Auth.Interfaces;
 using TNTTBD.Services.Application.Common;
 using TNTTBD.Services.Application.Common.Exceptions;

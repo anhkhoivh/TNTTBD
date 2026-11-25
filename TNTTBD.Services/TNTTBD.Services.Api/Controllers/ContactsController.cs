@@ -1,6 +1,6 @@
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Application.Contacts.Commands;
 using TNTTBD.Services.Application.Contacts.DTOs;
@@ -13,32 +13,34 @@ namespace TNTTBD.Services.Api.Controllers;
 [Authorize]
 public class ContactsController : Controller
 {
-    private readonly IMediator _mediator;
-
-    public ContactsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] GetContactsQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(
+        [FromQuery] GetContactsQuery query,
+        [FromServices] IRequestHandler<GetContactsQuery, PaginatedResult<ContactDto>> handler,
+        CancellationToken cancellationToken)
     {
-        PaginatedResult<ContactDto> result = await _mediator.Send(query, cancellationToken);
+        PaginatedResult<ContactDto> result = await handler.Handle(query, cancellationToken);
         return Ok(result);
     }
 
     [HttpGet("detail")]
-    public async Task<IActionResult> GetById([FromQuery] GetContactByIdQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(
+        [FromQuery] GetContactByIdQuery query,
+        [FromServices] IRequestHandler<GetContactByIdQuery, ContactDetailDto?> handler,
+        CancellationToken cancellationToken)
     {
-        ContactDetailDto? result = await _mediator.Send(query, cancellationToken);
+        ContactDetailDto? result = await handler.Handle(query, cancellationToken);
 
         return result == null ? NotFound() : Ok(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateContactCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(
+        [FromBody] CreateContactCommand command,
+        [FromServices] IRequestHandler<CreateContactCommand, Guid?> handler,
+        CancellationToken cancellationToken)
     {
-        Guid? id = await _mediator.Send(command, cancellationToken);
+        Guid? id = await handler.Handle(command, cancellationToken);
 
         return id switch
         {
@@ -48,14 +50,20 @@ public class ContactsController : Controller
     }
 
     [HttpPatch]
-    public async Task<IActionResult> Update(UpdateContactCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(
+        UpdateContactCommand command,
+        [FromServices] IRequestHandler<UpdateContactCommand, bool> handler,
+        CancellationToken cancellationToken)
     {
-        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
+        return await handler.Handle(command, cancellationToken) ? Ok() : Forbid();
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Remove(DeleteContactCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Remove(
+        DeleteContactCommand command,
+        [FromServices] IRequestHandler<DeleteContactCommand, bool> handler,
+        CancellationToken cancellationToken)
     {
-        return await _mediator.Send(command, cancellationToken) ? Ok() : Forbid();
+        return await handler.Handle(command, cancellationToken) ? Ok() : Forbid();
     }
 }

@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Application.Common.DTOs;
 using TNTTBD.Services.Domain.Enums;
 
@@ -16,7 +15,7 @@ public record CreateEucharisticYouthCommand(
     List<SpiritualMilestoneDto>? Milestones = null,
     List<YouthContactData>? Contacts = null,
     Guid? CatechismClassId = null
-) : IRequest<Guid?>;
+);
 
 /// <summary>
 /// Contact to link on youth creation. When <see cref="ContactId"/> is set, the existing contact is linked

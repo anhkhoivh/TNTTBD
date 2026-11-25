@@ -1,4 +1,4 @@
-using MediatR;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Auth.Commands;
 using TNTTBD.Services.Application.Auth.Interfaces;
 

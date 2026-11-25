@@ -1,4 +1,3 @@
-using MediatR;
 using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.Users.Commands;
@@ -11,4 +10,4 @@ public record CreateUserCommand(
     Guid? CatechistId = null,
     Guid? EucharisticYouthId = null,
     Guid? ContactId = null
-) : IRequest<Guid>;
+);

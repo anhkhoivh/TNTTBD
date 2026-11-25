@@ -1,4 +1,4 @@
-using MediatR;
+using TNTTBD.Services.Application.Abstractions;
 using TNTTBD.Services.Application.Reports.DTOs;
 using TNTTBD.Services.Application.Reports.Interfaces;
 using TNTTBD.Services.Application.Reports.Queries;

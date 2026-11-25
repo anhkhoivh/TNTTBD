@@ -1,6 +1,3 @@
-using MediatR;
-using TNTTBD.Services.Application.Common.DTOs;
-using TNTTBD.Services.Application.MilestoneEvents.DTOs;
 using TNTTBD.Services.Domain.Enums;
 
 namespace TNTTBD.Services.Application.MilestoneEvents.Queries;
@@ -13,4 +10,4 @@ public record GetMilestoneEventCandidatesQuery(
     DateOnly? Date = null,
     int Page = 1,
     int? PageSize = 20
-) : IRequest<PaginatedResult<MilestoneEventCandidateDto>>;
+);
